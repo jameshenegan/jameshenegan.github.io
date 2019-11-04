@@ -1,12 +1,732 @@
 <!DOCTYPE html>
 <html lang="en">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9703210d86c980b67eb2744c6077d606a1eee81b
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<<<<<<< HEAD
   <title>Document</title>
 </head>
 <body>
   <p>Hey</p>
 </body>
 </html>
+=======
+  <title>Bayley Project</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <style>
+    .counties :hover {
+      fill: rgb(153, 85, 102);
+    }
+
+    .county-borders {
+      fill: none;
+      stroke: rgb(192, 188, 211);
+      stroke-width: 0.5px;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      pointer-events: none;
+    }
+
+    div.tooltip { 
+          position: absolute;     
+          text-align: center;     
+          width: 120px;          
+          height: 32px;         
+          padding: 2px;       
+          font: 12px sans-serif;    
+          background: #fff; 
+          border: 0px;        
+          pointer-events: none;     
+      }
+  </style>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+
+
+</head>
+
+<body>
+  <div class="container">
+    <h2 class="center">Understanding the <code>bsid.xls</code> File</h2>
+
+    <p>In this document, we familiarize ourselves with the <code>bsid.xls</code> file that Dr. Walker gave us.</p>
+
+    <p>Note that the acronym <em>bsid</em> translates to <em>Bayley Scales of Infant Development</em>. Here, we will
+      refer to this simply as the <b>Bayley</b>. We refer to children in our sample who took the Bayley as <b>Bayley
+        Children</b>.</p>
+
+    <h4>Overview</h4>
+
+    <p>Here is a high-level overview of what is covered in this document.</p>
+
+    <ul class="collection">
+      <li class="collection-item">Possible Outcome Variables</li>
+      <li class="collection-item">Other Variables in the Data Set</li>
+      <li class="collection-item">Relating the <code>bsid.xls</code> file to the <code>asq.xls</code> file</li>
+    </ul>
+
+    <h3>Possible Outcome Variables</h3>
+    <p>The Bayley tests children in four overall domains: <b>cognitive</b>, <b>language</b>, <b>motor</b>,
+      and
+      <b>social-emotional</b>. </p>
+
+    <p>For each overall domain, we could view the <em>categorical</em> <b>composite score classification</b> as the
+      "final result"
+      of the test. </p>
+
+    <p>Here are the results of these classifications for our data set. Click on an image to see it in greater detail.
+    </p>
+
+    <div class="row">
+      <div class="col s3">
+        <a href="views/class-cog.html">
+          <img src="svgs/class-cog.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s3">
+        <a href="views/class-lang.html">
+          <img src="svgs/class-lang.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s3">
+        <a href="views/class-motor.html">
+          <img src="svgs/class-motor.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s3">
+        <a href="views/class-social.html">
+          <img src="svgs/class-social.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s3 center">
+        <p>Cognitive</p>
+      </div>
+      <div class="col s3 center">
+        <p>Language</p>
+      </div>
+      <div class="col s3 center">
+        <p>Motor</p>
+      </div>
+      <div class="col s3 center">
+        <p>Social-Emotional</p>
+      </div>
+    </div>
+
+    <p>If we want more detail (i.e., if we prefer to use a continuous variable as opposed to a categorical variable),
+      then, instead of looking at classifications, we can view the <b>composite score</b> of a domain as the "final
+      result" of the test. A child's classification for a domain is directly determined by their composite score for
+      that domain.</p>
+
+    <p> Meanwhile, we can view the <b>total raw score</b> as the "initial result" of the test. The total raw score gets
+      converted to a <b>scaled score</b>, which can then be converted to a <b>percentile rank</b> along with the
+      aforementioned composite score.</p>
+
+    <p>Note that we can use the percentile rank measure to compare the children in our sample with children from the
+      general population. In particular, <em>percentile ranks correspond directly to composite score
+        classifications</em>. For example, we see that "Extremely Low" and "Borderline" classifications are common for
+      our sample, but, according to their corresponding percentile ranks, they are uncommon in the general population.
+    </p>
+
+    <p>The <b>language</b> and <b>motor</b> domains can be broken down into sub-domains. Sub-domains are utilized for
+      total raw scores and scaled scores, but not for percentile ranks and composite scores. The language domain can be
+      broken down into sub-domains of <b>expressive</b> and
+      <b>receptive</b> communication. Meanwhile, the motor domain can be broken down into sub-domains of <b>fine</b> and
+      <b>gross</b> motor skills. </p>
+
+    <p>Here are the results from our data set. Click on an image to see it in greater detail.</p>
+
+    <div class="row">
+      <div class="col s2">
+        <p></p>
+      </div>
+      <div class="col s2">
+        <p>Composite Score</p>
+      </div>
+      <div class="col s2">
+        <p>Percentile Rank</p>
+      </div>
+      <div class="col s2">
+        <p>Scaled Score</p>
+      </div>
+      <div class="col s2">
+        <p>Total Raw Score</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s2">
+        <p>Cognitive</p>
+      </div>
+      <div class="col s2">
+        <a href="views/composite-cognitive.html">
+          <img src="svgs/composite-cognitive.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s2">
+        <a href="views/percentile-cog.html">
+          <img src="svgs/percentile-cognitive.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+      <div class="col s2">
+        <a href="svgs/ss-cog.svg">
+          <img src="svgs/ss-cog.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s2">
+        <a href="svgs/rs-cog.svg">
+          <img src="svgs/rs-cog.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col s2">
+        <p>Language</p>
+      </div>
+      <div class="col s2">
+        <a href="views/composite-language.html">
+          <img src="svgs/composite-language.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s2">
+        <a href="views/percentile-language.html">
+          <img src="svgs/percentile-language.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+
+      <div class="col s2">
+        <a href="svgs/ss-language.svg">
+          <img src="svgs/ss-language.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+      <div class="col s2">
+        <a href="svgs/rs-language.svg">
+          <img src="svgs/rs-language.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col s2">
+        <p>Motor</p>
+      </div>
+      <div class="col s2">
+        <a href="views/composite-motor.html">
+          <img src="svgs/composite-motor.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s2">
+        <a href="svgs/percentile-motor.svg">
+          <img src="svgs/percentile-motor.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+      <div class="col s2">
+        <a href="svgs/ss-motor.svg">
+          <img src="svgs/ss-motor.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+      <div class="col s2">
+        <a href="svgs/rs-motor.svg">
+          <img src="svgs/rs-motor.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col s2">
+        <p>Social Emotional</p>
+      </div>
+      <div class="col s2">
+        <a href="views/composite-social.html">
+          <img src="svgs/composite - Social Emotional.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+      <div class="col s2">
+        <a href="svgs/percentile-social.svg">
+          <img src="svgs/percentile-social.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+      <div class="col s2">
+        <a href="svgs/ss-social.svg">
+          <img src="svgs/ss-social.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+
+      <div class="col s2">
+        <a href="svgs/rs-social.svg">
+          <img src="svgs/rs-social.svg" alt="Hey" width="100%" />
+        </a>
+      </div>
+    </div>
+
+    <h4>Relationships Between Domains</h4>
+
+    <p>Here, we see some relationships between the composite scores of the four domains for our sample.</p>
+
+    <div class="center">
+      <a href="svgs/composites.svg">
+        <img src="svgs/composites.svg" alt="hey" width="65%">
+      </a>
+    </div>
+
+    <div>
+      <h3>Other Variables in the Data Set</h3>
+      <p>In this section, we look at some of the other variables that were given to us in the data set.</p>
+
+      <h4>Adjustment for Prematurity</h4>
+      <p> In <a
+          href="http://images.pearsonclinical.com/videos/BayleyTraining/Bayley-III_Module_2_Introducing_Bayley-III/page339.html">the
+          Bayley hand book</a>, we are told to "adjust for the child's prematurity through 24 months of chronological
+        age." This is a two step process:
+
+        <ul>
+          <li>
+            <em>1. Subtract the child’s date of birth from the expected date of birth. Enter the number of months and
+              days
+              in the row labeled Adjustment for Prematurity.</em>
+          </li>
+          <li>
+            <em>2. Subtract the adjustment for prematurity from the child’s age to obtain the Adjusted Age.</em>
+          </li>
+        </ul>
+
+        The "months" and "days" from Step 1 are given to us in the data set.
+      </p>
+
+
+    </div>
+
+    <div>
+      <h4>Age</h4>
+      <p>Most of the children were just a little older than two years at the time of testing.</p>
+      <a href="svgs/ages.svg">
+        <img src="svgs/ages.svg" alt="Ages" width="85%">
+      </a>
+    </div>
+
+    <div>
+      <h4>Demographics</h4>
+      The <code>bsid.csv</code> file also contains information on the sex and race of each child.
+
+      <a href="svgs/demo.svg">
+        <img src="svgs/demo.svg" alt="demog" width="100%">
+      </a>
+
+      <div class="right">
+
+        <a class="waves-effect waves-light btn modal-trigger" href="#modal2">See Table</a>
+
+      </div>
+
+      <!-- Modal Structure -->
+      <div id="modal2" class="modal">
+        <div class="modal-content">
+
+          <table>
+            <thead>
+              <tr>
+                <th>Sex</th>
+                <th>Race</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Male</td>
+                <td>Black</td>
+                <td>106</td>
+              </tr>
+              <tr>
+                <td>Female</td>
+                <td>Black</td>
+                <td>101</td>
+              </tr>
+              <tr>
+                <td>Female</td>
+                <td>White</td>
+                <td>39</td>
+              </tr>
+              <tr>
+                <td>Male</td>
+                <td>White</td>
+                <td>29</td>
+              </tr>
+              <tr>
+                <td>Male</td>
+                <td>Hispanic</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <td>Female</td>
+                <td>Hispanic</td>
+                <td>6</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <div>
+      <h3>Relating the Bayley to the ASQ</h3>
+
+      <p>One of our goals is to relate the results of Bayley exam to the results of the ASQ exam(s). At this point, it
+        appears as though there is more than one way to do this.</p>
+
+      <p>Here is one question to consider: for a given "collapsed month interval" (e.g. 4-month, 8-month, 12-month, 24
+        month), how many Bayley children took at least one ASQ at that interval?</p>
+
+
+      <p>Here is another question: for a given Bayley child, how many ASQ exams did that child take?</p>
+
+      <h4>Question One</h4>
+
+      <p>For a given "collapsed month interval" (e.g. 4-month, 8-month, 12-month, 24 month), how many Bayley children
+        took at least one ASQ at that interval?</p>
+
+      <div class="center">
+
+        <a href="svgs/asq-bayley-collapsed.svg">
+          <img src="svgs/asq-bayley-collapsed.svg" alt="Ages" width="80%">
+        </a>
+
+        <p>Here is that information in some greater detail.</p>
+
+        <a href="svgs/asq-bayley.svg">
+          <img src="svgs/asq-bayley.svg" alt="Ages" width="80%">
+        </a>
+
+      </div>
+
+      <h4>Question Two</h4>
+
+      <p> For a given Bayley child, how many ASQ exams did that child take?</p>
+
+
+      <div class="center">
+
+        <a href="svgs/asq-bail.svg">
+          <img src="svgs/asq-bail.svg" alt="Ages" width="80%">
+        </a>
+
+      </div>
+
+      <div class="right">
+
+        <a class="waves-effect waves-light btn modal-trigger" href="#modal1">See Table</a>
+
+      </div>
+
+      <!-- Modal Structure -->
+      <div id="modal1" class="modal">
+        <div class="modal-content">
+          <table>
+            <thead>
+              <tr>
+                <th>Number of ASQ Exams</th>
+                <th>Count</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>88</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>61</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>57</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>66</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>16</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">Done</a>
+        </div>
+      </div>
+
+    </div>
+
+
+    <p>Most of our Bayley children took somewhere between one and five ASQ exams.</p>
+
+    <p>Next, we consider the question: <em>when</em> did the Bayley children take the ASQ exams? Here, we examine this
+      question by dividing the children into different classes, where the classes are based on the total number of times
+      they took the ASQ. </p>
+
+    <h4>Children who took the ASQ Exactly Once</h4>
+
+    <p>Of all the Bayley children who took the ASQ exactly once, most of them took the ASQ around the same time they
+      were taking the Bayley exam.</p>
+
+    <div class="center">
+
+      <a href="svgs/asq-one-one.svg">
+        <img src="svgs/asq-one-one.svg" alt="Ages" width="50%">
+      </a>
+
+    </div>
+
+    <p>Note: the coloring scheme used in the graph is based on the <code>Interval Months Collapsed</code> variable.</p>
+
+    <h4>Children who took the ASQ Exactly Twice</h4>
+
+    <p>Of the children who took the ASQ exactly twice, most of them took their first test at 12-months, and then they
+      came back and took their second test some time around the same time they were taking the Bayley.</p>
+
+    <div class="center">
+      <div class="row">
+        <div class="col s6">
+          <a href="svgs/asq-2-1.svg">
+            <img src="svgs/asq-2-1.svg" alt="Ages" width="80%">
+          </a>
+          <p>ASQ Exam One</p>
+        </div>
+
+        <div class="col s6">
+          <a href="svgs/asq-2-2.svg">
+            <img src="svgs/asq-2-2.svg" alt="Ages" width="80%">
+          </a>
+          <p>ASQ Exam Two</p>
+        </div>
+
+      </div>
+    </div>
+
+    <h4>Children who took the ASQ Exactly Three Times</h4>
+
+    <p>Looking at the children who took the ASQ exactly three times, it appears as though a common pattern was to take
+      the exam at 8 months, then 12 months, then 24 months.</p>
+
+    <div class="center">
+      <div class="row">
+        <div class="col s4">
+          <a href="svgs/asq-3-1.svg">
+            <img src="svgs/asq-3-1.svg" alt="Ages" width="80%">
+          </a>
+          <p>ASQ Exam One</p>
+        </div>
+
+        <div class="col s4">
+          <a href="svgs/asq-3-2.svg">
+            <img src="svgs/asq-3-2.svg" alt="Ages" width="80%">
+          </a>
+          <p>ASQ Exam Two</p>
+        </div>
+
+        <div class="col s4">
+          <a href="svgs/asq-3-3.svg">
+            <img src="svgs/asq-3-3.svg" alt="Ages" width="80%">
+          </a>
+          <p>ASQ Exam Three</p>
+        </div>
+
+      </div>
+
+      <h4>Children who took the ASQ Exactly Four Times</h4>
+
+      <p>Looking at the children who took the ASQ exactly four times, it appears as though a common pattern was to take
+        the exam at 4 months, 8 months, 12 months, then 24 (or 27) months.</p>
+
+      <div class="center">
+        <div class="row">
+          <div class="col s3">
+            <a href="svgs/asq-4-1.svg">
+              <img src="svgs/asq-4-1.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam One</p>
+          </div>
+
+          <div class="col s3">
+            <a href="svgs/asq-4-2.svg">
+              <img src="svgs/asq-4-2.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Two</p>
+          </div>
+
+          <div class="col s3">
+            <a href="svgs/asq-4-3.svg">
+              <img src="svgs/asq-4-3.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Three</p>
+          </div>
+
+          <div class="col s3">
+            <a href="svgs/asq-4-4.svg">
+              <img src="svgs/asq-4-4.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Four</p>
+          </div>
+
+        </div>
+      </div>
+
+
+      <h4>Children who took the ASQ Exactly Five Times</h4>
+
+      <div class="center">
+        <div class="row">
+          <div class="col s3">
+            <a href="svgs/asq-5-1.svg">
+              <img src="svgs/asq-5-1.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam One</p>
+          </div>
+
+          <div class="col s2">
+            <a href="svgs/asq-5-2.svg">
+              <img src="svgs/asq-5-2.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Two</p>
+          </div>
+
+          <div class="col s2">
+            <a href="svgs/asq-5-3.svg">
+              <img src="svgs/asq-5-3.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Three</p>
+          </div>
+
+          <div class="col s2">
+            <a href="svgs/asq-5-4.svg">
+              <img src="svgs/asq-5-4.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Four</p>
+          </div>
+
+          <div class="col s3">
+            <a href="svgs/asq-5-5.svg">
+              <img src="svgs/asq-5-5.svg" alt="Ages" width="80%">
+            </a>
+            <p>ASQ Exam Five</p>
+          </div>
+
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <div class="container">
+    <h3>Some Possible Routes to Explore</h3>
+
+    <p>If we wish to explore this data, then there are several ways we could proceed.  For example, we might want to see if the 12 month ASQ "predicts" the Bayley.  But note that the Bayley has several domains, so we will eventually have to generate more specific hypotheses.</p>
+
+    <p>Moreover, we will have to consider the fact that, for some children, the 12 month ASQ will be their second or third exam, while, for others, the 12 month ASQ will be their first ASQ exam.  Should be consider "learning effects"?  </p>
+
+    <p>For now, we will zoom in on a certain subset of our Bayley Children.</p>
+
+    <h4>Zooming in on a Subset</h4>
+
+    <p>For now, let's look at the subset of Bayley children who
+      <ul>
+        <li>1. Only had one ASQ exam</li>
+        <li>2. Had that ASQ exam in the 24-month collapsed interval.</li>
+      </ul>
+
+    
+
+      Let's compare the <b>Bayley Motor Composite</b> with the Motor results from the ASQ exam.
+    </p>
+
+    <div class="center">
+
+      <a href="svgs/motor.svg">
+        <img src="svgs/motor.svg" alt="Ages" width="80%">
+      </a>
+
+    </div>
+
+    <p>
+      Note that the ASQ doesn't have a "composite" motor score. This brings up the question: should we use the "raw"
+      motor results of the Bayley, since they can be broken down into fine and gross motor skills?
+    </p>
+
+    <p>Now, let's compare the <b>Bayley Cognitive Composite</b>, the <b>Bayley Cognitive Composite</b>, the <b>ASQ Communication Raw SCore</b>, and the <b>ASQ Problem Solving</b> raw score.</p>
+
+    <div class="center">
+
+        <a href="svgs/lang-ps.svg">
+          <img src="svgs/lang-ps.svg" alt="Ages" width="80%">
+        </a>
+  
+      </div>
+
+
+      <h4>Geography</h4>
+
+      <p>The following infographic shows how many Bailey children came from each county in Mississippi.</p>
+
+      <div class = "center">
+
+      <svg width="460" height="600"></svg>
+
+    </div>
+
+  <script src="app2.js"></script>
+
+
+
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var elems = document.querySelectorAll('.modal');
+      var instances = M.Modal.init(elems);
+    });
+
+  </script>
+
+</body>
+
+</html>
+>>>>>>> 9703210d86c980b67eb2744c6077d606a1eee81b
