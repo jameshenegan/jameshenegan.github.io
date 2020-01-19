@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <title>Mississippi Stats</title>
+        <!-- Bootstrap Core CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <!-- jQuery UI CSS -->
+        <link rel="stylesheet" href="css/jquery-ui.min.css">
+        <link rel="stylesheet" href="css/jquery-ui.structure.min.css">
+        <link rel="stylesheet" href="css/jquery-ui.theme.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <div class="container">
+        <h1>Mississippi Resources</h1>
+    </div>       
+
+        <!-- Bootstrap grid setup -->
+        <div class="container">
+            <div id="selections" class="row">
+                <div class="col-md-4">
+                    <div id="slider-div">
+                        <label>Year: <span id="dateLabel1">1951</span> - <span id="dateLabel2">2018</span></label>
+                        <div id="date-slider"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select id="resource-select" class="form-control">
+                        <option selected value="Oil">Oil</option>
+                        <option value="Water">Water</option>                        
+                        <option value="Gas">Gas</option>                        
+                        <option value="Carbon Dioxide">Carbon Dioxide</option>                        
+                    </select>
+                </div>                
+            </div>
+            <div class="row">
+                <div id="chart-area"></div>  
+            </div>
+        </div>
+
+    <!-- External JS libraries -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/d3.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
