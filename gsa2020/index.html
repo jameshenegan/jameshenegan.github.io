@@ -141,12 +141,6 @@
                             <div class="col s3">
 
                                 <form action="#">
-                                    <p>
-                                        <label>
-                                            <input type="checkbox" class="filled-in" id="pv1" />
-                                            <span>Alcohol Prob.</span>
-                                        </label>
-                                    </p>
 
                                     <p>
                                         <label>
@@ -154,6 +148,15 @@
                                             <span>Atrial Fib.</span>
                                         </label>
                                     </p>
+                                    
+                                    <p>
+                                        <label>
+                                            <input type="checkbox" class="filled-in" id="pv1" />
+                                            <span>Alcohol Prob.</span>
+                                        </label>
+                                    </p>
+
+                             
 
                                     <p>
                                         <label>
@@ -709,7 +712,7 @@
             if (document.getElementById("pv13").checked) { myArray.push("2.htn3cat") }
             if (document.getElementById("pv14").checked) { myArray.push("3.htn3cat") }
             if (document.getElementById("pv15").checked) { myArray.push("age5") }
-            if (document.getElementById("pv16").checked) { myArray.push("1.anyapoe4") }
+            if (document.getElementById("pv15").checked) { myArray.push("1.anyapoe4") }
 
             globalPredArray = myArray;
             //  document.getElementById("displayPreds").innerHTML = globalPredArray
