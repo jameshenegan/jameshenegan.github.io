@@ -1,0 +1,1 @@
+Display plot based on data

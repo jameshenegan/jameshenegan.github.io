@@ -1,0 +1,361 @@
+raceplace,var_name,group,beta,se,varName,model
+1,1.alcprob,Dementia,2.4873078,1.0744395,alcprob,ASE Adj Model
+2,1.alcprob,Dementia,-.43988112,.52902788,alcprob,ASE Adj Model
+3,1.alcprob,Dementia,1.4936997,.27979091,alcprob,ASE Adj Model
+4,1.alcprob,Dementia,.44648477,.39906722,alcprob,ASE Adj Model
+5,1.alcprob,Dementia,1.6806103,1.4323567,alcprob,ASE Adj Model
+6,1.alcprob,Dementia,-.34376678,.78903824,alcprob,ASE Adj Model
+1,1.bmigte30,Dementia,-.21260488,.27776816,bmigte30,ASE Adj Model
+2,1.bmigte30,Dementia,-.40529647,.34624159,bmigte30,ASE Adj Model
+3,1.bmigte30,Dementia,-.19599554,.26082718,bmigte30,ASE Adj Model
+4,1.bmigte30,Dementia,-.4369331,.50107354,bmigte30,ASE Adj Model
+5,1.bmigte30,Dementia,-14.009446,1436.9104,bmigte30,ASE Adj Model
+6,1.bmigte30,Dementia,-1.0465595,.22697909,bmigte30,ASE Adj Model
+1,1.cvdhx,Dementia,.13942043,.24327813,cvdhx,ASE Adj Model
+2,1.cvdhx,Dementia,.70788908,.31070155,cvdhx,ASE Adj Model
+3,1.cvdhx,Dementia,.33865273,.2616865,cvdhx,ASE Adj Model
+4,1.cvdhx,Dementia,.44768763,.3813566,cvdhx,ASE Adj Model
+5,1.cvdhx,Dementia,-14.661408,2464.5112,cvdhx,ASE Adj Model
+6,1.cvdhx,Dementia,.21257474,.28694347,cvdhx,ASE Adj Model
+1,1.educ_lths,Dementia,1.4873068,.25579482,educ_lths,ASE Adj Model
+2,1.educ_lths,Dementia,-.36130825,.74343181,educ_lths,ASE Adj Model
+3,1.educ_lths,Dementia,.69902956,.22766837,educ_lths,ASE Adj Model
+4,1.educ_lths,Dementia,1.1137841,.45457116,educ_lths,ASE Adj Model
+5,1.educ_lths,Dementia,-.04590714,1.5618112,educ_lths,ASE Adj Model
+6,1.educ_lths,Dementia,.93335265,.19401935,educ_lths,ASE Adj Model
+1,1.eversmoked,Dementia,-.068293184,.23855528,eversmoked,ASE Adj Model
+2,1.eversmoked,Dementia,-.12582083,.27345061,eversmoked,ASE Adj Model
+3,1.eversmoked,Dementia,-.6761471,.23620467,eversmoked,ASE Adj Model
+4,1.eversmoked,Dementia,.25869343,.34900042,eversmoked,ASE Adj Model
+5,1.eversmoked,Dementia,-15.179652,1637.5237,eversmoked,ASE Adj Model
+6,1.eversmoked,Dementia,-.56022447,.20920008,eversmoked,ASE Adj Model
+1,1.fxdementia,Dementia,.32929096,.24994121,fxdementia,ASE Adj Model
+2,1.fxdementia,Dementia,2.034677,.30542898,fxdementia,ASE Adj Model
+3,1.fxdementia,Dementia,1.3646313,.25504366,fxdementia,ASE Adj Model
+4,1.fxdementia,Dementia,1.7460994,.37594992,fxdementia,ASE Adj Model
+5,1.fxdementia,Dementia,-12.681184,4170.1978,fxdementia,ASE Adj Model
+6,1.fxdementia,Dementia,2.0723944,.28704372,fxdementia,ASE Adj Model
+1,1.male,Dementia,.49321249,.23686987,male,ASE Adj Model
+2,1.male,Dementia,.082804859,.26764047,male,ASE Adj Model
+3,1.male,Dementia,.10930706,.21737802,male,ASE Adj Model
+4,1.male,Dementia,1.2410272,.36151314,male,ASE Adj Model
+5,1.male,Dementia,-16.356161,2594.5059,male,ASE Adj Model
+6,1.male,Dementia,.21045682,.20356911,male,ASE Adj Model
+1,1.srmc,Dementia,1.3329612,.24718817,srmc,ASE Adj Model
+2,1.srmc,Dementia,1.0171334,.29745087,srmc,ASE Adj Model
+3,1.srmc,Dementia,.90824234,.24049982,srmc,ASE Adj Model
+4,1.srmc,Dementia,1.34813,.35617197,srmc,ASE Adj Model
+5,1.srmc,Dementia,-.16505274,1.8344868,srmc,ASE Adj Model
+6,1.srmc,Dementia,.16480298,.22569984,srmc,ASE Adj Model
+1,1.strokehx,Dementia,1.1481284,.30883864,strokehx,ASE Adj Model
+2,1.strokehx,Dementia,1.463219,.45563048,strokehx,ASE Adj Model
+3,1.strokehx,Dementia,2.3498797,.3561945,strokehx,ASE Adj Model
+4,1.strokehx,Dementia,.81089616,.66537374,strokehx,ASE Adj Model
+5,1.strokehx,Dementia,-16.239626,8382.8691,strokehx,ASE Adj Model
+6,1.strokehx,Dementia,.64867145,.3207207,strokehx,ASE Adj Model
+1,1.unmarried,Dementia,.23671222,.26410556,unmarried,ASE Adj Model
+2,1.unmarried,Dementia,-.37331083,.32974824,unmarried,ASE Adj Model
+3,1.unmarried,Dementia,-.32632503,.24318147,unmarried,ASE Adj Model
+4,1.unmarried,Dementia,-.5443297,.45156154,unmarried,ASE Adj Model
+5,1.unmarried,Dementia,-1.7911527,1.7522829,unmarried,ASE Adj Model
+6,1.unmarried,Dementia,.36036226,.22960277,unmarried,ASE Adj Model
+1,2.dm3cat,Dementia,-.033326451,.32396841,dm3cat,ASE Adj Model
+2,2.dm3cat,Dementia,.57731575,.37160543,dm3cat,ASE Adj Model
+3,2.dm3cat,Dementia,.27500504,.28334749,dm3cat,ASE Adj Model
+4,2.dm3cat,Dementia,1.7333488,.39433998,dm3cat,ASE Adj Model
+5,2.dm3cat,Dementia,-.61410433,2.5992601,dm3cat,ASE Adj Model
+6,2.dm3cat,Dementia,.54782581,.24586065,dm3cat,ASE Adj Model
+1,2.htn3cat,Dementia,.10985996,.30725878,htn3cat,ASE Adj Model
+2,2.htn3cat,Dementia,.089588046,.32357407,htn3cat,ASE Adj Model
+3,2.htn3cat,Dementia,-.12947315,.26688156,htn3cat,ASE Adj Model
+4,2.htn3cat,Dementia,.064969264,.37286457,htn3cat,ASE Adj Model
+5,2.htn3cat,Dementia,12.878123,2428.0525,htn3cat,ASE Adj Model
+6,2.htn3cat,Dementia,-.40610814,.29899654,htn3cat,ASE Adj Model
+1,3.dm3cat,Dementia,-.83090913,1.0217534,dm3cat,ASE Adj Model
+2,3.dm3cat,Dementia,-.80717731,.73790908,dm3cat,ASE Adj Model
+3,3.dm3cat,Dementia,.38041335,.39138511,dm3cat,ASE Adj Model
+4,3.dm3cat,Dementia,.87924814,.59139186,dm3cat,ASE Adj Model
+5,3.dm3cat,Dementia,-9.998765,6061.3945,dm3cat,ASE Adj Model
+6,3.dm3cat,Dementia,.013320354,.55832803,dm3cat,ASE Adj Model
+1,3.htn3cat,Dementia,.46294942,.44410783,htn3cat,ASE Adj Model
+2,3.htn3cat,Dementia,-.25739503,.65153068,htn3cat,ASE Adj Model
+3,3.htn3cat,Dementia,.54925072,.47351095,htn3cat,ASE Adj Model
+4,3.htn3cat,Dementia,-.18386389,.80486655,htn3cat,ASE Adj Model
+5,3.htn3cat,Dementia,15.47231,2428.0527,htn3cat,ASE Adj Model
+6,3.htn3cat,Dementia,.33753341,.5072239,htn3cat,ASE Adj Model
+1,age5,Dementia,.74179983,.10966829,age5,ASE Adj Model
+2,age5,Dementia,.71135825,.12792873,age5,ASE Adj Model
+3,age5,Dementia,.82677537,.10554254,age5,ASE Adj Model
+4,age5,Dementia,1.0475062,.1677916,age5,ASE Adj Model
+5,age5,Dementia,1.9635491,1.0186294,age5,ASE Adj Model
+6,age5,Dementia,.77184647,.088377498,age5,ASE Adj Model
+1,1.alcprob,MCI,.15727033,.74778777,alcprob,ASE Adj Model
+2,1.alcprob,MCI,-.23374723,.20520611,alcprob,ASE Adj Model
+3,1.alcprob,MCI,.30469251,.21948704,alcprob,ASE Adj Model
+4,1.alcprob,MCI,.31406212,.17201233,alcprob,ASE Adj Model
+5,1.alcprob,MCI,-1.208725,1.1023556,alcprob,ASE Adj Model
+6,1.alcprob,MCI,-1.0905733,.74731183,alcprob,ASE Adj Model
+1,1.bmigte30,MCI,-.076481722,.10877646,bmigte30,ASE Adj Model
+2,1.bmigte30,MCI,.066900432,.13034463,bmigte30,ASE Adj Model
+3,1.bmigte30,MCI,.15016434,.12617505,bmigte30,ASE Adj Model
+4,1.bmigte30,MCI,.24602485,.15380849,bmigte30,ASE Adj Model
+5,1.bmigte30,MCI,.32155696,.64378291,bmigte30,ASE Adj Model
+6,1.bmigte30,MCI,-.1575169,.14232889,bmigte30,ASE Adj Model
+1,1.cvdhx,MCI,.19045103,.10512072,cvdhx,ASE Adj Model
+2,1.cvdhx,MCI,-.066965319,.16552208,cvdhx,ASE Adj Model
+3,1.cvdhx,MCI,.073243402,.1547267,cvdhx,ASE Adj Model
+4,1.cvdhx,MCI,-.067835294,.18980534,cvdhx,ASE Adj Model
+5,1.cvdhx,MCI,.9535138,.76736796,cvdhx,ASE Adj Model
+6,1.cvdhx,MCI,.396772,.21270546,cvdhx,ASE Adj Model
+1,1.educ_lths,MCI,.73671073,.14588104,educ_lths,ASE Adj Model
+2,1.educ_lths,MCI,-.4574351,.35971469,educ_lths,ASE Adj Model
+3,1.educ_lths,MCI,.041106023,.14640348,educ_lths,ASE Adj Model
+4,1.educ_lths,MCI,-.047502402,.28922397,educ_lths,ASE Adj Model
+5,1.educ_lths,MCI,.39398301,.73327953,educ_lths,ASE Adj Model
+6,1.educ_lths,MCI,-.20807666,.1549671,educ_lths,ASE Adj Model
+1,1.eversmoked,MCI,-.016418902,.098628573,eversmoked,ASE Adj Model
+2,1.eversmoked,MCI,.0050619659,.12246218,eversmoked,ASE Adj Model
+3,1.eversmoked,MCI,.024725294,.12060616,eversmoked,ASE Adj Model
+4,1.eversmoked,MCI,-.036144428,.13579856,eversmoked,ASE Adj Model
+5,1.eversmoked,MCI,.3289687,.58965033,eversmoked,ASE Adj Model
+6,1.eversmoked,MCI,-.10676281,.14339875,eversmoked,ASE Adj Model
+1,1.fxdementia,MCI,-.067641839,.11097945,fxdementia,ASE Adj Model
+2,1.fxdementia,MCI,1.1801161,.18435074,fxdementia,ASE Adj Model
+3,1.fxdementia,MCI,.57281369,.17582089,fxdementia,ASE Adj Model
+4,1.fxdementia,MCI,.92687428,.19768862,fxdementia,ASE Adj Model
+5,1.fxdementia,MCI,.10790651,1.1409506,fxdementia,ASE Adj Model
+6,1.fxdementia,MCI,1.6171597,.2404705,fxdementia,ASE Adj Model
+1,1.male,MCI,.23836823,.096507221,male,ASE Adj Model
+2,1.male,MCI,.5330469,.11794098,male,ASE Adj Model
+3,1.male,MCI,.37607181,.1174773,male,ASE Adj Model
+4,1.male,MCI,.24618118,.13445406,male,ASE Adj Model
+5,1.male,MCI,-.050937627,.60764438,male,ASE Adj Model
+6,1.male,MCI,.10423434,.14796419,male,ASE Adj Model
+1,1.srmc,MCI,.71456498,.098336004,srmc,ASE Adj Model
+2,1.srmc,MCI,.62339234,.14308101,srmc,ASE Adj Model
+3,1.srmc,MCI,.56771278,.13679592,srmc,ASE Adj Model
+4,1.srmc,MCI,.62053037,.14657868,srmc,ASE Adj Model
+5,1.srmc,MCI,.45048228,.5967555,srmc,ASE Adj Model
+6,1.srmc,MCI,.059015907,.16081484,srmc,ASE Adj Model
+1,1.strokehx,MCI,.91460264,.16069447,strokehx,ASE Adj Model
+2,1.strokehx,MCI,.80851662,.28826186,strokehx,ASE Adj Model
+3,1.strokehx,MCI,.71588171,.32988846,strokehx,ASE Adj Model
+4,1.strokehx,MCI,.60026354,.33726785,strokehx,ASE Adj Model
+5,1.strokehx,MCI,1.9659203,1.1106076,strokehx,ASE Adj Model
+6,1.strokehx,MCI,.41588777,.269878,strokehx,ASE Adj Model
+1,1.unmarried,MCI,.15951346,.11141533,unmarried,ASE Adj Model
+2,1.unmarried,MCI,.29354039,.13834476,unmarried,ASE Adj Model
+3,1.unmarried,MCI,-.13291548,.13425945,unmarried,ASE Adj Model
+4,1.unmarried,MCI,.32451072,.15343399,unmarried,ASE Adj Model
+5,1.unmarried,MCI,-.18107544,.69785619,unmarried,ASE Adj Model
+6,1.unmarried,MCI,.089531697,.15545306,unmarried,ASE Adj Model
+1,2.dm3cat,MCI,.27987608,.12545109,dm3cat,ASE Adj Model
+2,2.dm3cat,MCI,.53288156,.16285196,dm3cat,ASE Adj Model
+3,2.dm3cat,MCI,.41384101,.14183697,dm3cat,ASE Adj Model
+4,2.dm3cat,MCI,.70902497,.17704983,dm3cat,ASE Adj Model
+5,2.dm3cat,MCI,1.4539666,.69452119,dm3cat,ASE Adj Model
+6,2.dm3cat,MCI,.39004299,.15426263,dm3cat,ASE Adj Model
+1,2.htn3cat,MCI,.22088581,.12345158,htn3cat,ASE Adj Model
+2,2.htn3cat,MCI,.060149565,.13401438,htn3cat,ASE Adj Model
+3,2.htn3cat,MCI,.13432436,.14077641,htn3cat,ASE Adj Model
+4,2.htn3cat,MCI,.23409921,.15226342,htn3cat,ASE Adj Model
+5,2.htn3cat,MCI,-.65262002,.76598716,htn3cat,ASE Adj Model
+6,2.htn3cat,MCI,.05414905,.22432026,htn3cat,ASE Adj Model
+1,3.dm3cat,MCI,-.35256666,.34308952,dm3cat,ASE Adj Model
+2,3.dm3cat,MCI,.064716779,.21334663,dm3cat,ASE Adj Model
+3,3.dm3cat,MCI,.097267844,.22688702,dm3cat,ASE Adj Model
+4,3.dm3cat,MCI,-.13497251,.26747742,dm3cat,ASE Adj Model
+5,3.dm3cat,MCI,1.4423108,1.2885199,dm3cat,ASE Adj Model
+6,3.dm3cat,MCI,.1266367,.31863746,dm3cat,ASE Adj Model
+1,3.htn3cat,MCI,.22544791,.19747555,htn3cat,ASE Adj Model
+2,3.htn3cat,MCI,.01727034,.24774803,htn3cat,ASE Adj Model
+3,3.htn3cat,MCI,.051512197,.30512121,htn3cat,ASE Adj Model
+4,3.htn3cat,MCI,.42888203,.26267186,htn3cat,ASE Adj Model
+5,3.htn3cat,MCI,-17.268053,6241.7163,htn3cat,ASE Adj Model
+6,3.htn3cat,MCI,-.41756615,.49551865,htn3cat,ASE Adj Model
+1,age5,MCI,.35543123,.040380754,age5,ASE Adj Model
+2,age5,MCI,.32160464,.057615232,age5,ASE Adj Model
+3,age5,MCI,.31382743,.055854458,age5,ASE Adj Model
+4,age5,MCI,.44947985,.062430978,age5,ASE Adj Model
+5,age5,MCI,.27326578,.25982833,age5,ASE Adj Model
+6,age5,MCI,.3649056,.067177653,age5,ASE Adj Model
+1,1.alcprob,Dementia,2.2752008,1.0951701,,All adjustors
+2,1.alcprob,Dementia,-.52019137,.74637341,,All adjustors
+3,1.alcprob,Dementia,1.6391288,.42486149,,All adjustors
+4,1.alcprob,Dementia,.5106765,.52160674,,All adjustors
+5,1.alcprob,Dementia,-1.1843519,13916.455,,All adjustors
+6,1.alcprob,Dementia,-.49961475,1.1329931,,All adjustors
+1,1.bmigte30,Dementia,-.15823288,.2905502,,All adjustors
+2,1.bmigte30,Dementia,-.65005821,.42205197,,All adjustors
+3,1.bmigte30,Dementia,.49159679,.32034683,,All adjustors
+4,1.bmigte30,Dementia,-.61733454,.58073008,,All adjustors
+5,1.bmigte30,Dementia,-55.528881,18882.34,,All adjustors
+6,1.bmigte30,Dementia,-.73690498,.29215378,,All adjustors
+1,1.cvdhx,Dementia,.07757321,.2571277,,All adjustors
+2,1.cvdhx,Dementia,.46291196,.39677817,,All adjustors
+3,1.cvdhx,Dementia,.36083624,.34969786,,All adjustors
+4,1.cvdhx,Dementia,.48020414,.45527112,,All adjustors
+5,1.cvdhx,Dementia,-94.345955,36823.672,,All adjustors
+6,1.cvdhx,Dementia,.33494207,.38178253,,All adjustors
+1,1.educ_lths,Dementia,1.3541238,.26684356,,All adjustors
+2,1.educ_lths,Dementia,-.40324071,1.0632479,,All adjustors
+3,1.educ_lths,Dementia,.83784145,.29926476,,All adjustors
+4,1.educ_lths,Dementia,.51777452,.6348961,,All adjustors
+5,1.educ_lths,Dementia,5.2242236,14774.299,,All adjustors
+6,1.educ_lths,Dementia,.78747898,.26483679,,All adjustors
+1,1.eversmoked,Dementia,-.18378803,.24734785,,All adjustors
+2,1.eversmoked,Dementia,-.15322849,.33384863,,All adjustors
+3,1.eversmoked,Dementia,-.49175501,.29735646,,All adjustors
+4,1.eversmoked,Dementia,.33886635,.45151281,,All adjustors
+5,1.eversmoked,Dementia,-18.900402,11846.337,,All adjustors
+6,1.eversmoked,Dementia,-.40408248,.2747665,,All adjustors
+1,1.fxdementia,Dementia,.28370845,.2555871,,All adjustors
+2,1.fxdementia,Dementia,2.098069,.35394728,,All adjustors
+3,1.fxdementia,Dementia,1.690833,.32472068,,All adjustors
+4,1.fxdementia,Dementia,2.0116036,.44464192,,All adjustors
+5,1.fxdementia,Dementia,-26.549187,35830.031,,All adjustors
+6,1.fxdementia,Dementia,1.6864002,.37052029,,All adjustors
+1,1.male,Dementia,.53499079,.28585258,,All adjustors
+2,1.male,Dementia,.15507181,.35543323,,All adjustors
+3,1.male,Dementia,-.15946996,.31404155,,All adjustors
+4,1.male,Dementia,.65658319,.4828614,,All adjustors
+5,1.male,Dementia,-39.944077,11042.663,,All adjustors
+6,1.male,Dementia,.43417361,.31516942,,All adjustors
+1,1.srmc,Dementia,1.3413506,.25216031,,All adjustors
+2,1.srmc,Dementia,.83333987,.34749728,,All adjustors
+3,1.srmc,Dementia,.85207331,.30142769,,All adjustors
+4,1.srmc,Dementia,1.3603176,.40368459,,All adjustors
+5,1.srmc,Dementia,27.891779,9300.0996,,All adjustors
+6,1.srmc,Dementia,.17296346,.284738,,All adjustors
+1,1.strokehx,Dementia,1.1443033,.31796744,,All adjustors
+2,1.strokehx,Dementia,1.0009464,.5944317,,All adjustors
+3,1.strokehx,Dementia,2.5789456,.46930784,,All adjustors
+4,1.strokehx,Dementia,.049610179,.89184403,,All adjustors
+5,1.strokehx,Dementia,40.133034,25532.979,,All adjustors
+6,1.strokehx,Dementia,.67099667,.44303003,,All adjustors
+1,1.unmarried,Dementia,.24033335,.27124313,,All adjustors
+2,1.unmarried,Dementia,-.2052919,.3912521,,All adjustors
+3,1.unmarried,Dementia,-.62450087,.318288,,All adjustors
+4,1.unmarried,Dementia,-.51076967,.54690117,,All adjustors
+5,1.unmarried,Dementia,-38.011078,13418.33,,All adjustors
+6,1.unmarried,Dementia,.36665991,.30486125,,All adjustors
+1,2.dm3cat,Dementia,-.079262301,.34003559,,All adjustors
+2,2.dm3cat,Dementia,.74072146,.40679553,,All adjustors
+3,2.dm3cat,Dementia,-.015245881,.35554382,,All adjustors
+4,2.dm3cat,Dementia,1.9838834,.47443926,,All adjustors
+5,2.dm3cat,Dementia,-3.2604961,13933.993,,All adjustors
+6,2.dm3cat,Dementia,.72615886,.28082463,,All adjustors
+1,2.htn3cat,Dementia,.15897106,.33061734,,All adjustors
+2,2.htn3cat,Dementia,-.094048209,.37197027,,All adjustors
+3,2.htn3cat,Dementia,-.31693691,.33495447,,All adjustors
+4,2.htn3cat,Dementia,-.21226844,.46181902,,All adjustors
+5,2.htn3cat,Dementia,13.689861,13429.808,,All adjustors
+6,2.htn3cat,Dementia,-.17090364,.42152181,,All adjustors
+1,3.dm3cat,Dementia,-.84601665,1.037209,,All adjustors
+2,3.dm3cat,Dementia,-.49407914,.76360899,,All adjustors
+3,3.dm3cat,Dementia,.17164071,.47669229,,All adjustors
+4,3.dm3cat,Dementia,1.2243829,.64145511,,All adjustors
+5,3.dm3cat,Dementia,-24.36647,32205.967,,All adjustors
+6,3.dm3cat,Dementia,.34048671,.58192182,,All adjustors
+1,3.htn3cat,Dementia,.57458705,.45800832,,All adjustors
+2,3.htn3cat,Dementia,.023662647,.67013478,,All adjustors
+3,3.htn3cat,Dementia,.56452775,.58217722,,All adjustors
+4,3.htn3cat,Dementia,.56126124,.86565375,,All adjustors
+5,3.htn3cat,Dementia,-16.134275,37555.477,,All adjustors
+6,3.htn3cat,Dementia,1.030792,.64263284,,All adjustors
+1,age5,Dementia,.61619312,.11885645,,All adjustors
+2,age5,Dementia,.48664695,.16386741,,All adjustors
+3,age5,Dementia,.93224907,.15467235,,All adjustors
+4,age5,Dementia,.96272135,.20414741,,All adjustors
+5,age5,Dementia,8.5285158,4738.2246,,All adjustors
+6,age5,Dementia,.50620145,.1233893,,All adjustors
+1,1.alcprob,MCI,.0047939476,.75817794,,All adjustors
+2,1.alcprob,MCI,-.1280168,.22339411,,All adjustors
+3,1.alcprob,MCI,.32901856,.27541208,,All adjustors
+4,1.alcprob,MCI,.26480514,.19680756,,All adjustors
+5,1.alcprob,MCI,-.11802159,1.523007,,All adjustors
+6,1.alcprob,MCI,-.91773707,.77143359,,All adjustors
+1,1.bmigte30,MCI,-.16218312,.1153649,,All adjustors
+2,1.bmigte30,MCI,-.035953857,.14380452,,All adjustors
+3,1.bmigte30,MCI,.29307926,.14360794,,All adjustors
+4,1.bmigte30,MCI,.12949707,.17039043,,All adjustors
+5,1.bmigte30,MCI,-.28027269,.87977844,,All adjustors
+6,1.bmigte30,MCI,-.051675446,.16204436,,All adjustors
+1,1.cvdhx,MCI,.092929713,.11061514,,All adjustors
+2,1.cvdhx,MCI,-.25402358,.18440711,,All adjustors
+3,1.cvdhx,MCI,-.095483266,.17546025,,All adjustors
+4,1.cvdhx,MCI,-.21851319,.21043237,,All adjustors
+5,1.cvdhx,MCI,-.067237206,1.0583223,,All adjustors
+6,1.cvdhx,MCI,.36267981,.24591428,,All adjustors
+1,1.educ_lths,MCI,.59737331,.15132448,,All adjustors
+2,1.educ_lths,MCI,-.24320143,.37631044,,All adjustors
+3,1.educ_lths,MCI,.16203627,.16223682,,All adjustors
+4,1.educ_lths,MCI,-.16399358,.32996595,,All adjustors
+5,1.educ_lths,MCI,-.34791359,1.1282603,,All adjustors
+6,1.educ_lths,MCI,-.29995629,.17701931,,All adjustors
+1,1.eversmoked,MCI,-.069247656,.10127569,,All adjustors
+2,1.eversmoked,MCI,-.09077581,.13207677,,All adjustors
+3,1.eversmoked,MCI,.046187326,.13558626,,All adjustors
+4,1.eversmoked,MCI,-.03022282,.14971338,,All adjustors
+5,1.eversmoked,MCI,1.0911596,.84918672,,All adjustors
+6,1.eversmoked,MCI,-.12607767,.15977079,,All adjustors
+1,1.fxdementia,MCI,-.079877004,.11347897,,All adjustors
+2,1.fxdementia,MCI,1.1182516,.19758964,,All adjustors
+3,1.fxdementia,MCI,.60068101,.1954177,,All adjustors
+4,1.fxdementia,MCI,.89162725,.21585496,,All adjustors
+5,1.fxdementia,MCI,-20.541069,40372.895,,All adjustors
+6,1.fxdementia,MCI,1.5505444,.25929508,,All adjustors
+1,1.male,MCI,.20972857,.11294339,,All adjustors
+2,1.male,MCI,.63272554,.13886867,,All adjustors
+3,1.male,MCI,.2259566,.14643458,,All adjustors
+4,1.male,MCI,.31713495,.16018443,,All adjustors
+5,1.male,MCI,-.4143123,.95312762,,All adjustors
+6,1.male,MCI,.12605916,.18822697,,All adjustors
+1,1.srmc,MCI,.71976751,.099716067,,All adjustors
+2,1.srmc,MCI,.55255634,.15347821,,All adjustors
+3,1.srmc,MCI,.66043693,.153203,,All adjustors
+4,1.srmc,MCI,.59856862,.15716767,,All adjustors
+5,1.srmc,MCI,.2618449,.84138042,,All adjustors
+6,1.srmc,MCI,.027187699,.17754936,,All adjustors
+1,1.strokehx,MCI,.86510527,.1638732,,All adjustors
+2,1.strokehx,MCI,.66383183,.3130452,,All adjustors
+3,1.strokehx,MCI,.52325517,.37773088,,All adjustors
+4,1.strokehx,MCI,.66485775,.36124206,,All adjustors
+5,1.strokehx,MCI,1.8083357,1.3832936,,All adjustors
+6,1.strokehx,MCI,.38375193,.31044549,,All adjustors
+1,1.unmarried,MCI,.14500542,.11396178,,All adjustors
+2,1.unmarried,MCI,.25388268,.15011561,,All adjustors
+3,1.unmarried,MCI,-.33902651,.15202701,,All adjustors
+4,1.unmarried,MCI,.2465128,.16825479,,All adjustors
+5,1.unmarried,MCI,-.59789586,.93939584,,All adjustors
+6,1.unmarried,MCI,.056084801,.17262954,,All adjustors
+1,2.dm3cat,MCI,.24986187,.13339834,,All adjustors
+2,2.dm3cat,MCI,.56134003,.17482656,,All adjustors
+3,2.dm3cat,MCI,.41615796,.15539469,,All adjustors
+4,2.dm3cat,MCI,.70531875,.1914216,,All adjustors
+5,2.dm3cat,MCI,2.2322497,.94450033,,All adjustors
+6,2.dm3cat,MCI,.34974766,.16579954,,All adjustors
+1,2.htn3cat,MCI,.17998569,.131891,,All adjustors
+2,2.htn3cat,MCI,-.041941021,.14616276,,All adjustors
+3,2.htn3cat,MCI,-.006739642,.16029091,,All adjustors
+4,2.htn3cat,MCI,.14160307,.16726598,,All adjustors
+5,2.htn3cat,MCI,-1.0945594,1.0779303,,All adjustors
+6,2.htn3cat,MCI,.053086065,.25497621,,All adjustors
+1,3.dm3cat,MCI,-.35997379,.34952492,,All adjustors
+2,3.dm3cat,MCI,.16823146,.22034591,,All adjustors
+3,3.dm3cat,MCI,-.02047867,.242847,,All adjustors
+4,3.dm3cat,MCI,-.095293261,.27956492,,All adjustors
+5,3.dm3cat,MCI,1.923303,1.4854488,,All adjustors
+6,3.dm3cat,MCI,.020724073,.34028342,,All adjustors
+1,3.htn3cat,MCI,.26554137,.20150931,,All adjustors
+2,3.htn3cat,MCI,-.093416549,.2650651,,All adjustors
+3,3.htn3cat,MCI,.19908528,.32599345,,All adjustors
+4,3.htn3cat,MCI,.53479087,.27656817,,All adjustors
+5,3.htn3cat,MCI,-22.069782,63288.738,,All adjustors
+6,3.htn3cat,MCI,-.43583053,.59130323,,All adjustors
+1,age5,MCI,.26915774,.044258144,,All adjustors
+2,age5,MCI,.25817698,.065477341,,All adjustors
+3,age5,MCI,.37042308,.067741722,,All adjustors
+4,age5,MCI,.39365947,.069744125,,All adjustors
+5,age5,MCI,.39875379,.341759,,All adjustors
+6,age5,MCI,.36475727,.077572964,,All adjustors
