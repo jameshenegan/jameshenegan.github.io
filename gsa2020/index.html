@@ -148,7 +148,7 @@
                                             <span>Atrial Fib.</span>
                                         </label>
                                     </p>
-                                    
+
                                     <p>
                                         <label>
                                             <input type="checkbox" class="filled-in" id="pv1" />
@@ -156,7 +156,7 @@
                                         </label>
                                     </p>
 
-                             
+
 
                                     <p>
                                         <label>
@@ -342,21 +342,21 @@
 
     <script>
 
-        let translateRP = function(raceplace){
-            if(raceplace == "1"){
-                return("W-MCSA")
-            } else if(raceplace == "2"){
-                return("W-ARIC-MN")
-            } else if(raceplace == "3"){
-                return("W-ARIC-WA")
-            } else if(raceplace == "4"){
-                return("W-ARIC-FC")
-            } else if(raceplace == "5"){
-                return("B-ARIC-FC")
-            } else if(raceplace == "6"){
-                return("B-ARIC-JX")
+        let translateRP = function (raceplace) {
+            if (raceplace == "1") {
+                return ("W-MCSA")
+            } else if (raceplace == "2") {
+                return ("W-ARIC-MN")
+            } else if (raceplace == "3") {
+                return ("W-ARIC-WA")
+            } else if (raceplace == "4") {
+                return ("W-ARIC-FC")
+            } else if (raceplace == "5") {
+                return ("B-ARIC-FC")
+            } else if (raceplace == "6") {
+                return ("B-ARIC-JX")
             } else {
-                return("?")
+                return ("?")
             }
         }
 
@@ -426,7 +426,7 @@
         let w = 1.618 * h;
         let padding = 100;
 
-        let margins = {top: 50, bottom: 50, left: 50, right:50}
+        let margins = { top: 50, bottom: 50, left: 50, right: 50 }
 
         const svg = d3.select("#viz")
             .append("svg")
@@ -439,10 +439,10 @@
         let y = d3.scaleLinear()
             .range([h - margins.top, margins.bottom])
 
-        let xAxisGroup = svg.append("g")            
-            .attr("transform", "translate(0, " + (h - 4*margins.bottom/5) +  ")")
+        let xAxisGroup = svg.append("g")
+            .attr("transform", "translate(0, " + (h - 4 * margins.bottom / 5) + ")")
 
-        
+
 
         let textGroup = svg.append("g")
 
@@ -451,11 +451,13 @@
         let globalRacePlaceArray = [];
         let globalPredArray = [];
 
+        let axisLabelGroup = svg.append("g")
+
         // Define the div for the tooltip
 
 
         let updateData = function () {
-            
+
 
             d3.csv("data/plotDat.csv").then(data => {
                 // load in all of the data
@@ -491,20 +493,28 @@
 
                 let bound = 5
 
+                let clipped = 0
+
                 filterByPreds.forEach(d => {
                     d.beta = +d.beta;
                     d.se = + d.se;
                     d.ub = d.beta + 1.96 * d.se
                     d.lb = d.beta - 1.96 * d.se
-                    if(d.lb < -1 * bound){
+                    if (d.lb < -1 * bound) {
                         d.lb = -1 * bound
+                        clipped = 1
+                        console.log(clipped)
                     }
 
-                    if(d.ub > bound){
+                    if (d.ub > bound) {
                         d.ub = bound
+                        clipped = 1
+                        console.log(clipped)
                     }
                 }
                 )
+
+                console.log(clipped)
 
                 for (let j = 0; j < filterByPreds.length; j++) {
                     filterByPreds[j].y = filterByPreds.length - j
@@ -607,16 +617,30 @@
 
                     textGroup.append("text")
                         .attr("x", x(xMin))
-                        .attr("y", y(yMid))                        
+                        .attr("y", y(yMid))
                         .text(filterByPreds[i].var_name)
                 }
 
                 xAxisGroup.call(d3.axisBottom(x))
 
-                svg.append("text")
-                    .attr("x", (w)/2)
-                    .attr("y", h-margins.bottom/5)
-                    .text( "Beta Estimate (with 95% CI)").attr("text-anchor", "middle")
+                axisLabelGroup.selectAll("text").remove()
+
+                if (clipped == 0) {
+                    axisLabelGroup.append("text")
+                        .attr("x", (w) / 2)
+                        .attr("y", h - margins.bottom / 5)
+                        .text("Beta Estimate (with 95% CI)").attr("text-anchor", "middle")
+                } else {
+                    axisLabelGroup.append("text")
+                        .attr("x", (w) / 2)
+                        .attr("y", h - margins.bottom / 5)
+                        .text("Beta Estimate (with 95% CI)*").attr("text-anchor", "middle")
+
+                        axisLabelGroup.append("text")
+                        .attr("x", 3*w/4)
+                        .attr("y", h - margins.bottom / 10)
+                        .text("*Limited to [-5,5]").attr("text-anchor", "left")
+                }
 
             })
         }
