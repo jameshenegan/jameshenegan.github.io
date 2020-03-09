@@ -489,11 +489,20 @@
                 let filterByPreds;
                 filterByPreds = filterByRacePlace.filter(d => globalPredArray.includes(d.var_name))
 
+                let bound = 5
+
                 filterByPreds.forEach(d => {
                     d.beta = +d.beta;
                     d.se = + d.se;
                     d.ub = d.beta + 1.96 * d.se
                     d.lb = d.beta - 1.96 * d.se
+                    if(d.lb < -1 * bound){
+                        d.lb = -1 * bound
+                    }
+
+                    if(d.ub > bound){
+                        d.ub = bound
+                    }
                 }
                 )
 
