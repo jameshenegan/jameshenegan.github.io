@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+  <body>
+    <h4>Rectangle: 60 by 36</h4>
+
+    <h4>Circle Radius: <span id="radiusOutput">18</span></h4>
+    <input
+      type="range"
+      id="radius"
+      name="radius"
+      min="0"
+      max="18"
+      value="18"
+      step="0.05"
+    />
+
+    <div id="viz"></div>
+
+    <script>
+      let h = 1000;
+      let w = h;
+      let padding = 100;
+
+      const svg = d3
+        .select("#viz")
+        .append("svg")
+        .attr("height", h)
+        .attr("width", w);
+
+      let x = d3.scaleLinear().range([0, w]).domain([0, 100]);
+
+      let y = d3.scaleLinear().range([h, 0]).domain([100, 0]);
+
+      svg
+        .append("rect")
+        .attr("x", x(0))
+        .attr("y", y(0))
+        .attr("width", x(60))
+        .attr("height", y(36))
+        .style("fill", "black");
+
+      svg
+        .append("circle")
+        .attr("cx", x(30))
+        .attr("cy", y(18))
+        .attr("r", x(18) - x(0))
+        .style("fill", "white");
+
+      function handleChange(e) {
+        const myText = e.target.value;
+        document.getElementById("radiusOutput").innerHTML = myText;
+
+        const circleRadius = parseFloat(myText);
+
+        console.log(circleRadius);
+
+        svg.selectAll("circle").remove();
+
+        svg
+          .append("circle")
+          .attr("cx", x(30))
+          .attr("cy", y(18))
+          .attr("r", x(circleRadius) - x(0))
+          .style("fill", "white");
+      }
+
+      document.getElementById("radius").addEventListener("input", handleChange);
+    </script>
+  </body>
+</html>
