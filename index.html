@@ -1,204 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>James Henegan</title>
-  <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-  <!-- Load d3.js -->
-  <script src="https://d3js.org/d3.v4.js"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
-
-</head>
-
-<body>
-
-
-  <div class="container">
-
-    <nav>
-      <div class="blue nav-wrapper">
-        <a href="#" class="flow-text"> &nbsp; James Henegan</a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="resources.html">Resources</a></li>
-        </ul>
-
-      </div>
-    </nav>
-
-
-    <div class="row">
-
-      <div class="col s8">
-
-        <h4>Home</h4>
-
-        <p>Hello, and welcome to my personal website! </p>
-
-        <p>
-          I am currently a graduate student at the <a href="https://www.umc.edu/">University of Mississippi Medical Center</a>
-          (UMMC). In May 2020, I earned a Master's Degree in Data Science and Biostatistics from the <a
-          href="https://www.umc.edu/SoPH/Departments-and-Faculty/Data-Science/Department-of-Data-Science-Home.html">Department
-          of Data Science</a>.  You may find a detailed list of the courses I took to earn this degree <a href="https://docs.google.com/document/d/1NEu-lmJsYtlz7Sgx3FXt89vzo0QmLnAnDnxniZj_X4E/edit?usp=sharing">here</a>.
-        </p>
-
-        <p>
-          In the Spring of 2017, I obtained a PhD in Mathematics from the <a href="https://math.olemiss.edu/">University of Mississippi</a>. My dissertation, entitled <a href="files/Dissertation.pdf"><em>Asymptotic Properties of
-              Polynomials
-              Orthogonal over Multiply Connected Domains</em> </a> , was a work of <a
-            href="https://en.wikipedia.org/wiki/Pure_mathematics">pure mathematics</a>. By this, I mean
-          that it
-          would be difficult to apply the main results of my thesis to any problem that might arise in the real world.
-          Soon after graduation,
-          I became interested in learning more about tools and techniques that <em>could</em> be
-          applied to real world problems. Consequently, I decided to join the Department
-          of Data Science at UMMC in the Fall of 2018.
-
-        </p>
-
-        <!-- Modal Trigger -->
-
-        <p> The courses I have taken over the past year and a half have focused on
-          <a class="modal-trigger" href="#modal1">Biostatistics</a>, <a class="modal-trigger"
-            href="#modal2">Statistical Learning</a>, and
-          Programming. I have gained experience working
-          with SAS, Stata, R, Python, HTML, CSS, and JavaScript. Examples demonstrating my ability to utilize some of the concepts and languages I have learned may be found in my <a
-            href="portfolio.html">portfolio</a>.
-        </p>
-
-        <!-- Modal Structure -->
-        <div id="modal1" class="modal">
-          <div class="modal-content">
-            <h4>Biostatistics</h4>
-            <p>
-              Exploratory Data Analysis, Probability, Point and Interval Estimation, Statistical Inference, ANOVA,
-              Chi-Square Tests, Simple and Multiple Linear Regression, Logistic Regression, Generalized Linear Models,
-              Survival Analysis, Longitudinal Data Analysis
-            </p>
-          </div>
-          <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Done</a>
-          </div>
-        </div>
-
-         <!-- Modal Structure -->
-         <div id="modal2" class="modal">
-          <div class="modal-content">
-            <h4>Statistical Learning</h4>
-            <p>
-              The Bias-Variance Tradeoff, Regression, Classification, Resampling Methods, Linear Model Selection and Regularization, Splines, Generalized Additive Models, Tree-Based Methods, Support Vector Machines, Principal Component Analysis, Clustering Methods
-            </p>
-          </div>
-          <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Done</a>
-          </div>
-        </div>
-
-
-        <p> <b>About the Image on the Right.</b> Coming from a "pure math" background, I often think about how theoretical concepts and empirical observations interact with one another in the world of Statistics. If they were alive today, I'd like to
-          think that Plato would enjoy seeing how often the math in Statistics <a class="modal-trigger" href="#modalWork">works out nicely</a>, while Aristotle would
-          be hounding us to make sure that the theory that we are developing actually applies to the real world.</p>
-
-                   <!-- Modal Structure -->
-         <div id="modalWork" class="modal">
-          <div class="modal-content">            
-            <p>One of my favorite examples of how the math "works out nicely" in Statistics is the fact that the sigmoid function
-              \[
-              \phi(z) = \frac{e^z}{1 + e^z}
-              \]
-              has the following property:
-              \[
-              \phi'(z) = \phi(z) (1- \phi(z))
-              \]
-            </p>
-          </div>
-          <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Done</a>
-          </div>
-        </div>
-
-   
-
-          
-
-      </div>
-
-
-
-
-
-
-      <div class="col s4">
-
-
-
-        <div class="row">
-          <p>
-            <!-- space for image -->
-          </p>
-          <img src="files/plato-A.jpg" alt="School of Athens" style="max-width:80%;" class="z-depth-2">
-          <p><em> <a href="https://en.wikipedia.org/wiki/The_School_of_Athens">School of Athens</a></em> (detail), by <a
-              href="https://en.wikipedia.org/wiki/Raphael">Raphael</a>. Plato is on the left, Aristotle is on the right.
-            With his concept of
-            <a href="https://en.wikipedia.org/wiki/Theory_of_forms">Form</a>, Plato is associated with Theory.
-            Meanwhile, Aristotle is associated with <a href="https://en.wikipedia.org/wiki/Empiricism">Empirical
-              evidence</a>.</p>
-        </div> <!-- close row -->
-      </div> <!-- close column -->
-    </div> <!-- close row -->   
-
-    <p><b>About this site</b>.  This site was built with the help of <a href="https://materializecss.com/">Materialize CSS</a> and <a href="https://code.visualstudio.com/">Visual Studio Code</a>.  It is hosted by <a href="https://pages.github.com/">Github Pages</a>.</p>
-
-
+    <title>Jim Henegan's Personal Website</title>
+    <link rel="stylesheet" href="./materialize/materialize.css" />
+  </head>
+  <body>
     <div class="container">
       <div class="row">
-
-        
-
-        <div class="col s4">
-          <div class="collection">
-            <a href="index.html" class="collection-item center">Home</a>
-          </div>
+        <div class="col 12">
+          <h4>Working on it</h4>
+          <a href="https://youtu.be/5nO7IA1DeeI"
+            >This website is currently under construction...</a
+          >
         </div>
-
-        <div class="col s4">
-          <div class="collection">
-            <a href="portfolio.html" class="collection-item center">Portfolio</a>
-          </div>
-        </div>
-
-        <div class="col s4">
-          <div class="collection">
-            <a href="resources.html" class="collection-item center">Resources</a>
-          </div>
-        </div>
-
-
       </div>
     </div>
-
-  </div>
-
-
-  </div> <!-- close container-->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-
-  <script>
-
-    M.AutoInit();
-
-  </script>
-
-</body>
-
+  </body>
 </html>
