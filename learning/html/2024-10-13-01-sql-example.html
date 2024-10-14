@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="sql-example-01">2024-10-13: SQL-Example 01</h1>
+<h2
+id="sql-tutorial-combining-and-filtering-data-from-multiple-tables">SQL
+Tutorial: Combining and Filtering Data from Multiple Tables</h2>
+<p>In this tutorial, we will learn how to query multiple related tables
+to extract data based on specific conditions. The example involves three
+tables: <code>Employees</code>, <code>Transactions</code>, and
+<code>Positions</code>. Our goal is to extract information about
+employees who started within a certain date range and calculate how much
+they earned based on transactions that occurred over a two-year
+period.</p>
+<h3 id="scenario">Scenario</h3>
+<p>You have three tables:</p>
+<ol type="1">
+<li><p><strong>Employees</strong><br />
+Columns:</p>
+<ul>
+<li><code>employee_id</code>: Unique ID for each employee</li>
+<li><code>employer_id</code>: ID of the employer</li>
+<li><code>position_id</code>: ID that links to the employee’s
+position</li>
+<li><code>employment_start_date</code>: Date the employee started
+working</li>
+<li><code>employment_end_date</code>: Date the employee stopped working
+(if applicable)</li>
+<li><code>annual_salary</code>: Annual salary of the employee</li>
+</ul></li>
+<li><p><strong>Transactions</strong><br />
+Columns:</p>
+<ul>
+<li><code>employee_id</code>: ID of the employee (foreign key linking to
+Employees)</li>
+<li><code>transaction_date</code>: Date of a transaction related to the
+employee</li>
+<li><code>transaction_amount</code>: Amount earned in the
+transaction</li>
+</ul></li>
+<li><p><strong>Positions</strong><br />
+Columns:</p>
+<ul>
+<li><code>position_id</code>: Unique ID for each position</li>
+<li><code>position_name</code>: The name of the position (e.g., Software
+Engineer, Manager)</li>
+</ul></li>
+</ol>
+<h3 id="goal">Goal</h3>
+<p>We want to create a table with the following columns:</p>
+<ul>
+<li><code>employee_id</code></li>
+<li><code>employer_id</code></li>
+<li><code>position_name</code></li>
+<li><code>employment_start_date</code></li>
+<li><code>employment_end_date</code></li>
+<li><code>annual_salary</code></li>
+<li><code>amount_earned_after_two_years</code></li>
+</ul>
+<p>The output should:</p>
+<ol type="1">
+<li>Only include employees who started within a specific month (e.g.,
+from <code>2020-01-01</code> to <code>2020-02-01</code>).</li>
+<li>Calculate the total <code>transaction_amount</code> earned by each
+employee during a two-year period (e.g., from <code>2020-01-01</code> to
+<code>2021-12-31</code>).</li>
+</ol>
+<h3 id="steps-to-build-the-sql-query">Steps to Build the SQL Query</h3>
+<h4 id="filter-employees-by-employment-start-date">1. Filter Employees
+by Employment Start Date</h4>
+<p>We first need to filter the employees to include only those who
+started between <code>2020-01-01</code> and <code>2020-02-01</code>.
+This can be done with a <code>WHERE</code> clause on the
+<code>employment_start_date</code> column.</p>
+<h4 id="join-employees-with-positions">2. Join Employees with
+Positions</h4>
+<p>To get the <code>position_name</code>, we need to join the
+<code>Employees</code> table with the <code>Positions</code> table. We
+will use the <code>position_id</code> column in both tables for the
+join.</p>
+<h4
+id="join-employees-with-transactions-and-filter-transaction-dates">3.
+Join Employees with Transactions and Filter Transaction Dates</h4>
+<p>Next, we want to join the <code>Employees</code> table with the
+<code>Transactions</code> table to calculate the total
+<code>transaction_amount</code> for each employee during the two-year
+period. We will filter transactions using the
+<code>transaction_date</code> column and sum the transaction
+amounts.</p>
+<h4 id="group-and-aggregate-data">4. Group and Aggregate Data</h4>
+<p>We will use the SQL <code>GROUP BY</code> statement to group data by
+employees and then aggregate the total <code>transaction_amount</code>
+for each employee.</p>
+<h4 id="handling-employees-without-transactions">5. Handling Employees
+without Transactions</h4>
+<p>To ensure that employees who have no transactions are still included
+in the results (with a <code>0</code> amount), we will use a
+<code>LEFT JOIN</code> and the <code>COALESCE</code> function, which
+substitutes <code>0</code> if there is no data.</p>
+<h3 id="full-sql-query">Full SQL Query</h3>
+<p>Here’s the full query that achieves the desired result:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    e.employee_id,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    e.employer_id,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    p.position_name,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    e.employment_start_date,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    e.employment_end_date,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    e.annual_salary,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(t.transaction_amount), <span class="dv">0</span>) <span class="kw">AS</span> amount_earned_after_two_years</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    Employees e</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Join with Positions to get position_name</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Positions p</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> e.position_id <span class="op">=</span> p.position_id</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Left join with Transactions to sum the amounts</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    Transactions t</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> e.employee_id <span class="op">=</span> t.employee_id</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> t.transaction_date <span class="kw">BETWEEN</span> <span class="st">&#39;2020-01-01&#39;</span> <span class="kw">AND</span> <span class="st">&#39;2021-12-31&#39;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">-- Filter employees by employment_start_date within the desired range</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    e.employment_start_date <span class="kw">BETWEEN</span> <span class="st">&#39;2020-01-01&#39;</span> <span class="kw">AND</span> <span class="st">&#39;2020-02-01&#39;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- Grouping by employee to sum up transactions</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    e.employee_id,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    e.employer_id,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    p.position_name,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    e.employment_start_date,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    e.employment_end_date,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    e.annual_salary;</span></code></pre></div>
+<h3 id="query-breakdown">Query Breakdown</h3>
+<h4 id="selecting-the-columns">1. <strong>Selecting the
+Columns</strong></h4>
+<p>We are selecting the following columns:</p>
+<ul>
+<li><code>employee_id</code>, <code>employer_id</code>,
+<code>employment_start_date</code>, <code>employment_end_date</code>,
+and <code>annual_salary</code> from the <code>Employees</code>
+table.</li>
+<li><code>position_name</code> from the <code>Positions</code>
+table.</li>
+<li><code>amount_earned_after_two_years</code>, which is calculated by
+summing the <code>transaction_amount</code> from the
+<code>Transactions</code> table for each employee.</li>
+</ul>
+<h4 id="joining-tables">2. <strong>Joining Tables</strong></h4>
+<ul>
+<li>The <code>JOIN Positions p ON e.position_id = p.position_id</code>
+links the <code>Employees</code> table to the <code>Positions</code>
+table to retrieve the <code>position_name</code>.</li>
+<li>The
+<code>LEFT JOIN Transactions t ON e.employee_id = t.employee_id</code>
+links the <code>Employees</code> table to the <code>Transactions</code>
+table. This is a <code>LEFT JOIN</code> so that employees without
+transactions are still included in the results.</li>
+</ul>
+<h4 id="filtering-data">3. <strong>Filtering Data</strong></h4>
+<ul>
+<li>The <code>WHERE</code> clause
+<code>e.employment_start_date BETWEEN '2020-01-01' AND '2020-02-01'</code>
+filters employees who started within the specified date range.</li>
+<li>The condition
+<code>t.transaction_date BETWEEN '2020-01-01' AND '2021-12-31'</code>
+filters transactions within the two-year period.</li>
+</ul>
+<h4 id="handling-missing-transactions">4. <strong>Handling Missing
+Transactions</strong></h4>
+<p>We use the <code>COALESCE(SUM(t.transaction_amount), 0)</code>
+function to handle employees who have no transactions during the
+two-year period. This ensures that the result for
+<code>amount_earned_after_two_years</code> will be <code>0</code> for
+those employees.</p>
+<h4 id="grouping-and-aggregating">5. <strong>Grouping and
+Aggregating</strong></h4>
+<p>The <code>GROUP BY</code> statement groups the data by employee, and
+the <code>SUM(t.transaction_amount)</code> aggregates the total amount
+earned by each employee during the specified period.</p>
+<h3 id="key-sql-functions-and-concepts-used">Key SQL Functions and
+Concepts Used</h3>
+<ul>
+<li><strong>JOIN</strong>: To retrieve related data from multiple
+tables.</li>
+<li><strong>LEFT JOIN</strong>: Ensures all employees are included, even
+if they have no matching transactions.</li>
+<li><strong>COALESCE</strong>: Replaces <code>NULL</code> with a default
+value (<code>0</code> in this case).</li>
+<li><strong>GROUP BY</strong>: Groups rows that have the same values
+into summary rows.</li>
+<li><strong>SUM</strong>: Calculates the total of the
+<code>transaction_amount</code> for each group.</li>
+<li><strong>WHERE</strong>: Filters rows based on a condition.</li>
+</ul>
+<h3 id="adjusting-the-query">Adjusting the Query</h3>
+<ul>
+<li><strong>Changing the date ranges</strong>: You can adjust the
+employment start date or the transaction date ranges by modifying the
+<code>BETWEEN</code> clauses.</li>
+<li><strong>Filtering by other criteria</strong>: If you want to filter
+employees by other criteria (e.g., <code>employer_id</code> or
+<code>annual_salary</code>), you can add additional <code>WHERE</code>
+conditions.</li>
+</ul>
+<h3 id="conclusion">Conclusion</h3>
+<p>By combining <code>JOIN</code>, <code>LEFT JOIN</code>, and aggregate
+functions like <code>SUM</code> and <code>COALESCE</code>, this query
+allows you to extract useful insights from related tables. You can
+easily adjust the date ranges and filtering criteria to customize the
+results according to your needs.</p>
+    
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="tutorial-analyzing-doctor-and-patient-data-using-sql">Tutorial:
+Analyzing Doctor and Patient Data Using SQL</h2>
+<h3 id="scenario">Scenario</h3>
+<p>You have a table called <strong><code>patients</code></strong> in a
+database that logs each patient’s visit to a hospital. This table has
+the following relevant columns:</p>
+<ul>
+<li><strong><code>doctor_id</code></strong>: The unique identifier for
+the doctor who saw the patient.</li>
+<li><strong><code>date_of_visit</code></strong>: The date when the
+patient visited the doctor.</li>
+</ul>
+<p>You want to generate meaningful insights and analysis from this data,
+such as:</p>
+<ul>
+<li>The number of patients each doctor sees per year.</li>
+<li>The year-over-year percentage increase in patients for each
+doctor.</li>
+<li>Interesting trends and anomalies in the data.</li>
+</ul>
+<h3 id="counting-patients-seen-per-doctor-per-year">1. Counting Patients
+Seen Per Doctor Per Year</h3>
+<p>First, you want to know how many patients each doctor saw each year.
+Here’s the basic SQL query to achieve that:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    doctor_id,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>(date_of_visit) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_patients_seen_in_year</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    patients</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    doctor_id, <span class="dt">YEAR</span>(date_of_visit)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    doctor_id, <span class="dt">year</span>;</span></code></pre></div>
+<h4 id="explanation">Explanation:</h4>
+<ul>
+<li><code>COUNT(*)</code>: Counts the number of rows (patients) for each
+combination of <code>doctor_id</code> and year.</li>
+<li><code>GROUP BY doctor_id, YEAR(date_of_visit)</code>: Groups the
+data by <code>doctor_id</code> and the year extracted from
+<code>date_of_visit</code>.</li>
+<li><code>ORDER BY doctor_id, year</code>: Ensures the results are
+ordered by <code>doctor_id</code> and year.</li>
+</ul>
+<p>This query provides you with a breakdown of how many patients each
+doctor has seen each year.</p>
+<h3 id="adding-year-over-year-percentage-increase">2. Adding
+Year-over-Year Percentage Increase</h3>
+<p>To calculate the <strong>percentage increase</strong> in the number
+of patients for each doctor year-over-year, you can use the
+<code>LAG()</code> window function. This will allow you to access the
+number of patients seen in the previous year for each doctor.</p>
+<p>Here’s the query that computes the year-over-year percentage
+increase:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> patients_per_year <span class="kw">AS</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        doctor_id,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">YEAR</span>(date_of_visit) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_patients_seen_in_year</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        patients</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        doctor_id, <span class="dt">YEAR</span>(date_of_visit)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    doctor_id,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">year</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    num_patients_seen_in_year,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>) <span class="kw">IS</span> <span class="kw">NULL</span> <span class="cf">THEN</span> <span class="kw">NULL</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> (num_patients_seen_in_year <span class="op">-</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)) <span class="op">/</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> percent_increase</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    patients_per_year</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    doctor_id, <span class="dt">year</span>;</span></code></pre></div>
+<h4 id="explanation-1">Explanation:</h4>
+<ul>
+<li><strong><code>LAG()</code></strong>: This window function retrieves
+the number of patients seen in the previous year for each doctor.</li>
+<li><strong><code>CASE WHEN ... THEN NULL</code></strong>: If there’s no
+previous year (for the first year of data), return <code>NULL</code>.
+Otherwise, calculate the percentage increase using the formula:
+<ul>
+<li>[(current_year_patients - previous_year_patients) /
+previous_year_patients]</li>
+</ul></li>
+<li><strong><code>PARTITION BY doctor_id ORDER BY year</code></strong>:
+Ensures the window function operates separately for each doctor and is
+ordered by year.</li>
+</ul>
+<p>This query will give you the number of patients seen by each doctor
+in each year, along with the percentage increase in patients for
+subsequent years.</p>
+<h3 id="exploring-interesting-questions-with-sql">3. Exploring
+Interesting Questions with SQL</h3>
+<p>Now that you have the basic queries, you can extend the analysis to
+answer more complex questions:</p>
+<h4 id="a.-which-doctor-saw-the-most-patients-in-a-given-year">a. Which
+Doctor Saw the Most Patients in a Given Year?</h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> doctor_id, <span class="dt">year</span>, num_patients_seen_in_year</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> (</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        doctor_id,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">YEAR</span>(date_of_visit) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_patients_seen_in_year,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> <span class="dt">YEAR</span>(date_of_visit) <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="fu">rank</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        patients</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        doctor_id, <span class="dt">YEAR</span>(date_of_visit)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>) <span class="kw">AS</span> ranked_patients</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="fu">rank</span> <span class="op">=</span> <span class="dv">1</span>;</span></code></pre></div>
+<p>This query uses <code>RANK()</code> to rank doctors by the number of
+patients they saw in each year and then filters for the doctor with the
+highest patient count.</p>
+<h4
+id="b.-which-doctor-had-the-largest-percentage-increase-in-patients">b.
+Which Doctor Had the Largest Percentage Increase in Patients?</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> percentage_increase <span class="kw">AS</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WITH</span> patients_per_year <span class="kw">AS</span> (</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            doctor_id,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            <span class="dt">YEAR</span>(date_of_visit) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_patients_seen_in_year</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>            patients</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            doctor_id, <span class="dt">YEAR</span>(date_of_visit)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        doctor_id,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">year</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        num_patients_seen_in_year,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">CASE</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">WHEN</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>) <span class="kw">IS</span> <span class="kw">NULL</span> <span class="cf">THEN</span> <span class="kw">NULL</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">ELSE</span> (num_patients_seen_in_year <span class="op">-</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)) <span class="op">/</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">END</span> <span class="kw">AS</span> percent_increase</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        patients_per_year</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> doctor_id, <span class="dt">year</span>, percent_increase</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> percentage_increase</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> percent_increase <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> percent_increase <span class="kw">DESC</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
+<p>This query calculates the percentage increase for each doctor and
+then retrieves the record with the highest percentage increase.</p>
+<h4 id="c.-which-doctor-had-the-most-consistent-growth">c. Which Doctor
+Had the Most Consistent Growth?</h4>
+<p>You can measure consistent growth by checking which doctor has had
+positive percentage increases over multiple years:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> consistent_growth <span class="kw">AS</span> (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WITH</span> patients_per_year <span class="kw">AS</span> (</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">SELECT</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>            doctor_id,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>            <span class="dt">YEAR</span>(date_of_visit) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_patients_seen_in_year</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">FROM</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            patients</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            doctor_id, <span class="dt">YEAR</span>(date_of_visit)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        doctor_id,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">year</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        num_patients_seen_in_year,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">CASE</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">WHEN</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>) <span class="kw">IS</span> <span class="kw">NULL</span> <span class="cf">THEN</span> <span class="kw">NULL</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">ELSE</span> (num_patients_seen_in_year <span class="op">-</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)) <span class="op">/</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">END</span> <span class="kw">AS</span> percent_increase</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        patients_per_year</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> doctor_id, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> years_of_growth</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> consistent_growth</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> percent_increase <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> doctor_id</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> years_of_growth <span class="kw">DESC</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
+<p>This query finds the doctor with the highest number of years where
+they had a positive percentage increase in patient load.</p>
+<h3 id="visualizing-the-data">4. Visualizing the Data</h3>
+<p>Once you’ve analyzed the data with SQL, you can visualize it using
+tools like Python, Excel, or BI platforms (like Tableau or Power BI).
+For example:</p>
+<ul>
+<li><strong>Line charts</strong>: To show trends in the number of
+patients over time for each doctor.</li>
+<li><strong>Bar charts</strong>: To compare the number of patients seen
+by different doctors each year.</li>
+<li><strong>Heatmaps</strong>: To highlight doctors with the highest
+percentage increases or anomalies in their data.</li>
+</ul>
+<h3 id="conclusion">Conclusion</h3>
+<p>In this tutorial, we’ve covered:</p>
+<ol type="1">
+<li>How to count the number of patients each doctor sees per year.</li>
+<li>How to calculate the year-over-year percentage increase for each
+doctor.</li>
+<li>Some complex and interesting questions you can answer using SQL,
+like finding which doctor had the most consistent growth or the largest
+percentage increase in patients.</li>
+</ol>
+<p>This type of analysis helps hospitals make data-driven decisions
+about doctor performance, patient distribution, and capacity planning.
+By extending these concepts, you can explore a wide variety of business
+problems and gain valuable insights from your data.</p>
+<h3
+id="tutorial-longitudinal-data-analysis-with-binary-outcomes-using-gee-and-mixed-effects-logistic-regression">Tutorial:
+Longitudinal Data Analysis with Binary Outcomes Using GEE and
+Mixed-Effects Logistic Regression</h3>
+<p>In this tutorial, we will guide you through analyzing longitudinal
+data where the outcome is binary (e.g., whether the percent increase in
+patients is greater than 4.5% or not) using two powerful methods:
+<strong>Generalized Estimating Equations (GEE)</strong> and
+<strong>Mixed-Effects Logistic Regression</strong>. We will also cover
+how to adjust for the baseline patient load (the number of patients seen
+in the first year) to control for initial differences between
+doctors.</p>
+<h4 id="scenario-1">Scenario</h4>
+<p>You have a dataset that tracks the number of patients each doctor
+sees over several years. The goal is to understand the probability that
+a doctor experiences a <strong>greater than 4.5% increase</strong> in
+patient load from year to year. However, doctors may start with
+different numbers of patients, so we want to adjust for the
+<strong>baseline number of patients seen in the first year</strong> to
+account for these differences.</p>
+<h3 id="step-1-preparing-the-data">Step 1: Preparing the Data</h3>
+<p>Start by organizing your data into a structure that includes:</p>
+<ol type="1">
+<li><strong>doctor_id</strong>: Unique identifier for each doctor.</li>
+<li><strong>year</strong>: The year of the visit.</li>
+<li><strong>num_patients_seen_in_year</strong>: The number of patients
+seen by the doctor in that year.</li>
+<li><strong>percent_increase</strong>: The percentage increase in
+patients compared to the previous year.</li>
+<li><strong>increase_over_4_5_percent_binary</strong>: A binary
+indicator (1/0) where <code>1</code> means the percent increase was
+greater than 4.5%, and <code>0</code> means it was not.</li>
+<li><strong>patients_first_year</strong>: The number of patients seen by
+the doctor in their first year.</li>
+</ol>
+<p>To calculate the <strong>percent increase</strong> and binary
+indicator, use SQL or a similar approach. Here’s an SQL example to
+compute these columns:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> patients_per_year <span class="kw">AS</span> (</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        doctor_id,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">YEAR</span>(date_of_visit) <span class="kw">AS</span> <span class="dt">year</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> num_patients_seen_in_year</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        patients</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        doctor_id, <span class="dt">YEAR</span>(date_of_visit)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    doctor_id,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">year</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    num_patients_seen_in_year,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>) <span class="kw">IS</span> <span class="kw">NULL</span> <span class="cf">THEN</span> <span class="kw">NULL</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> (num_patients_seen_in_year <span class="op">-</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)) <span class="op">/</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> percent_increase,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> (<span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>              (num_patients_seen_in_year <span class="op">-</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>)) <span class="op">/</span> <span class="fu">LAG</span>(num_patients_seen_in_year) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> doctor_id <span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">year</span>) <span class="op">&gt;</span> <span class="fl">0.045</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">THEN</span> <span class="dv">1</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="dv">0</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> increase_over_4_5_percent_binary</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    patients_per_year</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    doctor_id, <span class="dt">year</span>;</span></code></pre></div>
+<p>Now that your data is ready, let’s move on to the analysis.</p>
+<hr />
+<h3 id="step-2-analyzing-with-gee-generalized-estimating-equations">Step
+2: Analyzing with GEE (Generalized Estimating Equations)</h3>
+<p>GEE is used to model population-averaged effects in longitudinal
+data, accounting for the correlation between repeated measures for the
+same subject (in this case, doctors).</p>
+<h4 id="fitting-a-gee-model">Fitting a GEE Model</h4>
+<p>In R, we can fit the model using the <code>geepack</code> library.
+Here’s how you can fit a GEE model with a binary outcome (whether the
+doctor had a &gt;4.5% increase) and adjust for the number of patients in
+the first year.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the geepack package if you haven&#39;t already</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;geepack&quot;)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geepack)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>gee_model <span class="ot">&lt;-</span> <span class="fu">geeglm</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  increase_over_4_5_percent_binary <span class="sc">~</span> year <span class="sc">+</span> patients_first_year,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> binomial,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> doctor_id,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> your_data,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">corstr =</span> <span class="st">&quot;exchangeable&quot;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gee_model)</span></code></pre></div>
+<h4 id="interpreting-the-gee-results">Interpreting the GEE Results</h4>
+<ul>
+<li><strong>Intercept</strong>: The baseline log-odds that a doctor will
+exceed a 4.5% increase, holding <code>year</code> and
+<code>patients_first_year</code> constant.</li>
+<li><strong>Year</strong>: A positive coefficient for <code>year</code>
+suggests that, over time, the odds of exceeding a 4.5% increase are
+increasing.</li>
+<li><strong>Patients_First_Year</strong>: A negative coefficient
+indicates that doctors with a higher patient load in the first year are
+less likely to exceed a 4.5% increase in subsequent years.</li>
+</ul>
+<p>You can convert the coefficients from log-odds to <strong>odds
+ratios</strong> for easier interpretation:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>odds_ratio <span class="ot">&lt;-</span> <span class="fu">exp</span>(gee_model<span class="sc">$</span>coefficients)</span></code></pre></div>
+<hr />
+<h3 id="step-3-analyzing-with-mixed-effects-logistic-regression">Step 3:
+Analyzing with Mixed-Effects Logistic Regression</h3>
+<p>Mixed-Effects Logistic Regression allows you to account for
+<strong>individual variability</strong> between doctors. It models
+<strong>random intercepts</strong> for each doctor, which helps capture
+doctor-specific baseline probabilities.</p>
+<h4 id="fitting-a-mixed-effects-model">Fitting a Mixed-Effects
+Model</h4>
+<p>In R, you can use the <code>lme4</code> package to fit a
+mixed-effects logistic regression:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install the lme4 package if you haven&#39;t already</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;lme4&quot;)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>mixed_model <span class="ot">&lt;-</span> <span class="fu">glmer</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  increase_over_4_5_percent_binary <span class="sc">~</span> year <span class="sc">+</span> patients_first_year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> doctor_id),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> binomial,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> your_data</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mixed_model)</span></code></pre></div>
+<h4 id="interpreting-the-mixed-effects-model-results">Interpreting the
+Mixed-Effects Model Results</h4>
+<ul>
+<li><p><strong>Fixed Effects</strong>: Similar to GEE, the fixed effects
+(<code>year</code>, <code>patients_first_year</code>) represent
+population-averaged effects.</p>
+<ul>
+<li>A positive coefficient for <code>year</code> means that the odds of
+exceeding a 4.5% increase grow over time.</li>
+<li>A negative coefficient for <code>patients_first_year</code> means
+that doctors who saw more patients in their first year are less likely
+to experience large increases in subsequent years.</li>
+</ul></li>
+<li><p><strong>Random Effects (Intercept)</strong>: The random intercept
+represents the variability in baseline odds of exceeding a 4.5% increase
+across doctors. A higher variance suggests that doctors differ
+significantly in their likelihood of exceeding this threshold, even
+after accounting for the fixed effects.</p></li>
+</ul>
+<hr />
+<h3 id="step-4-comparing-the-models">Step 4: Comparing the Models</h3>
+<ul>
+<li><strong>GEE</strong>: This model gives you
+<strong>population-averaged effects</strong>, which is useful if you’re
+interested in how the overall population of doctors behaves over
+time.</li>
+<li><strong>Mixed-Effects Logistic Regression</strong>: This model is
+ideal for understanding <strong>doctor-specific effects</strong>,
+allowing you to account for variability between individual doctors.</li>
+</ul>
+<h4 id="key-questions-to-ask-when-interpreting-results">Key Questions to
+Ask When Interpreting Results:</h4>
+<ol type="1">
+<li><p><strong>Does the likelihood of exceeding a 4.5% increase in
+patient load change over time?</strong></p>
+<ul>
+<li>Check the coefficient for <code>year</code>. A positive value
+indicates that doctors are more likely to exceed this threshold in later
+years.</li>
+</ul></li>
+<li><p><strong>How does the baseline patient load (patients_first_year)
+affect future increases?</strong></p>
+<ul>
+<li>A negative coefficient for <code>patients_first_year</code> suggests
+that starting with more patients reduces the likelihood of large
+increases in future years.</li>
+</ul></li>
+<li><p><strong>How much variability is there between
+doctors?</strong></p>
+<ul>
+<li>In the mixed-effects model, check the <strong>random intercept
+variance</strong>. Higher variability means that some doctors
+consistently see larger (or smaller) percentage increases than
+others.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="step-5-reporting-and-next-steps">Step 5: Reporting and Next
+Steps</h3>
+<p>Once you’ve run and interpreted your models, you can report the
+results:</p>
+<ol type="1">
+<li><strong>Model Fit</strong>: Use metrics like <strong>QIC</strong>
+for GEE or <strong>AIC</strong> for the mixed-effects model to assess
+the goodness-of-fit. Lower values indicate better model fit.</li>
+<li><strong>Odds Ratios</strong>: Convert your log-odds estimates to
+<strong>odds ratios</strong> for easier interpretation.</li>
+<li><strong>Adjusting Models</strong>: Consider adding interaction
+terms, such as <code>year * patients_first_year</code>, to explore how
+the effect of the first-year patient load changes over time.</li>
+</ol>
+<h3 id="conclusion-1">Conclusion</h3>
+<p>In this tutorial, we walked through how to use <strong>GEE</strong>
+and <strong>Mixed-Effects Logistic Regression</strong> to analyze binary
+outcomes in longitudinal data. Both models account for the correlation
+between repeated measurements, but mixed-effects models provide
+additional insights into doctor-specific variability. Adjusting for
+baseline variables, like the number of patients seen in the first year,
+helps control for initial differences and ensures more accurate
+inferences about growth trends.</p>
+<p>By applying these models, you can uncover valuable insights into how
+doctors’ patient loads evolve over time and identify factors that
+influence growth trajectories.</p>
+    
+</body>
+</html>

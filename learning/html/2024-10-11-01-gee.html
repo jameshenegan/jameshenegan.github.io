@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3
+id="tutorial-modeling-binary-data-with-generalized-estimating-equations-gee-in-python">Tutorial:
+Modeling Binary Data with Generalized Estimating Equations (GEE) in
+Python</h3>
+<p>In this tutorial, we will demonstrate how to use the
+<strong>Generalized Estimating Equations (GEE)</strong> technique to
+model binary outcomes, using a Python package called
+<code>statsmodels</code>. We will work with a small sample dataset and
+fit a GEE model to understand the relationship between certain
+predictors (e.g., region) and a binary response variable (e.g., bonus).
+Finally, we’ll interpret the model output and calculate probabilities
+based on the model’s log-odds coefficients.</p>
+<h4 id="setting-up-the-environment">1. Setting Up the Environment</h4>
+<p>To follow along, make sure you have the necessary packages installed.
+You can install <code>pandas</code>, <code>statsmodels</code>, and
+<code>numpy</code> using the following command:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pandas statsmodels numpy</span></code></pre></div>
+<p>Now let’s walk through the steps:</p>
+<h4 id="data-preparation">2. Data Preparation</h4>
+<p>We first create a sample dataset with binary outcomes (e.g.,
+<code>bonus</code>, representing whether a sales agent received a bonus)
+and other features that may influence the outcome.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample data in a pandas DataFrame</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;agent_id&#39;</span>: [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>],</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;year&#39;</span>: [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>],</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;bonus&#39;</span>: [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>],</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;sales&#39;</span>: [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">10</span>],</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;start_sales&#39;</span>: [<span class="dv">2000</span>, <span class="dv">2000</span>, <span class="dv">2000</span>, <span class="dv">5000</span>, <span class="dv">5000</span>, <span class="dv">5000</span>, <span class="dv">1500</span>, <span class="dv">1500</span>, <span class="dv">1500</span>],</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;region&#39;</span>: [<span class="st">&#39;North&#39;</span>, <span class="st">&#39;North&#39;</span>, <span class="st">&#39;North&#39;</span>, <span class="st">&#39;South&#39;</span>, <span class="st">&#39;South&#39;</span>, <span class="st">&#39;South&#39;</span>, <span class="st">&#39;South&#39;</span>, <span class="st">&#39;South&#39;</span>, <span class="st">&#39;South&#39;</span>]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data)</span></code></pre></div>
+<p>This dataset consists of:</p>
+<ul>
+<li><strong><code>agent_id</code></strong>: the identifier for the sales
+agent,</li>
+<li><strong><code>year</code></strong>: time progression (0, 1, 2),</li>
+<li><strong><code>bonus</code></strong>: the binary response variable (0
+= no bonus, 1 = bonus),</li>
+<li><strong><code>sales</code></strong>: the total sales made,</li>
+<li><strong><code>start_sales</code></strong>: the starting sales amount
+for the agent,</li>
+<li><strong><code>region</code></strong>: the geographic region where
+the agent operates.</li>
+</ul>
+<h4 id="understanding-the-generalized-estimating-equations-gee">3.
+Understanding the Generalized Estimating Equations (GEE)</h4>
+<p>GEE is useful when you want to model repeated measurements or
+clustered data. In this case, each agent is measured at multiple time
+points (years). GEE accounts for the correlation between repeated
+measurements for the same individual (i.e., agent).</p>
+<h4 id="fitting-the-gee-model">4. Fitting the GEE Model</h4>
+<p>We will fit a GEE model to examine the effect of the
+<code>region</code> on whether an agent receives a bonus. The formula
+<code>"bonus ~ 1 + region"</code> specifies that the binary
+<code>bonus</code> depends on the region.</p>
+<p>The <code>groups="agent_id"</code> argument specifies that
+observations are clustered within the same <code>agent_id</code>, and
+the <code>family=Binomial()</code> argument indicates we are modeling a
+binary outcome (bonus/no bonus).</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.genmod.generalized_estimating_equations <span class="im">import</span> GEE</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.genmod.families <span class="im">import</span> Binomial</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit GEE model</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> GEE.from_formula(<span class="st">&quot;bonus ~ 1 + region&quot;</span>, groups<span class="op">=</span><span class="st">&quot;agent_id&quot;</span>, data<span class="op">=</span>df, family<span class="op">=</span>Binomial())</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> model.fit()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the summary of the results</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result.summary())</span></code></pre></div>
+<h4 id="interpreting-the-output">5. Interpreting the Output</h4>
+<p>The result of the model fitting process is summarized as follows:</p>
+<pre><code>                               GEE Regression Results
+===================================================================================
+Dep. Variable:                       bonus   No. Observations:                    9
+Model:                                 GEE   No. clusters:                        3
+Method:                        Generalized   Min. cluster size:                   3
+                      Estimating Equations   Max. cluster size:                   3
+Family:                           Binomial   Mean cluster size:                 3.0
+Dependence structure:         Independence   Num. iterations:                     2
+Date:                     Sat, 12 Oct 2024   Scale:                           1.000
+Covariance type:                    robust   Time:                         22:14:55
+===================================================================================
+                      coef    std err          z      P&gt;|z|      [0.025      0.975]
+-----------------------------------------------------------------------------------
+Intercept          -0.6931   1.67e-16  -4.16e+15      0.000      -0.693      -0.693
+region[T.South]     1.3863   2.04e-16    6.8e+15      0.000       1.386       1.386
+==============================================================================</code></pre>
+<p>Here’s how to interpret key parts of the output:</p>
+<ul>
+<li><strong>Intercept</strong>: The log-odds of receiving a bonus for
+agents in the <code>North</code> region is -0.6931.</li>
+<li><strong>region[T.South]</strong>: The log-odds increase by 1.3863
+for agents in the <code>South</code> region relative to those in the
+<code>North</code>.</li>
+<li><strong>P&gt;|z|</strong>: The p-values for both coefficients are
+0.000, indicating that both the intercept and the <code>region</code>
+effect are statistically significant.</li>
+</ul>
+<h4 id="calculating-probabilities-from-log-odds">6. Calculating
+Probabilities from Log-Odds</h4>
+<p>The coefficients in the model are log-odds, but it’s often easier to
+interpret them as probabilities. We can convert log-odds to
+probabilities using the following formula:</p>
+<p>[ = ]</p>
+<p>We’ll define a function to handle this conversion:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to convert log-odds to probability</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> inverse_log_odds(log_odds):</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>log_odds))</span></code></pre></div>
+<p>Let’s calculate the probability of receiving a bonus for a
+<code>South</code> region agent, based on the model’s log-odds. We can
+add the intercept (-0.6931) to the coefficient for the
+<code>South</code> region (1.3863) and convert this to a
+probability:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>log_odds_value <span class="op">=</span> <span class="op">-</span><span class="fl">0.6931</span> <span class="op">+</span> <span class="fl">1.3863</span>  <span class="co"># log-odds for a South agent</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>probability <span class="op">=</span> inverse_log_odds(log_odds_value)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Probability: </span><span class="sc">{</span>probability<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p>This results in:</p>
+<pre><code>Probability: 0.666678404216681</code></pre>
+<p>This means that the model predicts a 66.67% probability of receiving
+a bonus for agents in the <code>South</code> region.</p>
+<h4 id="conclusion">7. Conclusion</h4>
+<p>In this tutorial, we demonstrated how to:</p>
+<ol type="1">
+<li>Create a binary dataset and fit a GEE model using the
+<code>statsmodels</code> package in Python.</li>
+<li>Interpret the model’s coefficients and convert log-odds to
+probabilities.</li>
+</ol>
+<p>GEE models are especially useful for analyzing data where
+observations are grouped or repeated, as in our case with sales agents
+tracked over multiple years. You can extend this approach to more
+complex datasets and relationships, adjusting the model formula to
+include additional predictors or interactions.</p>
+<h4 id="key-takeaways">Key Takeaways:</h4>
+<ul>
+<li>GEE models can handle correlated data (e.g., repeated
+measures).</li>
+<li>The model output is in log-odds, which can be converted to more
+interpretable probabilities.</li>
+<li>The <code>statsmodels</code> package in Python provides an
+easy-to-use framework for fitting and interpreting GEE models.</li>
+</ul>
+    
+</body>
+</html>

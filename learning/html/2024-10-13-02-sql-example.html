@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="sql-example-02">2024-10-13 SQL Example 02</h1>
+<h2
+id="tutorial-using-common-table-expressions-ctes-to-simplify-sql-queries">Tutorial:
+Using Common Table Expressions (CTEs) to Simplify SQL Queries</h2>
+<p>In this tutorial, we’ll learn how to simplify complex SQL queries
+using <strong>Common Table Expressions (CTEs)</strong>. We’ll work with
+three tables: <code>Employees</code>, <code>Transactions</code>, and
+<code>Positions</code>. Our goal is to filter employees based on their
+employment start date, calculate their total earnings over a two-year
+period, and display related data such as their position and annual
+salary.</p>
+<p>By the end of this tutorial, you’ll understand how to:</p>
+<ul>
+<li>Use CTEs to make your queries cleaner and more maintainable.</li>
+<li>Filter data and aggregate results.</li>
+<li>Combine data from multiple tables using <code>JOIN</code>.</li>
+</ul>
+<hr />
+<h3 id="the-scenario">The Scenario</h3>
+<p>You have the following tables:</p>
+<ol type="1">
+<li><p><strong>Employees Table</strong>: Contains details about
+employees such as their start date, end date, position, and salary.</p>
+<ul>
+<li><code>employee_id</code></li>
+<li><code>employer_id</code></li>
+<li><code>position_id</code></li>
+<li><code>employment_start_date</code></li>
+<li><code>employment_end_date</code></li>
+<li><code>annual_salary</code></li>
+</ul></li>
+<li><p><strong>Transactions Table</strong>: Contains financial
+transactions tied to each employee, such as payments or earnings.</p>
+<ul>
+<li><code>employee_id</code></li>
+<li><code>transaction_date</code></li>
+<li><code>transaction_amount</code></li>
+</ul></li>
+<li><p><strong>Positions Table</strong>: Contains the names of various
+job positions.</p>
+<ul>
+<li><code>position_id</code></li>
+<li><code>position_name</code></li>
+</ul></li>
+</ol>
+<h3 id="the-goal">The Goal</h3>
+<p>We want to generate a report with the following columns:</p>
+<ul>
+<li><code>employee_id</code></li>
+<li><code>employer_id</code></li>
+<li><code>position_name</code></li>
+<li><code>employment_start_date</code></li>
+<li><code>employment_end_date</code></li>
+<li><code>annual_salary</code></li>
+<li><code>amount_earned_after_two_years</code>: The total amount the
+employee earned from transactions during the first two years of
+employment.</li>
+</ul>
+<p>The report should:</p>
+<ol type="1">
+<li>Include employees who started within a specific date range (e.g.,
+from January 1, 2020, to February 1, 2020).</li>
+<li>Only include transactions within a two-year period (e.g., from
+January 1, 2020, to December 31, 2021).</li>
+</ol>
+<hr />
+<h3 id="why-use-ctes">Why Use CTEs?</h3>
+<p>Common Table Expressions (CTEs) allow you to:</p>
+<ul>
+<li><strong>Improve query readability</strong>: Break down complex logic
+into smaller, understandable parts.</li>
+<li><strong>Organize large queries</strong>: Make queries easier to
+manage by separating them into logical chunks.</li>
+<li><strong>Reuse parts of your query</strong>: If the same logic needs
+to be used multiple times, CTEs make this possible.</li>
+</ul>
+<hr />
+<h3 id="steps-to-solve-the-problem-using-ctes">Steps to Solve the
+Problem Using CTEs</h3>
+<p>We’ll use two CTEs to make the query more structured:</p>
+<ol type="1">
+<li><strong>FilteredEmployees</strong>: A CTE to filter employees who
+started within the specified date range.</li>
+<li><strong>TransactionSummary</strong>: A CTE to calculate the total
+amount earned by each employee during the two-year period.</li>
+</ol>
+<hr />
+<h3 id="writing-the-sql-query-with-ctes">Writing the SQL Query with
+CTEs</h3>
+<p>Let’s break the problem down step by step.</p>
+<h4 id="step-1-create-a-cte-for-filtering-employees">Step 1: Create a
+CTE for Filtering Employees</h4>
+<p>First, we need to filter employees based on their
+<code>employment_start_date</code>. In our example, we’re interested in
+employees who started between January 1, 2020, and February 1, 2020.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> FilteredEmployees <span class="kw">AS</span> (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        employee_id,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        employer_id,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        position_id,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        employment_start_date,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        employment_end_date,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        annual_salary</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        Employees</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        employment_start_date <span class="kw">BETWEEN</span> <span class="st">&#39;2020-01-01&#39;</span> <span class="kw">AND</span> <span class="st">&#39;2020-02-01&#39;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>This CTE (<code>FilteredEmployees</code>) selects the relevant
+columns from the <code>Employees</code> table and filters employees
+based on their start date.</p>
+<h4 id="step-2-create-a-cte-to-summarize-transactions">Step 2: Create a
+CTE to Summarize Transactions</h4>
+<p>Next, we create a second CTE (<code>TransactionSummary</code>) to
+calculate the total amount each employee earned from transactions that
+occurred between January 1, 2020, and December 31, 2021.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TransactionSummary <span class="kw">AS</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        employee_id,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(transaction_amount), <span class="dv">0</span>) <span class="kw">AS</span> amount_earned_after_two_years</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        Transactions</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        transaction_date <span class="kw">BETWEEN</span> <span class="st">&#39;2020-01-01&#39;</span> <span class="kw">AND</span> <span class="st">&#39;2021-12-31&#39;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        employee_id</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>This CTE sums the <code>transaction_amount</code> for each employee
+within the specified date range (the first two years). The
+<code>COALESCE</code> function ensures that if an employee has no
+transactions, their total earnings will be set to <code>0</code>.</p>
+<h4 id="step-3-join-the-ctes-and-positions-table">Step 3: Join the CTEs
+and Positions Table</h4>
+<p>In the main query, we’ll join:</p>
+<ul>
+<li>The filtered employees from <code>FilteredEmployees</code>.</li>
+<li>The summed transaction data from
+<code>TransactionSummary</code>.</li>
+<li>The <code>Positions</code> table to get the
+<code>position_name</code>.</li>
+</ul>
+<p>Here’s the complete query:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> FilteredEmployees <span class="kw">AS</span> (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- CTE to filter employees by employment start date</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        employee_id,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        employer_id,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        position_id,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        employment_start_date,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        employment_end_date,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        annual_salary</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        Employees</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        employment_start_date <span class="kw">BETWEEN</span> <span class="st">&#39;2020-01-01&#39;</span> <span class="kw">AND</span> <span class="st">&#39;2020-02-01&#39;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>TransactionSummary <span class="kw">AS</span> (</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- CTE to sum transactions for each employee within a two-year period</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        employee_id,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(transaction_amount), <span class="dv">0</span>) <span class="kw">AS</span> amount_earned_after_two_years</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        Transactions</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        transaction_date <span class="kw">BETWEEN</span> <span class="st">&#39;2020-01-01&#39;</span> <span class="kw">AND</span> <span class="st">&#39;2021-12-31&#39;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">GROUP</span> <span class="kw">BY</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        employee_id</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">-- Main query to join everything</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    fe.employee_id,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    fe.employer_id,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    p.position_name,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    fe.employment_start_date,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    fe.employment_end_date,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    fe.annual_salary,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(ts.amount_earned_after_two_years, <span class="dv">0</span>) <span class="kw">AS</span> amount_earned_after_two_years</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    FilteredEmployees fe</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="kw">JOIN</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    Positions p</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> fe.position_id <span class="op">=</span> p.position_id</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    TransactionSummary ts</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ON</span> fe.employee_id <span class="op">=</span> ts.employee_id;</span></code></pre></div>
+<h3 id="explanation-of-the-query">Explanation of the Query</h3>
+<ol type="1">
+<li><p><strong>FilteredEmployees CTE</strong>:</p>
+<ul>
+<li>Filters employees who started within a specific date range.</li>
+<li>Columns selected: <code>employee_id</code>,
+<code>employer_id</code>, <code>position_id</code>,
+<code>employment_start_date</code>, <code>employment_end_date</code>,
+<code>annual_salary</code>.</li>
+</ul></li>
+<li><p><strong>TransactionSummary CTE</strong>:</p>
+<ul>
+<li>Summarizes the total transaction amount for each employee within the
+first two years.</li>
+<li>Uses the <code>COALESCE</code> function to handle cases where an
+employee has no transactions, ensuring the result is
+<code>0</code>.</li>
+</ul></li>
+<li><p><strong>Main Query</strong>:</p>
+<ul>
+<li>Joins the filtered employees (<code>FilteredEmployees</code>) with
+their position names (<code>Positions</code>) and transaction summaries
+(<code>TransactionSummary</code>).</li>
+<li>Uses a <code>LEFT JOIN</code> on <code>TransactionSummary</code> to
+ensure that even employees with no transactions are included in the
+result.</li>
+</ul></li>
+</ol>
+<h3 id="benefits-of-using-ctes">Benefits of Using CTEs</h3>
+<ul>
+<li><strong>Clarity</strong>: CTEs make the query easier to read by
+separating the filtering, aggregation, and joining into distinct
+sections.</li>
+<li><strong>Flexibility</strong>: You can modify each part (e.g., change
+the date ranges or add more filtering conditions) without impacting
+other parts of the query.</li>
+<li><strong>Reusability</strong>: If you need to reuse the filtered
+employee data or transaction summaries elsewhere in the query, you can
+simply refer to the CTEs.</li>
+</ul>
+<h3 id="conclusion">Conclusion</h3>
+<p>In this tutorial, we demonstrated how to use CTEs to make complex SQL
+queries more readable and maintainable. By breaking the query into
+smaller, logical components, you can manage filtering, aggregation, and
+joining more effectively. CTEs help keep your query organized,
+especially when dealing with large datasets or multiple conditions.</p>
+<p>Now you can confidently use CTEs in your own queries to make your SQL
+code more structured and easy to understand!</p>
+    
+</body>
+</html>
