@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3
+id="detailed-tutorial-on-survival-analysis-with-competing-risks-in-python">Detailed
+Tutorial on Survival Analysis with Competing Risks in Python</h3>
+<p>Survival analysis is a statistical approach to study the expected
+duration until an event of interest (e.g., time to death, time to
+failure, etc.) occurs. In many real-world scenarios, you may encounter
+multiple potential events (or risks) that could terminate the survival
+process, called <strong>competing risks</strong>. The goal of
+<strong>competing risks survival analysis</strong> is to properly model
+and analyze the time until one of these events occurs while accounting
+for the presence of other risks.</p>
+<p>In this tutorial, we will walk through the theory and practice of
+survival analysis with competing risks in Python, using popular
+libraries like <code>lifelines</code>, <code>scikit-survival</code>, and
+<code>pandas</code>.</p>
+<h3 id="what-are-competing-risks">What Are Competing Risks?</h3>
+<p>In standard survival analysis, we typically focus on a single event
+(like death or failure), assuming that no other type of event can
+prevent the event of interest from occurring. However, in many cases,
+multiple types of events can happen, and they may preclude or compete
+with each other. For example:</p>
+<ul>
+<li>In medical studies, a patient might die from different causes (e.g.,
+cancer vs. heart disease).</li>
+<li>In engineering, a machine might fail due to different reasons (e.g.,
+mechanical vs. electrical failure).</li>
+</ul>
+<p><strong>Competing risks</strong> occur when one event of interest is
+precluded by the occurrence of another event, making it essential to
+handle these risks properly when performing survival analysis.</p>
+<h3 id="key-concepts-in-competing-risks">Key Concepts in Competing
+Risks</h3>
+<ol type="1">
+<li><strong>Cause-Specific Hazard</strong>: The instantaneous risk of
+failure from a specific cause, assuming that no other causes have
+occurred.</li>
+<li><strong>Cumulative Incidence Function (CIF)</strong>: The
+probability of the event happening by a given time for a specific cause,
+accounting for the competing risks.</li>
+<li><strong>Subdistribution Hazard</strong>: A model that incorporates
+both the event of interest and the competing events into a unified
+framework.</li>
+<li><strong>Kaplan-Meier Estimates</strong>: Commonly used in standard
+survival analysis but not appropriate when competing risks are present
+because they overestimate the incidence of the event of interest.</li>
+</ol>
+<h3 id="python-libraries-used">Python Libraries Used</h3>
+<ul>
+<li><strong><code>lifelines</code></strong>: A Python library for
+survival analysis. Though it doesn’t directly support competing risks,
+it provides tools to calculate Kaplan-Meier curves, cumulative
+incidence, and regression models.</li>
+<li><strong><code>scikit-survival</code></strong>: Extends
+<code>scikit-learn</code> for survival analysis and provides
+functionality for working with competing risks.</li>
+</ul>
+<h3 id="steps-to-perform-competing-risks-analysis-in-python">Steps to
+Perform Competing Risks Analysis in Python</h3>
+<ol type="1">
+<li><p><strong>Install Necessary Libraries</strong> You’ll need to
+install the following libraries if you haven’t already:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install lifelines scikit-survival pandas matplotlib</span></code></pre></div></li>
+<li><p><strong>Prepare the Data</strong></p>
+<p>Survival data typically contains:</p>
+<ul>
+<li><strong>Duration</strong>: Time until an event (or censoring).</li>
+<li><strong>Event type</strong>: Whether the event of interest occurred
+or was censored.</li>
+<li><strong>Competing events</strong>: Codes or labels for the different
+types of events (e.g., event type 1, event type 2, etc.).</li>
+<li><strong>Covariates</strong>: Additional factors that might influence
+the survival time.</li>
+</ul>
+<p>For this tutorial, we’ll create a synthetic dataset to demonstrate
+the concepts.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set random seed for reproducibility</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create synthetic dataset</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Time to event or censoring</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;duration&#39;</span>] <span class="op">=</span> np.random.exponential(scale<span class="op">=</span><span class="dv">10</span>, size<span class="op">=</span>n)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Event types: 1 = Event of interest, 2 = Competing risk, 0 = Censored</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;event_type&#39;</span>] <span class="op">=</span> np.random.choice([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], size<span class="op">=</span>n, p<span class="op">=</span>[<span class="fl">0.4</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>])</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Some covariates (e.g., age, gender)</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;age&#39;</span>] <span class="op">=</span> np.random.normal(<span class="dv">50</span>, <span class="dv">10</span>, size<span class="op">=</span>n)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;gender&#39;</span>] <span class="op">=</span> np.random.choice([<span class="dv">0</span>, <span class="dv">1</span>], size<span class="op">=</span>n)</span></code></pre></div>
+<p>This dataset simulates survival times (<code>duration</code>), with
+an event type of either 1 (event of interest), 2 (competing event), or 0
+(censored).</p></li>
+<li><p><strong>Exploratory Data Analysis</strong> Let’s first visualize
+the distribution of survival times and event types.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot survival time distribution</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt.hist(df[<span class="st">&#39;duration&#39;</span>], bins<span class="op">=</span><span class="dv">30</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">&#39;b&#39;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Distribution of Survival Times&#39;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Time&#39;</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Frequency&#39;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Event type counts</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;event_type&#39;</span>].value_counts().plot(kind<span class="op">=</span><span class="st">&#39;bar&#39;</span>, color<span class="op">=</span><span class="st">&#39;skyblue&#39;</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Event Type Distribution&#39;</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Event Type&#39;</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>This will give you a basic understanding of how the survival times
+and event types are distributed.</p></li>
+<li><p><strong>Calculate Cause-Specific Cumulative Incidence
+(CIF)</strong></p>
+<p>To calculate the cumulative incidence function (CIF), we can use the
+<code>CumulativeIncidenceFitter</code> from the <code>lifelines</code>
+library. CIF gives us the probability that an event of a specific type
+will happen by a given time, taking competing risks into account.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lifelines <span class="im">import</span> CumulativeIncidenceFitter</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the CumulativeIncidenceFitter instance</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cif <span class="op">=</span> CumulativeIncidenceFitter()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the data</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>cif.fit(df[<span class="st">&#39;duration&#39;</span>], df[<span class="st">&#39;event_type&#39;</span>], event_of_interest<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>cif.plot_cumulative_density()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Cumulative Incidence Function for Event of Interest&#39;</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>Here, we calculate and plot the CIF for the event of interest (event
+type 1). You can adjust the <code>event_of_interest</code> argument to
+look at competing risks (e.g.,
+<code>event_of_interest=2</code>).</p></li>
+<li><p><strong>Cause-Specific Hazard Model</strong></p>
+<p>To model the cause-specific hazard, you can use the Cox Proportional
+Hazard model for each event type separately. For example:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lifelines <span class="im">import</span> CoxPHFitter</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the dataset for Cox model</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df_cox <span class="op">=</span> df[df[<span class="st">&#39;event_type&#39;</span>].isin([<span class="dv">0</span>, <span class="dv">1</span>])]  <span class="co"># Filter to include only censored and event 1</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate the Cox model</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>cph <span class="op">=</span> CoxPHFitter()</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model using covariates</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>cph.fit(df_cox, duration_col<span class="op">=</span><span class="st">&#39;duration&#39;</span>, event_col<span class="op">=</span><span class="st">&#39;event_type&#39;</span>, covariates<span class="op">=</span>[<span class="st">&#39;age&#39;</span>, <span class="st">&#39;gender&#39;</span>])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>cph.print_summary()</span></code></pre></div>
+<p>This model shows how covariates (e.g., age, gender) affect the
+cause-specific hazard for the event of interest.</p></li>
+<li><p><strong>Fine-Gray Model for Subdistribution Hazard</strong></p>
+<p>The Fine-Gray model accounts for the competing risks by modeling the
+subdistribution hazard, which directly estimates the effect of
+covariates on the cumulative incidence.</p>
+<p>The <code>scikit-survival</code> library provides an implementation
+of the Fine-Gray model. Below is an example of fitting the Fine-Gray
+model:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sksurv.datasets <span class="im">import</span> get_x_y</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sksurv.linear_model <span class="im">import</span> FineGrayModel</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create structured array for sksurv</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>df_fine_gray <span class="op">=</span> df[df[<span class="st">&#39;event_type&#39;</span>] <span class="op">!=</span> <span class="dv">2</span>]  <span class="co"># Remove competing risk 2 for Fine-Gray model</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>df_fine_gray[<span class="st">&#39;event&#39;</span>] <span class="op">=</span> df_fine_gray[<span class="st">&#39;event_type&#39;</span>] <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare X (covariates) and y (duration and event)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df_fine_gray[[<span class="st">&#39;age&#39;</span>, <span class="st">&#39;gender&#39;</span>]]</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array(<span class="bu">list</span>(<span class="bu">zip</span>(df_fine_gray[<span class="st">&#39;event&#39;</span>], df_fine_gray[<span class="st">&#39;duration&#39;</span>])), dtype<span class="op">=</span>[(<span class="st">&#39;event&#39;</span>, <span class="st">&#39;?&#39;</span>), (<span class="st">&#39;duration&#39;</span>, <span class="st">&#39;&lt;f8&#39;</span>)])</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Fine-Gray Model</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> make_pipeline(StandardScaler(), FineGrayModel())</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>model.fit(X, y)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Output model coefficients</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&#39;Fine-Gray Model Coefficients: </span><span class="sc">{</span>model[<span class="op">-</span><span class="dv">1</span>]<span class="sc">.</span>coef_<span class="sc">}</span><span class="ss">&#39;</span>)</span></code></pre></div>
+<p>The Fine-Gray model gives you a subdistribution hazard ratio that
+directly relates covariates to the cumulative incidence of the event of
+interest while accounting for competing events.</p></li>
+<li><p><strong>Visualizing CIF for Multiple Events</strong></p>
+<p>Finally, you can plot the CIFs for different competing events on the
+same graph:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CIF for event of interest (1)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cif.fit(df[<span class="st">&#39;duration&#39;</span>], df[<span class="st">&#39;event_type&#39;</span>], event_of_interest<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> cif.plot_cumulative_density(label<span class="op">=</span><span class="st">&#39;Event of Interest&#39;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># CIF for competing risk (2)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>cif.fit(df[<span class="st">&#39;duration&#39;</span>], df[<span class="st">&#39;event_type&#39;</span>], event_of_interest<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>cif.plot_cumulative_density(ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">&#39;Competing Risk&#39;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Cumulative Incidence Function for Different Event Types&#39;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>This allows you to visualize how the probabilities of different types
+of events evolve over time in the presence of competing risks.</p></li>
+</ol>
+<h3 id="conclusion">Conclusion</h3>
+<p>Competing risks analysis is crucial when dealing with multiple events
+that may terminate the survival process. Python libraries like
+<code>lifelines</code> and <code>scikit-survival</code> offer powerful
+tools for modeling and visualizing competing risks. In this tutorial, we
+covered the core concepts:</p>
+<ul>
+<li>Understanding the key ideas of competing risks.</li>
+<li>Calculating the cumulative incidence function (CIF).</li>
+<li>Fitting cause-specific Cox proportional hazard models.</li>
+<li>Using the Fine-Gray model to handle subdistribution hazards.</li>
+</ul>
+<p>You can expand this basic framework by incorporating more
+covariates</p>
+    
+</body>
+</html>

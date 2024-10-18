@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3
+id="in-depth-tutorial-on-using-random-forests-for-survival-analysis-in-python-for-life-insurance-analysts">In-Depth
+Tutorial on Using Random Forests for Survival Analysis in Python (for
+Life Insurance Analysts)</h3>
+<p>In the life insurance industry, survival analysis is an essential
+tool for predicting the time until an event occurs—typically, the time
+until death or some form of lapse in the policyholder’s engagement with
+their insurance. Random Forests (RF) for survival analysis extend the
+power of ensemble learning methods to handle censored data, providing
+flexibility and robustness when modeling time-to-event data.</p>
+<p>In this tutorial, we will cover:</p>
+<ol type="1">
+<li><strong>Introduction to Survival Analysis</strong></li>
+<li><strong>Random Forests for Survival Analysis</strong></li>
+<li><strong>Step-by-Step Implementation in Python</strong>
+<ul>
+<li>Preparing the Data</li>
+<li>Building the Random Forest Survival Model</li>
+<li>Evaluating the Model</li>
+<li>Practical Example with the <code>random-survival-forest</code>
+package</li>
+</ul></li>
+<li><strong>Interpreting the Results</strong></li>
+<li><strong>Key Applications in Life Insurance</strong></li>
+</ol>
+<p>Let’s break this down step by step.</p>
+<hr />
+<h3 id="introduction-to-survival-analysis">1. Introduction to Survival
+Analysis</h3>
+<p>Survival analysis deals with predicting the time until a certain
+event happens. In life insurance, this “event” could be:</p>
+<ul>
+<li>The death of an insured person (mortality analysis),</li>
+<li>The lapse of a policy,</li>
+<li>The claim of a policy, etc.</li>
+</ul>
+<p>What makes survival data unique is that it is often
+<strong>censored</strong>. Censorship occurs when you have incomplete
+information about the time of the event. For example:</p>
+<ul>
+<li><strong>Right-censored</strong>: The event hasn’t happened yet for
+some individuals by the end of the study.</li>
+<li><strong>Left-censored</strong>: The event occurred before the
+observation started.</li>
+</ul>
+<h3 id="random-forests-for-survival-analysis">2. Random Forests for
+Survival Analysis</h3>
+<p>Random Forests are ensemble learning methods that build multiple
+decision trees and aggregate their predictions. In survival analysis,
+the Random Survival Forest (RSF) model adapts this to handle censored
+data, making it suitable for life insurance use cases where the time of
+the event is unknown for some clients.</p>
+<p>RSF splits the data based on maximizing survival differences between
+groups and aggregates predictions over all trees to estimate survival
+probabilities.</p>
+<p><strong>Advantages of RSF</strong>:</p>
+<ul>
+<li>Handles high-dimensional data.</li>
+<li>Naturally accommodates censored data.</li>
+<li>Does not assume a specific parametric distribution like other
+survival methods (e.g., Cox Proportional Hazards).</li>
+</ul>
+<h3 id="step-by-step-implementation-in-python">3. Step-by-Step
+Implementation in Python</h3>
+<p>To perform Random Forests for survival analysis in Python, we will
+use the <code>scikit-survival</code> library, which offers a Random
+Survival Forest implementation. Let’s walk through the steps
+involved.</p>
+<h4 id="preparing-the-data">3.1 Preparing the Data</h4>
+<p>First, install the necessary packages:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install scikit-survival</span></code></pre></div>
+<p>Let’s start with a sample dataset where:</p>
+<ul>
+<li><code>duration</code> is the time until the event (e.g., death or
+policy lapse).</li>
+<li><code>event</code> is a binary variable where 1 indicates the event
+occurred (death/lapse), and 0 indicates the observation is
+censored.</li>
+</ul>
+<p>You can use your own dataset or try with a publicly available dataset
+like the <code>veterans</code> dataset.</p>
+<p>Here’s how to load the data:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sksurv.datasets <span class="im">import</span> load_veterans_lung_cancer</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sksurv.ensemble <span class="im">import</span> RandomSurvivalForest</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sksurv.util <span class="im">import</span> Surv</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load example dataset</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>data_x, data_y <span class="op">=</span> load_veterans_lung_cancer()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the dataset into proper format</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>data_y <span class="op">=</span> Surv.from_dataframe(<span class="st">&quot;status&quot;</span>, <span class="st">&quot;time&quot;</span>, data_y)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Split data into training and testing sets</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(data_x, data_y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code></pre></div>
+<h4 id="building-the-random-survival-forest-model">3.2 Building the
+Random Survival Forest Model</h4>
+<p>Next, we’ll train the Random Survival Forest model using
+<code>sksurv.ensemble.RandomSurvivalForest</code>. Key hyperparameters
+include:</p>
+<ul>
+<li><code>n_estimators</code>: Number of trees in the forest.</li>
+<li><code>min_samples_split</code>: Minimum number of samples required
+to split an internal node.</li>
+</ul>
+<p>Here’s how you can build and fit the model:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instantiate Random Survival Forest model</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rsf <span class="op">=</span> RandomSurvivalForest(n_estimators<span class="op">=</span><span class="dv">100</span>, min_samples_split<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>rsf.fit(X_train, y_train)</span></code></pre></div>
+<h4 id="evaluating-the-model">3.3 Evaluating the Model</h4>
+<p>Once the model is trained, you can evaluate its performance using
+metrics like <strong>concordance index</strong> (C-index), which
+measures the ability of the model to rank individuals by risk.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sksurv.metrics <span class="im">import</span> concordance_index_censored</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict survival for the test data</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> rsf.predict(X_test)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate using C-index</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>cindex <span class="op">=</span> concordance_index_censored(y_test[<span class="st">&#39;status&#39;</span>], y_test[<span class="st">&#39;time&#39;</span>], y_pred)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;C-index: </span><span class="sc">{</span>cindex[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h4 id="interpreting-variable-importance">3.4 Interpreting Variable
+Importance</h4>
+<p>A useful feature of Random Forests is variable importance, which
+shows which features contribute most to the prediction. This is key in
+life insurance to understand which client attributes (e.g., age, income,
+smoking status) are most predictive of survival or lapse.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get feature importances</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>importances <span class="op">=</span> rsf.feature_importances_</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> X_train.columns</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the most important features</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>feature_importances <span class="op">=</span> pd.DataFrame({<span class="st">&quot;Feature&quot;</span>: features, <span class="st">&quot;Importance&quot;</span>: importances})</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>feature_importances <span class="op">=</span> feature_importances.sort_values(by<span class="op">=</span><span class="st">&quot;Importance&quot;</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(feature_importances)</span></code></pre></div>
+<h3 id="practical-example-life-insurance-dataset">4. Practical Example:
+Life Insurance Dataset</h3>
+<p>Let’s assume you have a dataset <code>insurance.csv</code> containing
+features of your clients (age, gender, policy type, smoking status,
+etc.), their survival time, and whether they died or lapsed during the
+study period. Here’s how you’d apply RSF to it:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load your dataset</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">&#39;insurance.csv&#39;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the survival object</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&#39;status&#39;</span>] <span class="op">=</span> data[<span class="st">&#39;event&#39;</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="va">True</span> <span class="cf">if</span> x <span class="op">==</span> <span class="dv">1</span> <span class="cf">else</span> <span class="va">False</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> Surv.from_dataframe(<span class="st">&#39;status&#39;</span>, <span class="st">&#39;duration&#39;</span>, data)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Define your features (assuming the dataset contains them)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data[[<span class="st">&#39;age&#39;</span>, <span class="st">&#39;gender&#39;</span>, <span class="st">&#39;smoking_status&#39;</span>, <span class="st">&#39;policy_type&#39;</span>]]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Split into training and testing sets</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the Random Survival Forest model</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>rsf <span class="op">=</span> RandomSurvivalForest(n_estimators<span class="op">=</span><span class="dv">100</span>, min_samples_split<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>rsf.fit(X_train, y_train)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model with the C-index</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>cindex <span class="op">=</span> concordance_index_censored(y_test[<span class="st">&#39;status&#39;</span>], y_test[<span class="st">&#39;duration&#39;</span>], rsf.predict(X_test))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Concordance Index: </span><span class="sc">{</span>cindex[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="key-applications-in-life-insurance">5. Key Applications in Life
+Insurance</h3>
+<ul>
+<li><strong>Mortality Modeling</strong>: Predict the likelihood of a
+policyholder dying within a certain time frame.</li>
+<li><strong>Lapse Modeling</strong>: Estimate the probability of a
+policyholder discontinuing their policy within a given period.</li>
+<li><strong>Premium Pricing</strong>: Set premiums based on expected
+time-to-event, adjusting for factors like age, health, and
+lifestyle.</li>
+<li><strong>Claims Analysis</strong>: Predict the likelihood of a claim
+based on customer characteristics.</li>
+</ul>
+<hr />
+<h3 id="conclusion">Conclusion</h3>
+<p>Random Survival Forests are a powerful tool in the hands of life
+insurance analysts. By combining the flexibility of decision trees with
+the ability to handle censored data, RSF models can provide robust,
+interpretable, and accurate predictions of time-to-event outcomes such
+as death or policy lapse.</p>
+<p>Key takeaways:</p>
+<ul>
+<li><strong>Random Forests</strong> handle high-dimensional, complex
+data and are non-parametric.</li>
+<li><strong>Survival analysis</strong> methods incorporate censored
+data.</li>
+<li><strong>RSF models</strong> are valuable in life insurance for
+mortality, lapse, and risk modeling.</li>
+</ul>
+<p>By using the step-by-step guide above, you should be well-equipped to
+implement Random Forests for survival analysis and apply them to
+real-world insurance problems.</p>
+    
+</body>
+</html>
