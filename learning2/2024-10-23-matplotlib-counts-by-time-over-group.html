@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3
+id="tutorial-visualizing-counts-over-time-by-group-using-pandas-and-matplotlib">Tutorial:
+Visualizing Counts Over Time by Group Using Pandas and Matplotlib</h3>
+<p>In this tutorial, we will walk through the steps to visualize a
+dataset that contains <code>year</code>, <code>month</code>,
+<code>group</code>, and <code>count</code> information. We will
+demonstrate how to create <strong>line plots</strong> and
+<strong>stacked area plots</strong> using Python’s pandas and matplotlib
+libraries.</p>
+<h3 id="table-of-contents">Table of Contents</h3>
+<ol type="1">
+<li>Setting Up the Environment</li>
+<li>Preparing the Data</li>
+<li>Creating a Date Column</li>
+<li>Pivoting the Data for Grouped Visualization</li>
+<li>Plotting the Data
+<ul>
+<li>Line Plot</li>
+<li>Stacked Area Plot</li>
+</ul></li>
+<li>Conclusion</li>
+</ol>
+<h3 id="setting-up-the-environment">1. Setting Up the Environment</h3>
+<p>Before we begin, make sure you have the required libraries installed.
+You can install them using pip if necessary:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pandas matplotlib</span></code></pre></div>
+<p>Now, import the necessary libraries:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div>
+<h3 id="preparing-the-data">2. Preparing the Data</h3>
+<p>We will use a sample dataset that contains columns for
+<code>year</code>, <code>month</code>, <code>group</code>, and
+<code>count</code>. Each row represents the count of a specific group in
+a particular year and month. Let’s create a pandas DataFrame to simulate
+this data:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;year&#39;</span>: [<span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>],</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;month&#39;</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>],</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;group&#39;</span>: [<span class="st">&#39;A&#39;</span>, <span class="st">&#39;A&#39;</span>, <span class="st">&#39;A&#39;</span>, <span class="st">&#39;B&#39;</span>, <span class="st">&#39;B&#39;</span>, <span class="st">&#39;B&#39;</span>],</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;count&#39;</span>: [<span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the DataFrame</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># View the DataFrame</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div>
+<p>This DataFrame looks like this:</p>
+<table>
+<thead>
+<tr>
+<th>year</th>
+<th>month</th>
+<th>group</th>
+<th>count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2020</td>
+<td>1</td>
+<td>A</td>
+<td>10</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>2</td>
+<td>A</td>
+<td>15</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>3</td>
+<td>A</td>
+<td>20</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>1</td>
+<td>B</td>
+<td>5</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>2</td>
+<td>B</td>
+<td>10</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>3</td>
+<td>B</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<h3 id="creating-a-date-column">3. Creating a Date Column</h3>
+<p>To visualize the data over time, it’s important to create a unified
+date column. We will combine the <code>year</code> and
+<code>month</code> columns into a single <code>date</code> column.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a datetime-like column</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;date&#39;</span>] <span class="op">=</span> pd.to_datetime(df[[<span class="st">&#39;year&#39;</span>, <span class="st">&#39;month&#39;</span>]].assign(day<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the updated DataFrame</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div>
+<p>Now, the DataFrame will include the new <code>date</code> column:</p>
+<table>
+<thead>
+<tr>
+<th>year</th>
+<th>month</th>
+<th>group</th>
+<th>count</th>
+<th>date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2020</td>
+<td>1</td>
+<td>A</td>
+<td>10</td>
+<td>2020-01-01</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>2</td>
+<td>A</td>
+<td>15</td>
+<td>2020-02-01</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>3</td>
+<td>A</td>
+<td>20</td>
+<td>2020-03-01</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>1</td>
+<td>B</td>
+<td>5</td>
+<td>2021-01-01</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>2</td>
+<td>B</td>
+<td>10</td>
+<td>2021-02-01</td>
+</tr>
+<tr>
+<td>2021</td>
+<td>3</td>
+<td>B</td>
+<td>15</td>
+<td>2021-03-01</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pivoting-the-data-for-grouped-visualization">4. Pivoting the
+Data for Grouped Visualization</h3>
+<p>To prepare the data for plotting, we need to pivot the DataFrame so
+that each group becomes a separate column. This way, the counts for each
+group can be visualized over time.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot the data to have groups as columns</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df_pivot <span class="op">=</span> df.pivot(index<span class="op">=</span><span class="st">&#39;date&#39;</span>, columns<span class="op">=</span><span class="st">&#39;group&#39;</span>, values<span class="op">=</span><span class="st">&#39;count&#39;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the pivoted DataFrame</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_pivot)</span></code></pre></div>
+<p>This reshapes the DataFrame into a format where the <code>date</code>
+is the index, and each <code>group</code> has its own column of
+<code>count</code> values:</p>
+<table>
+<thead>
+<tr>
+<th>date</th>
+<th>A</th>
+<th>B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2020-01-01</td>
+<td>10</td>
+<td>NaN</td>
+</tr>
+<tr>
+<td>2020-02-01</td>
+<td>15</td>
+<td>NaN</td>
+</tr>
+<tr>
+<td>2020-03-01</td>
+<td>20</td>
+<td>NaN</td>
+</tr>
+<tr>
+<td>2021-01-01</td>
+<td>NaN</td>
+<td>5</td>
+</tr>
+<tr>
+<td>2021-02-01</td>
+<td>NaN</td>
+<td>10</td>
+</tr>
+<tr>
+<td>2021-03-01</td>
+<td>NaN</td>
+<td>15</td>
+</tr>
+</tbody>
+</table>
+<h3 id="plotting-the-data">5. Plotting the Data</h3>
+<p>Now that the data is in a suitable format, we can create the
+visualizations.</p>
+<h4 id="line-plot">Line Plot</h4>
+<p>A <strong>line plot</strong> is useful for visualizing trends over
+time. Each group will have its own line in the chart.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Line plot for counts over time by group</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_pivot.plot(kind<span class="op">=</span><span class="st">&#39;line&#39;</span>, marker<span class="op">=</span><span class="st">&#39;o&#39;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Counts over Time by Group&#39;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Date&#39;</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">&#39;Group&#39;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>The line plot will show the trends for each group across the
+specified dates. Each group will have its own color and line, making it
+easy to compare trends.</p>
+<h4 id="stacked-area-plot">Stacked Area Plot</h4>
+<p>A <strong>stacked area plot</strong> can be used to show the
+cumulative contributions of each group over time. It helps in
+visualizing both individual group trends and the total count over
+time.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stacked area plot for counts over time by group</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_pivot.plot(kind<span class="op">=</span><span class="st">&#39;area&#39;</span>, stacked<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Counts over Time by Group (Stacked Area)&#39;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Date&#39;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">&#39;Group&#39;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>In a stacked area plot, each group’s area is stacked on top of the
+others. This gives a sense of both individual contributions and total
+counts.</p>
+<h3 id="conclusion">6. Conclusion</h3>
+<p>In this tutorial, we walked through the process of visualizing group
+counts over time using a pandas DataFrame. We covered two different
+types of visualizations:</p>
+<ul>
+<li><strong>Line plot</strong>: Ideal for seeing individual trends.</li>
+<li><strong>Stacked area plot</strong>: Great for visualizing cumulative
+contributions.</li>
+</ul>
+<p>By learning how to pivot your data and use matplotlib for plotting,
+you can apply these techniques to various time series and grouped data
+visualizations.</p>
+<p>Feel free to experiment with your own dataset, and modify the
+visualizations to suit your analysis!</p>
+    
+</body>
+</html>

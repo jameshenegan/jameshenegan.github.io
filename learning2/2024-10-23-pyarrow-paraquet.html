@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="pyarrow-and-paraquet">PyArrow and Paraquet</h1>
+<p>Below is a detailed tutorial on <strong>PyArrow</strong> and
+<strong>Parquet</strong>, including an overview, installation, how to
+use them for efficient data handling, and practical examples.</p>
+<h3 id="table-of-contents"><strong>Table of Contents</strong></h3>
+<ol type="1">
+<li>Overview of PyArrow and Parquet</li>
+<li>Installation</li>
+<li>PyArrow Basics</li>
+<li>Introduction to Parquet</li>
+<li>Reading and Writing Parquet Files using PyArrow</li>
+<li>PyArrow and Pandas Integration</li>
+<li>Performance Benefits of Parquet with PyArrow</li>
+<li>Conclusion</li>
+</ol>
+<hr />
+<h3 id="overview-of-pyarrow-and-parquet">1. <strong>Overview of PyArrow
+and Parquet</strong></h3>
+<ul>
+<li><p><strong>PyArrow</strong> is a Python binding to the Apache Arrow
+project, which is a cross-language development platform for in-memory
+data. PyArrow is widely used for working with large datasets, in-memory
+data processing, and file serialization/deserialization.</p></li>
+<li><p><strong>Parquet</strong> is a highly efficient columnar storage
+file format optimized for large-scale data processing. It stores data in
+a column-wise fashion, enabling efficient querying, compression, and
+disk I/O when reading or writing data.</p></li>
+</ul>
+<hr />
+<h3 id="installation">2. <strong>Installation</strong></h3>
+<p>To use <strong>PyArrow</strong> and <strong>Parquet</strong> in
+Python, you need to install the required libraries:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pyarrow pandas</span></code></pre></div>
+<p><strong>PyArrow</strong> includes support for reading and writing
+Parquet files. You’ll also need <strong>Pandas</strong> if you’re
+working with DataFrames.</p>
+<hr />
+<h3 id="pyarrow-basics">3. <strong>PyArrow Basics</strong></h3>
+<p><strong>PyArrow</strong> provides tools to work with the
+<strong>Arrow</strong> format, which is an in-memory columnar data
+format for efficient data analytics. Below are some of the core
+components of PyArrow:</p>
+<ul>
+<li><strong>Table</strong>: Similar to a Pandas DataFrame, but optimized
+for columnar in-memory processing.</li>
+<li><strong>Array</strong>: Represents a column of data.</li>
+<li><strong>Schema</strong>: Describes the structure of a dataset (like
+column names and types).</li>
+</ul>
+<h4 id="example-creating-an-arrow-table">Example: Creating an Arrow
+Table</h4>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define some data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    pa.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    pa.array([<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>, <span class="st">&#39;c&#39;</span>]),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    pa.array([<span class="fl">3.5</span>, <span class="fl">4.5</span>, <span class="fl">5.5</span>])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Define column names and schema</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>schema <span class="op">=</span> pa.schema([</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;int_column&#39;</span>, pa.int64()),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;str_column&#39;</span>, pa.string()),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;float_column&#39;</span>, pa.float64())</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an Arrow Table</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> pa.Table.from_arrays(data, schema<span class="op">=</span>schema)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(table)</span></code></pre></div>
+<p>This will print the contents of the Arrow table, which includes three
+columns: an integer column, a string column, and a float column.</p>
+<hr />
+<h3 id="introduction-to-parquet">4. <strong>Introduction to
+Parquet</strong></h3>
+<p>Parquet is a columnar storage format that is widely used in big data
+environments. It allows efficient compression and encoding of data to
+reduce storage requirements and improve data I/O.</p>
+<h4 id="key-features-of-parquet">Key Features of Parquet:</h4>
+<ul>
+<li><strong>Columnar storage</strong>: Data is stored by columns rather
+than by rows, which is optimal for analytics.</li>
+<li><strong>Compression</strong>: Parquet supports efficient compression
+codecs like Snappy and Gzip, reducing file size significantly.</li>
+<li><strong>Splitting</strong>: Parquet can be split across many files
+for efficient distributed processing (e.g., with Hadoop or Spark).</li>
+</ul>
+<hr />
+<h3 id="reading-and-writing-parquet-files-using-pyarrow">5.
+<strong>Reading and Writing Parquet Files using PyArrow</strong></h3>
+<p>PyArrow makes working with Parquet files straightforward, supporting
+both reading and writing.</p>
+<h4 id="example-writing-a-parquet-file">Example: Writing a Parquet
+File</h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow.parquet <span class="im">as</span> pq</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Write the previously created Arrow Table to a Parquet file</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pq.write_table(table, <span class="st">&#39;example.parquet&#39;</span>)</span></code></pre></div>
+<h4 id="example-reading-a-parquet-file">Example: Reading a Parquet
+File</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the Parquet file back into an Arrow Table</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>table_from_parquet <span class="op">=</span> pq.read_table(<span class="st">&#39;example.parquet&#39;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(table_from_parquet)</span></code></pre></div>
+<p>The above examples demonstrate how to write an Arrow Table to a
+Parquet file and then read it back. This process is highly efficient due
+to the columnar nature of Parquet and in-memory optimization with
+Arrow.</p>
+<hr />
+<h3 id="pyarrow-and-pandas-integration">6. <strong>PyArrow and Pandas
+Integration</strong></h3>
+<p>Pandas is one of the most widely used libraries for data
+manipulation, and PyArrow integrates seamlessly with it. You can convert
+between Arrow Tables and Pandas DataFrames, allowing you to benefit from
+both libraries.</p>
+<h4 id="example-convert-pyarrow-table-to-pandas-dataframe">Example:
+Convert PyArrow Table to Pandas DataFrame</h4>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Arrow Table to Pandas DataFrame</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> table.to_pandas()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div>
+<h4 id="example-convert-pandas-dataframe-to-pyarrow-table">Example:
+Convert Pandas DataFrame to PyArrow Table</h4>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Pandas DataFrame back to PyArrow Table</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>arrow_table <span class="op">=</span> pa.Table.from_pandas(df)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(arrow_table)</span></code></pre></div>
+<p>This integration is useful because it allows you to use Pandas for
+small-scale manipulations and then convert to Arrow for more efficient
+data processing or storage in Parquet.</p>
+<hr />
+<h3 id="performance-benefits-of-parquet-with-pyarrow">7.
+<strong>Performance Benefits of Parquet with PyArrow</strong></h3>
+<p>Using PyArrow with Parquet offers several performance benefits,
+especially for large datasets:</p>
+<ul>
+<li><strong>Reduced File Size</strong>: Parquet’s columnar format and
+compression (Snappy, Gzip) significantly reduce the size of stored
+data.</li>
+<li><strong>Efficient Queries</strong>: When querying specific columns
+in large datasets, Parquet reads only the required columns, reducing
+disk I/O and memory usage.</li>
+<li><strong>Optimized for Distributed Systems</strong>: Parquet files
+can be split across multiple files and processed in parallel, making
+them ideal for big data processing frameworks like Apache Spark and
+Hadoop.</li>
+<li><strong>In-memory Speed</strong>: PyArrow’s in-memory data
+processing capabilities allow for high-speed data manipulation and
+analytics.</li>
+</ul>
+<h4 id="example-writing-a-large-pandas-dataframe-to-parquet">Example:
+Writing a Large Pandas DataFrame to Parquet</h4>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a large DataFrame</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_large <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;col1&#39;</span>: <span class="bu">range</span>(<span class="dv">1000000</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;col2&#39;</span>: [<span class="st">&#39;text&#39;</span>] <span class="op">*</span> <span class="dv">1000000</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;col3&#39;</span>: <span class="bu">range</span>(<span class="dv">1000000</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to Arrow Table</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>arrow_table_large <span class="op">=</span> pa.Table.from_pandas(df_large)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Write to Parquet with compression</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>pq.write_table(arrow_table_large, <span class="st">&#39;large_data.parquet&#39;</span>, compression<span class="op">=</span><span class="st">&#39;snappy&#39;</span>)</span></code></pre></div>
+<h4 id="example-reading-a-specific-column-from-a-parquet-file">Example:
+Reading a Specific Column from a Parquet File</h4>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Only read specific columns</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>table_filtered <span class="op">=</span> pq.read_table(<span class="st">&#39;large_data.parquet&#39;</span>, columns<span class="op">=</span>[<span class="st">&#39;col1&#39;</span>, <span class="st">&#39;col3&#39;</span>])</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(table_filtered)</span></code></pre></div>
+<p>This example highlights the efficiency of using Parquet when only
+certain columns of a large dataset are needed. Instead of loading the
+entire dataset into memory, you can load only the required columns,
+improving both speed and memory usage.</p>
+<hr />
+<h3 id="conclusion">8. <strong>Conclusion</strong></h3>
+<p>PyArrow and Parquet are powerful tools for handling large datasets
+efficiently. PyArrow’s in-memory data structures enable fast data
+processing, while Parquet’s columnar format offers significant storage
+savings and query optimization. Combined, they provide a solution that
+is widely adopted in big data environments and can also be used for
+local data processing with Python.</p>
+<p>To summarize:</p>
+<ul>
+<li><strong>PyArrow</strong> is an in-memory data representation that
+enables efficient data interchange.</li>
+<li><strong>Parquet</strong> is an efficient, compressed columnar
+storage format.</li>
+<li>Together, they allow you to handle large datasets efficiently,
+making it easy to work with big data frameworks.</li>
+</ul>
+<p>With this tutorial, you now have the foundation to integrate PyArrow
+and Parquet into your data processing workflows, ensuring that you can
+handle large-scale data efficiently and with optimal performance.</p>
+    
+</body>
+</html>
