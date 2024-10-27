@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3
+id="tutorial-converting-monthly-data-to-quarterly-datetime-and-visualizing-with-line-plots-in-python">Tutorial:
+Converting Monthly Data to Quarterly Datetime and Visualizing with Line
+Plots in Python</h3>
+<p>In this tutorial, we’ll learn how to:</p>
+<ol type="1">
+<li>Convert monthly time series data into quarterly aggregates.</li>
+<li>Create proper <code>datetime</code> objects representing the start
+of each quarter.</li>
+<li>Visualize the resulting quarterly data using a line plot with
+<code>datetime</code> values on the x-axis.</li>
+</ol>
+<p>This is useful for analyzing trends over time, especially when
+working with time series data in fields like finance, sales, or
+economics.</p>
+<hr />
+<h3 id="step-by-step-guide"><strong>Step-by-Step Guide</strong></h3>
+<h4 id="step-1-create-the-example-data">Step 1: Create the Example
+Data</h4>
+<p>We’ll start with a dataset that includes monthly data across multiple
+years. For simplicity, this example dataset contains a
+<code>year</code>, <code>month</code>, and <code>count</code>
+column.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Provided example data</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;year&#39;</span>: [</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>, <span class="dv">2020</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span>, <span class="dv">2021</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;month&#39;</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;count&#39;</span>: [<span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>, <span class="dv">350</span>, <span class="dv">400</span>, <span class="dv">450</span>, <span class="dv">500</span>, <span class="dv">550</span>, <span class="dv">600</span>, <span class="dv">650</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>              <span class="dv">100</span>, <span class="dv">150</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">300</span>, <span class="dv">350</span>, <span class="dv">400</span>, <span class="dv">450</span>, <span class="dv">500</span>, <span class="dv">550</span>, <span class="dv">600</span>, <span class="dv">650</span>]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data)</span></code></pre></div>
+<p>In this dataset:</p>
+<ul>
+<li>We have monthly <code>count</code> data for the years 2020 and
+2021.</li>
+<li>The goal is to convert these monthly values into quarterly
+aggregates and plot them with a datetime-based x-axis.</li>
+</ul>
+<hr />
+<h4 id="step-2-convert-monthly-data-into-quarterly-datetime-values">Step
+2: Convert Monthly Data into Quarterly Datetime Values</h4>
+<p>We’ll transform the monthly data into quarterly data. The first step
+is to:</p>
+<ul>
+<li><strong>Assign each month to its respective quarter</strong>.</li>
+<li><strong>Create a <code>datetime</code> object</strong> representing
+the start of each quarter.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert month to quarter</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;quarter&#39;</span>] <span class="op">=</span> df[<span class="st">&#39;month&#39;</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: (x <span class="op">-</span> <span class="dv">1</span>) <span class="op">//</span> <span class="dv">3</span> <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a &#39;quarter_start&#39; datetime column for the start of each quarter</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;quarter_start&#39;</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">&#39;year&#39;</span>].astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">&#39;-Q&#39;</span> <span class="op">+</span> df[<span class="st">&#39;quarter&#39;</span>].astype(<span class="bu">str</span>)) <span class="op">+</span> pd.offsets.QuarterBegin(startingMonth<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Group the data by the &#39;quarter_start&#39; and sum the counts for each quarter</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>df_quarterly <span class="op">=</span> df.groupby(<span class="st">&#39;quarter_start&#39;</span>, as_index<span class="op">=</span><span class="va">False</span>).agg({<span class="st">&#39;count&#39;</span>: <span class="st">&#39;sum&#39;</span>})</span></code></pre></div>
+<h3 id="explanation">Explanation:</h3>
+<ul>
+<li><strong>Convert Months to Quarters</strong>: We calculate the
+quarter for each month by using the formula
+<code>(month - 1) // 3 + 1</code>.</li>
+<li><strong>Create Datetime Objects</strong>: Using
+<code>pd.to_datetime()</code> combined with
+<code>pd.offsets.QuarterBegin()</code>, we generate a
+<code>datetime</code> value representing the first day of each quarter.
+This ensures that the x-axis in our plot will reflect actual time.</li>
+<li><strong>Aggregate by Quarter</strong>: We group by the
+<code>quarter_start</code> column and sum the counts, resulting in a
+DataFrame where each row represents a quarter.</li>
+</ul>
+<hr />
+<h4 id="step-3-visualize-the-data-using-a-line-plot">Step 3: Visualize
+the Data Using a Line Plot</h4>
+<p>Now that we have quarterly data with proper <code>datetime</code>
+objects, we can create a line plot with the x-axis showing dates and the
+y-axis representing the quarterly counts.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a line plot with datetime on the x-axis</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the data with datetime as the x-axis</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>plt.plot(df_quarterly[<span class="st">&#39;quarter_start&#39;</span>], df_quarterly[<span class="st">&#39;count&#39;</span>], marker<span class="op">=</span><span class="st">&#39;o&#39;</span>, label<span class="op">=</span><span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding labels and title</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Date (Quarter Start)&#39;</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Counts by Quarter&#39;</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Format the x-axis to show years and quarters properly</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.gcf().autofmt_xdate()  <span class="co"># Auto formats the date labels for better readability</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="explanation-1">Explanation:</h3>
+<ul>
+<li><strong>Plotting the Line</strong>: We use <code>plt.plot()</code>
+to create the line plot, setting the <code>quarter_start</code>
+(datetime) on the x-axis and the <code>count</code> on the y-axis.</li>
+<li><strong>Datetime Formatting</strong>:
+<code>plt.gcf().autofmt_xdate()</code> ensures that the date labels are
+formatted correctly, making them easier to read (e.g., rotating them if
+necessary).</li>
+<li><strong>Marker</strong>: A circular marker (<code>marker='o'</code>)
+is used to emphasize each data point on the line.</li>
+</ul>
+<hr />
+<h4 id="final-result">Final Result</h4>
+<p>After running the code, you’ll get a plot where:</p>
+<ul>
+<li>The x-axis represents the starting dates of each quarter (in
+<code>datetime</code> format).</li>
+<li>The y-axis shows the total counts for each quarter.</li>
+<li>A line connects the quarterly data points, giving a clear visual of
+the trend over time.</li>
+</ul>
+<h3 id="summary">Summary:</h3>
+<p>In this tutorial, we:</p>
+<ol type="1">
+<li>Started with a dataset containing monthly data.</li>
+<li>Converted the months to quarters and created <code>datetime</code>
+objects for the start of each quarter.</li>
+<li>Visualized the quarterly data with a line plot, using proper
+datetime formatting for the x-axis.</li>
+</ol>
+<p>This approach provides an intuitive way to aggregate and analyze time
+series data by quarter, with the added benefit of accurate time
+representation on the x-axis.</p>
+    
+</body>
+</html>

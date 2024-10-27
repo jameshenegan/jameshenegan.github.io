@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3 id="confusion-matrix">1. <strong>Confusion Matrix</strong></h3>
+<p>The <strong>Confusion Matrix</strong> is a table that shows the
+performance of a classification model by comparing the predicted classes
+to the actual classes. It works particularly well for binary
+classification but can be extended to multiclass problems.</p>
+<h4 id="structure-of-the-confusion-matrix">Structure of the Confusion
+Matrix:</h4>
+<p>For binary classification, a typical confusion matrix looks like
+this:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Predicted Positive</th>
+<th>Predicted Negative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Actual Positive</strong></td>
+<td>True Positive (TP)</td>
+<td>False Negative (FN)</td>
+</tr>
+<tr>
+<td><strong>Actual Negative</strong></td>
+<td>False Positive (FP)</td>
+<td>True Negative (TN)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>True Positive (TP)</strong>: Correctly predicted
+positive.</li>
+<li><strong>False Negative (FN)</strong>: Model predicted negative, but
+it should have been positive.</li>
+<li><strong>False Positive (FP)</strong>: Model predicted positive, but
+it should have been negative.</li>
+<li><strong>True Negative (TN)</strong>: Correctly predicted
+negative.</li>
+</ul>
+<hr />
+<h3 id="precision">2. <strong>Precision</strong></h3>
+<p><strong>Precision</strong> tells you how many of the predicted
+positive cases were actually positive. It’s useful when the cost of a
+false positive is high.</p>
+<p>[ Precision = TP / (TP + FP) ]</p>
+<p>This measures the accuracy of positive predictions. A high precision
+value means few false positives.</p>
+<hr />
+<h3 id="recall-sensitivity-or-true-positive-rate">3. <strong>Recall
+(Sensitivity or True Positive Rate)</strong></h3>
+<p><strong>Recall</strong> measures how many of the actual positive
+cases were correctly identified by the model. This is important when
+it’s critical to identify all positive cases (e.g., in detecting
+diseases).</p>
+<p>[ Recall = TP / (TP + FN) ]</p>
+<p>A high recall value indicates that the model is good at detecting
+positive cases, with few false negatives.</p>
+<hr />
+<h3 id="f1-score">4. <strong>F1-Score</strong></h3>
+<p>The <strong>F1-Score</strong> combines <strong>Precision</strong> and
+<strong>Recall</strong> into a single metric, taking the harmonic mean
+of the two. It’s useful when you need a balance between Precision and
+Recall.</p>
+<p>[ F1-Score = 2 _ (Precision _ Recall) / (Precision + Recall) ]</p>
+<p>This metric ranges from 0 to 1, with 1 being perfect precision and
+recall.</p>
+<hr />
+<h3 id="accuracy">5. <strong>Accuracy</strong></h3>
+<p><strong>Accuracy</strong> is the ratio of correct predictions (both
+positive and negative) to the total number of cases. It’s simple but can
+be misleading when the classes are imbalanced.</p>
+<p>[ Accuracy = (TP + TN) / (TP + TN + FP + FN) ]</p>
+<p>High accuracy is often seen in balanced datasets but might not
+reflect true performance in highly imbalanced datasets.</p>
+<hr />
+<h3 id="specificity-true-negative-rate">6. <strong>Specificity (True
+Negative Rate)</strong></h3>
+<p><strong>Specificity</strong> measures how well the model identifies
+negative cases. It’s especially important when false positives are
+costly.</p>
+<p>[ Specificity = TN / (TN + FP) ]</p>
+<p>It tells you the proportion of actual negatives that were correctly
+identified as negatives.</p>
+<hr />
+<h3 id="roc-receiver-operating-characteristic-curve">7. <strong>ROC
+(Receiver Operating Characteristic) Curve</strong></h3>
+<p>The <strong>ROC Curve</strong> is a plot that shows the trade-off
+between the <strong>True Positive Rate (Recall)</strong> and the
+<strong>False Positive Rate</strong> for different classification
+thresholds. This helps visualize the performance of a model over a range
+of thresholds.</p>
+<ul>
+<li><strong>True Positive Rate (Recall)</strong> = TP / (TP + FN)</li>
+<li><strong>False Positive Rate</strong> = FP / (FP + TN)</li>
+</ul>
+<p>The <strong>Area Under the Curve (AUC)</strong> of the ROC is a
+single number that represents the model’s overall ability to distinguish
+between classes. A perfect model has an AUC of 1, and a random model has
+an AUC of 0.5.</p>
+<hr />
+<h3 id="precision-recall-curve">8. <strong>Precision-Recall
+Curve</strong></h3>
+<p>Another useful curve is the <strong>Precision-Recall Curve</strong>,
+especially when dealing with imbalanced datasets. It plots
+<strong>Precision</strong> against <strong>Recall</strong> at different
+thresholds.</p>
+<ul>
+<li>A high area under the Precision-Recall curve (AUC-PR) means both
+high precision and high recall, which is especially useful when the
+positive class is rare.</li>
+</ul>
+<hr />
+<h3 id="summary-of-metrics">Summary of Metrics:</h3>
+<ol type="1">
+<li><strong>Confusion Matrix</strong>: Provides a full picture of model
+predictions in terms of true positives, true negatives, false positives,
+and false negatives.</li>
+<li><strong>Precision</strong>: Focuses on how many of the predicted
+positives are actually positive. Use when false positives are
+costly.</li>
+<li><strong>Recall</strong>: Measures how many of the actual positive
+cases the model correctly identifies. Use when false negatives are
+costly.</li>
+<li><strong>F1-Score</strong>: Combines both precision and recall into a
+balanced metric.</li>
+<li><strong>Accuracy</strong>: Simple but can be misleading if your data
+is imbalanced.</li>
+<li><strong>Specificity</strong>: Complements recall by focusing on the
+correct identification of negative cases.</li>
+<li><strong>ROC Curve</strong>: Visualizes the trade-off between true
+positive and false positive rates.</li>
+<li><strong>Precision-Recall Curve</strong>: Focuses on precision and
+recall, especially helpful when class imbalance is an issue.</li>
+</ol>
+<p>These tools and metrics help you evaluate the performance of
+classification models, allowing you to make informed decisions on which
+models to use based on the type of errors that are most important in
+your specific application.</p>
+    
+</body>
+</html>

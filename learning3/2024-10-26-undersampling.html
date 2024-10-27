@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3
+id="tutorial-implementing-randomundersampler-from-scratch-in-python"><strong>Tutorial:
+Implementing RandomUnderSampler from Scratch in Python</strong></h3>
+<p>In this tutorial, we will walk through the process of implementing a
+<strong>Random Under-sampling</strong> technique from scratch, without
+using external libraries like <code>imblearn</code>. Random
+undersampling is a common technique used to balance datasets where there
+is a significant imbalance between classes.</p>
+<p>We will:</p>
+<ol type="1">
+<li>Build a simple function to randomly undersample the majority
+class.</li>
+<li>Apply it to a synthetic dataset and evaluate its effects.</li>
+<li>Discuss how undersampling can help deal with class imbalance.</li>
+</ol>
+<h3 id="what-is-random-under-sampling"><strong>What is Random
+Under-sampling?</strong></h3>
+<p>Random undersampling is a technique used to reduce the number of
+samples in the majority class in order to balance it with the minority
+class. This can be helpful when you’re dealing with imbalanced datasets,
+where one class significantly outnumbers another. In such cases, models
+can become biased toward predicting the majority class, leading to poor
+performance on the minority class.</p>
+<h3 id="step-1-importing-required-libraries"><strong>Step 1: Importing
+Required Libraries</strong></h3>
+<p>We will start by importing some common libraries for data handling
+and generating a dataset:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_classification</span></code></pre></div>
+<h3 id="step-2-simulating-an-imbalanced-dataset"><strong>Step 2:
+Simulating an Imbalanced Dataset</strong></h3>
+<p>To demonstrate random undersampling, we’ll first generate an
+imbalanced dataset using <code>make_classification</code> from
+<code>scikit-learn</code>. This will simulate a situation where 96% of
+the samples belong to one class and only 4% belong to the other:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate an imbalanced dataset</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_classification(n_samples<span class="op">=</span><span class="dv">1000</span>, n_features<span class="op">=</span><span class="dv">10</span>, n_informative<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                           n_classes<span class="op">=</span><span class="dv">2</span>, weights<span class="op">=</span>[<span class="fl">0.96</span>, <span class="fl">0.04</span>], flip_y<span class="op">=</span><span class="dv">0</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the data into a DataFrame for easier manipulation</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="ss">f&#39;feature_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">&#39;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">11</span>)])</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&#39;target&#39;</span>] <span class="op">=</span> y</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check original class distribution</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Original class distribution:&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data[<span class="st">&#39;target&#39;</span>].value_counts())</span></code></pre></div>
+<p>This code will generate 1,000 samples with 10 features and a highly
+imbalanced class distribution: 96% for class 0 (majority) and 4% for
+class 1 (minority).</p>
+<h3 id="step-3-writing-the-random_undersampler-function"><strong>Step 3:
+Writing the <code>random_undersampler</code> Function</strong></h3>
+<p>Now, we’ll create our custom function to randomly undersample the
+majority class. The idea is to reduce the number of majority class
+samples to match the number of minority class samples.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> random_undersampler(X, y, random_state<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Perform random undersampling on the majority class to balance the dataset.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    X : DataFrame or array-like, shape (n_samples, n_features)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">        Feature matrix.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    y : array-like, shape (n_samples,)</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">        Target vector (labels).</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    random_state : int, optional (default=None)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">        Seed for random number generator.</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">    X_resampled, y_resampled : Resampled feature matrix and target vector.</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert to DataFrame for easier manipulation</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> pd.DataFrame(X) <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(X, pd.DataFrame) <span class="cf">else</span> X</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pd.Series(y) <span class="cf">if</span> <span class="kw">not</span> <span class="bu">isinstance</span>(y, pd.Series) <span class="cf">else</span> y</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Identify minority and majority classes</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    minority_class <span class="op">=</span> y.value_counts().idxmin()</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    majority_class <span class="op">=</span> y.value_counts().idxmax()</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get indices of minority and majority class</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    minority_indices <span class="op">=</span> y[y <span class="op">==</span> minority_class].index</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    majority_indices <span class="op">=</span> y[y <span class="op">==</span> majority_class].index</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Randomly sample from majority class to match minority class size</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    np.random.seed(random_state)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    undersampled_majority_indices <span class="op">=</span> np.random.choice(majority_indices, size<span class="op">=</span><span class="bu">len</span>(minority_indices), replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combine minority class indices with undersampled majority class indices</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    resampled_indices <span class="op">=</span> np.concatenate([minority_indices, undersampled_majority_indices])</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Resample the feature matrix and target vector</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    X_resampled <span class="op">=</span> X.loc[resampled_indices].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    y_resampled <span class="op">=</span> y.loc[resampled_indices].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X_resampled, y_resampled</span></code></pre></div>
+<h3 id="explanation-of-the-function"><strong>Explanation of the
+Function:</strong></h3>
+<ol type="1">
+<li><strong>Separating Classes</strong>: We first separate the dataset
+into the majority and minority classes based on the target variable
+<code>y</code>.</li>
+<li><strong>Random Sampling</strong>: We then randomly select a subset
+of samples from the majority class so that its size matches the number
+of samples in the minority class.</li>
+<li><strong>Combining Data</strong>: Finally, we combine the minority
+class samples and the undersampled majority class samples to create a
+new, balanced dataset.</li>
+</ol>
+<h3 id="step-4-applying-randomundersampler"><strong>Step 4: Applying
+RandomUnderSampler</strong></h3>
+<p>Now, let’s apply our custom <code>random_undersampler</code> function
+to the imbalanced dataset we generated earlier.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the custom undersampling function</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>X_resampled, y_resampled <span class="op">=</span> random_undersampler(data.drop(<span class="st">&#39;target&#39;</span>, axis<span class="op">=</span><span class="dv">1</span>), data[<span class="st">&#39;target&#39;</span>], random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the new class distribution after undersampling</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Resampled class distribution:&quot;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(y_resampled.value_counts())</span></code></pre></div>
+<h3 id="expected-output"><strong>Expected Output:</strong></h3>
+<p>Before undersampling:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Original</span> class distribution:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">0</span>    960</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">1</span>     40</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Name:</span> target, dtype: int64</span></code></pre></div>
+<p>After applying random undersampling:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Resampled</span> class distribution:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">0</span>    40</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">1</span>    40</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Name:</span> target, dtype: int64</span></code></pre></div>
+<p>As you can see, after random undersampling, the majority class has
+been reduced to match the size of the minority class (40 samples each),
+resulting in a balanced dataset.</p>
+<h3 id="step-5-analyzing-the-effects-of-undersampling"><strong>Step 5:
+Analyzing the Effects of Undersampling</strong></h3>
+<p>The key benefit of undersampling is that it helps balance your
+dataset, which can improve model performance, especially on the minority
+class. However, the downside is that you discard a significant portion
+of the majority class, potentially losing important information.</p>
+<p>Let’s explore how undersampling affects the dataset visually using
+<code>matplotlib</code>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the class distribution before and after undersampling</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Before undersampling</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].hist(data[<span class="st">&#39;target&#39;</span>], bins<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, edgecolor<span class="op">=</span><span class="st">&#39;black&#39;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].set_title(<span class="st">&#39;Before Undersampling&#39;</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].set_xlabel(<span class="st">&#39;Class&#39;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].set_ylabel(<span class="st">&#39;Frequency&#39;</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># After undersampling</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].hist(y_resampled, bins<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">&#39;green&#39;</span>, edgecolor<span class="op">=</span><span class="st">&#39;black&#39;</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].set_title(<span class="st">&#39;After Undersampling&#39;</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].set_xlabel(<span class="st">&#39;Class&#39;</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].set_ylabel(<span class="st">&#39;Frequency&#39;</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="step-6-summary"><strong>Step 6: Summary</strong></h3>
+<p>In this tutorial, we implemented a <strong>Random
+Under-sampling</strong> technique from scratch to balance an imbalanced
+dataset. Here’s a quick summary:</p>
+<ol type="1">
+<li><strong>Undersampling</strong> helps balance a dataset by reducing
+the size of the majority class.</li>
+<li>We implemented this by randomly selecting a subset of samples from
+the majority class.</li>
+<li><strong>Random Undersampling</strong> can improve model performance
+on the minority class but may lead to information loss from the majority
+class.</li>
+</ol>
+<h3 id="considerations"><strong>Considerations:</strong></h3>
+<ul>
+<li><strong>When to use</strong>: Use undersampling when you have a
+large majority class and don’t mind potentially losing some
+information.</li>
+<li><strong>Alternatives</strong>: If information loss is a concern,
+consider <strong>oversampling</strong> techniques like SMOTE or
+adjusting model class weights to penalize the majority class without
+discarding data.</li>
+</ul>
+<p>This is a fundamental approach to balancing data. For more
+sophisticated methods, you might explore other sampling techniques like
+SMOTE or combining undersampling with ensemble methods such as random
+forests.</p>
+<p>Let me know if you have any questions or if you’d like to extend this
+tutorial further!</p>
+    
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="sql-window-functions-and-the-partition-by-clause"><strong>SQL
+Window Functions and the <code>PARTITION BY</code> Clause</strong></h2>
+<h3 id="what-are-window-functions"><strong>1. What Are Window
+Functions?</strong></h3>
+<p>Window functions allow you to perform calculations across a set of
+rows that are related to the current row. Unlike aggregate functions
+(e.g., <code>SUM()</code>, <code>AVG()</code>), window functions do not
+reduce the number of rows in the result set. Instead, they add
+additional calculations to the existing rows.</p>
+<h3 id="the-over-clause"><strong>2. The <code>OVER()</code>
+Clause</strong></h3>
+<p>The <code>OVER()</code> clause is a critical component of window
+functions. It defines the “window” or subset of rows used for the
+calculation. The <code>OVER()</code> clause can consist of:</p>
+<ul>
+<li><code>PARTITION BY</code> (optional) — Divides the result set into
+partitions, and the window function is applied to each partition
+separately.</li>
+<li><code>ORDER BY</code> (optional) — Specifies the order of rows in
+each partition.</li>
+<li><code>ROWS</code> or <code>RANGE</code> (optional) — Defines the
+frame of rows to consider for calculations, often used for running
+totals or moving averages.</li>
+</ul>
+<h3 id="common-sql-window-functions"><strong>3. Common SQL Window
+Functions</strong></h3>
+<p>Some of the most common window functions include:</p>
+<ul>
+<li><strong>Ranking Functions:</strong> <code>ROW_NUMBER()</code>,
+<code>RANK()</code>, <code>DENSE_RANK()</code>,
+<code>NTILE()</code></li>
+<li><strong>Aggregate Functions:</strong> <code>SUM()</code>,
+<code>AVG()</code>, <code>COUNT()</code>, <code>MIN()</code>,
+<code>MAX()</code></li>
+<li><strong>Value Functions:</strong> <code>LEAD()</code>,
+<code>LAG()</code>, <code>FIRST_VALUE()</code>,
+<code>LAST_VALUE()</code></li>
+</ul>
+<hr />
+<h2 id="key-window-functions-explained"><strong>4. Key Window Functions
+Explained</strong></h2>
+<h3 id="row_number"><strong>4.1 ROW_NUMBER()</strong></h3>
+<p>The <code>ROW_NUMBER()</code> function assigns a unique sequential
+integer to rows within a partition of the result set.</p>
+<p><strong>Syntax:</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> ([<span class="kw">PARTITION</span> <span class="kw">BY</span> column_name] <span class="kw">ORDER</span> <span class="kw">BY</span> column_name)</span></code></pre></div>
+<p><strong>Example:</strong> You want to assign a row number to each
+employee, starting at 1 for each department:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> row_num</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>Here:</p>
+<ul>
+<li><code>PARTITION BY department_id</code> divides the data by
+department.</li>
+<li><code>ORDER BY salary DESC</code> orders the rows in each partition
+by salary in descending order.</li>
+<li>The <code>ROW_NUMBER()</code> function assigns a unique number to
+each row within the department partition.</li>
+</ul>
+<h3 id="rank"><strong>4.2 RANK()</strong></h3>
+<p><code>RANK()</code> assigns a rank to rows in each partition. If
+there are ties, the same rank is assigned, but the following rank will
+skip numbers.</p>
+<p><strong>Syntax:</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">RANK</span>() <span class="kw">OVER</span> ([<span class="kw">PARTITION</span> <span class="kw">BY</span> column_name] <span class="kw">ORDER</span> <span class="kw">BY</span> column_name)</span></code></pre></div>
+<p><strong>Example:</strong> Rank employees by salary within their
+department:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> salary_rank</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>If two employees in the same department have the same salary, they
+will share the same rank, but the next employee will have a gap in the
+ranking.</p>
+<h3 id="dense_rank"><strong>4.3 DENSE_RANK()</strong></h3>
+<p><code>DENSE_RANK()</code> is similar to <code>RANK()</code>, but it
+does not leave gaps in the ranking if there are ties.</p>
+<p><strong>Syntax:</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DENSE_RANK</span>() <span class="kw">OVER</span> ([<span class="kw">PARTITION</span> <span class="kw">BY</span> column_name] <span class="kw">ORDER</span> <span class="kw">BY</span> column_name)</span></code></pre></div>
+<p><strong>Example:</strong> Rank employees without skipping numbers for
+ties:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="fu">dense_rank</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>If two employees have the same salary, they will share the same rank,
+but the next employee will have the next consecutive rank.</p>
+<h3 id="sum"><strong>4.4 SUM()</strong></h3>
+<p>The <code>SUM()</code> function can also be used as a window
+function. It calculates the running or cumulative total for each row
+within a partition.</p>
+<p><strong>Syntax:</strong></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">SUM</span>(column_name) <span class="kw">OVER</span> ([<span class="kw">PARTITION</span> <span class="kw">BY</span> column_name] [<span class="kw">ORDER</span> <span class="kw">BY</span> column_name] [<span class="kw">ROWS</span> <span class="kw">or</span> <span class="kw">RANGE</span>])</span></code></pre></div>
+<p><strong>Example:</strong> You want to calculate the cumulative total
+salary for employees within each department:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> employee_id) <span class="kw">AS</span> cumulative_salary</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<ul>
+<li>The <code>SUM()</code> function calculates the cumulative salary for
+each department.</li>
+<li><code>ORDER BY employee_id</code> ensures the cumulative sum is
+calculated based on the order of employee IDs.</li>
+</ul>
+<h3 id="lead-and-lag"><strong>4.5 LEAD() and LAG()</strong></h3>
+<p>These functions allow you to access data from subsequent or preceding
+rows without using a self-join.</p>
+<ul>
+<li><code>LEAD()</code>: Accesses data from the next row.</li>
+<li><code>LAG()</code>: Accesses data from the previous row.</li>
+</ul>
+<p><strong>Syntax:</strong></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">LEAD</span>(column_name, offset, default_value) <span class="kw">OVER</span> ([<span class="kw">PARTITION</span> <span class="kw">BY</span> column_name] [<span class="kw">ORDER</span> <span class="kw">BY</span> column_name])</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">LAG</span>(column_name, offset, default_value) <span class="kw">OVER</span> ([<span class="kw">PARTITION</span> <span class="kw">BY</span> column_name] [<span class="kw">ORDER</span> <span class="kw">BY</span> column_name])</span></code></pre></div>
+<p><strong>Example:</strong> You want to compare an employee’s salary
+with the previous employee’s salary in the same department:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">LAG</span>(salary, <span class="dv">1</span>, <span class="dv">0</span>) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> employee_id) <span class="kw">AS</span> previous_salary</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<ul>
+<li><code>LAG(salary, 1, 0)</code> retrieves the salary from the
+previous row, ordered by <code>employee_id</code> within each
+department.</li>
+</ul>
+<hr />
+<h2 id="the-partition-by-clause"><strong>5. The
+<code>PARTITION BY</code> Clause</strong></h2>
+<p>The <code>PARTITION BY</code> clause divides the result set into
+partitions or groups before applying the window function. It works
+similarly to <code>GROUP BY</code>, but it doesn’t reduce the number of
+rows in the result set.</p>
+<h3 id="how-partition-by-works"><strong>5.1 How
+<code>PARTITION BY</code> Works:</strong></h3>
+<ul>
+<li><strong>Without <code>PARTITION BY</code>:</strong> The window
+function considers all rows in the table as a single partition.</li>
+<li><strong>With <code>PARTITION BY</code>:</strong> The window function
+is applied separately to each partition.</li>
+</ul>
+<h3 id="examples-of-partition-by-in-use"><strong>5.2 Examples of
+<code>PARTITION BY</code> in Use</strong></h3>
+<h4 id="ranking-employees-within-departments"><strong>5.2.1 Ranking
+Employees within Departments</strong></h4>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="fu">rank</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>This assigns a unique rank to each employee within their department,
+ordered by salary.</p>
+<h4 id="cumulative-total-by-department"><strong>5.2.2 Cumulative Total
+by Department</strong></h4>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> employee_id) <span class="kw">AS</span> cumulative_salary</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>This calculates the cumulative salary within each department.</p>
+<h4 id="average-salary-by-department"><strong>5.2.3 Average Salary by
+Department</strong></h4>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AVG</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id) <span class="kw">AS</span> average_salary</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>This computes the average salary for each employee’s department.</p>
+<hr />
+<h2 id="frame-clauses-rows-and-range"><strong>6. Frame Clauses: ROWS and
+RANGE</strong></h2>
+<p>The <code>ROWS</code> and <code>RANGE</code> clauses allow further
+control over which rows are included in the window for calculation. They
+are especially useful for calculating moving averages or running
+totals.</p>
+<h3 id="rows-example-moving-average"><strong>6.1 ROWS Example (Moving
+Average)</strong></h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    employee_id,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    department_id,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    salary,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">AVG</span>(salary) <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> department_id <span class="kw">ORDER</span> <span class="kw">BY</span> employee_id <span class="kw">ROWS</span> <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">PRECEDING</span> <span class="kw">AND</span> <span class="dv">1</span> <span class="kw">FOLLOWING</span>) <span class="kw">AS</span> moving_avg</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employees;</span></code></pre></div>
+<p>This calculates the moving average salary, looking at one row before
+and after the current row within the department.</p>
+<hr />
+<h2 id="differences-between-partition-by-and-group-by"><strong>7.
+Differences Between <code>PARTITION BY</code> and
+<code>GROUP BY</code></strong></h2>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 41%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Aspect</strong></th>
+<th><strong>PARTITION BY</strong></th>
+<th><strong>GROUP BY</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Row Count</strong></td>
+<td>Retains all rows.</td>
+<td>Reduces the result set to one row per group.</td>
+</tr>
+<tr>
+<td><strong>Functionality</strong></td>
+<td>Used with window functions to perform row-level analysis.</td>
+<td>Used with aggregate functions to collapse rows into groups.</td>
+</tr>
+<tr>
+<td><strong>Aggregate Support</strong></td>
+<td>Supports windowed aggregates without reducing rows.</td>
+<td>Only supports aggregate calculations for groups.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="conclusion"><strong>8. Conclusion</strong></h2>
+<p>Window functions with the <code>PARTITION BY</code> clause are
+powerful tools for performing row-wise calculations over partitions of
+data. Unlike traditional aggregate functions, window functions preserve
+the row structure while allowing you to calculate values like running
+totals, rankings, and moving averages within partitions. The flexibility
+and power of window functions make them indispensable for advanced SQL
+analytics.</p>
+<p>By mastering window functions, you can perform complex data analysis,
+such as:</p>
+<ul>
+<li>Ranking and percentiles</li>
+<li>Cumulative sums and moving averages</li>
+<li>Comparing current rows with previous or next rows</li>
+</ul>
+<p>With these tools in hand, you’re ready to take on sophisticated SQL
+queries and build robust reports.</p>
+    
+</body>
+</html>

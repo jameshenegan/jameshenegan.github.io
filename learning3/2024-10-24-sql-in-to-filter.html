@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="tutorial-sql-filtering-with-in-vs-join"><strong>Tutorial: SQL
+Filtering with <code>IN</code> vs <code>JOIN</code></strong></h2>
+<p>In SQL, you often need to filter data based on results from other
+tables. This can be done using either the <code>IN</code> clause or a
+<code>JOIN</code>. Both approaches are valid, but they have differences
+in performance, readability, and use cases. This tutorial will walk you
+through how to use both techniques and when to choose one over the
+other.</p>
+<hr />
+<h3 id="introduction-to-in-and-join"><strong>1. Introduction to
+<code>IN</code> and <code>JOIN</code></strong></h3>
+<ul>
+<li><strong><code>IN</code></strong>: Allows you to filter rows by
+checking if a value exists within a set of values or subquery results.
+It’s typically used for simple existence checks.</li>
+<li><strong><code>JOIN</code></strong>: Allows you to combine rows from
+two or more tables based on a related column. <code>JOIN</code> is more
+versatile since it lets you retrieve columns from both tables and
+perform more complex queries.</li>
+</ul>
+<hr />
+<h3 id="basic-usage-of-in-and-join"><strong>2. Basic Usage of
+<code>IN</code> and <code>JOIN</code></strong></h3>
+<h4 id="example-of-in-clause"><strong>Example of <code>IN</code>
+Clause</strong></h4>
+<p>Suppose you have two tables:</p>
+<ul>
+<li><strong>customers</strong>: Contains customer details.</li>
+<li><strong>orders</strong>: Contains order details, including a
+<code>customer_id</code> column that references customers.</li>
+</ul>
+<p>You want to retrieve orders for customers who are located in the
+USA.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Using IN to filter orders for customers from the USA</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte1 <span class="kw">AS</span> (</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> customer_id</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> customers</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> country <span class="op">=</span> <span class="st">&#39;USA&#39;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> order_id, customer_id, order_date</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> customer_id <span class="kw">IN</span> (<span class="kw">SELECT</span> customer_id <span class="kw">FROM</span> cte1);</span></code></pre></div>
+<h3 id="how-it-works"><strong>How it works</strong>:</h3>
+<ul>
+<li>The first part of the query (<code>cte1</code>) selects
+<code>customer_id</code>s of all customers from the USA.</li>
+<li>The main query uses the <code>IN</code> clause to filter
+<code>orders</code> by checking if the <code>customer_id</code> is in
+the result set returned by <code>cte1</code>.</li>
+</ul>
+<h4 id="example-of-join"><strong>Example of
+<code>JOIN</code></strong></h4>
+<p>You can achieve the same result using a <code>JOIN</code>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Using JOIN to retrieve orders for customers from the USA</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte1 <span class="kw">AS</span> (</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> customer_id</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> customers</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> country <span class="op">=</span> <span class="st">&#39;USA&#39;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> orders.order_id, orders.customer_id, orders.order_date</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> cte1 <span class="kw">ON</span> orders.customer_id <span class="op">=</span> cte1.customer_id;</span></code></pre></div>
+<h3 id="how-it-works-1"><strong>How it works</strong>:</h3>
+<ul>
+<li>The CTE (<code>cte1</code>) selects <code>customer_id</code>s from
+customers in the USA.</li>
+<li>The <code>INNER JOIN</code> matches those <code>customer_id</code>s
+from <code>orders</code>, filtering only those that belong to USA
+customers.</li>
+</ul>
+<hr />
+<h3 id="performance-considerations"><strong>3. Performance
+Considerations</strong></h3>
+<h4 id="when-to-use-in"><strong>3.1 When to Use
+<code>IN</code></strong></h4>
+<ul>
+<li><p><strong>Simplicity</strong>: When you only care about whether a
+value exists in another set (i.e., simple existence checks) and don’t
+need data from both tables.</p></li>
+<li><p><strong>Smaller Datasets</strong>: For smaller sets of data,
+<code>IN</code> works fine because the SQL optimizer can handle these
+queries efficiently.</p></li>
+<li><p><strong>Readable Code</strong>: If your query is simple and
+clarity is more important than speed, <code>IN</code> can be a cleaner
+solution.</p></li>
+</ul>
+<h4 id="when-to-use-join"><strong>3.2 When to Use
+<code>JOIN</code></strong></h4>
+<ul>
+<li><p><strong>Complex Queries</strong>: If you need to retrieve columns
+from both the main table and the related table, <code>JOIN</code> is
+better suited.</p></li>
+<li><p><strong>Larger Datasets</strong>: <code>JOIN</code>s tend to
+perform better on large datasets compared to <code>IN</code>. This is
+because <code>JOIN</code> is often optimized to work more efficiently by
+the SQL engine, especially when indexes are involved.</p></li>
+<li><p><strong>Flexibility</strong>: <code>JOIN</code> offers more
+flexibility. You can retrieve additional columns from the joined tables
+and even apply more complex filtering conditions.</p></li>
+</ul>
+<h4 id="practical-example-performance-comparison"><strong>3.3 Practical
+Example: Performance Comparison</strong></h4>
+<p>Consider a scenario with a large number of customers and orders. To
+compare the performance, you can use execution time analysis tools
+provided by your SQL engine (e.g., <code>EXPLAIN</code> in PostgreSQL or
+MySQL).</p>
+<p><strong>IN Approach</strong>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte1 <span class="kw">AS</span> (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> customer_id</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> customers</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> country <span class="op">=</span> <span class="st">&#39;USA&#39;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> order_id, customer_id, order_date</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> customer_id <span class="kw">IN</span> (<span class="kw">SELECT</span> customer_id <span class="kw">FROM</span> cte1);</span></code></pre></div>
+<p><strong>JOIN Approach</strong>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte1 <span class="kw">AS</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> customer_id</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> customers</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> country <span class="op">=</span> <span class="st">&#39;USA&#39;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> orders.order_id, orders.customer_id, orders.order_date</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> cte1 <span class="kw">ON</span> orders.customer_id <span class="op">=</span> cte1.customer_id;</span></code></pre></div>
+<h4 id="execution-analysis"><strong>Execution Analysis</strong>:</h4>
+<ul>
+<li>Run both queries and compare the execution times using your SQL
+engine’s execution plan tools.</li>
+<li><strong><code>JOIN</code></strong> might perform better with large
+datasets because SQL engines often optimize <code>JOIN</code>s more
+effectively than <code>IN</code> for larger sets of data.</li>
+</ul>
+<hr />
+<h3 id="handling-nulls-and-duplicates"><strong>4. Handling Nulls and
+Duplicates</strong></h3>
+<h4 id="handling-nulls-with-in"><strong>4.1 Handling Nulls with
+<code>IN</code></strong></h4>
+<p>If you use <code>IN</code> and the subquery returns
+<code>NULL</code>, the comparison might not work as expected. For
+instance:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> order_id</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> customer_id <span class="kw">IN</span> (<span class="kw">SELECT</span> customer_id <span class="kw">FROM</span> customers <span class="kw">WHERE</span> country <span class="kw">IS</span> <span class="kw">NULL</span>);</span></code></pre></div>
+<p>This will not match any rows because <code>NULL</code> is not equal
+to any value. To handle this, you can exclude <code>NULL</code> values
+explicitly in your subquery:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> order_id</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> customer_id <span class="kw">IN</span> (<span class="kw">SELECT</span> customer_id <span class="kw">FROM</span> customers <span class="kw">WHERE</span> country <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">AND</span> customer_id <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>);</span></code></pre></div>
+<h4 id="handling-duplicates-in-join"><strong>4.2 Handling Duplicates in
+<code>JOIN</code></strong></h4>
+<p><code>JOIN</code>s can introduce duplicates if there are multiple
+matching rows in the joined table. To prevent this, you can use
+<code>DISTINCT</code>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte1 <span class="kw">AS</span> (</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> <span class="kw">DISTINCT</span> customer_id</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> customers</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> country <span class="op">=</span> <span class="st">&#39;USA&#39;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> orders.order_id, orders.customer_id, orders.order_date</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> cte1 <span class="kw">ON</span> orders.customer_id <span class="op">=</span> cte1.customer_id;</span></code></pre></div>
+<hr />
+<h3 id="advanced-scenarios-left-join-vs-in"><strong>5. Advanced
+Scenarios: LEFT JOIN vs IN</strong></h3>
+<p>In some cases, you might want to include rows from one table even if
+there is no match in the other table. In this case, a
+<code>LEFT JOIN</code> is more appropriate than an <code>IN</code>
+clause. The <code>LEFT JOIN</code> will return all rows from the left
+table, even if there is no corresponding match in the right table.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> cte1 <span class="kw">AS</span> (</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> customer_id</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> customers</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">WHERE</span> country <span class="op">=</span> <span class="st">&#39;USA&#39;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> orders.order_id, orders.customer_id, orders.order_date</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> orders</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> cte1 <span class="kw">ON</span> orders.customer_id <span class="op">=</span> cte1.customer_id;</span></code></pre></div>
+<p>This query will return all orders, but those with customers outside
+the USA will have <code>NULL</code> in the columns from
+<code>cte1</code>.</p>
+<hr />
+<h3 id="summary-best-practices-for-in-vs-join"><strong>6. Summary: Best
+Practices for <code>IN</code> vs <code>JOIN</code></strong></h3>
+<ul>
+<li><p><strong>Use <code>IN</code></strong>:</p>
+<ul>
+<li>When you need a simple existence check.</li>
+<li>When working with small datasets.</li>
+<li>When readability is more important than performance.</li>
+</ul></li>
+<li><p><strong>Use <code>JOIN</code></strong>:</p>
+<ul>
+<li>When working with large datasets for better performance.</li>
+<li>When you need to retrieve additional columns from the joined
+table.</li>
+<li>When working with more complex queries or relationships.</li>
+<li>When optimizing for performance and scalability.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="conclusion"><strong>7. Conclusion</strong></h3>
+<p>Both <code>IN</code> and <code>JOIN</code> are powerful tools for
+filtering data in SQL, and choosing between them depends on the specific
+context of your query. <code>IN</code> is simpler and can be more
+readable for basic existence checks, while <code>JOIN</code> provides
+greater flexibility and tends to perform better on larger datasets.</p>
+<p>The key takeaway is that <strong>performance</strong> and
+<strong>clarity</strong> are the two main factors to consider:</p>
+<ul>
+<li>For <strong>small datasets</strong> or <strong>simple
+queries</strong>, <code>IN</code> is often sufficient.</li>
+<li>For <strong>large datasets</strong> or <strong>complex
+queries</strong>, <code>JOIN</code> is likely to be the better
+option.</li>
+</ul>
+<p>As always, testing both methods with your actual data and using query
+optimization tools is the best way to make an informed decision for your
+specific use case.</p>
+<hr />
+<h3 id="practice-exercise"><strong>8. Practice Exercise</strong></h3>
+<p>Try writing your own queries using <code>IN</code> and
+<code>JOIN</code> with different tables in your database. Measure
+performance differences using the <code>EXPLAIN</code> command in your
+SQL environment. Experiment with filtering, selecting multiple columns,
+and handling null values or duplicates.</p>
+<p>By practicing with both approaches, you’ll get a better sense of when
+to use each and how to structure more efficient queries!</p>
+    
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3 id="sql-case-statement-a-detailed-tutorial">SQL <code>CASE</code>
+Statement: A Detailed Tutorial</h3>
+<p>The SQL <code>CASE</code> statement is a versatile tool that allows
+you to perform conditional logic in your SQL queries. It acts much like
+an <code>IF-THEN-ELSE</code> statement in other programming languages,
+enabling you to return specific values based on conditions.</p>
+<p>Here’s a step-by-step guide on how to use the <code>CASE</code>
+statement in SQL.</p>
+<hr />
+<h3 id="table-of-contents">Table of Contents</h3>
+<ol type="1">
+<li><strong>Basic Syntax of the SQL <code>CASE</code>
+Statement</strong></li>
+<li><strong>Using <code>CASE</code> in a <code>SELECT</code>
+Statement</strong></li>
+<li><strong>Using <code>CASE</code> in
+<code>ORDER BY</code></strong></li>
+<li><strong>Using <code>CASE</code> in <code>WHERE</code>
+Clauses</strong></li>
+<li><strong>Nested <code>CASE</code> Statements</strong></li>
+<li><strong>Using <code>CASE</code> with Aggregation
+Functions</strong></li>
+<li><strong>Common Use Cases</strong></li>
+<li><strong>Tips for Using the <code>CASE</code> Statement</strong></li>
+</ol>
+<hr />
+<h3 id="basic-syntax-of-the-sql-case-statement">1. Basic Syntax of the
+SQL <code>CASE</code> Statement</h3>
+<p>The basic syntax for the <code>CASE</code> statement in SQL is:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">CASE</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">WHEN</span> condition1 <span class="cf">THEN</span> result1</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">WHEN</span> condition2 <span class="cf">THEN</span> result2</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">..</span>.</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">ELSE</span> default_result</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">END</span></span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><code>WHEN condition THEN result</code>: If the condition is true,
+the corresponding result is returned.</li>
+<li><code>ELSE default_result</code>: If none of the conditions are met,
+the <code>ELSE</code> value is returned. This is optional, and if
+omitted, <code>NULL</code> is returned if no conditions are true.</li>
+<li><code>END</code>: Marks the end of the <code>CASE</code>
+statement.</li>
+</ul>
+<h3 id="using-case-in-a-select-statement">2. Using <code>CASE</code> in
+a <code>SELECT</code> Statement</h3>
+<p>A common use case for the <code>CASE</code> statement is inside a
+<code>SELECT</code> query, where you can conditionally modify the
+output.</p>
+<h4 id="example-1-categorizing-data">Example 1: Categorizing Data</h4>
+<p>Let’s say you have a <code>Products</code> table and want to
+categorize products based on their <code>price</code>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> product_name, price,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="op">&lt;</span> <span class="dv">50</span> <span class="cf">THEN</span> <span class="st">&#39;Cheap&#39;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="kw">BETWEEN</span> <span class="dv">50</span> <span class="kw">AND</span> <span class="dv">150</span> <span class="cf">THEN</span> <span class="st">&#39;Moderate&#39;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">&#39;Expensive&#39;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> price_category</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Products;</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li>If <code>price</code> is less than 50, it will return ‘Cheap’.</li>
+<li>If <code>price</code> is between 50 and 150, it will return
+‘Moderate’.</li>
+<li>For prices greater than 150, it will return ‘Expensive’.</li>
+</ul>
+<h4 id="example-2-conditional-string-manipulation">Example 2:
+Conditional String Manipulation</h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> first_name, last_name,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> gender <span class="op">=</span> <span class="st">&#39;M&#39;</span> <span class="cf">THEN</span> <span class="st">&#39;Mr. &#39;</span> <span class="op">||</span> first_name</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> gender <span class="op">=</span> <span class="st">&#39;F&#39;</span> <span class="cf">THEN</span> <span class="st">&#39;Ms. &#39;</span> <span class="op">||</span> first_name</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> first_name</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> formal_name</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Employees;</span></code></pre></div>
+<p>Here, the <code>CASE</code> statement appends “Mr.” for male
+employees and “Ms.” for female employees. For others, it leaves the name
+unchanged.</p>
+<h3 id="using-case-in-order-by">3. Using <code>CASE</code> in
+<code>ORDER BY</code></h3>
+<p>The <code>CASE</code> statement can also be used in the
+<code>ORDER BY</code> clause to sort results conditionally.</p>
+<h4 id="example-1-conditional-sorting">Example 1: Conditional
+Sorting</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> product_name, <span class="kw">category</span>, price</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Products</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> <span class="kw">category</span> <span class="op">=</span> <span class="st">&#39;Electronics&#39;</span> <span class="cf">THEN</span> price</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="kw">category</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span>;</span></code></pre></div>
+<p>In this case, products from the ‘Electronics’ category are sorted by
+<code>price</code>, while other products are sorted by
+<code>category</code>.</p>
+<h3 id="using-case-in-where-clauses">4. Using <code>CASE</code> in
+<code>WHERE</code> Clauses</h3>
+<p>The <code>CASE</code> statement is less frequently used in
+<code>WHERE</code> clauses, but it’s possible.</p>
+<h4 id="example-1-conditional-filtering">Example 1: Conditional
+Filtering</h4>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> product_name, price</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Products</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="op">&gt;</span> <span class="dv">100</span> <span class="cf">THEN</span> <span class="st">&#39;Expensive&#39;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">&#39;Affordable&#39;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="op">=</span> <span class="st">&#39;Expensive&#39;</span>;</span></code></pre></div>
+<p>Here, only expensive products are returned.</p>
+<h3 id="nested-case-statements">5. Nested <code>CASE</code>
+Statements</h3>
+<p>You can nest <code>CASE</code> statements to handle more complex
+logic.</p>
+<h4 id="example-1-nested-logic">Example 1: Nested Logic</h4>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> product_name, price,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="op">&lt;</span> <span class="dv">50</span> <span class="cf">THEN</span> <span class="st">&#39;Cheap&#39;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="op">&gt;=</span> <span class="dv">50</span> <span class="kw">AND</span> price <span class="op">&lt;=</span> <span class="dv">150</span> <span class="cf">THEN</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">CASE</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                <span class="cf">WHEN</span> price <span class="op">=</span> <span class="dv">100</span> <span class="cf">THEN</span> <span class="st">&#39;Exactly 100&#39;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                <span class="cf">ELSE</span> <span class="st">&#39;Moderate&#39;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">END</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">&#39;Expensive&#39;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> price_category</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Products;</span></code></pre></div>
+<p>This query adds a secondary condition to check if the
+<code>price</code> is exactly 100.</p>
+<h3 id="using-case-with-aggregation-functions">6. Using
+<code>CASE</code> with Aggregation Functions</h3>
+<p>The <code>CASE</code> statement is powerful when used with aggregate
+functions like <code>SUM</code>, <code>COUNT</code>, <code>AVG</code>,
+etc.</p>
+<h4 id="example-1-conditional-aggregation">Example 1: Conditional
+Aggregation</h4>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> gender <span class="op">=</span> <span class="st">&#39;M&#39;</span> <span class="cf">THEN</span> salary <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span>) <span class="kw">AS</span> total_male_salary,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SUM</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> gender <span class="op">=</span> <span class="st">&#39;F&#39;</span> <span class="cf">THEN</span> salary <span class="cf">ELSE</span> <span class="dv">0</span> <span class="cf">END</span>) <span class="kw">AS</span> total_female_salary</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Employees;</span></code></pre></div>
+<p>Here, the <code>SUM</code> function calculates the total salaries of
+male and female employees separately.</p>
+<h4 id="example-2-conditional-count">Example 2: Conditional
+<code>COUNT</code></h4>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> status <span class="op">=</span> <span class="st">&#39;active&#39;</span> <span class="cf">THEN</span> <span class="dv">1</span> <span class="cf">ELSE</span> <span class="kw">NULL</span> <span class="cf">END</span>) <span class="kw">AS</span> active_users,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> status <span class="op">=</span> <span class="st">&#39;inactive&#39;</span> <span class="cf">THEN</span> <span class="dv">1</span> <span class="cf">ELSE</span> <span class="kw">NULL</span> <span class="cf">END</span>) <span class="kw">AS</span> inactive_users</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Users;</span></code></pre></div>
+<p>This counts the number of active and inactive users.</p>
+<h3 id="common-use-cases">7. Common Use Cases</h3>
+<h4 id="a-assigning-grades-based-on-marks">a Assigning Grades Based on
+Marks</h4>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> student_name, marks,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> marks <span class="op">&gt;=</span> <span class="dv">90</span> <span class="cf">THEN</span> <span class="st">&#39;A&#39;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> marks <span class="op">&gt;=</span> <span class="dv">75</span> <span class="cf">THEN</span> <span class="st">&#39;B&#39;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> marks <span class="op">&gt;=</span> <span class="dv">60</span> <span class="cf">THEN</span> <span class="st">&#39;C&#39;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">&#39;D&#39;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> grade</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Students;</span></code></pre></div>
+<p>This query assigns a grade to students based on their marks.</p>
+<h4 id="b-age-group-classification">b Age Group Classification</h4>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> name, age,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> age <span class="op">&lt;</span> <span class="dv">18</span> <span class="cf">THEN</span> <span class="st">&#39;Child&#39;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> age <span class="kw">BETWEEN</span> <span class="dv">18</span> <span class="kw">AND</span> <span class="dv">65</span> <span class="cf">THEN</span> <span class="st">&#39;Adult&#39;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> <span class="st">&#39;Senior&#39;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> age_group</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Persons;</span></code></pre></div>
+<p>This query classifies individuals into age groups.</p>
+<h4 id="c-calculating-discounts-based-on-price">c Calculating Discounts
+Based on Price</h4>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> product_name, price,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="op">&gt;</span> <span class="dv">200</span> <span class="cf">THEN</span> price <span class="op">*</span> <span class="fl">0.80</span>  <span class="co">-- 20% discount</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">WHEN</span> price <span class="op">&gt;</span> <span class="dv">100</span> <span class="cf">THEN</span> price <span class="op">*</span> <span class="fl">0.90</span>  <span class="co">-- 10% discount</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">ELSE</span> price</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> discounted_price</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> Products;</span></code></pre></div>
+<p>Here, discounts are applied based on price ranges.</p>
+<hr />
+<h3 id="tips-for-using-the-case-statement">8. Tips for Using the
+<code>CASE</code> Statement</h3>
+<ul>
+<li><strong>Performance:</strong> While <code>CASE</code> is powerful,
+overuse or placing it in <code>WHERE</code> clauses can affect
+performance, especially with large datasets.</li>
+<li><strong>Data Types:</strong> Ensure that the returned data types are
+consistent. SQL expects the same data type for all <code>THEN</code>
+clauses.</li>
+<li><strong><code>ELSE</code> Clause:</strong> Always try to include an
+<code>ELSE</code> clause to handle unexpected data. Otherwise, SQL
+returns <code>NULL</code> for rows that don’t meet any condition.</li>
+<li><strong>Debugging:</strong> When debugging, check your logic by
+running <code>CASE</code> without <code>ELSE</code> to inspect which
+rows return <code>NULL</code>, and adjust your conditions
+accordingly.</li>
+</ul>
+<hr />
+<h3 id="conclusion">Conclusion</h3>
+<p>The SQL <code>CASE</code> statement is an extremely useful tool for
+making queries more dynamic and adaptable. Whether you’re categorizing
+data, calculating conditional values, or customizing output,
+<code>CASE</code> provides a flexible way to incorporate logic directly
+into your SQL queries. With this guide, you should be well-equipped to
+use <code>CASE</code> effectively in your own database operations.</p>
+    
+</body>
+</html>
