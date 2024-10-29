@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2
+id="tutorial-metrics-for-evaluating-forecasting-models-in-machine-learning">Tutorial:
+Metrics for Evaluating Forecasting Models in Machine Learning</h2>
+<p>In forecasting with machine learning, it’s important to measure how
+well your model predicts future values. There are several evaluation
+metrics you can use to assess the accuracy and quality of your
+forecasts. Each metric has its advantages and limitations, so selecting
+the right one depends on your specific forecasting task.</p>
+<h3 id="mean-absolute-error-mae">1. <strong>Mean Absolute Error
+(MAE)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>MAE is the average difference between the actual values and the
+predicted values, ignoring whether the errors are positive or
+negative.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>Simply calculate the absolute error for each data point (the
+difference between the actual and predicted values) and then take the
+average of those errors.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>It’s easy to understand because it tells you, on average, how far
+off your model’s predictions are. The error is in the same unit as the
+original data.</li>
+</ul>
+<p><strong>Example:</strong><br />
+If you are predicting daily sales in dollars, an MAE of 50 means your
+forecast is off by an average of $50 each day.</p>
+<hr />
+<h3 id="mean-squared-error-mse">2. <strong>Mean Squared Error
+(MSE)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>MSE is the average of the squared differences between the actual
+values and the predicted values. It penalizes larger errors more than
+smaller ones because of the squaring.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>For each prediction, subtract the actual value from the predicted
+value, square this result, and then average all these squared
+values.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>If you care more about larger errors, MSE is useful because squaring
+emphasizes the impact of big mistakes.</li>
+</ul>
+<p><strong>Example:</strong><br />
+If you have an MSE of 400, it means the average squared difference
+between your actual and predicted values is 400, but this is harder to
+interpret compared to MAE since it’s in squared units.</p>
+<hr />
+<h3 id="root-mean-squared-error-rmse">3. <strong>Root Mean Squared Error
+(RMSE)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>RMSE is simply the square root of the MSE, making it easier to
+interpret because it is in the same unit as the data.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>After calculating MSE, just take the square root of that value.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>RMSE combines the benefits of MSE (penalizing larger errors) and MAE
+(interpretability). It’s useful if you want to emphasize larger errors
+but still want the result in the original data units.</li>
+</ul>
+<p><strong>Example:</strong><br />
+If your RMSE is 20, the average prediction error is about 20 units in
+the same scale as your data, which is easier to understand.</p>
+<hr />
+<h3 id="mean-absolute-percentage-error-mape">4. <strong>Mean Absolute
+Percentage Error (MAPE)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>MAPE calculates the percentage difference between your actual and
+predicted values. It’s scale-independent, so it’s often used to compare
+models across different datasets.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>For each data point, calculate the absolute error, divide it by the
+actual value, and multiply by 100 to get the percentage error. Then take
+the average.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>It’s helpful when you need to compare the accuracy of your model
+across different scales. However, MAPE can be misleading if your actual
+values are very small (close to zero).</li>
+</ul>
+<p><strong>Example:</strong><br />
+If your MAPE is 10%, your model’s forecasts are off by 10% on
+average.</p>
+<hr />
+<h3 id="symmetric-mean-absolute-percentage-error-smape">5.
+<strong>Symmetric Mean Absolute Percentage Error (sMAPE)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>sMAPE is a variation of MAPE that avoids problems with division by
+zero or small values. It uses a symmetric formula by dividing the error
+by the average of the actual and predicted values.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>For each data point, compute the absolute error, divide it by the
+average of the actual and predicted values, and multiply by 100 to get
+the percentage error. Then average these values.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>sMAPE helps handle situations where the actual value is very small
+or zero, making it more reliable than MAPE.</li>
+</ul>
+<p><strong>Example:</strong><br />
+If your sMAPE is 12%, the average percentage error between your
+predicted and actual values is 12%.</p>
+<hr />
+<h3 id="mean-absolute-scaled-error-mase">6. <strong>Mean Absolute Scaled
+Error (MASE)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>MASE compares your model’s performance to a simple baseline
+forecast, like using the last observation as the prediction.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>First, calculate the average error of a naïve forecast (e.g.,
+predicting today’s value using yesterday’s value). Then calculate the
+average absolute error of your model and divide it by the baseline
+error.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>It’s a good choice if you want to see if your model is actually
+better than a simple baseline prediction.</li>
+</ul>
+<p><strong>Example:</strong><br />
+A MASE of less than 1 means your model is doing better than the naïve
+forecast, while a MASE greater than 1 means it’s worse.</p>
+<hr />
+<h3 id="r-squared-r²">7. <strong>R-squared (R²)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>R-squared is a statistical measure that tells you how well your
+model explains the variation in the actual data. It ranges from 0 to 1,
+where 1 means the model perfectly predicts the data.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>R² is calculated by comparing how much variation is explained by
+your model versus how much variation there is in the data.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>It’s useful for understanding how much of the trend your model
+captures. However, it’s not always the best for time series because it
+doesn’t account for autocorrelation (when data points are related to
+past data points).</li>
+</ul>
+<p><strong>Example:</strong><br />
+An R² of 0.85 means that your model explains 85% of the variance in the
+actual data.</p>
+<hr />
+<h3 id="bias-mean-forecast-error">8. <strong>Bias (Mean Forecast
+Error)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>Bias tells you whether your model is consistently over- or
+under-predicting. A positive bias means the model is generally
+predicting too high, while a negative bias means it’s predicting too
+low.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>Simply subtract the actual values from the predicted values and take
+the average.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>If your model has a high bias, it’s systematically off, which means
+you may need to adjust your model.</li>
+</ul>
+<p><strong>Example:</strong><br />
+If your bias is -5, your model tends to under-predict by 5 units on
+average.</p>
+<hr />
+<h3 id="pinball-loss-for-quantile-forecasting">9. <strong>Pinball Loss
+(for Quantile Forecasting)</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>Pinball loss is a metric specifically for quantile forecasts, which
+estimate a range of possible outcomes instead of a single value. It
+penalizes over- and under-predictions differently based on the
+quantile.</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>For each quantile, calculate the pinball loss by giving different
+weights to positive and negative errors. Then average the losses.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>It’s useful when you want to forecast a range (like the 10th, 50th,
+and 90th percentiles) instead of just one value, and you want to
+penalize errors differently depending on whether the forecast is too
+high or too low.</li>
+</ul>
+<hr />
+<h3 id="tracking-signal">10. <strong>Tracking Signal</strong></h3>
+<p><strong>What is it?</strong></p>
+<ul>
+<li>The tracking signal helps you monitor your forecast’s accuracy over
+time by detecting if the model is consistently off (e.g., always
+over-predicting).</li>
+</ul>
+<p><strong>How to use it:</strong></p>
+<ul>
+<li>It’s the ratio of cumulative forecast errors to the mean absolute
+deviation (MAD). If the tracking signal is too high or low, it signals a
+persistent bias.</li>
+</ul>
+<p><strong>Why use it?</strong></p>
+<ul>
+<li>It’s useful for checking whether your model is drifting over time
+and needs adjustment.</li>
+</ul>
+<p><strong>Example:</strong><br />
+A tracking signal of 0 means the model is unbiased, while a value far
+from 0 indicates systematic error.</p>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>These are some of the most common metrics you can use to evaluate
+forecasting models. Each one has its strengths and weaknesses, so it’s
+essential to pick the metric that best suits your forecasting goals:</p>
+<ul>
+<li>Use <strong>MAE</strong> or <strong>RMSE</strong> for
+easy-to-interpret error measurements.</li>
+<li>Try <strong>MSE</strong> if you want to emphasize large errors.</li>
+<li><strong>MAPE</strong> and <strong>sMAPE</strong> are good if you
+need percentage-based evaluation.</li>
+<li>For model comparisons, <strong>MASE</strong> is helpful, while
+<strong>Bias</strong> and <strong>Tracking Signal</strong> can help you
+monitor systematic errors.</li>
+</ul>
+<p>By understanding and applying these metrics, you can better evaluate
+your forecasting models and improve their performance over time.</p>
+    
+</body>
+</html>
