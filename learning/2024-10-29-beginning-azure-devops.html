@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="introduction-to-devops">1. Introduction to DevOps</h1>
+<p>DevOps is a practice that merges software development (Dev) and IT
+operations (Ops) to create more efficient, collaborative, and automated
+workflows across the entire software life cycle. The aim is to build
+secure, resilient, and rapidly evolving systems at scale, addressing the
+disconnection that once existed between software developers and
+operations teams. By breaking down silos, DevOps enables faster, more
+reliable software delivery, aligning with business goals and improving
+customer experiences.</p>
+<p>Historically, software development followed a sequential “waterfall”
+approach, where each phase—planning, coding, testing, and deployment—was
+completed before moving to the next. This rigid process caused long
+delays and introduced errors, as code was handed off between separate
+teams without constant collaboration. In the early 2000s, agile
+methodologies emerged to counter this, providing flexibility with
+iterative cycles of development. However, even agile couldn’t fully
+address the demand for faster automation, which led to the evolution of
+DevOps.</p>
+<p>DevOps integrates multiple continuous stages, each feeding into the
+next:</p>
+<ol type="1">
+<li><strong>Planning</strong>: Identifying business needs and mapping
+out features.</li>
+<li><strong>Development</strong>: Writing and updating code with tools
+that allow simultaneous collaboration.</li>
+<li><strong>Continuous Integration</strong>: Regularly testing and
+merging code to ensure compatibility.</li>
+<li><strong>Deployment</strong>: Automatically deploying the software
+and infrastructure across multiple environments.</li>
+<li><strong>Monitoring</strong>: Tracking performance and user
+interactions to ensure stability and reliability.</li>
+<li><strong>Feedback</strong>: Gathering customer input to inform future
+iterations and improvements.</li>
+</ol>
+<p>The core benefits of DevOps include:</p>
+<ul>
+<li><strong>Speed</strong>: Automation accelerates development, allowing
+faster delivery of updates and features.</li>
+<li><strong>Shorter release cycles</strong>: Teams work in short
+iterations, making it easier to debug and improve features.</li>
+<li><strong>Collaboration</strong>: Developers, IT professionals, and
+other stakeholders work together throughout the life cycle, ensuring
+better outcomes.</li>
+<li><strong>Learning and accountability</strong>: Continuous monitoring
+and feedback improve software quality and team accountability.</li>
+<li><strong>Resilience</strong>: Easier rollbacks of updates reduce
+downtime and customer impact.</li>
+<li><strong>Security</strong>: Security checks are integrated into the
+development process (known as DevSecOps), ensuring safer
+applications.</li>
+</ul>
+<p>Today, cloud computing plays a crucial role in DevOps by offering
+virtual environments that support automation, testing, and global
+collaboration. Cloud platforms enable easier provisioning of
+infrastructure, allowing teams to focus on building and improving
+software rather than managing servers. Various roles like DevOps
+engineers and site reliability engineers have emerged to specialize in
+cloud-based DevOps practices.</p>
+<p>Overall, DevOps has transformed software development into a
+continuous, highly collaborative, and automated process that enhances
+speed, quality, and security.</p>
+<h1 id="introduction-to-azure-devops">2. Introduction to Azure
+DevOps</h1>
+<p>Azure DevOps is a comprehensive toolchain designed to streamline the
+development and deployment of software. It integrates various services
+that allow teams to plan, collaborate, build, and release software
+products efficiently. It fosters a collaborative environment where
+developers, project managers, and other stakeholders work together to
+produce high-quality software more quickly than traditional methods.</p>
+<p>Azure DevOps can be utilized in two ways:</p>
+<ol type="1">
+<li><strong>Azure DevOps Services</strong> (cloud-based SaaS platform):
+Accessible via the internet with a high uptime guarantee and global
+distribution.</li>
+<li><strong>Azure DevOps Server</strong> (on-premise): Uses an SQL
+backend and allows organizations to keep data on their internal network
+for security and compliance reasons.</li>
+</ol>
+<h3
+id="key-differences-between-azure-devops-services-and-azure-devops-server">Key
+Differences Between Azure DevOps Services and Azure DevOps Server:</h3>
+<ul>
+<li><strong>Scoping</strong>: Cloud services use organizations and
+projects, while on-premise setups rely on deployments, project
+collections, and projects.</li>
+<li><strong>Authentication</strong>: Cloud-based authentication happens
+with Azure Active Directory, while on-premise systems use Windows
+Authentication with Active Directory credentials.</li>
+<li><strong>Data Protection</strong>: Data in Azure DevOps Services is
+stored in the cloud, while in Azure DevOps Server, it remains on the
+organization’s servers.</li>
+</ul>
+<h3 id="core-features-of-azure-devops">Core Features of Azure
+DevOps:</h3>
+<ul>
+<li><strong>Azure Boards</strong>: Tools for project management,
+supporting agile and scrum methodologies, with customizable dashboards
+and reports.</li>
+<li><strong>Azure Repos</strong>: A version control system that tracks
+changes in code, allowing real-time snapshots and retrieval.</li>
+<li><strong>Azure Pipelines</strong>: Combines Continuous Integration
+(CI) and Continuous Deployment (CD) to automate building, testing, and
+deploying code.</li>
+<li><strong>Azure Test Plans</strong>: A platform for test management,
+including manual testing, user acceptance testing, and gathering
+feedback.</li>
+<li><strong>Azure Artifacts</strong>: A tool for managing and sharing
+code packages across teams.</li>
+</ul>
+<h3 id="additional-benefits-of-azure-devops-services">Additional
+Benefits of Azure DevOps Services:</h3>
+<ul>
+<li><strong>Simplified Management</strong>: Removes the need for
+managing servers, allowing teams to focus on productivity.</li>
+<li><strong>Access to Latest Features</strong>: Cloud users get updates
+and new features faster than on-premise users.</li>
+<li><strong>Improved Connectivity</strong>: Remote teams benefit from
+better access and performance through globally distributed Azure
+regions.</li>
+<li><strong>Cost Flexibility</strong>: Transition from capital
+expenditures (servers, hardware) to operational costs (subscriptions),
+offering budget flexibility.</li>
+</ul>
+<h3 id="azure-monitor-and-azure-devtest-labs">Azure Monitor and Azure
+DevTest Labs:</h3>
+<ul>
+<li><strong>Azure Monitor</strong>: While not part of the Azure DevOps
+toolchain, Azure Monitor is critical for maximizing application
+performance and availability. It gathers data on application health and
+identifies issues proactively.</li>
+<li><strong>DevTest Labs</strong>: A sandbox environment where teams can
+experiment with different Azure tools and practice CI/CD in a controlled
+setting.</li>
+</ul>
+<p>In summary, Azure DevOps offers a versatile, integrated suite for
+modern software development. It can be deployed either as a cloud-based
+service or on-premise, each with its specific advantages. Teams can
+leverage its various tools—Boards, Repos, Pipelines, Test Plans, and
+Artifacts—to manage projects efficiently and integrate monitoring with
+Azure Monitor for enhanced observability.</p>
+<h1 id="managing-an-azure-devops-project-with-azure-boards">3. Managing
+an Azure DevOps Project with Azure Boards</h1>
+<p>Azure Boards is a powerful tool within Azure DevOps, enabling teams
+to plan, track, and manage software development projects. It provides
+features like work items, backlogs, boards, sprints, and queries to
+support agile, scrum, or other methodologies, offering flexibility and
+transparency for organizations.</p>
+<h3
+id="key-concepts-in-managing-an-azure-devops-project-with-azure-boards">Key
+Concepts in Managing an Azure DevOps Project with Azure Boards:</h3>
+<h4 id="azure-devops-organizations"><strong>Azure DevOps
+Organizations</strong></h4>
+<p>An Azure DevOps organization is a structure for grouping related
+projects, which can be organized around a company’s business units or
+departments. Each organization gets access to the Azure DevOps toolchain
+for project planning, development, and deployment. Starting with one
+organization is common, but more can be added as needed for different
+teams or units. Azure DevOps organizations reflect the structure of a
+real-world company, helping manage projects and teams in a logical
+manner.</p>
+<h4 id="azure-devops-projects"><strong>Azure DevOps
+Projects</strong></h4>
+<p>Within an Azure DevOps organization, projects act as containers for
+all related work, code, artifacts, pipelines, and test plans. Projects
+can be singular (for simplicity and transparency) or divided into
+multiple projects (for better security, control, and autonomy). Teams
+can manage everything from one project or break it into sub-projects
+based on business needs.</p>
+<h4
+id="creating-azure-devops-organizations-and-projects"><strong>Creating
+Azure DevOps Organizations and Projects</strong></h4>
+<p>Creating an Azure DevOps organization or project is straightforward.
+The process includes logging into Azure DevOps, naming your
+organization, selecting a region, and then setting up your first
+project. Teams can choose from different templates—Basic, Agile, Scrum,
+or CMMI—depending on their work methodology and project
+requirements.</p>
+<h4 id="work-item-processes"><strong>Work Item Processes</strong></h4>
+<p>Work items are essential for tracking tasks in Azure Boards.
+Depending on the process chosen (e.g., Basic, Agile, Scrum), teams track
+different types of work like epics, user stories, bugs, tasks, etc. Work
+items can be organized and updated across different stages—To Do, Doing,
+and Done—providing visibility into progress. Work items also support
+detailed information, such as descriptions, priority, assigned team
+members, and related tasks.</p>
+<h4 id="backlogs"><strong>Backlogs</strong></h4>
+<p>Backlogs are a prioritized list of tasks and features that a team
+plans to deliver. These help manage the development process, ensuring
+the most important work is done first. Backlogs can be assigned to
+sprints, reorganized, and detailed with estimates to better manage team
+workloads.</p>
+<h4 id="boards"><strong>Boards</strong></h4>
+<p>Boards visually represent the state of work items (e.g., tasks or
+issues) in columns like To Do, Doing, and Done. Teams can drag and drop
+work items across these columns to reflect progress, making it easier to
+manage and track workflows. Boards are interactive and customizable,
+helping teams stay organized and aligned.</p>
+<h4 id="sprints"><strong>Sprints</strong></h4>
+<p>Sprints divide work into manageable time periods (often two or three
+weeks), helping teams focus on specific tasks within a set timeframe.
+Azure Boards provides sprint overviews and task boards to track progress
+within a sprint. Sprint boards are often used during daily stand-up
+meetings to assess what’s being worked on, what’s done, and any
+blockers.</p>
+<h4 id="queries"><strong>Queries</strong></h4>
+<p>Queries in Azure Boards help teams filter and analyze work items
+based on various criteria, like status or tag. This feature allows teams
+to quickly search for specific work items and get an overview of tasks
+across projects.</p>
+<h4 id="plans"><strong>Plans</strong></h4>
+<p>Delivery plans provide a multi-team view of work schedules across
+sprints. This helps teams and management track progress, identify
+dependencies, and ensure that teams are aligned toward the
+organization’s overall goals. Delivery plans enhance transparency and
+coordination across different teams and projects.</p>
+<h3 id="integration-with-github"><strong>Integration with
+GitHub</strong></h3>
+<p>Azure Boards can integrate with GitHub, allowing teams to link work
+items with commits, pull requests, and issues. This integration ensures
+that teams can track the development process from planning in Azure
+Boards to implementation in GitHub, maintaining a seamless workflow.</p>
+<h3 id="summary"><strong>Summary</strong></h3>
+<p>Azure Boards offers a comprehensive set of tools to help teams
+organize and manage their projects efficiently, supporting different
+project methodologies like Basic, Agile, and Scrum. Through work items,
+backlogs, boards, sprints, and delivery plans, teams can plan, track,
+and execute their tasks with transparency and collaboration. Integrating
+GitHub with Azure Boards adds another layer of efficiency by connecting
+code development directly with work tracking.</p>
+<p>In the next chapter, a deeper dive into Azure Repos will cover source
+control management and how it integrates with the overall DevOps
+toolchain.</p>
+<h1 id="version-control-with-azure-repos">4. Version Control with Azure
+Repos</h1>
+<p>Azure Repos is a version control system integrated into Azure DevOps
+that provides tools for managing changes to source code. It supports Git
+and Team Foundation Version Control (TFVC) as its two primary systems,
+with Git being the most widely used. Here’s a breakdown of the key
+elements in using Azure Repos:</p>
+<h3 id="version-control"><strong>Version Control</strong></h3>
+<p>Version control enables teams to track changes made to the source
+code over time. It acts as a safety net, allowing developers to
+experiment freely while maintaining the ability to revert to stable
+versions if necessary. The two most common types of version control
+systems are centralized (with one main repository) and distributed
+(where each developer has a full copy of the project). The system also
+enhances collaboration, backups, and traceability for code changes.</p>
+<h3 id="types-of-version-control-systems"><strong>Types of Version
+Control Systems</strong></h3>
+<ul>
+<li><strong>Distributed Version Control (e.g., Git)</strong>: Each
+developer has a local copy of the repository.</li>
+<li><strong>Centralized Version Control</strong>: All files are managed
+from a single server.</li>
+<li><strong>Lock-based Version Control</strong>: Prevents multiple users
+from editing the same file simultaneously.</li>
+<li><strong>Optimistic Version Control</strong>: Users work in isolated
+workspaces, and changes are merged when submitted.</li>
+</ul>
+<h3 id="git"><strong>Git</strong></h3>
+<p>Git is a distributed version control system widely used in software
+development. It tracks changes to files, supports branching, and enables
+collaboration. Git repositories contain snapshots of the code and its
+history, making it easier to revert to previous versions or merge
+different changes.</p>
+<h3 id="setting-up-a-git-repository-in-azure-devops"><strong>Setting up
+a Git Repository in Azure DevOps</strong></h3>
+<ol type="1">
+<li><strong>Create a repository</strong>: Users can set up a new Git
+repository within Azure DevOps and initialize it with README and
+.gitignore files, which specify which files to ignore.</li>
+<li><strong>Clone the repository</strong>: Developers clone the
+repository to their local machines using Git commands, allowing them to
+make local changes and commit them back to the remote repository.</li>
+<li><strong>Import an existing repository</strong>: Azure Repos also
+allows users to import repositories from platforms like GitHub into
+Azure DevOps.</li>
+</ol>
+<h3 id="pull-requests"><strong>Pull Requests</strong></h3>
+<p>Pull requests are an integral part of version control, allowing team
+members to review, comment on, and approve code changes before they are
+merged into the main branch. Draft pull requests can be created for
+early feedback before the code is fully ready.</p>
+<h3 id="tags"><strong>Tags</strong></h3>
+<p>Git tags allow teams to mark specific points in the project history,
+such as a stable release. Azure Repos supports both annotated and
+lightweight tags. Annotated tags store additional metadata, such as the
+tagger’s identity and date, whereas lightweight tags are simply
+references to a commit.</p>
+<h3 id="benefits-of-version-control"><strong>Benefits of Version
+Control</strong></h3>
+<ul>
+<li><strong>Collaboration</strong>: Enables multiple developers to work
+on the same codebase simultaneously without overwriting each other’s
+work.</li>
+<li><strong>Backups</strong>: The ability to revert to previous versions
+if something goes wrong.</li>
+<li><strong>Traceability</strong>: Every change is logged with
+descriptions, making it easy to track project evolution.</li>
+</ul>
+<p>In summary, Azure Repos facilitates efficient version control,
+collaboration, and project management through its integration with Git
+and TFVC, with features like pull requests and tagging enhancing the
+development workflow. The next chapter focuses on <strong>Azure
+Pipelines</strong>, exploring automated builds and deployments.</p>
+<h1 id="automating-code-builds-with-azure-pipelines">5. Automating Code
+Builds with Azure Pipelines</h1>
+<p>Azure Pipelines is a key component of the DevOps lifecycle,
+facilitating automation for continuous integration (CI), continuous
+deployment (CD), and continuous delivery (CD). Here’s an overview of the
+critical aspects covered in this chapter:</p>
+<h3 id="continuous-integration-ci"><strong>Continuous Integration
+(CI)</strong></h3>
+<p>Continuous Integration helps developers merge code into a shared
+repository frequently. When code changes are merged, the system
+automatically builds and tests the application. This ensures that new
+changes don’t break the application and allows teams to detect issues
+early. By integrating regularly, developers can resolve conflicts
+between branches sooner, improving the overall workflow.</p>
+<h3 id="continuous-deployment-cd"><strong>Continuous Deployment
+(CD)</strong></h3>
+<p>Continuous deployment automates the release of software changes into
+the production environment after passing all tests. This process
+eliminates the need for manual intervention, allowing updates to be made
+continuously without waiting for long release cycles. It’s ideal for
+delivering frequent updates to customers and getting feedback rapidly.
+However, successful implementation requires well-designed automated
+tests to ensure that changes are safe to deploy.</p>
+<h3 id="continuous-delivery"><strong>Continuous Delivery</strong></h3>
+<p>While similar to continuous deployment, continuous delivery still
+requires manual approval before code is deployed to production. This
+gives teams more control over final releases, even though testing and
+pre-production deployment are automated.</p>
+<h3 id="azure-pipelines"><strong>Azure Pipelines</strong></h3>
+<p>Azure Pipelines is a service from Microsoft that automates the build,
+testing, and release processes. It supports a wide range of languages,
+platforms, and repositories. Azure Pipelines integrates with services
+like GitHub, Bitbucket, and more to build and deploy software across
+different environments, whether in virtual machines, cloud hosts, or
+mobile app hosts.</p>
+<p>Key features of Azure Pipelines include:</p>
+<ul>
+<li><strong>Cross-platform support</strong>: Pipelines can run on
+Windows, macOS, or Linux.</li>
+<li><strong>Multi-language support</strong>: Azure Pipelines can handle
+code in various programming languages and frameworks.</li>
+<li><strong>Automated builds and releases</strong>: Pipelines
+automatically compile, test, and deploy code to target
+environments.</li>
+</ul>
+<h3 id="pipeline-components"><strong>Pipeline Components</strong></h3>
+<p>Pipelines consist of stages, jobs, tasks, and steps. A
+<strong>stage</strong> is a logical division of work (e.g., building,
+testing), and each <strong>job</strong> within a stage contains specific
+tasks. <strong>Tasks</strong> are the individual steps performed within
+each job, such as compiling code or running tests. These steps are
+executed on computers known as <strong>agents</strong>, which run the
+pipeline’s defined tasks.</p>
+<ul>
+<li><strong>Microsoft-hosted agents</strong>: Predefined virtual
+machines managed by Microsoft.</li>
+<li><strong>Self-hosted agents</strong>: Machines managed by the user,
+offering more control over configurations.</li>
+</ul>
+<h3 id="defining-pipelines"><strong>Defining Pipelines</strong></h3>
+<p>There are two main ways to define pipelines in Azure:</p>
+<ol type="1">
+<li><strong>YAML files</strong>: A script-based approach where you write
+YAML scripts to configure the pipeline’s actions.</li>
+<li><strong>Classic editor</strong>: A graphical user interface (GUI)
+for defining pipelines by selecting tasks from a list.</li>
+</ol>
+<p>Using YAML provides flexibility and reusability, especially as
+pipelines become more complex. YAML is key to defining pipeline actions,
+including which agents to use, the jobs to run, and the stages to pass
+through.</p>
+<h3 id="agents-and-agent-pools"><strong>Agents and Agent
+Pools</strong></h3>
+<p>Agents are the machines that execute tasks in a pipeline. You can
+choose between <strong>Microsoft-hosted agents</strong> (pre-configured
+virtual machines) or <strong>self-hosted agents</strong> (custom
+machines managed by the user). These agents are organized into
+<strong>agent pools</strong> for better management. A pipeline job runs
+on one of the available agents in the pool.</p>
+<h3 id="yaml-build-scripts"><strong>YAML Build Scripts</strong></h3>
+<p>YAML is used to write the configuration for Azure Pipelines. A
+typical YAML file defines the triggers, jobs, tasks, and conditions
+under which the pipeline should run. For example, you can configure
+pipelines to build and test a Node.js project, as shown in the sample
+script provided in this chapter.</p>
+<p>Key YAML terms:</p>
+<ul>
+<li><strong>pipeline</strong>: Defines the stages of the CI/CD
+process.</li>
+<li><strong>jobs</strong>: The units of work within a stage.</li>
+<li><strong>steps</strong>: The tasks executed in sequence in a
+job.</li>
+<li><strong>variables</strong>: Parameters or settings used in the
+pipeline.</li>
+<li><strong>trigger</strong>: Specifies which events will trigger the
+pipeline (e.g., code push).</li>
+</ul>
+<h3 id="summary-1"><strong>Summary</strong></h3>
+<p>Azure Pipelines allows teams to automate the build, test, and release
+processes as part of a DevOps workflow. With features supporting
+multiple programming languages, platforms, and cloud providers, Azure
+Pipelines provides a flexible environment for setting up CI/CD
+pipelines. YAML is a key tool for defining pipelines, enabling more
+complex configurations while maintaining readability and
+flexibility.</p>
+<p>Next, <strong>Chapter 6</strong> will focus on <strong>automated
+testing</strong>, where you’ll explore how to run automated tests within
+Azure DevOps to ensure software quality throughout the pipeline.</p>
+<h1 id="running-automated-tests-with-azure-pipelines">6. Running
+Automated Tests with Azure Pipelines</h1>
+<h3 id="running-automated-tests-with-azure-pipelines-1"><strong>Running
+Automated Tests with Azure Pipelines</strong></h3>
+<p>Automated testing is a critical component of the continuous
+integration (CI) process in DevOps, ensuring that software functions as
+intended before being released to production. This chapter outlines
+various software testing types, the importance of testing, and how to
+set up and automate tests using <strong>Azure Pipelines</strong>.</p>
+<h3 id="overview-of-software-testing"><strong>Overview of Software
+Testing</strong></h3>
+<p>Software testing is essential for validating and ensuring that an
+application behaves as expected in different scenarios. By catching bugs
+early, testing helps prevent poor customer experiences, reduces security
+risks, and ensures compatibility across platforms.</p>
+<h4 id="history-of-software-testing"><strong>History of Software
+Testing</strong></h4>
+<p>In the 1980s, software testing evolved into a structured process to
+identify, isolate, and fix bugs in larger applications. It became a key
+part of <strong>software quality assurance (SQA)</strong>, a process
+designed to ensure that software adheres to quality standards and
+guidelines.</p>
+<h4 id="continuous-testing"><strong>Continuous Testing</strong></h4>
+<p>With continuous testing, testing is integrated into the early stages
+of the software development lifecycle, preventing issues from escalating
+later. It speeds up software releases while maintaining quality and
+reducing risks.</p>
+<h3 id="importance-of-software-testing"><strong>Importance of Software
+Testing</strong></h3>
+<ol type="1">
+<li><strong>Better customer experience</strong>: Bugs are identified and
+resolved before they reach production.</li>
+<li><strong>Compatibility validation</strong>: Tests ensure that
+applications work across different platforms and devices.</li>
+<li><strong>Security</strong>: Identifies vulnerabilities like unstable
+libraries or insecure file uploads.</li>
+<li><strong>Better observability</strong>: Testing helps developers
+monitor and troubleshoot applications.</li>
+<li><strong>Application extensibility</strong>: Tests help ensure new
+features don’t break existing functionality.</li>
+</ol>
+<h3 id="types-of-software-tests"><strong>Types of Software
+Tests</strong></h3>
+<ol type="1">
+<li><strong>Unit Tests</strong>: Test individual components or functions
+of the code in isolation, ensuring correctness in small units of the
+application.</li>
+<li><strong>Integration Tests</strong>: Test the interaction between
+different components to identify issues when they work together.</li>
+<li><strong>Smoke Tests</strong>: Verify that core application
+functionalities work after a code change, ensuring build stability.</li>
+<li><strong>Regression Tests</strong>: Ensure that new code changes
+don’t negatively impact existing functionality.</li>
+<li><strong>End-to-End Tests</strong>: Simulate real-world scenarios to
+test the application’s full workflow from the user’s perspective, across
+all layers.</li>
+</ol>
+<p>Additional testing methods include:</p>
+<ul>
+<li><strong>Acceptance Tests</strong>: Validated by the customer to
+confirm the software meets business requirements.</li>
+<li><strong>Security Tests</strong>: Check how well the application
+handles security threats.</li>
+<li><strong>Performance Tests</strong>: Assess the stability,
+scalability, and responsiveness of the application under load.</li>
+</ul>
+<h3 id="steps-for-running-software-tests"><strong>Steps for Running
+Software Tests</strong></h3>
+<ol type="1">
+<li><strong>Create a test plan</strong>: Define the strategy, goals, and
+resources required for testing.</li>
+<li><strong>Create test cases</strong>: Set up scenarios to validate
+specific features of the application.</li>
+<li><strong>Execute tests and record results</strong>: Run the tests and
+document the outcomes.</li>
+<li><strong>Fix errors</strong>: If any issues arise, troubleshoot and
+resolve them before proceeding.</li>
+</ol>
+<h3 id="setting-up-testing-in-azure-pipelines"><strong>Setting Up
+Testing in Azure Pipelines</strong></h3>
+<p>Azure Pipelines allows you to run automated tests for various
+programming languages and platforms (e.g., .NET Core, Python, ASP.NET,
+Java, etc.). Here’s how to set it up:</p>
+<ol type="1">
+<li><strong>Create a new pipeline</strong> in Azure Pipelines.</li>
+<li><strong>Select the project source</strong> from Azure Repos, GitHub,
+Bitbucket, etc.</li>
+<li><strong>Choose a pipeline template</strong> based on the technology
+stack you’re using.</li>
+<li><strong>Configure tasks</strong>: For example, ASP.NET projects come
+with pre-configured tasks to build and test applications.</li>
+</ol>
+<p>Azure Pipelines can run tests in <strong>build</strong> and
+<strong>release</strong> pipelines, providing detailed test results and
+helping to identify flaky tests (tests with inconsistent results).
+Automated tests are executed as part of the CI/CD process, ensuring that
+every change is validated before it moves forward.</p>
+<h3 id="summary-2"><strong>Summary</strong></h3>
+<p>Automated software testing is a vital process for improving the
+quality and reliability of applications. By integrating tests early in
+the development lifecycle, teams can identify and resolve issues
+quickly, ensuring that features work as intended and that new changes
+don’t negatively affect the system. In Azure Pipelines, testing is
+easily automated across various platforms, providing a seamless way to
+ensure code quality.</p>
+<p><strong>Next</strong>: Chapter 7 will explore <strong>Azure
+Artifacts</strong>, focusing on managing and sharing source code
+packages efficiently.</p>
+<h1
+id="creating-and-hosting-source-code-packages-with-azure-artifacts">7.
+Creating and Hosting Source Code Packages with Azure Artifacts</h1>
+<h3 id="azure-artifacts-summary"><strong>Azure Artifacts
+Summary</strong></h3>
+<p>This chapter focuses on <strong>Azure Artifacts</strong>, a feature
+in Azure DevOps that allows you to store, manage, and share source code
+packages and build artifacts.</p>
+<h3 id="overview-of-artifact-repositories"><strong>Overview of Artifact
+Repositories</strong></h3>
+<p>Artifact repositories store <strong>build artifacts</strong>
+(binaries from continuous integration) and <strong>deployment
+artifacts</strong> (executables for release). They help developers
+securely store and share packages across teams and projects.</p>
+<h3 id="introduction-to-azure-artifacts"><strong>Introduction to Azure
+Artifacts</strong></h3>
+<p>Azure Artifacts supports various package types, including
+<strong>NuGet, npm, Python, Maven</strong>, and <strong>universal
+packages</strong>. These packages can be shared within teams, across
+organizations, or publicly. Azure also supports symbols, files
+containing debugging information for compiled binaries.</p>
+<h3 id="azure-artifact-feeds"><strong>Azure Artifact Feeds</strong></h3>
+<p>Artifact feeds in Azure are cloud-based repositories to organize and
+manage software packages. Feeds can be either
+<strong>project-scoped</strong> (limited to a specific project) or
+<strong>organization-scoped</strong> (available across an
+organization).</p>
+<ul>
+<li><strong>Project-Scoped Feeds</strong>: Visible only to users with
+access to the project.</li>
+<li><strong>Organization-Scoped Feeds</strong>: Accessible to the entire
+organization and not tied to a specific project.</li>
+</ul>
+<h3 id="creating-and-using-azure-artifact-feeds"><strong>Creating and
+Using Azure Artifact Feeds</strong></h3>
+<ul>
+<li><strong>Creating a Feed</strong>: Feeds can be easily created
+through the Azure DevOps dashboard by specifying a name, visibility, and
+scope (project or organization).</li>
+<li><strong>Public Feeds</strong>: If a project is public, the feed can
+also be public, allowing external users to access packages without an
+Azure DevOps account.</li>
+</ul>
+<h3 id="azure-artifact-feed-views"><strong>Azure Artifact Feed
+Views</strong></h3>
+<p>Feed views help manage package versions. Common views are:</p>
+<ul>
+<li><strong><span class="citation"
+data-cites="local">@local</span></strong>: Default view with all
+packages.</li>
+<li><strong><span class="citation"
+data-cites="prerelease">@prerelease</span></strong>: Contains packages
+ready for testing.</li>
+<li><strong><span class="citation"
+data-cites="release">@release</span></strong>: Stable versions released
+to the public.</li>
+</ul>
+<h3 id="upstream-sources"><strong>Upstream Sources</strong></h3>
+<p>Upstream sources allow you to centralize multiple package sources,
+such as public repositories (e.g., npm, NuGet) or other internal feeds.
+This simplifies configuration management and enhances security by
+controlling access to external sources.</p>
+<h3 id="publishing-artifacts-in-azure-pipelines"><strong>Publishing
+Artifacts in Azure Pipelines</strong></h3>
+<p>Artifacts can be published during the CI/CD process using Azure
+Pipelines:</p>
+<ul>
+<li><strong>Using YAML</strong>: Artifacts can be published directly
+through YAML scripts or by using tasks.</li>
+<li><strong>Using the Classic Editor</strong>: Artifacts can also be
+published via the graphical interface by adding tasks like <strong>NuGet
+Pack</strong> and <strong>Publish Pipeline Artifacts</strong>.</li>
+</ul>
+<h3 id="downloading-artifacts-in-azure-pipelines"><strong>Downloading
+Artifacts in Azure Pipelines</strong></h3>
+<p>Artifacts can be downloaded for use in subsequent pipeline stages
+using YAML or the classic editor. These artifacts can be retrieved for
+deployments, testing, or other tasks.</p>
+<h3 id="summary-3"><strong>Summary</strong></h3>
+<p>Azure Artifacts is a powerful tool for managing and sharing packages
+across teams and projects. It supports multiple package types and
+enables users to organize packages using feeds and views. It integrates
+seamlessly with <strong>Azure Pipelines</strong> to publish and download
+build and deployment artifacts during the CI/CD process.</p>
+<p><strong>Next Chapter</strong>: Chapter 8 will cover <strong>code
+deployments and release pipelines</strong> and how to automate these
+processes using Azure Pipelines.</p>
+<h1 id="automating-code-deployments-with-azure-pipelines">8. Automating
+Code Deployments with Azure Pipelines</h1>
+<h3
+id="automating-code-deployments-with-azure-pipelines-summary"><strong>Automating
+Code Deployments with Azure Pipelines Summary</strong></h3>
+<p>This chapter focuses on <strong>continuous deployment (CD)</strong>,
+<strong>continuous delivery (CD)</strong>, and <strong>release
+pipelines</strong> in the DevOps lifecycle. It demonstrates how to
+automate code deployments using Azure Pipelines.</p>
+<h3 id="key-topics-covered"><strong>Key Topics Covered</strong></h3>
+<h4
+id="continuous-deployment-and-continuous-delivery"><strong>Continuous
+Deployment and Continuous Delivery</strong></h4>
+<ul>
+<li><strong>Continuous Deployment</strong>: Involves automatically
+pushing code updates to production without manual intervention, driven
+by automated testing. While faster, it introduces risks if unstable code
+passes through the pipeline.</li>
+<li><strong>Continuous Delivery</strong>: Code is deployed automatically
+into a testing environment, but human approval is required for
+production deployment. It combines configuration management, continuous
+integration, and continuous testing.</li>
+</ul>
+<h4
+id="advantages-of-continuous-deployment-and-continuous-delivery"><strong>Advantages
+of Continuous Deployment and Continuous Delivery</strong></h4>
+<ul>
+<li><strong>Faster and smaller releases</strong>: Continuous deployment
+speeds up releases by breaking them into small, manageable batches.</li>
+<li><strong>Reduced manual intervention</strong>: Automation replaces
+time-consuming manual processes.</li>
+<li><strong>Faster customer feedback</strong>: Regular deployments
+facilitate quicker feedback loops, allowing teams to react quickly to
+customer needs.</li>
+<li><strong>Lower deployment risks</strong>: Especially with continuous
+delivery, deployments are tested and validated before release, ensuring
+higher-quality products.</li>
+</ul>
+<h4 id="release-pipelines"><strong>Release Pipelines</strong></h4>
+<p>A <strong>release pipeline</strong> automates the steps for deploying
+software changes from development to production. It includes manual and
+automated tasks for building, testing, and deploying software. Release
+pipelines are key for continuous delivery and continuous deployment.</p>
+<p><strong>Advantages</strong>:</p>
+<ul>
+<li><strong>Faster releases</strong>: Automated pipelines shorten the
+wait for new features.</li>
+<li><strong>Improved developer productivity</strong>: Developers spend
+less time on manual deployment tasks.</li>
+<li><strong>Reduced costs</strong>: Automation decreases time and
+resources needed for releases and rollbacks.</li>
+</ul>
+<h4 id="how-release-pipelines-work-in-azure"><strong>How Release
+Pipelines Work in Azure</strong></h4>
+<p>Azure Pipelines automate the deployment process with the following
+steps:</p>
+<ol type="1">
+<li><strong>Predeployment approval</strong></li>
+<li><strong>Queue deployment job</strong></li>
+<li><strong>Agent selection</strong></li>
+<li><strong>Download artifacts</strong></li>
+<li><strong>Execute deployment</strong></li>
+<li><strong>Logging</strong></li>
+<li><strong>Postdeployment approval</strong></li>
+</ol>
+<h4
+id="deployment-model-using-azure-release-pipelines"><strong>Deployment
+Model Using Azure Release Pipelines</strong></h4>
+<p>Azure Pipelines can integrate multiple build artifacts and deploy
+them to various stages like <strong>development, testing, and
+production</strong>. Stages consist of jobs and tasks executed by
+agents.</p>
+<h4 id="creating-and-managing-release-pipelines"><strong>Creating and
+Managing Release Pipelines</strong></h4>
+<ul>
+<li><strong>Creating a Release Pipeline</strong>: This involves
+selecting templates, configuring stages (e.g., for Azure App Service),
+and linking build artifacts.</li>
+<li><strong>Creating a Release</strong>: Releases are automatically or
+manually triggered when new artifacts are available. The release process
+deploys changes based on pipeline configuration.</li>
+</ul>
+<h4 id="multistage-pipelines"><strong>Multistage Pipelines</strong></h4>
+<ul>
+<li><strong>Multistage Pipelines</strong>: Deploy to multiple
+environments such as <strong>test, staging, and production</strong> in
+separate stages. Conditions, approvals, and triggers can be added
+between stages to control progression.</li>
+<li><strong>Approvals and Conditions</strong>: Predeployment approvals
+ensure that only authorized personnel can approve deployments to
+sensitive environments like production.</li>
+</ul>
+<h3 id="summary-4"><strong>Summary</strong></h3>
+<ul>
+<li><strong>Continuous Deployment</strong> automates the release
+process, eliminating manual testing and approval.</li>
+<li><strong>Continuous Delivery</strong> automates deployments but still
+requires manual production approvals.</li>
+<li><strong>Release Pipelines</strong> in Azure enable automated
+deployment through stages with pre- and post-deployment conditions.</li>
+<li><strong>Multistage Pipelines</strong> allow deploying applications
+across multiple environments, ensuring thorough testing before
+production.</li>
+</ul>
+<p><strong>Next Chapter</strong>: Chapter 9 will cover <strong>Azure
+Test Plans</strong>, explaining how to run manual and automated tests
+using this service.</p>
+<h1 id="application-testing-with-azure-test-plans">9. Application
+Testing with Azure Test Plans</h1>
+<h3
+id="application-testing-with-azure-test-plans-summary"><strong>Application
+Testing with Azure Test Plans Summary</strong></h3>
+<p>This chapter covers how <strong>Azure Test Plans</strong> is used for
+running manual and automated tests to ensure application quality. Azure
+Test Plans is a comprehensive test management tool that helps teams
+perform different types of testing, organize test plans, track results,
+and gather feedback from stakeholders.</p>
+<h3 id="key-topics-covered-1"><strong>Key Topics Covered</strong></h3>
+<h4 id="overview-of-azure-test-plans"><strong>Overview of Azure Test
+Plans</strong></h4>
+<ul>
+<li><strong>Azure Test Plans</strong> provides tools for <strong>manual,
+exploratory, and user acceptance testing (UAT)</strong>. It helps QA
+teams track tests, gather feedback, and link test results to
+requirements or bugs.</li>
+<li><strong>Exploratory testing</strong> focuses on discovering
+unexpected issues through unscripted testing.</li>
+<li><strong>Automated testing</strong> can be integrated into
+<strong>Azure Pipelines</strong>, connecting tests to builds and
+releases, providing detailed test analytics.</li>
+</ul>
+<h4 id="advantages-of-azure-test-plans"><strong>Advantages of Azure Test
+Plans</strong></h4>
+<ul>
+<li><strong>Extensibility</strong>: Integrates with existing tools and
+allows extensions.</li>
+<li><strong>Platform agnostic</strong>: Supports tests across various
+operating systems and browsers.</li>
+<li><strong>Quality data collection</strong>: Captures detailed
+diagnostic data, such as screenshots, logs, and code coverage, during
+manual testing.</li>
+</ul>
+<h4 id="creating-test-plans-and-test-suites"><strong>Creating Test Plans
+and Test Suites</strong></h4>
+<ul>
+<li><strong>Test Plans</strong> are collections of <strong>test
+suites</strong>, which group <strong>test cases</strong>.</li>
+<li>Types of <strong>Test Suites</strong>:
+<ul>
+<li><strong>Static Suites</strong>: Manually organized test cases.</li>
+<li><strong>Requirement-Based Suites</strong>: Linked to specific work
+items or requirements.</li>
+<li><strong>Query-Based Suites</strong>: Pull test cases based on
+specific query criteria.</li>
+</ul></li>
+</ul>
+<h4 id="test-cases"><strong>Test Cases</strong></h4>
+<ul>
+<li><strong>Test Cases</strong> define what is being tested and contain
+steps to validate specific functionality.</li>
+<li>Test cases are added within test suites and can be structured to
+meet specific testing needs.</li>
+</ul>
+<h4 id="configurations-in-tests"><strong>Configurations in
+Tests</strong></h4>
+<ul>
+<li><strong>Test Configurations</strong> allow testing across different
+environments (e.g., operating systems, browsers).</li>
+<li><strong>Configuration variables</strong> (like OS, CPU) can be
+combined to create <strong>test configurations</strong> that are
+assigned to test cases or test suites.</li>
+</ul>
+<h4 id="running-manual-tests"><strong>Running Manual Tests</strong></h4>
+<ul>
+<li><strong>Manual tests</strong> can be run based on configurations,
+allowing testers to validate the application in different
+environments.</li>
+<li>Results of manual tests can be visualized using <strong>test result
+charts</strong> for analysis.</li>
+</ul>
+<h4 id="running-automated-tests-from-test-plans"><strong>Running
+Automated Tests from Test Plans</strong></h4>
+<ul>
+<li><strong>Automated tests</strong> can be integrated and triggered
+from within <strong>Test Plans</strong>. This allows for scheduling or
+rerunning specific automated tests without triggering a full
+pipeline.</li>
+<li>Automated tests are linked to <strong>build pipelines</strong> and
+executed through <strong>release pipelines</strong>.</li>
+</ul>
+<h3 id="summary-5"><strong>Summary</strong></h3>
+<ul>
+<li><strong>Azure Test Plans</strong> helps organize and execute manual,
+exploratory, and automated tests.</li>
+<li>It supports <strong>test suites</strong>, <strong>test
+cases</strong>, and <strong>configurations</strong> for running tests
+across different environments.</li>
+<li>Both manual and automated test results can be tracked and analyzed
+using <strong>Azure Test Plans</strong>.</li>
+</ul>
+<p>In the next chapter, <strong>Chapter 10</strong>, the focus will
+shift to <strong>infrastructure automation</strong> on Azure, discussing
+how to deploy infrastructure using <strong>Azure Pipelines</strong>.</p>
+<h1 id="infrastructure-automation-with-azure-pipelines">10.
+Infrastructure Automation with Azure Pipelines</h1>
+<h3
+id="infrastructure-automation-with-azure-pipelines-summary"><strong>Infrastructure
+Automation with Azure Pipelines Summary</strong></h3>
+<p>This chapter focuses on <strong>infrastructure automation</strong>
+using <strong>Azure Pipelines</strong> and how to deploy application
+infrastructure with <strong>Infrastructure as Code (IaC)</strong>
+techniques.</p>
+<h3 id="key-topics-covered-2"><strong>Key Topics Covered</strong></h3>
+<h4 id="overview-of-infrastructure-automation"><strong>Overview of
+Infrastructure Automation</strong></h4>
+<ul>
+<li><strong>Infrastructure automation</strong> automates provisioning
+and managing cloud resources using software tools, reducing manual
+intervention and errors.</li>
+<li>Historically, manual infrastructure configuration was
+time-consuming, error-prone, and lacked scalability.</li>
+<li><strong>IaC</strong> helps manage infrastructure using source code,
+making infrastructure management repeatable, consistent, and easier to
+maintain.</li>
+</ul>
+<h4 id="types-of-infrastructure-as-code"><strong>Types of Infrastructure
+as Code</strong></h4>
+<ul>
+<li><strong>Imperative IaC</strong>: Specifies step-by-step actions to
+create infrastructure, offering fine-grained control (e.g., Azure CLI
+commands).</li>
+<li><strong>Declarative IaC</strong>: Focuses on defining the desired
+infrastructure state, leaving the system to figure out how to achieve it
+(e.g., Azure Resource Manager (ARM) templates, Azure Bicep).</li>
+</ul>
+<h4 id="benefits-of-infrastructure-as-code"><strong>Benefits of
+Infrastructure as Code</strong></h4>
+<ul>
+<li><strong>Version control</strong>, <strong>reusability</strong>,
+<strong>streamlined engineering practices</strong>,
+<strong>documentation</strong>, and <strong>idempotency</strong>
+(consistent results on repeated executions).</li>
+</ul>
+<h4 id="infrastructure-automation-tools-on-azure"><strong>Infrastructure
+Automation Tools on Azure</strong></h4>
+<ul>
+<li><strong>ARM Templates</strong>: Declarative JSON-based templates to
+manage Azure resources.</li>
+<li><strong>Azure Bicep</strong>: A simpler, domain-specific language to
+declare Azure resources, offering a more readable syntax compared to ARM
+templates.</li>
+</ul>
+<h4 id="using-azure-bicep-in-azure-pipelines"><strong>Using Azure Bicep
+in Azure Pipelines</strong></h4>
+<ul>
+<li><strong>Setting up Azure Bicep</strong>: Install Azure CLI and Bicep
+on your local machine.</li>
+<li><strong>Azure Bicep Templates</strong>: Define resources in clear,
+easy-to-read syntax. These templates integrate seamlessly with
+<strong>Azure Pipelines</strong> for automating infrastructure
+deployments.</li>
+</ul>
+<h4 id="pipeline-authentication"><strong>Pipeline
+Authentication</strong></h4>
+<ul>
+<li>Use <strong>service connections</strong> in Azure DevOps to allow
+pipelines to access and manage Azure resources securely, automating
+deployments without manual login.</li>
+</ul>
+<h4
+id="deploying-azure-bicep-templates-using-azure-pipelines"><strong>Deploying
+Azure Bicep Templates Using Azure Pipelines</strong></h4>
+<ul>
+<li>Connect <strong>Azure Pipelines</strong> to your Bicep templates
+stored in a repository.</li>
+<li>Define deployment steps in YAML using the
+<code>AzureResourceManagerTemplateDeployment</code> task.</li>
+<li>Automate the deployment of infrastructure resources, such as web
+apps or storage accounts, using Azure Pipelines.</li>
+</ul>
+<h3 id="summary-6"><strong>Summary</strong></h3>
+<ul>
+<li><strong>Infrastructure automation</strong> streamlines the process
+of provisioning and managing cloud infrastructure.</li>
+<li><strong>IaC</strong> allows you to manage infrastructure using code,
+ensuring consistency, reducing errors, and making scaling easier.</li>
+<li><strong>Azure Resource Manager (ARM) templates</strong> and
+<strong>Azure Bicep</strong> are key declarative tools for managing
+Azure infrastructure.</li>
+<li><strong>Azure Pipelines</strong> can automate the deployment of
+<strong>Azure Bicep</strong> templates, simplifying infrastructure
+deployment at scale.</li>
+</ul>
+<p>In <strong>Chapter 11</strong>, you will be introduced to a sample
+project with exercises to practice using the Azure DevOps tools and
+services covered in the book.</p>
+    
+</body>
+</html>
