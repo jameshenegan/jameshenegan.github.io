@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="azure-devops-for-machine-learning-projects">Azure DevOps for
+Machine Learning Projects</h1>
+<p>Azure DevOps can be an excellent platform for orchestrating CI/CD
+pipelines for machine learning (ML) models. In a typical ML pipeline,
+you’ll have multiple stages similar to software development—data
+preprocessing, model training, model evaluation, and deployment. Here’s
+how you could set up a CI/CD pipeline in Azure DevOps specifically for
+ML:</p>
+<h3 id="project-setup-and-repo-structure">1. <strong>Project Setup and
+Repo Structure</strong></h3>
+<ul>
+<li><p>Start by creating a project repository in Azure DevOps. Organize
+your code into directories for <code>data</code>, <code>scripts</code>,
+<code>models</code>, and <code>notebooks</code>.</p></li>
+<li><p>Example structure:</p>
+<pre><code>├── data
+├── notebooks
+├── scripts
+│   ├── preprocess.py
+│   ├── train.py
+│   ├── evaluate.py
+│   └── deploy.py
+└── models</code></pre></li>
+<li><p><strong><code>preprocess.py</code></strong>: Code for data
+cleaning and feature engineering.</p></li>
+<li><p><strong><code>train.py</code></strong>: Code for model
+training.</p></li>
+<li><p><strong><code>evaluate.py</code></strong>: Code for evaluating
+model performance.</p></li>
+<li><p><strong><code>deploy.py</code></strong>: Code for deploying the
+model to a production environment, such as Azure Machine Learning or an
+Azure Container Instance.</p></li>
+</ul>
+<h3 id="define-the-pipeline-in-azure-devops">2. <strong>Define the
+Pipeline in Azure DevOps</strong></h3>
+<p>In Azure DevOps, create a YAML file
+(<code>azure-pipelines.yml</code>) for defining the pipeline steps,
+including CI (continuous integration) and CD (continuous deployment)
+stages.</p>
+<h3 id="set-up-cicd-pipeline-stages">3. <strong>Set Up CI/CD Pipeline
+Stages</strong></h3>
+<h4 id="a.-data-preprocessing-stage"><strong>a. Data Preprocessing
+Stage</strong></h4>
+<ul>
+<li><strong>Trigger</strong>: Any data or script changes.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Install dependencies (e.g., <code>pandas</code>, <code>numpy</code>,
+<code>scikit-learn</code>, <code>tensorflow</code>, or
+<code>pytorch</code>).</li>
+<li>Run <code>preprocess.py</code> to clean and transform data for model
+training.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> Preprocessing</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> Preprocess</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@0</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>              pip install -r requirements.txt</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>              python scripts/preprocess.py</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Data Preprocessing&quot;</span></span></code></pre></div>
+<h4 id="b.-model-training-stage"><strong>b. Model Training
+Stage</strong></h4>
+<ul>
+<li><strong>Trigger</strong>: Any changes in <code>train.py</code>, data
+files, or configuration.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Run <code>train.py</code> to train the model.</li>
+<li>Save the trained model to a <code>models</code> directory.</li>
+<li>Log training metrics (e.g., accuracy, loss) to Azure Machine
+Learning (AML) for experiment tracking.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> Training</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> Preprocessing</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> TrainModel</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@0</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">        - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            pip install -r requirements.txt</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>            python scripts/train.py --output-path=models/</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Model Training&quot;</span></span></code></pre></div>
+<h4 id="c.-model-evaluation-stage"><strong>c. Model Evaluation
+Stage</strong></h4>
+<ul>
+<li><strong>Trigger</strong>: Training completion.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Run <code>evaluate.py</code> to assess model accuracy and
+performance on test data.</li>
+<li>If the model meets a specific performance threshold, proceed to
+deployment; otherwise, flag for review.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> Evaluation</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> Training</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> EvaluateModel</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@0</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">        - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            pip install -r requirements.txt</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            python scripts/evaluate.py --model-path=models/</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Model Evaluation&quot;</span></span></code></pre></div>
+<h4 id="d.-model-deployment-stage"><strong>d. Model Deployment
+Stage</strong></h4>
+<ul>
+<li><strong>Trigger</strong>: Evaluation success.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Deploy the model to an Azure environment, like Azure Machine
+Learning Service, or as a container in Azure Kubernetes Service (AKS) or
+Azure Container Instances (ACI).</li>
+<li>Run <code>deploy.py</code> to automate this process.</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> Deployment</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> Evaluation</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> and(succeeded(), eq(variables[&#39;model_approval_status&#39;], &#39;approved&#39;))</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> DeployModel</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@0</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">        - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            pip install -r requirements.txt</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            python scripts/deploy.py --model-path=models/</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Model Deployment&quot;</span></span></code></pre></div>
+<h3 id="model-versioning-and-approval">4. <strong>Model Versioning and
+Approval</strong></h3>
+<ul>
+<li><strong>Versioning</strong>: Track versions of models within the
+pipeline. Every time a model is trained and saved, log a version number
+(e.g., <code>model_v1.pkl</code>, <code>model_v2.pkl</code>).</li>
+<li><strong>Approval Gate</strong>: After the evaluation stage, set up
+an approval gate in Azure DevOps to manually approve the deployment if
+the model has passed predefined metrics.</li>
+</ul>
+<h3 id="monitoring-and-continuous-feedback">5. <strong>Monitoring and
+Continuous Feedback</strong></h3>
+<ul>
+<li><strong>Logging and Monitoring</strong>: Integrate monitoring tools
+to log model performance, response time, and accuracy in
+production.</li>
+<li><strong>Retraining Trigger</strong>: Set up triggers to retrain the
+model if performance drops below a specific threshold. This feedback
+loop is crucial for machine learning models deployed in production.</li>
+</ul>
+<h3 id="sample-code-for-training-and-deployment">Sample Code for
+Training and Deployment</h3>
+<p>Here’s an outline of what <code>train.py</code> and
+<code>deploy.py</code> might look like:</p>
+<h4 id="train.py"><code>train.py</code></h4>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">&#39;data/processed_data.csv&#39;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> data.drop(<span class="st">&#39;target&#39;</span>, axis<span class="op">=</span><span class="dv">1</span>), data[<span class="st">&#39;target&#39;</span>]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Train model</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> RandomForestClassifier()</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Save model</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>joblib.dump(model, <span class="st">&#39;models/model_v1.pkl&#39;</span>)</span></code></pre></div>
+<h4 id="deploy.py"><code>deploy.py</code></h4>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Model</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core.webservice <span class="im">import</span> AciWebservice, Webservice</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core.model <span class="im">import</span> InferenceConfig</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load model</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> joblib.load(<span class="st">&#39;models/model_v1.pkl&#39;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Register model in Azure Machine Learning</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>workspace <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>Model.register(workspace, model_path<span class="op">=</span><span class="st">&quot;models/model_v1.pkl&quot;</span>, model_name<span class="op">=</span><span class="st">&quot;ml_model&quot;</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Deploy model</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>inference_config <span class="op">=</span> InferenceConfig(entry_script<span class="op">=</span><span class="st">&quot;score.py&quot;</span>, environment<span class="op">=</span>my_env)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>aci_config <span class="op">=</span> AciWebservice.deploy_configuration(cpu_cores<span class="op">=</span><span class="dv">1</span>, memory_gb<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>service <span class="op">=</span> Model.deploy(workspace, <span class="st">&quot;my-ml-model&quot;</span>, [model], inference_config, aci_config)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>service.wait_for_deployment(show_output<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Model deployed at </span><span class="sc">{</span>service<span class="sc">.</span>scoring_uri<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="automated-retraining-workflow-advanced">6. <strong>Automated
+Retraining Workflow (Advanced)</strong></h3>
+<ul>
+<li><strong>Scheduled Retraining</strong>: Automate retraining if new
+data arrives.</li>
+<li><strong>Rollback</strong>: If a new model fails in production,
+rollback to a previous stable version.</li>
+</ul>
+<p>This setup leverages Azure DevOps to manage the end-to-end workflow
+from preprocessing to deployment, adding automation, version control,
+and approvals, which are crucial in an ML lifecycle. You can expand it
+further to include automated testing and monitoring as your model
+matures in production.</p>
+    
+</body>
+</html>
