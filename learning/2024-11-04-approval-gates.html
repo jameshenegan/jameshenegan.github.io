@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1
+id="setting-up-approval-gates-for-machine-learning-projects-in-azure-devops-and-azure-ml-studio">Setting
+Up Approval Gates for Machine Learning Projects in Azure DevOps and
+Azure ML Studio</h1>
+<p>The following proposal summarizes some information from the following
+resources:</p>
+<ul>
+<li><strong>Introduction to machine learning operations
+(MLOps)</strong>.
+<ul>
+<li>Description: This is a Learning Path offered by Microsoft Learn.
+Topics covered include:
+<ul>
+<li>How to use source control (i.e., Git and Azure Repos) for machine
+learning projects.</li>
+<li>How to automate machine learning workflows with Azure DevOps
+pipelines and Azure Machine Learning pipelines.</li>
+<li>How to work with multiple Azure DevOps environments for continuous
+deployment (CD) of ML models.</li>
+</ul></li>
+<li>URL:
+https://learn.microsoft.com/en-us/training/paths/introduction-machine-learn-operations/</li>
+</ul></li>
+<li><strong>Azure Machine Learning &amp; MLOps : Beginner to
+Advance</strong>.
+<ul>
+<li>Description: This is a Udemy course created by Mohammad
+Ghodratigohar (MG). In the course, MG shows how to create Continuous
+Integration and Continuous Deployment (CI/CD) pipelines in Azure DevOps
+that can interact with Azure Machine Learning studio.</li>
+<li>URL:
+https://www.udemy.com/course/azure-machine-learning-mlops-mg</li>
+</ul></li>
+</ul>
+<p><strong>Note</strong>: the following proposal was written with the
+help of ChatGPT 4o. The prompts mainly asked ChatGPT to summarize some
+information from the resources above, with a specific focus on approval
+gates.</p>
+<h2 id="overview"><strong>1. Overview</strong></h2>
+<p>To meet compliance needs and improve our ML workflows, we’re
+proposing a process for adding <strong>approval gates</strong> at key
+steps in our machine learning lifecycle. These approval gates will
+ensure that code and models get properly reviewed and tested before they
+reach production.</p>
+<p>Here’s what we’re aiming to achieve:</p>
+<ul>
+<li>Make sure our code meets quality and compliance standards.</li>
+<li>Keep track of changes and approvals for better accountability.</li>
+<li>Reduce the risk of deploying untested code or models to
+production.</li>
+</ul>
+<p>The plan is to set up two main types of approval gates:</p>
+<ol type="1">
+<li><strong>Repository-Level Gates</strong> for reviewing code in Azure
+DevOps Repos.</li>
+<li><strong>Environment-Level Gates</strong> to control deployments
+through Azure DevOps Environments.</li>
+</ol>
+<h2 id="goals"><strong>2. Goals</strong></h2>
+<p>Our main goals here are to:</p>
+<ul>
+<li>Build in compliance checkpoints without making the workflow too
+heavy.</li>
+<li>Make sure all changes are reviewed and tested before going
+live.</li>
+<li>Create an audit trail for every approval and deployment.</li>
+</ul>
+<h2 id="the-approach-setting-up-the-approval-gates"><strong>3. The
+Approach: Setting Up the Approval Gates</strong></h2>
+<h3 id="repository-level-approval-gates"><strong>3.1 Repository-Level
+Approval Gates</strong></h3>
+<h4 id="why-we-need-this">Why We Need This</h4>
+<p>Repository-level gates will help us catch any code issues early by
+requiring code reviews and quality checks before changes get merged into
+production.</p>
+<h4 id="how-it-works">How It Works</h4>
+<ol type="1">
+<li><p><strong>Azure DevOps Repos</strong>:</p>
+<ul>
+<li>We’ll keep all code for ML projects in Azure DevOps Repos, with
+separate repositories for each project.</li>
+</ul></li>
+<li><p><strong>Branching Strategy</strong>:</p>
+<ul>
+<li>Our setup will include a <strong>main (production) branch</strong>
+and <strong>feature branches</strong>. Developers work in feature
+branches and only merge into the main branch after approval.</li>
+</ul></li>
+<li><p><strong>Pull Requests</strong>:</p>
+<ul>
+<li>Any changes to the main branch will require a <strong>pull request
+(PR)</strong>. PRs will include details on the changes made, and
+reviewers will check them for code quality and alignment with our
+standards.</li>
+</ul></li>
+<li><p><strong>Branch Policies</strong>:</p>
+<ul>
+<li>We’ll add policies to make sure PRs only get merged if they:
+<ul>
+<li>Pass a code review.</li>
+<li>Complete automated checks, like linting or style checks.</li>
+<li>Successfully build and pass tests.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Automated Checks</strong> (optional):</p>
+<ul>
+<li>We can add extra gates like code analysis or test coverage checks to
+catch issues before they get merged.</li>
+</ul></li>
+</ol>
+<h4 id="compliance-perks">Compliance Perks</h4>
+<ul>
+<li><strong>Audit Trail</strong>: Every PR, review, and merge will be
+logged in Azure DevOps for easy tracking.</li>
+<li><strong>Access Control</strong>: Only designated users can approve
+and merge code into the main branch.</li>
+</ul>
+<h3 id="environment-level-approval-gates"><strong>3.2 Environment-Level
+Approval Gates</strong></h3>
+<h4 id="why-we-need-this-1">Why We Need This</h4>
+<p>Environment-level gates help us control where and when models get
+deployed. By setting approval gates between dev, staging, and
+production, we make sure only tested models go live.</p>
+<h4 id="how-it-works-1">How It Works</h4>
+<ol type="1">
+<li><p><strong>Environment Setup</strong>:</p>
+<ul>
+<li>We’ll create three environments in Azure DevOps:
+<strong>Development</strong>, <strong>Staging/QA</strong>, and
+<strong>Production</strong>. Each environment will have its own group of
+resources. For example, the Development environment may have an Azure ML
+Studio workspace, the Staging environment may have a Azure container
+instance to host a staging model and web application, and the Production
+environment may have a Kubernetes cluster.</li>
+</ul></li>
+<li><p><strong>Multi-Stage Pipelines</strong>:</p>
+<ul>
+<li>Our pipeline will move models across environments in stages:
+<ul>
+<li><strong>Development</strong>: Where the model is first deployed and
+tested.</li>
+<li><strong>Staging/QA</strong>: Where we validate the model in a
+production-like setup.</li>
+<li><strong>Production</strong>: Where the model is finally deployed for
+live use.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Approval Process for Environment
+Transitions</strong>:</p>
+<ul>
+<li><strong>Development to Staging/QA</strong>: Automated deployment—no
+manual approval required here.</li>
+<li><strong>Staging/QA to Production</strong>: Manual approval is
+required. Before moving to production, a reviewer will check:
+<ul>
+<li>Model performance in staging.</li>
+<li>Compliance with any specific requirements.</li>
+<li>Logs and test results.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Environment Access Control</strong>:</p>
+<ul>
+<li>We’ll use Role-Based Access Control (RBAC) to restrict who can
+approve deployments to each environment.</li>
+</ul></li>
+</ol>
+<h4 id="compliance-perks-1">Compliance Perks</h4>
+<ul>
+<li><strong>Approval Checks</strong>: We can set up specific people to
+approve deployments before they go live.</li>
+<li><strong>Logging and Auditing</strong>: Deployment logs and approval
+actions are recorded in Azure DevOps, so we have a record for compliance
+purposes.</li>
+<li><strong>Rollback Options</strong>: If an issue is found in
+production, we can quickly roll back to a previous version.</li>
+</ul>
+<h3 id="integrating-with-azure-machine-learning-studio"><strong>3.3
+Integrating with Azure Machine Learning Studio</strong></h3>
+<h4 id="why-we-need-this-2">Why We Need This</h4>
+<p>We’ll also set up workflows in Azure Machine Learning Studio to
+manage the training and deployment of our models.</p>
+<h4 id="how-it-works-2">How It Works</h4>
+<ol type="1">
+<li><p><strong>Training Pipelines</strong>:</p>
+<ul>
+<li>Automate model training and evaluation in Azure Machine Learning
+Studio. We can even trigger a training pipeline as part of the approval
+process, making sure the latest model is validated.</li>
+</ul></li>
+<li><p><strong>Model Versioning</strong>:</p>
+<ul>
+<li>Each model version will be registered in Azure ML’s model registry
+with all relevant metadata. This way, we have a clear record of every
+version we’ve tested.</li>
+</ul></li>
+<li><p><strong>Environment Promotions</strong>:</p>
+<ul>
+<li>Use Azure ML’s deployment tools to push the model across our
+environments, with gated approvals ensuring only tested models make it
+to production.</li>
+</ul></li>
+</ol>
+<h3 id="monitoring-and-logging-for-continuous-compliance"><strong>3.4
+Monitoring and Logging for Continuous Compliance</strong></h3>
+<p>To keep everything in line with compliance requirements, we’ll set
+up:</p>
+<ul>
+<li><strong>Pipeline Monitoring</strong>: Track all pipeline runs,
+approvals, and deployments.</li>
+<li><strong>Model Monitoring</strong>: Set up checks for data drift and
+model performance in production.</li>
+<li><strong>Audit Logs</strong>: Keep comprehensive logs of all changes,
+approvals, and deployments so that everything is trackable.</li>
+</ul>
+<h2 id="next-steps"><strong>4. Next Steps</strong></h2>
+<p>Here’s how we’ll roll out this gated approval process:</p>
+<ol type="1">
+<li><strong>Pilot Project</strong>: Test the setup on a single ML
+project to make sure it’s practical.</li>
+<li><strong>Refinement</strong>: Adjust as needed based on the pilot,
+tweaking policies, approvals, and access controls.</li>
+<li><strong>Full Rollout</strong>: Once the pilot is solid, expand the
+gated approval process to all ML projects.</li>
+<li><strong>Documentation and Training</strong>: Create user guides and
+train the team on this new workflow.</li>
+</ol>
+    
+</body>
+</html>
