@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="machine-learning-operations-mlops-road-map">Machine Learning
+Operations (MLOps) Road Map</h1>
+<p><strong>Subtitle:</strong> Steps to Guide Our Maturity in MLOps
+Practices</p>
+<h2 id="introduction">Introduction</h2>
+<p>The purpose of this document is to outline five steps that will
+advance our MLOps maturity.</p>
+<p>The five steps are:</p>
+<ol type="1">
+<li>Distinguish between the discovery phase and the operationalization
+phase of an ML project.</li>
+<li>Transition from notebooks to scripts for ML processes that have been
+operationalized.</li>
+<li>Implement version control for operationalized scripts using an Azure
+DevOps repository.</li>
+<li>Set up automation to trigger Azure Machine Learning (AML) pipelines
+from Azure DevOps pipelines.</li>
+<li>Separate development and production AML environments.</li>
+</ol>
+<h2 id="discovery-vs.-operationalization">Discovery
+vs. Operationalization</h2>
+<h3 id="discovery">Discovery</h3>
+<p>The <strong>discovery</strong> phase of an ML project is where we
+explore and experiment. During this phase, we test various approaches,
+explore datasets, and iterate to identify the most promising model for
+the specifc project we’re working on.</p>
+<p>Typical activities in the discovery phase include:</p>
+<ul>
+<li><strong>Locate Data Sources</strong>: Identifying and accessing the
+raw data sources required for the project.</li>
+<li><strong>Exploratory Data Analysis (EDA)</strong>: Understanding data
+characteristics, distributions, and any initial cleaning needs.</li>
+<li><strong>Model Selection</strong>: Experimenting with different model
+architectures and algorithms.</li>
+<li><strong>Data Cleaning, Transformation, and Feature
+Engineering</strong>: Preparing the data for optimal model performance
+by transforming it as required.</li>
+<li><strong>Model Evaluation</strong>: Testing models against validation
+and test datasets, refining the approach based on performance
+metrics.</li>
+</ul>
+<h4 id="terms-and-concepts-associated-with-the-discovery-phase">Terms
+and Concepts Associated with the Discovery Phase</h4>
+<ul>
+<li><strong>Exploration and Development</strong>: Testing and iterating
+with different approaches.</li>
+<li><strong>Iterative Process</strong>: Cycles of adjustment and
+re-evaluation.</li>
+<li><strong>Proof of Concept (PoC) and Pilot Projects</strong>: Sprints
+to investigate potential solutions.</li>
+<li><strong>The Inner Loop of MLOps</strong>: The iterative phase where
+models are developed and refined.</li>
+</ul>
+<h3 id="operationalization">Operationalization</h3>
+<p>During the discovery phase, we explore multiple approaches and
+experiment with different models. But once we find one that works, we
+shift our focus to <strong>operationalization</strong>—the phase where
+we make the model and its processes reliable, automated, and ready for
+use in the real world.</p>
+<p>At the most basic level, operationalization means getting a trained
+model ready to support business decisions. In other words,
+<strong>operationalizing a model</strong> means that it’s polished and
+dependable enough to be deployed in a business setting.</p>
+<p>But our real goal during this phase is to <strong>operationalize the
+entire pipeline</strong>—everything from data ingestion and
+preprocessing to feature engineering, model training, and evaluation.
+This way, when new data comes in, we can re-run the pipeline to
+automatically update the model with the latest information.</p>
+<p>As Microsoft Learn puts it, our objective is to “convert the model
+training to a robust and reproducible pipeline.” By operationalizing the
+whole pipeline, we build a process that can support regular retraining
+and real-time updates, so our models stay relevant and accurate as
+things evolve.</p>
+<h4
+id="terms-and-concepts-associated-with-the-operationalization-phase">Terms
+and Concepts Associated with the Operationalization Phase</h4>
+<ul>
+<li><strong>Reproducible</strong>: Produces consistent results every
+time it’s run, as long as the conditions are the same.</li>
+<li><strong>Robust</strong>: Designed to keep working well, even if some
+factors or data change along the way.</li>
+<li><strong>Lean, Streamlined, Optimized</strong>: Free of extra steps,
+ensuring maximum efficiency without unnecessary complexity.</li>
+<li><strong>Production Ready</strong>: Fully tested, reliable, and ready
+to perform in real-world environments.</li>
+<li><strong>The Outer Loop of MLOps</strong>: The broader cycle where a
+strong, automated pipeline continuously runs to update models for
+production use.</li>
+</ul>
+<h2
+id="scripts-instead-of-notebooks-for-operationalized-processes">Scripts
+Instead of Notebooks for Operationalized Processes</h2>
+<p>Scripts are generally more suitable than notebooks for
+production-level tasks. As highlighted in Microsoft Learn:</p>
+<blockquote>
+<p>“Though notebooks are ideal for experimentation and development,
+scripts are a better fit for production workloads.”</p>
+</blockquote>
+<p>Transitioning from notebooks to scripts might feel like a hurdle at
+first and could slow us down initially. Notebooks are intuitive and
+flexible for exploring ideas and refining models, and moving to scripts
+may require restructuring and rethinking how we organize code. However,
+this shift will pay off in the long run by making our workflows more
+efficient, maintainable, and scalable.</p>
+<h3 id="benefits-of-using-scripts">Benefits of Using Scripts</h3>
+<ul>
+<li><strong>Automatability</strong>: Scripts can be executed from the
+command line, which simplifies integration with automated workflows,
+such as Azure Machine Learning and Azure DevOps pipelines.</li>
+<li><strong>Version Control</strong>: Scripts work seamlessly with
+version control systems, making it easier to track changes, collaborate,
+and manage different code versions.</li>
+<li><strong>Code Flow</strong>: Unlike notebooks, scripts provide a
+clear, structured order of execution, which reduces ambiguity and makes
+it easier to understand the control flow.</li>
+<li><strong>Testability</strong>: Quality assurance is more
+straightforward with scripts. Unit testing, code quality checks, and
+other quality control processes integrate more naturally with scripts
+than with notebook cells.</li>
+</ul>
+<h3 id="how-to-convert-a-notebook-to-a-script">How to Convert a Notebook
+to a Script</h3>
+<p>To convert a notebook to a script, follow these steps:</p>
+<ol type="1">
+<li><strong>Export Cells to Script</strong>: Most notebook environments
+allow exporting cells directly to a <code>.py</code> script. In Jupyter
+Notebook, for example, you can use the <code>nbconvert</code> tool:
+<code>jupyter nbconvert --to script my_notebook.ipynb</code>.</li>
+<li><strong>Review Control Flow</strong>: Ensure that the exported
+script has a logical flow. Restructure it as needed, organizing
+functions, classes, and control statements.</li>
+<li><strong>Parameterize the Code</strong>: Replace hardcoded values
+with parameters to make the script more flexible and reusable.</li>
+<li><strong>Remove Interactive Elements</strong>: Any cell-specific
+variables or interactive elements (e.g., sliders or exploratory print
+statements) should be refactored or removed.</li>
+<li><strong>Test the Script</strong>: Run the script in a
+non-interactive environment to verify functionality and catch any
+issues.</li>
+</ol>
+<h3 id="additional-comments">Additional Comments</h3>
+<p>The ease of converting notebooks to scripts depends on how structured
+the notebook is to begin with. Notebooks with a clear, ordered flow
+convert relatively easily. However, those with complex, interactive
+control flows may need more work to become well-organized,
+production-ready scripts. While this initial refactoring can take time,
+it ultimately results in code that’s easier to automate, test, and
+deploy, making our workflows more sustainable in the long term.</p>
+<h2 id="version-control-with-an-azure-devops-repository">Version Control
+with an Azure DevOps Repository</h2>
+<p>Using version control is essential for collaboration, tracking
+changes, and maintaining a history of our ML assets.</p>
+<h3 id="steps-for-implementing-version-control-in-azure-devops">Steps
+for Implementing Version Control in Azure DevOps</h3>
+<ol type="1">
+<li><strong>Initialize a Repository</strong>: Set up a Git repository in
+Azure DevOps for storing ML scripts, configurations, and other
+assets.</li>
+<li><strong>Organize Project Structure</strong>: Create folders for data
+processing scripts, model training scripts, configuration files, and
+documentation. Use a consistent naming convention for easier
+navigation.</li>
+<li><strong>Commit Regularly</strong>: Commit changes frequently with
+descriptive commit messages to capture the development history.</li>
+<li><strong>Branching Strategy</strong>: Use branching strategies like
+<code>feature</code>, <code>development</code>, and
+<code>production</code> branches to manage different stages of
+code.</li>
+<li><strong>Pull Requests and Code Reviews</strong>: Use pull requests
+for reviewing and merging code. Set up approval policies to ensure
+quality.</li>
+</ol>
+<h2 id="trigger-aml-pipelines-from-azure-devops-pipelines">Trigger AML
+Pipelines from Azure DevOps Pipelines</h2>
+<p>Integrating Azure Machine Learning (AML) pipelines with Azure DevOps
+pipelines allows us to automate model training, testing, and
+deployment.</p>
+<h3 id="how-to-set-up-pipeline-integration">How to Set Up Pipeline
+Integration</h3>
+<ol type="1">
+<li><strong>Create an AML Pipeline</strong>: Define and test an ML
+pipeline within Azure Machine Learning to handle data preprocessing,
+model training, and evaluation.</li>
+<li><strong>Set Up Azure DevOps Pipeline</strong>: In Azure DevOps,
+create a pipeline that includes triggers, such as new data or code
+changes, to initiate the AML pipeline.</li>
+<li><strong>Use the AML SDK or REST API</strong>: Within the DevOps
+pipeline, use the AML SDK or REST API to trigger the AML pipeline.
+Define inputs, outputs, and dependencies as needed.</li>
+<li><strong>Monitor Execution and Results</strong>: Use Azure DevOps
+logs to monitor pipeline runs and capture any errors, providing
+traceability and accountability.</li>
+</ol>
+<h2 id="separate-development-and-production-aml-environments">Separate
+Development and Production AML Environments</h2>
+<p>For production-quality deployments, it’s essential to separate
+development and production environments, helping us ensure that only
+thoroughly tested models are used in production.</p>
+<h3 id="steps-for-environment-separation">Steps for Environment
+Separation</h3>
+<ol type="1">
+<li><strong>Provision Separate Resources</strong>: Create distinct AML
+workspaces for development and production. Each workspace should have
+its own associated compute, storage, and configuration settings.</li>
+<li><strong>Use Environment-Specific Variables</strong>: Define
+environment variables in both DevOps and AML to manage differences
+between development and production, such as data sources, API keys, and
+storage paths.</li>
+<li><strong>Control Access and Permissions</strong>: Limit access to the
+production workspace to only those responsible for deployment. Use
+role-based access control to enforce permissions.</li>
+<li><strong>Automate Environment Promotion</strong>: Develop automated
+scripts or DevOps pipelines to promote models from development to
+production. These scripts should verify the model’s performance before
+allowing promotion.</li>
+</ol>
+    
+</body>
+</html>
