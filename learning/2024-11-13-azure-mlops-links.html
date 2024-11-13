@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p><a
+href="https://learn.microsoft.com/en-us/training/modules/manage-git-branches-workflows/">Design
+and implement branch strategies and workflows</a></p>
+<p>This module provides an in-depth look at Git branching strategies to
+support continuous delivery and streamline collaborative development. It
+is intended for roles like DevOps engineers, developers, and solution
+architects who manage branching within Azure and GitHub environments.
+The key learning objectives include:</p>
+<ol type="1">
+<li><strong>Understanding Branching Workflows</strong>: Learn about
+different Git branching workflows, including feature branches and GitHub
+Flow, to support organized and efficient development.</li>
+<li><strong>Implementing Feature Branches</strong>: Set up feature
+branches to isolate development, ensuring main branches remain stable
+and ready for deployment.</li>
+<li><strong>Using GitHub Flow and Forking</strong>: Explore the GitHub
+Flow for straightforward, single-branch workflows, and the forking model
+to enable contributions from external collaborators.</li>
+<li><strong>Branch Merging and Restrictions</strong>: Implement merging
+restrictions to protect main branches and enforce code quality through
+approvals.</li>
+</ol>
+<p>This module is part of the AZ-400 DevOps certification path and
+provides practical steps to design a branch strategy, manage version
+control with Azure Repos, and apply these strategies effectively within
+Azure DevOps environments.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/training/modules/collaborate-pull-requests-azure-repos/">Explore
+feature branch workflow</a></p>
+<p>The <strong>Feature Branch Workflow</strong> enables developers to
+work on new features in separate branches, keeping the main branch
+stable. This encapsulation allows for collaborative development without
+affecting the main codebase, which is crucial in continuous integration
+environments. <strong>Pull Requests</strong> (PRs) initiate discussions
+around code changes, allowing teams to review, suggest changes, or seek
+help.</p>
+<p>The <strong>Release Branch Workflow</strong> adds a layer for stable,
+tested code ready for deployment. Release branches isolate release
+preparation, allowing bug fixes and final adjustments before merging
+into the main branch or deploying directly.</p>
+<p><strong>Trunk-Based Development</strong> simplifies this further by
+frequently merging short-lived feature branches back into the main
+branch, promoting rapid integration and continuous delivery.</p>
+<h3 id="key-steps-in-the-feature-branch-workflow">Key Steps in the
+Feature Branch Workflow:</h3>
+<ol type="1">
+<li><strong>Create a Branch</strong>: Developers branch from the main
+branch to work on isolated features or fixes.</li>
+<li><strong>Add Commits</strong>: Track progress with commits, which
+document changes and facilitate rollbacks if needed.</li>
+<li><strong>Open Pull Requests</strong>: Start discussions, share
+updates, or seek feedback.</li>
+<li><strong>Discuss and Review Code</strong>: Use PR comments for code
+review and iterative improvement.</li>
+<li><strong>Deploy and Merge</strong>: Test changes in an environment
+before merging them back into the main branch, ensuring quality and
+stability.</li>
+</ol>
+<p>This workflow ensures organized development, enables collaboration,
+and maintains a clean main branch, aligning well with CI/CD
+practices.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/training/paths/build-first-machine-operations-workflow/">End-to-end
+machine learning operations (MLOps) with Azure Machine Learning</a></p>
+<p>This Azure Machine Learning MLOps learning path teaches how to apply
+DevOps practices to machine learning projects, focusing on automation,
+source control, and continuous integration/continuous deployment (CI/CD)
+to achieve an end-to-end MLOps workflow. It is designed for those with
+experience in Python or R, machine learning model development, and basic
+Azure ML concepts. Key modules include:</p>
+<ol type="1">
+<li><strong>Automate ML Jobs</strong>: Learn to manage model training
+and testing workflows by creating and running Azure ML jobs.</li>
+<li><strong>Integrate GitHub Actions</strong>: Automate ML pipelines
+using GitHub Actions for tasks like model training and deployment.</li>
+<li><strong>Trigger Actions by Feature Changes</strong>: Use
+feature-based triggers to initiate workflows based on specific code
+updates, enhancing main branch protection.</li>
+<li><strong>Automated Code Checks</strong>: Implement linting and unit
+testing through GitHub Actions to maintain code quality for ML
+projects.</li>
+<li><strong>Environment Management</strong>: Set up environments for
+training, testing, and deploying models as part of a scalable MLOps
+strategy.</li>
+<li><strong>Model Deployment</strong>: Automate the deployment process
+with GitHub Actions and the Azure ML CLI, ensuring a reliable and
+testable production model deployment.</li>
+</ol>
+<p>Each module combines theoretical concepts, practical exercises, and
+knowledge checks to build a structured MLOps pipeline that enhances
+efficiency, collaboration, and model reliability in production.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-convert-ml-experiment-to-production?view=azureml-api-1">Convert
+ML experiments to production Python code</a></p>
+<p>This tutorial explains how to convert Jupyter notebook code into
+production-ready Python scripts, focusing on making machine learning
+(ML) experiments compatible with automated testing and CI/CD processes
+using Azure Machine Learning and MLOpsPython. Key steps include:</p>
+<ol type="1">
+<li><p><strong>Remove Nonessential Code</strong>: Eliminate any
+exploratory code to streamline scripts, ensuring only essential code
+remains, making it more maintainable.</p></li>
+<li><p><strong>Refactor into Functions</strong>: Break down code into
+reusable functions (e.g., <code>split_data</code>,
+<code>train_model</code>, <code>get_model_metrics</code>) to enhance
+readability and facilitate testing.</p></li>
+<li><p><strong>Create Python Scripts</strong>: Convert Jupyter notebooks
+into Python files using <code>nbconvert</code>, separating related
+functions into training (<code>train.py</code>) and scoring
+(<code>score.py</code>) scripts.</p></li>
+<li><p><strong>Develop Unit Tests</strong>: Implement unit tests with
+Pytest to validate individual functions, ensuring reliable
+functionality, especially for critical parts like the
+<code>train_model</code> function.</p></li>
+</ol>
+<p>By following these steps, experimentation code can be standardized
+for deployment and maintained easily in production, integrating well
+with CI/CD pipelines and Azure Machine Learning environments.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/cloud-scale-analytics/best-practices/data-science-best-practices">Best
+practices for data science projects with cloud-scale analytics in
+Azure</a></p>
+<p>The article provides best practices for operationalizing data science
+projects with cloud-scale analytics in Azure. Key practices include
+creating reusable templates for deploying necessary Azure resources,
+setting up distinct environments for development and production, and
+defining guidelines for both real-time and batch processing scenarios.
+For real-time needs, models are typically deployed on Azure Kubernetes
+Service (AKS) after testing. Batch scenarios, on the other hand, often
+utilize Azure ML pipelines with Data Factory orchestration.</p>
+<p>MLOps workflows benefit from structured artifacts like sample
+notebooks, YAML-based Azure Machine Learning pipelines, and predefined
+repository structures to ensure scalability, reproducibility, and
+efficiency in managing data science models and pipelines. The
+recommended repository structure enhances collaboration and organizes
+Azure-specific configurations, DevOps artifacts, and project-specific
+code for ease of access across data science teams.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/training/modules/introduction-development-operations-principles-for-machine-learn/4-integrate-azure-development-operations-tools">Integrate
+Azure Machine Learning with DevOps tools</a></p>
+<p>In integrating Azure Machine Learning with DevOps tools like Azure
+DevOps or GitHub, two main roles are involved:</p>
+<ol type="1">
+<li><strong>Administrator</strong>: Sets up and manages the DevOps
+environment, including securely connecting to Azure Machine
+Learning.</li>
+<li><strong>End User</strong>: Contributes to development but has
+limited access to DevOps configurations.</li>
+</ol>
+<h3 id="steps-for-azure-devops-integration">Steps for Azure DevOps
+Integration:</h3>
+<ul>
+<li><strong>Setup</strong>: The administrator creates an Azure DevOps
+organization and project to manage resources.</li>
+<li><strong>Service Connection</strong>: A secure connection to Azure
+Machine Learning is established by creating a service principal in
+Microsoft Entra ID, allowing Azure DevOps to manage access without
+individual credentials.</li>
+<li><strong>Configuration</strong>: The service principal is given
+“Contributor” access, and the connection is named for easy reference in
+workflows.</li>
+</ul>
+<h3 id="steps-for-github-integration">Steps for GitHub Integration:</h3>
+<ul>
+<li><strong>Repository Creation</strong>: A new GitHub repository is set
+up for the project, which can be individual or organizational.</li>
+<li><strong>Authentication Setup</strong>: A service principal is
+created in Azure, granting “Contributor” access to Azure Machine
+Learning. Credentials are saved in JSON format.</li>
+<li><strong>Secure Storage</strong>: These credentials are stored as a
+secret (AZURE_CREDENTIALS) within the GitHub repository settings,
+enabling secure automation in workflows.</li>
+</ul>
+<p>Both Azure DevOps and GitHub use service principals to authenticate
+securely, facilitating automated workflows that connect directly with
+Azure Machine Learning.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops">Key
+concepts for new Azure Pipelines users</a></p>
+<p>The article introduces key concepts in Azure Pipelines, a tool within
+Azure DevOps for CI/CD processes. Major components include:</p>
+<ul>
+<li><strong>Pipeline</strong>: A workflow for CI/CD that includes
+multiple stages, jobs, steps, and tasks. Stages can represent different
+environments, like testing or production.</li>
+<li><strong>Triggers</strong>: Conditions that initiate the pipeline,
+such as a code push or schedule.</li>
+<li><strong>Agent and Jobs</strong>: An agent executes jobs, which are
+grouped steps within a stage. Jobs can be agent-based or agentless.</li>
+<li><strong>Artifacts</strong>: Files or packages generated from builds
+and tests, available for subsequent tasks or deployments.</li>
+<li><strong>Continuous Integration (CI) and Continuous Delivery
+(CD)</strong>: CI focuses on building and testing, while CD deploys code
+across stages, ensuring quality.</li>
+<li><strong>Deployment and Environments</strong>: Deployments involve
+deploying to environments, which can include servers or cloud
+services.</li>
+<li><strong>Libraries and Variables</strong>: Secure files and variable
+groups shared across pipelines for configuration.</li>
+</ul>
+<p>These concepts enable automated, structured workflows in application
+deployment, supporting quality control, versioning, and reliable
+releases.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/azure/devops/pipelines/process/approvals?view=azure-devops&amp;tabs=check-pass">Define
+Approvals and Checks</a></p>
+<p>The article provides a detailed guide to configuring
+<strong>approvals and checks</strong> in Azure DevOps pipelines,
+enabling resource owners to control when and how stages in a pipeline
+proceed. These controls help ensure deployments meet specific criteria,
+maintain quality, and follow governance practices. Key points
+include:</p>
+<h3 id="key-elements-of-approvals-and-checks">Key Elements of Approvals
+and Checks:</h3>
+<ol type="1">
+<li><p><strong>Approvals</strong>: Used to manually control deployments,
+requiring designated users or groups to approve changes before a stage
+executes. Approvals can be deferred to align with optimal deployment
+times.</p></li>
+<li><p><strong>Types of Checks</strong>:</p>
+<ul>
+<li><strong>Static Checks</strong>: Include branch controls and template
+requirements, ensuring source branches meet policies and structure.</li>
+<li><strong>Dynamic Checks</strong>: Such as invoking Azure Functions,
+REST APIs, and business hour restrictions, which can periodically
+evaluate conditions during pipeline execution.</li>
+<li><strong>Post-Check Approvals and Exclusive Locks</strong>: Prevent
+multiple stages from running simultaneously, securing sequential
+deployment and quality.</li>
+</ul></li>
+<li><p><strong>Advanced Options</strong>:</p>
+<ul>
+<li><strong>Branch Control</strong>: Restricts pipelines to specific
+protected branches.</li>
+<li><strong>Business Hours</strong>: Allows stage execution only during
+specified time windows.</li>
+<li><strong>Invoke Azure Function / REST API</strong>: Integrates custom
+checks with Azure or external services, providing flexibility for
+advanced conditional deployments.</li>
+<li><strong>Query Azure Monitor Alerts</strong>: Ensures no critical
+alerts before proceeding, commonly used for monitoring health in
+production.</li>
+</ul></li>
+<li><p><strong>Special Features</strong>:</p>
+<ul>
+<li><strong>Exclusive Lock</strong>: Limits resource use to one pipeline
+run, preventing simultaneous executions that may cause conflicts.</li>
+<li><strong>Evaluate Artifacts</strong>: Checks compliance of artifacts,
+such as container images, with security policies before deployment.</li>
+<li><strong>Deferred and Scheduled Approvals</strong>: Allows for
+scheduling checks and approvals, ideal for timed releases or
+lower-traffic periods.</li>
+</ul></li>
+</ol>
+<p>This approval and check framework supports structured, secure, and
+policy-compliant deployment pipelines in Azure DevOps, aligning with
+DevOps best practices for continuous delivery.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/ai-machine-learning-resource-organization">Organize
+and set up Azure Machine Learning environments</a></p>
+<p>This article outlines best practices for organizing and deploying
+Azure Machine Learning environments, addressing team structure,
+workspace setup, regions, and compliance considerations. Key points
+include:</p>
+<h3 id="team-structure-and-workspace-setup">1. <strong>Team Structure
+and Workspace Setup</strong>:</h3>
+<ul>
+<li><strong>Workspace per Team</strong>: One workspace per team
+centralizes artifacts and simplifies access but requires uniform data
+access levels.</li>
+<li><strong>Workspace per Project</strong>: Enables data and cost
+segregation at the project level, facilitating collaboration with
+external contributors.</li>
+<li><strong>Single Workspace</strong>: Suitable for R&amp;D or
+exploratory work, minimizing Azure resource footprint but potentially
+cluttering the workspace.</li>
+</ul>
+<h3 id="environment-and-workspace-configurations">2. <strong>Environment
+and Workspace Configurations</strong>:</h3>
+<ul>
+<li><strong>Single Environment</strong>: Suitable for research with no
+need for lifecycle-based release management, reducing resource
+overhead.</li>
+<li><strong>Multiple Environments</strong>: Deploys separate workspaces
+for Dev, QA, and Production, supporting staged rollouts, increased
+security, and access control.</li>
+<li><strong>Dual Environment (Limited Data Access
+vs. Production)</strong>: Balances development and production
+requirements, ideal for separating environments without duplicating
+resources excessively.</li>
+</ul>
+<h3 id="regional-and-resource-setup">3. <strong>Regional and Resource
+Setup</strong>:</h3>
+<ul>
+<li><strong>Regional Training</strong>: Deploys resources close to the
+data for compliance and lower latency.</li>
+<li><strong>Regional Serving</strong>: Deploys inference services near
+the end-users, reducing latency and aligning with local
+regulations.</li>
+<li><strong>Regional Fine-Tuning</strong>: Allows training in one region
+and fine-tuning with local data in another for compliance.</li>
+</ul>
+<h3 id="reference-implementation-example">4. <strong>Reference
+Implementation Example</strong>:</h3>
+<ul>
+<li>In the example setup, Contoso organizes resources by project and
+sets up a multi-environment structure, with exploratory resources for
+initial development and restricted production data access. This approach
+ensures compliance, cost management, and appropriate role-based access
+control across environments.</li>
+</ul>
+<p>This structured approach to Azure Machine Learning deployment allows
+organizations to manage resources effectively while meeting compliance,
+security, and collaboration needs.</p>
+<p><a
+href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/ai-machine-learning-mlops">Machine
+Learning Operations</a></p>
+<p>This article outlines best practices for implementing machine
+learning operations (MLOps) using Azure Machine Learning, focusing on
+integrating DevOps principles for scalable, reliable, and automated ML
+workflows. Key areas include:</p>
+<h3 id="understanding-mlops">1. <strong>Understanding
+MLOps</strong>:</h3>
+<ul>
+<li>MLOps integrates machine learning into production processes,
+ensuring models are monitored, retrained, and replaced without
+disrupting operations. Key tasks involve managing data drift, continuous
+experimentation, model versioning, and data pipelines.</li>
+</ul>
+<h3 id="mlops-vs.-devops">2. <strong>MLOps vs. DevOps</strong>:</h3>
+<ul>
+<li>MLOps differs from traditional DevOps with added needs for data
+exploration, frequent retraining, quality monitoring, and specialist
+roles like data scientists and ML engineers. This adaptive process
+handles unique challenges like data quality and the need for
+retraining.</li>
+</ul>
+<h3 id="seven-core-mlops-principles">3. <strong>Seven Core MLOps
+Principles</strong>:</h3>
+<ul>
+<li>Version control for code, data, and outputs.</li>
+<li>Use of multiple environments for development and production.</li>
+<li>Infrastructure and configurations managed as code.</li>
+<li>Experiment tracking for reproducibility.</li>
+<li>Code testing and model validation.</li>
+<li>Continuous integration and deployment for ML models.</li>
+<li>Service, model, and data monitoring.</li>
+</ul>
+<h3 id="best-practices-with-azure-machine-learning">4. <strong>Best
+Practices with Azure Machine Learning</strong>:</h3>
+<ul>
+<li><strong>People</strong>: Teams with specialized roles should follow
+structured project workflows like the Team Data Science Process.</li>
+<li><strong>Processes</strong>: Standardize code templates, use
+versioning, and ensure reproducibility through versioned datasets and
+models.</li>
+<li><strong>Technology</strong>: Use Azure DevOps and Azure Machine
+Learning for CI/CD, event-based retraining, and integrated
+monitoring.</li>
+</ul>
+<h3 id="the-ai-factory-concept">5. <strong>The AI Factory
+Concept</strong>:</h3>
+<ul>
+<li>An AI factory is a standardized system for developing and deploying
+multiple ML use cases at scale, relying on shared assets, reusable
+templates, centralized data management, and cross-team collaboration.
+This structure enables consistency and accelerates project
+development.</li>
+</ul>
+<h3 id="ethics-in-mlops">6. <strong>Ethics in MLOps</strong>:</h3>
+<ul>
+<li>Ethical considerations in model design prevent biases, protect
+reputation, and support responsible AI practices.</li>
+</ul>
+<p>By adopting MLOps best practices, organizations can streamline ML
+model development, improve deployment reliability, and scale their AI
+capabilities while addressing ethical and operational standards.</p>
+    
+</body>
+</html>
