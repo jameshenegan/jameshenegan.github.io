@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="geo">GEO</h1>
+<h2 id="abstract">Abstract</h2>
+<p>The emergence of large language models (LLMs) has transformed search
+engines, leading to the creation of “generative engines” (GEs) that use
+these models to directly generate and summarize responses to user
+queries. Unlike traditional search engines that rely on showing links to
+external websites, generative engines compile and synthesize information
+from multiple sources to provide a cohesive answer. This shift has made
+search engines more useful to users, offering faster, often more
+personalized responses, but it also presents a challenge to content
+creators, whose work may be used by these engines without much
+transparency or control over how it appears in the responses.</p>
+<p>To support content creators within this new system, a new approach
+called <strong>Generative Engine Optimization (GEO)</strong> has been
+introduced. GEO offers a framework to help content creators improve the
+chances that their content will be featured in generative engine
+responses, despite the black-box nature of these models. This
+optimization strategy allows creators to focus on increasing the
+visibility of their content through customizable visibility metrics,
+despite limited direct control over generative engine behavior.</p>
+<p>A benchmark, <strong>GEO-bench</strong>, has been developed to
+evaluate the effectiveness of GEO. GEO-bench includes a large set of
+diverse user queries spanning multiple topics and sources, allowing a
+structured way to assess visibility improvements. Initial evaluations
+show that GEO can enhance content visibility in generative engine
+responses by as much as 40%. Additionally, GEO’s effectiveness varies
+across different types of content, suggesting that tailored strategies
+are needed for different domains.</p>
+<p>This research highlights a new direction in the development of search
+technology and information accessibility, with significant implications
+for both the creators of generative engines and content providers.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Traditional search engines, invented around 30 years ago, transformed
+global information access by providing lists of relevant websites in
+response to user queries. However, these engines were limited in that
+they only pointed users toward information rather than providing answers
+directly. The rise of large language models (LLMs), such as those in
+tools like BingChat, Google’s Search Generative Experience (SGE), and
+perplexity.ai, has now led to the development of “generative engines”
+(GEs). These new systems blend traditional search with generative models
+to gather and synthesize information from multiple sources, offering
+comprehensive, multi-faceted responses rather than just lists of
+links.</p>
+<p>Generative engines bring significant benefits to users by delivering
+information faster and more accurately and to developers by improving
+engagement and satisfaction. However, they present a challenge for
+content creators. Unlike traditional search engines, generative engines
+reduce users’ need to visit websites, potentially lowering organic
+traffic and impacting creators who rely on site visits for revenue and
+visibility. Additionally, the proprietary and opaque nature of GEs
+leaves content creators with little insight or control over how their
+content is used or displayed.</p>
+<p>To address these challenges, the authors introduce <strong>Generative
+Engine Optimization (GEO)</strong>, a novel framework designed to help
+content creators adapt their content for generative engines. GEO uses a
+flexible, black-box optimization approach to improve the visibility of
+web content in generative responses. By adjusting content presentation,
+style, and structure, GEO aims to enhance a website’s chances of being
+cited or included in generative responses.</p>
+<p>One of GEO’s key innovations is its visibility metrics, which go
+beyond traditional rankings to measure visibility across dimensions like
+citation placement, relevance, and influence within the response. Since
+generative engines use complex, structured outputs, these new metrics
+are necessary for assessing visibility more accurately than traditional
+search engines, which simply rank results linearly.</p>
+<p>To test GEO’s effectiveness, the authors developed
+<strong>GEO-bench</strong>, a large benchmark containing 10,000 queries
+across various domains. Evaluations of GEO’s methods show visibility
+improvements of up to 40% across different queries, with strategies like
+including citations, quotations, and relevant statistics significantly
+boosting a source’s presence in generative responses. Real-world tests
+on platforms like Perplexity.ai confirmed these gains, demonstrating a
+37% improvement in content visibility.</p>
+<p>In summary, the contributions of this work are:</p>
+<ol type="1">
+<li><strong>Generative Engine Optimization (GEO)</strong>: The first
+optimization framework for improving content visibility in generative
+engines, with up to a 40% boost in some cases.</li>
+<li><strong>Customized Visibility Metrics</strong>: GEO introduces a new
+set of visibility metrics tailored to generative engine requirements,
+allowing creators to optimize content with precision.</li>
+<li><strong>GEO-bench Benchmark</strong>: The first large-scale, diverse
+benchmark for evaluating content optimization techniques specifically
+for generative engines, supporting rigorous testing and
+improvement.</li>
+</ol>
+<p>This work provides an essential toolset for content creators adapting
+to the generative search landscape and marks an advancement in
+optimizing for information discovery in the era of generative AI.</p>
+<h2 id="formulation-and-methodology">Formulation and Methodology</h2>
+<p><strong>2.1 Formulation of Generative Engines (GEs):</strong></p>
+<p>Generative engines (GEs) are advanced search systems that combine
+traditional search functions with generative language models. They work
+by retrieving relevant documents from the web (or a database) and using
+AI models to generate a summarized response, complete with inline
+citations. Unlike traditional search engines, which display a ranked
+list of websites, GEs synthesize content from multiple sources into a
+structured answer. This structure presents challenges in defining and
+measuring visibility (or “impression”) because GEs do not just list
+results but instead embed citations within a response, intermixing
+various sources.</p>
+<p>A typical GE workflow involves:</p>
+<ol type="1">
+<li>Breaking down the user’s query into smaller sub-queries.</li>
+<li>Sending these to a search engine to retrieve sources.</li>
+<li>Summarizing each source.</li>
+<li>Combining summaries into a cohesive response.</li>
+</ol>
+<p>This process is illustrated by a setup resembling BingChat, which
+splits a complex query into simpler parts, retrieves relevant sources,
+summarizes them, and integrates these summaries into a structured
+response. Since GEs aim to be accurate and avoid misinformation, every
+fact in the response ideally links to a supporting source.</p>
+<p><strong>2.2 Generative Engine Optimization (GEO):</strong></p>
+<p>Generative Engine Optimization (GEO) is proposed as a new framework
+to help content creators increase their visibility within GE responses.
+Traditional SEO strategies aren’t effective with GEs because GEs
+generate responses based on a more nuanced understanding of language and
+meaning rather than simple keyword matching. GEO is designed to maximize
+a website’s impression by ensuring it is frequently and prominently
+cited within responses. This visibility depends on relevance to the
+query and placement within the answer.</p>
+<p><strong>2.2.1 Defining Impressions for Generative
+Engines:</strong></p>
+<p>Since visibility metrics from traditional search engines don’t fit
+well with GEs, GEO introduces new “impression” metrics tailored to these
+systems:</p>
+<ol type="1">
+<li><strong>Word Count Impression</strong>: Measures the prominence of a
+source by the number of words from a citation in the response. A higher
+word count indicates greater prominence.</li>
+<li><strong>Position-Adjusted Word Count</strong>: Weights citations
+more heavily if they appear earlier in the response since users are
+likelier to read the beginning of an answer.</li>
+<li><strong>Subjective Impression Metric</strong>: Considers subjective
+factors like relevance, citation influence, and material uniqueness. It
+uses a tool called G-Eval to evaluate the quality of these subjective
+metrics.</li>
+</ol>
+<p><strong>2.2.2 GEO Methods for Websites:</strong></p>
+<p>To optimize content for GE visibility, GEO offers several strategies
+that help improve how often and prominently a website is cited:</p>
+<ol type="1">
+<li><strong>Authoritative Style</strong>: Makes text sound more
+convincing.</li>
+<li><strong>Statistics Addition</strong>: Adds quantitative data for
+clarity.</li>
+<li><strong>Keyword Inclusion</strong>: Incorporates query-relevant
+keywords.</li>
+<li><strong>Citing Sources and Adding Quotations</strong>: Increases
+credibility by citing trusted sources.</li>
+<li><strong>Easy-to-Understand Language</strong>: Simplifies complex
+language for better comprehension.</li>
+<li><strong>Fluency Optimization</strong>: Ensures text flows
+naturally.</li>
+<li><strong>Unique Terms</strong>: Uses specific or technical terms to
+stand out.</li>
+</ol>
+<p>Most methods enhance existing content presentation, while a few (like
+adding sources and quotations) may require additional information.</p>
+<p><strong>Testing GEO Methods:</strong></p>
+<p>The effectiveness of each method is tested by applying them
+individually to website content in response to a query and evaluating
+the improvements in visibility metrics. Each GEO method, therefore, aims
+to make website content more compatible with generative engine
+requirements, improving the chances of being cited within AI-generated
+responses.</p>
+<p>In essence, GEO offers a range of techniques for content creators to
+boost visibility in a world where generative engines, not traditional
+search engines, may increasingly control the flow of information.</p>
+<h2 id="experimental-setup">Experimental Setup</h2>
+<h3 id="summary-and-explanation">Summary and Explanation:</h3>
+<p><strong>3.1 Evaluated Generative Engine:</strong> This experimental
+setup mimics common commercial generative engines (like You.com and
+Perplexity.ai) by using a two-step process:</p>
+<ol type="1">
+<li>Retrieving the top 5 most relevant sources from Google for each
+query.</li>
+<li>Using an AI language model (specifically GPT-3.5 Turbo) to generate
+responses based on these sources.</li>
+</ol>
+<p>The use of only the top 5 sources helps manage limitations in
+processing power and cost when working with large language models. Each
+query receives multiple generated responses, reducing variability in the
+results.</p>
+<p><strong>3.2 Benchmark: GEO-bench</strong> To evaluate the
+effectiveness of Generative Engine Optimization (GEO) methods, the
+GEO-bench dataset was created. This benchmark includes 10,000 diverse
+queries, categorized by topic, complexity, and user intent, providing a
+robust test environment for assessing GEO methods.</p>
+<p>The queries in GEO-bench are drawn from nine sources:</p>
+<ul>
+<li><strong>MS Macro, ORCAS-1, Natural Questions</strong>: Represent
+general user queries from search engines.</li>
+<li><strong>All Souls, LIMA</strong>: Include complex questions
+requiring reasoning and aggregation of information.</li>
+<li><strong>Davinci-Debate</strong>: Questions designed to test debate
+and reasoning skills.</li>
+<li><strong>Perplexity.ai Discover, ELI-5</strong>: Complex questions
+from Perplexity.ai and Reddit that require simplified explanations.</li>
+<li><strong>GPT-4 Generated Queries</strong>: A diverse set of synthetic
+queries across different domains.</li>
+</ul>
+<p>Each query in GEO-bench is associated with the top 5 Google search
+results, allowing for a thorough test of how well GEO methods enhance
+content visibility.</p>
+<p><strong>Tags in GEO-bench:</strong> Each query is tagged by category
+(like Arts, Health, Games), user intent (informational, transactional,
+navigational), and complexity. This tagging helps content creators
+select the right GEO method based on the nature of the query, allowing
+for more targeted optimization.</p>
+<p><strong>3.3 GEO Methods</strong> Nine GEO methods are tested, each
+aimed at improving different aspects of content visibility within
+generative engine responses. These methods include tactics like adding
+authoritative language, including statistics, simplifying language, and
+quoting sources. Each method’s effectiveness is compared to a baseline
+(unmodified content), and results are averaged to minimize
+randomness.</p>
+<p><strong>3.4 Evaluation Metrics</strong> Two main metrics are used to
+assess GEO method performance:</p>
+<ol type="1">
+<li><strong>Position-Adjusted Word Count</strong>: Measures visibility
+based on both word count and citation position, giving greater weight to
+sources that appear earlier in the response.</li>
+<li><strong>Subjective Impression</strong>: Measures a source’s
+relevance and influence within the response, as well as its uniqueness,
+diversity, position, and click likelihood. This is further broken into
+sub-metrics to capture different factors that may impact user attention
+and engagement.</li>
+</ol>
+<p>To standardize these metrics, they are normalized so that all
+citation impressions in a response add up to 1. The relative improvement
+in visibility is calculated by comparing the baseline impression with
+the improved impression after applying GEO methods.</p>
+<p><strong>Performance Results</strong> The study shows that traditional
+SEO techniques, like keyword stuffing, perform poorly in generative
+engines. In contrast, methods such as <strong>Quotation
+Addition</strong> and <strong>Statistics Addition</strong> yield
+substantial improvements, increasing visibility by up to 41% in
+Position-Adjusted Word Count and by 28% in Subjective Impression. This
+indicates that content enhancements focusing on authoritative
+information and direct citations are more effective for improving
+visibility within generative engines.</p>
+<h2 id="results">Results</h2>
+<h3 id="summary-and-explanation-1">Summary and Explanation:</h3>
+<p><strong>4. Results Overview</strong> This study evaluated various
+Generative Engine Optimization (GEO) methods designed to improve website
+visibility in Generative Engine (GE) responses. By testing these methods
+on GEO-bench, a diverse set of user queries, the researchers measured
+performance using two metrics:</p>
+<ol type="1">
+<li><strong>Position-Adjusted Word Count</strong>: Considers both the
+word count and the citation’s position in a GE’s response.</li>
+<li><strong>Subjective Impression</strong>: Combines several subjective
+factors like relevance, credibility, and uniqueness to create an overall
+impression score.</li>
+</ol>
+<p><strong>Key Findings</strong> The results indicate that GEO methods
+consistently outperform the baseline (no optimization) across these
+metrics, demonstrating their robustness across various types of queries.
+Specifically:</p>
+<ul>
+<li><strong>Top-performing methods</strong>: The “Cite Sources,”
+“Quotation Addition,” and “Statistics Addition” methods yielded the
+highest visibility gains. These methods, which involve adding relevant
+statistics, credible quotes, and reliable citations, achieved:
+<ul>
+<li>30-40% improvement on the Position-Adjusted Word Count metric.</li>
+<li>15-30% improvement on the Subjective Impression metric.</li>
+<li>These techniques enhance both the content’s credibility and the
+richness of the information, requiring only minor adjustments to
+existing content.</li>
+</ul></li>
+</ul>
+<p><strong>Effectiveness Based on Search Rank</strong> The study found
+that GEO methods are especially helpful for content from lower-ranked
+websites in traditional search results. For instance, when using “Cite
+Sources” and “Quotation Addition” methods, visibility increased
+significantly for content that wasn’t initially highly ranked in search
+engines, thus providing a path for less prominent websites to gain
+visibility in GE responses.</p>
+<p><strong>Top-performing Tags by GEO Method</strong> Each GEO method
+performs well in specific content categories:</p>
+<ul>
+<li><strong>Authoritative Style</strong>: Effective for categories like
+Debate, History, and Science.</li>
+<li><strong>Fluency Optimization</strong>: Beneficial in Business,
+Science, and Health.</li>
+<li><strong>Cite Sources</strong>: Works best in fact-based or legal
+content.</li>
+<li><strong>Quotation Addition</strong>: Effective in People &amp;
+Society, Explanation, and History.</li>
+<li><strong>Statistics Addition</strong>: Valuable in Law &amp;
+Government, Debate, and Opinion content.</li>
+</ul>
+<p>These findings suggest that content creators can tailor their
+optimization strategies based on their website’s target domain for
+maximum effectiveness.</p>
+<p><strong>Stylistic Changes and Presentation</strong> Improving
+readability and fluency in the text (Fluency Optimization and
+Easy-to-Understand methods) also boosted visibility by 15-30%,
+highlighting that GE responses value not just factual content but also
+how well information is presented. This suggests that GEs prioritize
+content that is clear, well-organized, and easy to understand.</p>
+<p><strong>Keyword Stuffing and Authoritative Tone</strong> Traditional
+SEO tactics like keyword stuffing proved ineffective in GEs, offering
+little to no improvement in visibility. Additionally, adding a more
+persuasive or authoritative tone did not significantly boost visibility,
+indicating that GEs already have built-in mechanisms to assess content
+quality without requiring overt stylistic changes.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>These results show that optimization strategies effective for
+traditional search engines may not work as well in Generative Engines.
+Instead, focusing on content credibility, presentation, and adding
+authoritative sources or statistics are more effective ways to increase
+visibility. For content creators, this suggests a shift from traditional
+SEO techniques to those that align more closely with the nuanced
+evaluation methods of GEs, helping ensure their content remains visible
+and valuable in this new search paradigm.</p>
+<h2 id="analysis">Analysis</h2>
+<h3 id="summary-and-explanation-2">Summary and Explanation:</h3>
+<p><strong>5.1 Domain-Specific Generative Engine Optimizations</strong>
+This section highlights that certain Generative Engine Optimization
+(GEO) methods are more effective in specific content domains:</p>
+<ul>
+<li><strong>Authoritative Tone</strong>: Effective for debate-style and
+historical content, where a persuasive writing style can enhance
+credibility.</li>
+<li><strong>Cite Sources</strong>: Particularly useful for factual
+content, as citations validate the facts and improve the credibility of
+the response.</li>
+<li><strong>Statistics Addition</strong>: Works best in fields like Law
+&amp; Government and Opinion content, where data-driven evidence can
+increase the authority and visibility of the content.</li>
+<li><strong>Quotation Addition</strong>: Most effective in domains like
+People &amp; Society, Explanation, and History, as quotes add
+authenticity and depth, enhancing visibility.</li>
+</ul>
+<p>This analysis suggests that website owners should make targeted,
+domain-specific optimizations to improve their visibility on generative
+engines.</p>
+<p><strong>5.2 Optimization of Multiple Websites</strong> The study also
+examined how GEO methods affect the visibility of websites across
+different search rankings:</p>
+<ul>
+<li><strong>Lower-ranked websites</strong> benefit more from GEO because
+they are typically disadvantaged in traditional search rankings due to
+factors like limited backlinks. GEO can improve their visibility in
+Generative Engine responses, offering them a fairer playing field.</li>
+<li>For instance, using “Cite Sources” increased the visibility of
+fifth-ranked websites by 115.1%, while top-ranked websites saw a
+decrease in visibility by 30.3% when GEO methods were applied across all
+content sources.</li>
+</ul>
+<p>This shows that GEO methods could help democratize online visibility,
+offering smaller websites a chance to compete effectively against larger
+ones in Generative Engine responses.</p>
+<p><strong>5.3 Combination of GEO Strategies</strong> Combining GEO
+strategies generally yields better results than using them individually.
+The analysis of strategy combinations showed that:</p>
+<ul>
+<li><strong>Fluency Optimization and Statistics Addition</strong>
+together produced the highest visibility improvements, outperforming
+individual strategies by over 5.5%.</li>
+<li><strong>Cite Sources</strong> also performed well in combination
+with other strategies, boosting visibility significantly, even though it
+was less effective alone.</li>
+</ul>
+<p>This suggests that content creators can achieve optimal results by
+combining multiple GEO methods tailored to their content.</p>
+<p><strong>5.4 Qualitative Analysis</strong> Examples in this section
+illustrate how GEO methods improve visibility with minimal changes:</p>
+<ul>
+<li>Adding a citation source significantly increases visibility, as seen
+in a query about Swiss chocolate, where citing a study on chocolate
+consumption boosted the content’s credibility.</li>
+<li>Incorporating relevant statistics, like mentioning a 70% increase in
+robotic involvement, makes content more authoritative and
+informative.</li>
+<li>Enhancing the tone (e.g., using a more persuasive or impactful
+style) also improves visibility, especially in responses that require a
+clear stance or opinion.</li>
+</ul>
+<p>These examples show that even minor adjustments, such as citing
+credible sources or adding statistics, can substantially improve
+visibility in Generative Engine responses without extensive content
+changes.</p>
+<hr />
+<h3 id="conclusion-1">Conclusion</h3>
+<p>This analysis highlights the importance of domain-specific and
+combined GEO strategies in improving visibility on Generative Engines.
+Small content creators and lower-ranked websites can especially benefit,
+making GEO an effective approach to leveling the digital playing field.
+Content creators are encouraged to experiment with multiple GEO
+strategies and tailor them to their content domains for the best results
+in Generative Engine responses.</p>
+<h3 id="summary-and-explanation-3">Summary and Explanation</h3>
+<p><strong>6. GEO in the Wild: Testing on Perplexity.ai</strong> The GEO
+methods were tested on Perplexity.ai, a widely-used generative engine,
+to confirm their real-world effectiveness. Key findings include:</p>
+<ul>
+<li><strong>Quotation Addition</strong> improved visibility the most,
+with a 22% increase in Position-Adjusted Word Count over the baseline,
+indicating that citing quotes from credible sources is particularly
+effective.</li>
+<li><strong>Statistics Addition</strong> also boosted visibility by 37%,
+while traditional SEO methods like <strong>Keyword Stuffing</strong>
+underperformed, showing 10% less effectiveness than the baseline.</li>
+</ul>
+<p>These results underscore three main points:</p>
+<ol type="1">
+<li>The effectiveness of domain-specific GEO methods in real-world
+applications.</li>
+<li>The adaptability of GEO methods across various generative
+engines.</li>
+<li>The practicality of GEO methods for content creators, as they can
+easily implement them to improve visibility.</li>
+</ol>
+<p><strong>7. Related Work</strong> This work builds on previous
+research in evidence-backed answer generation, where models use sources
+to generate responses. While past methods focused on fetching sources or
+manipulating model outputs, GEO introduces non-adversarial strategies
+that optimize content for generative engines.</p>
+<p>Additionally, GEO differs from traditional <strong>Search Engine
+Optimization (SEO)</strong> as it involves optimizing for generative
+models rather than keyword-based ranking. GEO considers multi-modal
+outputs, conversational structures, and varied query reformulation,
+necessitating different strategies than standard SEO.</p>
+<p><strong>8. Conclusion</strong> This research introduces the concept
+of Generative Engine Optimization (GEO), which allows content creators
+to enhance their content’s visibility in generative engine results. Key
+contributions include:</p>
+<ul>
+<li><strong>GEO-bench</strong>: A benchmark dataset of diverse queries
+with sources for evaluating GEO methods.</li>
+<li><strong>Effective GEO Methods</strong>: Techniques like adding
+citations, statistics, and quotations were shown to increase visibility
+by up to 40%.</li>
+<li><strong>Commercial Application</strong>: Testing on a real
+generative engine (Perplexity.ai) demonstrated the high real-world
+impact of GEO methods, especially for small creators and lower-ranked
+sites, by making visibility improvements accessible without relying on
+traditional SEO factors like backlinks.</li>
+</ul>
+<p>The research formalizes GEO as a new paradigm, offering tools,
+benchmarks, and methods to enhance generative engine optimization across
+various content domains.</p>
+<p><strong>9. Limitations</strong> While promising, GEO has certain
+limitations:</p>
+<ol type="1">
+<li><strong>Adaptability</strong>: GEO methods might need to evolve as
+generative engines change, similar to SEO’s ongoing adaptation.</li>
+<li><strong>Query Evolution</strong>: GEO-bench may require updates to
+stay aligned with shifting real-world query patterns.</li>
+<li><strong>Impact on Search Rankings</strong>: Since GEO focuses on
+text optimization rather than metadata like domain or backlinks, it’s
+unclear how it affects traditional search rankings, though it likely has
+minimal impact.</li>
+<li><strong>Context Limitations</strong>: Larger context lengths in
+future models could allow them to process more sources, potentially
+diminishing the emphasis on high search rankings.</li>
+</ol>
+<p>In sum, GEO represents an innovative step toward helping content
+creators adapt to the generative search engine landscape, with practical
+implications for enhancing visibility across multiple platforms and
+evolving search paradigms.</p>
+    
+</body>
+</html>
