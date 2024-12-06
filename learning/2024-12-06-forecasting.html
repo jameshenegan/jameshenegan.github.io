@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="statsforecast">Statsforecast</h1>
+<p><strong>Statsforecast</strong> is a Python library developed by
+Nixtla that focuses on time series forecasting. It provides a suite of
+classical forecasting methods—like ARIMA, ETS, Croston’s method, and
+others—implemented in a way that emphasizes both speed and accuracy.
+This library is designed to handle large-scale forecasting scenarios
+efficiently and can run on single machines or in distributed
+environments (e.g., with Dask or Spark).</p>
+<p>Some key features and aspects of <strong>statsforecast</strong>
+include:</p>
+<ol type="1">
+<li><p><strong>Wide Range of Methods</strong>:<br />
+It includes implementations of well-established statistical models
+(ARIMA, ETS, Theta, etc.) and specialized forecasting techniques (such
+as Croston’s, SBA, and TSB for intermittent demand).</p></li>
+<li><p><strong>Vectorization and Efficiency</strong>:<br />
+The underlying code is optimized for speed by leveraging techniques like
+vectorization, NumPy operations, and Numba’s just-in-time compilation.
+This makes it fast even for large datasets.</p></li>
+<li><p><strong>Scalability and Parallelization</strong>:<br />
+<strong>statsforecast</strong> supports parallelization through Python’s
+multiprocessing, and it can integrate with Dask or Spark clusters to
+handle large-scale or distributed forecasting workloads.</p></li>
+<li><p><strong>Accuracy and Benchmarking</strong>:<br />
+The package’s authors have focused on ensuring that these methods match
+or exceed the accuracy of their well-known R counterparts (e.g., those
+in the <code>forecast</code> R package), and they have run extensive
+benchmarks against other forecasting libraries.</p></li>
+<li><p><strong>Integration with Other Nixtla Tools</strong>:<br />
+It often pairs well with other Nixtla packages, such as
+<strong>NeuralForecast</strong> (for deep learning–based methods) or
+<strong>HierarchicalForecast</strong> (for hierarchical time series).
+Together, these libraries form a comprehensive ecosystem for both
+traditional and modern forecasting approaches.</p></li>
+<li><p><strong>Easy-to-Use API</strong>:<br />
+The API allows you to quickly fit models and generate forecasts either
+for single series or for multiple series at once. This batch processing
+capability is particularly convenient for businesses or researchers
+dealing with many SKUs, products, or sensors simultaneously.</p></li>
+</ol>
+<p>You can find the code and documentation on GitHub: <a
+href="https://github.com/Nixtla/statsforecast">https://github.com/Nixtla/statsforecast</a>,
+and they also provide tutorials, benchmarks, and user guides to help
+newcomers get started.</p>
+<h1 id="hierarchicalforecast">HierarchicalForecast</h1>
+<p><strong>HierarchicalForecast</strong> is another Python library from
+the Nixtla team, specifically focused on hierarchical and grouped time
+series forecasting. While <strong>Statsforecast</strong> provides a
+range of classical forecasting models and tools to handle large-scale
+time series forecasting, <strong>HierarchicalForecast</strong> addresses
+the complexities involved in reconciling forecasts across different
+levels of an organizational or category hierarchy.</p>
+<p><strong>Key aspects of HierarchicalForecast include:</strong></p>
+<ol type="1">
+<li><p><strong>Hierarchical and Grouped Forecasts</strong>:<br />
+Unlike standard forecasting methods that produce forecasts for single
+time series, HierarchicalForecast deals with collections of time series
+that are organized in a hierarchical or grouped structure (e.g.,
+product–region–store breakdowns). The tool ensures that forecasts at the
+bottom level sum up consistently to forecasts at higher aggregation
+levels.</p></li>
+<li><p><strong>Reconciliation Methods</strong>:<br />
+The library supports various reconciliation methods to ensure coherent
+forecasts across all levels of the hierarchy:</p>
+<ul>
+<li><strong>Bottom-Up (BU)</strong>: Summing up lower-level forecasts to
+higher levels.</li>
+<li><strong>Top-Down (TD)</strong>: Allocating a top-level forecast down
+to lower levels using proportions.</li>
+<li><strong>Middle-Out (MO)</strong>: Combining top-down and bottom-up
+approaches through intermediate aggregations.</li>
+<li><strong>Optimal Reconciliation (MinT)</strong>: Using statistical
+approaches such as Weighted Least Squares (WLS) to optimally reconcile
+forecasts and reduce errors due to misalignment of forecasts at
+different levels.</li>
+</ul></li>
+<li><p><strong>Integration With Statsforecast</strong>:<br />
+HierarchicalForecast seamlessly integrates with Statsforecast. You can
+use Statsforecast models (ARIMA, ETS, etc.) to generate base forecasts
+at different levels, then feed those forecasts into HierarchicalForecast
+to reconcile them. This workflow ensures consistency and coherence
+across all levels of your hierarchy.</p></li>
+<li><p><strong>Scalability and Performance</strong>:<br />
+Like Statsforecast, HierarchicalForecast is optimized for speed and
+scalability, allowing it to handle large hierarchical structures
+efficiently.</p></li>
+<li><p><strong>Open-Source and Actively Developed</strong>:<br />
+The library is open-source, backed by the Nixtla community. You can find
+its code and documentation on GitHub: <a
+href="https://github.com/Nixtla/hierarchicalforecast">https://github.com/Nixtla/hierarchicalforecast</a>.
+It’s regularly updated and maintained, with tutorials and guides that
+help you get started quickly.</p></li>
+</ol>
+<p>In short, if you’re dealing with complex multi-level time series and
+need coherent forecasts that sum up correctly at each level,
+HierarchicalForecast is a dedicated solution that works hand-in-hand
+with Nixtla’s other forecasting tools.</p>
+    
+</body>
+</html>
