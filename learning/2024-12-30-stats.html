@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="question-1">Question 1</h2>
+<p>Suupose I have a dataset that looks like this — id treatment score 1
+1 43 2 0 213 3 1 41 4 0 220 — except suppose that there are 100
+observations in total. i am interested in learning about how to analyze
+the dataset. in particular, i’m curious to estimate the ratio of the
+score for treatment 1 to the score for treatment 0. i think this would
+tell me the “percent increase” — and i want a confience interval for
+that percent increase. is that possible</p>
+<h2 id="answer-1">Answer 1</h2>
+<p><strong>Short Answer</strong><br />
+Yes, absolutely. One straightforward way is to compare the
+<em>means</em> of the two groups on the <strong>log scale</strong>, then
+exponentiate back to get a ratio (and a confidence interval for that
+ratio). That ratio directly corresponds to “percent increase.”</p>
+<hr />
+<h2 id="why-a-ratio-instead-of-a-difference">Why a Ratio Instead of a
+Difference?</h2>
+<p>Instead of asking, “By how much is the average score different?” you
+want to know, “By what <em>factor</em> is the average score different?”
+A ratio between two means is a natural way to express a percent increase
+(or decrease). For instance,</p>
+<p>[ ;=; . ]</p>
+<p>If ( = 1.10), that suggests a 10% increase over the control group’s
+mean. If ( = 0.90), that suggests a 10% <em>decrease</em>.</p>
+<hr />
+<h2 id="the-log-transform-trick">The Log-Transform Trick</h2>
+<p>A very common approach to estimating ratios (and their CIs) is:</p>
+<ol type="1">
+<li><strong>Take logs</strong> of your outcome (Y) (i.e., ((Y))) to turn
+multiplicative differences into <em>additive</em> differences.</li>
+<li><strong>Compare the means on the log-scale</strong> (using a
+two-sample test or regression).</li>
+<li><strong>Exponentiate</strong> the result to recover the
+<em>ratio</em> on the original scale.</li>
+</ol>
+<h3 id="taking-logs">1. Taking Logs</h3>
+<p>Suppose you have two groups:</p>
+<ul>
+<li>(Y<em>1, Y_2, , Y</em>{n_1}) from <strong>treatment =
+1</strong>,</li>
+<li>(Y<em>{n_1 + 1}, , Y</em>{n_1 + n_2}) from <strong>treatment =
+0</strong>.</li>
+</ul>
+<p>Take the natural log of each score: [ X_i = (Y_i). ]</p>
+<h3 id="compare-means-on-the-log-scale">2. Compare Means on the Log
+Scale</h3>
+<p>Compute the sample means of the logs in each group:</p>
+<ul>
+<li>(<em> = </em>{i } X_i).</li>
+<li>(<em> = </em>{j } X_j).</li>
+</ul>
+<p>Their difference [ d = <em> ;-; </em> ] is an estimate of (() ;-; ()
+= !().)</p>
+<p>You can get a confidence interval for (d) in a variety of
+ways—commonly:</p>
+<ul>
+<li>A <strong>two-sample t-test</strong> on the log-transformed scores,
+or</li>
+<li>A <strong>linear regression</strong> with ((Y)) as the response and
+treatment indicator as the predictor (and possibly including other
+covariates).</li>
+</ul>
+<h3 id="exponentiate-to-recover-the-ratio">3. Exponentiate to Recover
+the Ratio</h3>
+<p>Exponentiating (d) gives you an estimate of the ratio: [ (d) ;=;
+(<em> - </em>) . ]</p>
+<p>If you have a confidence interval for (d), say ([,d_{},, d_{},]), you
+simply exponentiate that interval to get a confidence interval for the
+ratio: [ . ]</p>
+<h3 id="converting-ratios-to-percent-increases">Converting Ratios to
+Percent Increases</h3>
+<ul>
+<li>If the ratio is (r), then the percent change (increase if (r&gt;1))
+from control is: [ 100 (r - 1)%. ]</li>
+<li>So if ((d) = 1.25), that corresponds to a 25% increase over the
+control group’s mean.</li>
+</ul>
+<hr />
+<h2 id="example-conceptual">Example (Conceptual)</h2>
+<ol type="1">
+<li><strong>Collect the data</strong>: Suppose you have 50 scores from
+the treatment group and 50 from the control group.</li>
+<li><strong>Log-transform</strong>: Replace each score (y_i) by (x_i =
+(y_i)).</li>
+<li><strong>Compute group means</strong>: (_1) and (_0).</li>
+<li><strong>Find difference</strong>: (d = _1 - _0).</li>
+<li><strong>Exponentiate</strong>: ((d)) = estimated ratio of
+means.</li>
+<li><strong>CI</strong>: Using standard formulas (from a t-test or
+regression), get ([d_L, d_U]) for (d). Then your ratio CI is ([(d_L),
+(d_U)]).</li>
+</ol>
+<hr />
+<h2 id="what-if-my-data-are-not-log-normal">What if My Data Are Not
+Log-Normal?</h2>
+<ul>
+<li>Even if your data are not strictly log-normal, the log transform is
+still very commonly used in practice to compare ratios.</li>
+<li>If you worry about distribution assumptions, you can use
+<strong>nonparametric bootstrap</strong> methods:
+<ol type="1">
+<li>Resample (with replacement) within each group.</li>
+<li>Compute the ratio of means (or medians, if that’s your target).</li>
+<li>Repeat many times to get an empirical distribution for the
+ratio.</li>
+<li>Extract the percentile-based confidence interval.</li>
+</ol></li>
+</ul>
+<hr />
+<h2 id="tldr">TL;DR</h2>
+<ol type="1">
+<li><strong>Yes</strong>, it’s absolutely possible (and common) to
+estimate a ratio of means and get a corresponding confidence
+interval.</li>
+<li>The <strong>log-transform</strong> plus a standard two-sample
+inference (like a t-test on (())) is a quick, standard method.</li>
+<li>Exponentiate the difference in log-means to get the ratio of means,
+and interpret it as percent increase (or decrease).</li>
+<li>If distribution assumptions are concerning, use
+<strong>bootstrap</strong> methods to get a more robust CI
+estimate.</li>
+</ol>
+<hr />
+<p><strong>Bottom line</strong>:<br />
+A ratio of treatment scores to control scores is a perfectly valid
+measure of “percent increase.” You can use the log-transform approach
+(plus any standard two-sample inference method) to obtain both an
+estimate of this ratio and a confidence interval.</p>
+<h2 id="question-2">Question 2</h2>
+<p>can i do this using linear regression with statsmodels in python</p>
+<h2 id="answer-2">Answer 2</h2>
+<p>Absolutely—you can do this via a log‐transformed linear regression in
+<strong>statsmodels</strong>. The high‐level idea is:</p>
+<ol type="1">
+<li><strong>Log‐transform</strong> your outcome (score).</li>
+<li><strong>Regress</strong> the log of the score on the treatment
+indicator.</li>
+<li><strong>Exponentiate</strong> the coefficient (and its confidence
+interval) to get the ratio.</li>
+</ol>
+<p>Below is a step-by-step example.</p>
+<hr />
+<h2 id="set-up-the-data">1. Set up the data</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Example data (toy example with 4 obs, but imagine 100 real obs):</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;id&#39;</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>],</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;treatment&#39;</span>: [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;score&#39;</span>: [<span class="dv">43</span>, <span class="dv">213</span>, <span class="dv">41</span>, <span class="dv">220</span>]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p>In your real dataset, you’ll have ~100 observations, but the steps
+will be the same.</p>
+<hr />
+<h2 id="logtransform-the-outcome">2. Log‐transform the outcome</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;log_score&#39;</span>] <span class="op">=</span> np.log(df[<span class="st">&#39;score&#39;</span>])</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div>
+<p>This new column <code>log_score</code> will be used as the dependent
+variable in a linear regression.</p>
+<hr />
+<h2 id="fit-the-regression-using-statsmodels">3. Fit the regression
+using statsmodels</h2>
+<p>We’ll use a simple formula approach with <strong>ordinary least
+squares</strong> (OLS). Note that if <code>treatment</code> is truly
+binary (0/1), you can just include it directly. If your treatment
+variable is categorical with more than two levels, you’d specify it as
+<code>C(treatment)</code>.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model: log_score ~ treatment</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">&#39;log_score ~ treatment&#39;</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary())</span></code></pre></div>
+<h3 id="interpreting-the-regression">Interpreting the regression</h3>
+<ul>
+<li>The <strong>intercept</strong> in this model is the average (()) for
+<code>treatment = 0</code>.</li>
+<li>The <strong>coefficient on <code>treatment</code></strong> is the
+<em>difference in log means</em> between <code>treatment=1</code> and
+<code>treatment=0</code>.</li>
+</ul>
+<p>Mathematically, if the coefficient on <code>treatment</code> is (),
+it estimates: [ (_1) - (_0) ;=; !(), ] where (_1) is the mean score for
+treatment=1, and (_0) is the mean score for treatment=0.</p>
+<hr />
+<h2 id="extract-the-ratio-and-its-confidence-interval">4. Extract the
+ratio (and its confidence interval)</h2>
+<p>Once the model is fit:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the point estimate for the difference in logs</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>log_diff_est <span class="op">=</span> model.params[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the 95% CI for that difference</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ci_lower, ci_upper <span class="op">=</span> model.conf_int().loc[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Coefficient on treatment (log-diff) =&quot;</span>, log_diff_est)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95% CI (log-diff)                  = [</span><span class="sc">{:.3f}</span><span class="st">, </span><span class="sc">{:.3f}</span><span class="st">]&quot;</span>.<span class="bu">format</span>(ci_lower, ci_upper))</span></code></pre></div>
+<h3 id="convert-logdifference-to-ratio">Convert log‐difference to
+ratio</h3>
+<p>Exponentiate:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ratio_est <span class="op">=</span> np.exp(log_diff_est)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ratio_ci_lower <span class="op">=</span> np.exp(ci_lower)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ratio_ci_upper <span class="op">=</span> np.exp(ci_upper)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Estimated ratio =&quot;</span>, ratio_est)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95% CI for ratio = [</span><span class="sc">{:.3f}</span><span class="st">, </span><span class="sc">{:.3f}</span><span class="st">]&quot;</span>.<span class="bu">format</span>(ratio_ci_lower, ratio_ci_upper))</span></code></pre></div>
+<ul>
+<li>( = () )</li>
+<li>A ratio of 1.10 corresponds to a <strong>10% increase</strong>
+vs. treatment=0.</li>
+<li>A ratio of 0.80 corresponds to a <strong>20% decrease</strong>
+vs. treatment=0.</li>
+</ul>
+<p>You can also convert the ratio to percent change by subtracting 1 and
+multiplying by 100:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>percent_increase_est <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_est <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>percent_increase_lower <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_ci_lower <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>percent_increase_upper <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_ci_upper <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Estimated </span><span class="sc">% c</span><span class="st">hange = </span><span class="sc">{:.1f}</span><span class="st">%&quot;</span>.<span class="bu">format</span>(percent_increase_est))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95% CI for </span><span class="sc">% c</span><span class="st">hange = [</span><span class="sc">{:.1f}</span><span class="st">%, </span><span class="sc">{:.1f}</span><span class="st">%]&quot;</span>.<span class="bu">format</span>(percent_increase_lower,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                                                     percent_increase_upper))</span></code></pre></div>
+<hr />
+<h2 id="putting-it-all-together">5. Putting it all together</h2>
+<p>Below is a concise code snippet you can adapt to your real
+100‐observation dataset:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Suppose &#39;df&#39; is your DataFrame with columns: [&#39;id&#39;, &#39;treatment&#39;, &#39;score&#39;]</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Create log of the outcome</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;log_score&#39;</span>] <span class="op">=</span> np.log(df[<span class="st">&#39;score&#39;</span>])</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit regression</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">&#39;log_score ~ treatment&#39;</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Extract results</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>log_diff_est <span class="op">=</span> model.params[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>ci_lower, ci_upper <span class="op">=</span> model.conf_int().loc[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>ratio_est <span class="op">=</span> np.exp(log_diff_est)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>ratio_ci_lower <span class="op">=</span> np.exp(ci_lower)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>ratio_ci_upper <span class="op">=</span> np.exp(ci_upper)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>percent_increase_est <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_est <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>percent_increase_lower <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_ci_lower <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>percent_increase_upper <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_ci_upper <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;=== Regression on the log scale ===&quot;</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary())</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">=== Ratio and % Increase ===&quot;</span>)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Log-diff point estimate: </span><span class="sc">{</span>log_diff_est<span class="sc">:.3f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Log-diff 95% CI: [</span><span class="sc">{</span>ci_lower<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ci_upper<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Ratio estimate: </span><span class="sc">{</span>ratio_est<span class="sc">:.3f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Ratio 95% CI: [</span><span class="sc">{</span>ratio_ci_lower<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ratio_ci_upper<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Percent increase estimate: </span><span class="sc">{</span>percent_increase_est<span class="sc">:.1f}</span><span class="ss">%&quot;</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Percent increase 95% CI: [</span><span class="sc">{</span>percent_increase_lower<span class="sc">:.1f}</span><span class="ss">%, </span><span class="sc">{</span>percent_increase_upper<span class="sc">:.1f}</span><span class="ss">%]&quot;</span>)</span></code></pre></div>
+<hr />
+<h2 id="nonparametric-robust-alternatives">6. Nonparametric / Robust
+Alternatives</h2>
+<p>If you’re concerned that a log‐normal assumption may not hold, you
+could:</p>
+<ul>
+<li><strong>Check residual diagnostics</strong> on the log scale. Often,
+outcomes are roughly log‐normal in many practical settings.</li>
+<li><strong>Use the bootstrap</strong> for a more robust
+(distribution-free) confidence interval for the ratio.</li>
+</ul>
+<p>But in many typical scenarios, <strong>log‐transform + OLS</strong>
+is a very common and practical way to estimate a ratio of group means
+(and the corresponding “percent increase”) in Python with
+<strong>statsmodels</strong>.</p>
+<h2 id="question-3">Question 3</h2>
+<p>can you provide me with some python code that i could use to generate
+a synthetic datataset t to play around with</p>
+<h2 id="answer-3">Answer 3</h2>
+<p>Below is a short Python snippet to generate a <strong>synthetic
+dataset</strong> with 100 observations, 50 of which receive
+<code>treatment = 1</code> and 50 of which receive
+<code>treatment = 0</code>. The <strong>scores</strong> will be drawn
+from a log-normal distribution so that on the <strong>original
+(un-logged) scale</strong>, the “treatment” group is about 30% higher,
+on average, than the control group. Feel free to tweak the parameters as
+you see fit.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_synthetic_data(n<span class="op">=</span><span class="dv">100</span>, treatment_ratio<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                            base_mean_log<span class="op">=</span><span class="fl">4.5</span>, <span class="co"># mean of log(score) in the control group</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                            base_sd_log<span class="op">=</span><span class="fl">0.6</span>,   <span class="co"># std dev of log(score)</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                            treat_multiplier<span class="op">=</span><span class="fl">1.3</span>): <span class="co"># ~30% increase for treatment</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Generate a synthetic dataset of scores, half with treatment=1, half with treatment=0.</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns a pandas DataFrame with columns [id, treatment, score].</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">    n : int</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Total number of observations.</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">    treatment_ratio : float (0 &lt; treatment_ratio &lt; 1)</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">        Proportion of observations that get treatment=1.</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">    base_mean_log : float</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">        Mean of the log(score) in the control group.</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">    base_sd_log : float</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">        Standard deviation of the log(score) for both groups.</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">    treat_multiplier : float</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">        Multiplicative factor by which the treatment group’s *mean* on the log scale is shifted.</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">        If treat_multiplier = 1.3, the *mean* ratio is about exp(log_diff) = 1.3,</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">        or 30% higher than control’s average.</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Number of treatment = 1</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    n_treat <span class="op">=</span> <span class="bu">int</span>(n <span class="op">*</span> treatment_ratio)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    n_control <span class="op">=</span> n <span class="op">-</span> n_treat</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Control group ---</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># log(score) ~ Normal(base_mean_log, base_sd_log^2)</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    log_scores_control <span class="op">=</span> np.random.normal(loc<span class="op">=</span>base_mean_log,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                                          scale<span class="op">=</span>base_sd_log,</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>                                          size<span class="op">=</span>n_control)</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># score on original scale</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    scores_control <span class="op">=</span> np.exp(log_scores_control)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Treatment group ---</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># shift the mean on the log scale by log(treat_multiplier)</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># so the *mean* ratio of treatment to control is about treat_multiplier.</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    log_scores_treatment <span class="op">=</span> np.random.normal(loc<span class="op">=</span>(base_mean_log <span class="op">+</span> np.log(treat_multiplier)),</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>                                            scale<span class="op">=</span>base_sd_log,</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                                            size<span class="op">=</span>n_treat)</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    scores_treatment <span class="op">=</span> np.exp(log_scores_treatment)</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create DataFrame</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    df_control <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;id&#39;</span>: np.arange(<span class="dv">1</span>, n_control <span class="op">+</span> <span class="dv">1</span>),</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;treatment&#39;</span>: <span class="dv">0</span>,</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;score&#39;</span>: scores_control</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    df_treatment <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;id&#39;</span>: np.arange(n_control <span class="op">+</span> <span class="dv">1</span>, n_control <span class="op">+</span> n_treat <span class="op">+</span> <span class="dv">1</span>),</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;treatment&#39;</span>: <span class="dv">1</span>,</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;score&#39;</span>: scores_treatment</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.concat([df_control, df_treatment], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># shuffle to avoid having all control first and then treatment</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.sample(frac<span class="op">=</span><span class="dv">1</span>, random_state<span class="op">=</span><span class="dv">42</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>    synthetic_df <span class="op">=</span> generate_synthetic_data(n<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>                                           treatment_ratio<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>                                           base_mean_log<span class="op">=</span><span class="fl">4.5</span>,</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>                                           base_sd_log<span class="op">=</span><span class="fl">0.6</span>,</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>                                           treat_multiplier<span class="op">=</span><span class="fl">1.3</span>)</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(synthetic_df.head(<span class="dv">10</span>))</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="ch">\n</span><span class="ss">Shape of dataset: </span><span class="sc">{</span>synthetic_df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(synthetic_df.groupby(<span class="st">&#39;treatment&#39;</span>)[<span class="st">&#39;score&#39;</span>].describe())</span></code></pre></div>
+<h2 id="explanation-of-parameters">Explanation of Parameters</h2>
+<ul>
+<li><strong>n</strong>: Total number of observations (default 100).</li>
+<li><strong>treatment_ratio</strong>: Fraction of observations assigned
+to treatment=1 (default 50%).</li>
+<li><strong>base_mean_log</strong>: Mean of (()) for the control
+group.</li>
+<li><strong>base_sd_log</strong>: Standard deviation of (()) (same for
+both groups here).</li>
+<li><strong>treat_multiplier</strong>: We shift the treatment group’s
+mean on the log scale by (()).
+<ul>
+<li>If <code>treat_multiplier = 1.3</code>, the <em>mean</em> ratio of
+treatment to control is about 1.3 (i.e., 30% higher).</li>
+</ul></li>
+</ul>
+<p>You can play with these parameters to see how they affect the
+distribution of scores and the ratio between treatment and control
+groups. Then you can apply the <strong>log‐linear regression</strong>
+approach in <strong>statsmodels</strong> to see if you recover an
+estimated ratio near the desired value (e.g., ~1.3).</p>
+<h2 id="question-4">Question 4</h2>
+<p>could generalized linear models help out with this at all?</p>
+<h2 id="answer-4">Answer 4</h2>
+<p><strong>Short Answer</strong><br />
+Yes—using a <strong>generalized linear model (GLM)</strong> with a
+<strong>log link</strong> can be an elegant way to directly model ratios
+(multiplicative effects). In particular, if your outcome is strictly
+positive (like a score, time, or cost), you might consider a
+<strong>Gamma</strong> GLM with a log link. This approach naturally
+yields an estimate of the <em>ratio</em> between treatments, rather than
+a difference.</p>
+<hr />
+<h2 id="why-a-glm-might-help">1. Why a GLM might help</h2>
+<ul>
+<li><p><strong>Directly model multiplicative effects</strong>: A GLM
+with a log link models the expected value of the outcome (Y) (e.g.,
+score) on the log scale, i.e.,<br />
+[ ([Y ]) = _0 + _1 () + ] This means that a one-unit increase in ()
+(from 0 to 1) corresponds to multiplying ([Y]) by ((_1)). Hence, ((_1))
+is the ratio of mean outcomes for treatment=1 vs. treatment=0.</p></li>
+<li><p><strong>Suitable for positive, skewed data</strong>: If your
+scores are positively skewed and strictly positive, a
+<strong>Gamma</strong> distribution can be more appropriate than
+assuming a normal distribution on the log scale.</p></li>
+<li><p><strong>Inference</strong>: GLMs still provide standard errors
+and confidence intervals for (_1). Exponentiating those intervals yields
+confidence intervals for the ratio.</p></li>
+</ul>
+<hr />
+<h2 id="example-gamma-glm-with-log-link-in-statsmodels">2. Example:
+Gamma GLM with log link in Statsmodels</h2>
+<p>Below is a minimal Python example of how you might fit a Gamma GLM
+with a log link using <strong>statsmodels</strong>.</p>
+<h3 id="a-generate-synthetic-data">a) Generate Synthetic Data</h3>
+<p>Let’s assume we have already generated some synthetic data (like in
+the previous code snippet). Here we’ll assume <code>df</code> has
+columns: <code>treatment</code> (0/1) and <code>score</code>
+(positive).</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># For demonstration, let&#39;s quickly generate some data:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>treatment <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, <span class="fl">0.5</span>, size<span class="op">=</span>n)  <span class="co"># half 0, half 1</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose &quot;true&quot; ratio ~ 1.3</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Control group (treatment=0) has mean ~ exp(4.5)</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>control_logmean <span class="op">=</span> <span class="fl">4.5</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>sd_log <span class="op">=</span> <span class="fl">0.6</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Shift on log scale by log(1.3) for the treatment group</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>log_shift <span class="op">=</span> np.log(<span class="fl">1.3</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> []</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> treatment:</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    mu_log <span class="op">=</span> control_logmean <span class="op">+</span> t <span class="op">*</span> log_shift</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> np.exp(np.random.normal(mu_log, sd_log))</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    scores.append(y)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> np.array(scores)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;treatment&#39;</span>: treatment,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;score&#39;</span>: scores</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<h3 id="b-fit-the-gamma-glm">b) Fit the Gamma GLM</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Create the design matrix</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Statsmodels GLM formula syntax is similar to OLS:</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We&#39;ll specify Gamma family with a log link</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.glm(<span class="st">&quot;score ~ treatment&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                data<span class="op">=</span>df,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                family<span class="op">=</span>sm.families.Gamma(link<span class="op">=</span>sm.families.links.log())</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>               ).fit()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary())</span></code></pre></div>
+<ul>
+<li>Here, we say:<br />
+[ (_i) = _0 + _1 _i ] with (_i = [_i]).</li>
+<li><code>sm.families.Gamma(link=sm.families.links.log())</code> means
+we assume a Gamma distribution for the errors, with a log link
+function.</li>
+</ul>
+<h3 id="c-interpret-the-coefficients">c) Interpret the Coefficients</h3>
+<p>From the GLM summary:</p>
+<ul>
+<li><strong>Intercept</strong> (_0) () ((_0)) is the
+<strong>mean</strong> of <code>score</code> for the control group
+(treatment=0).</li>
+<li><strong><code>treatment</code> coefficient</strong> (_1) () ((_1))
+is the <strong>ratio</strong> of the mean for treatment=1
+vs. treatment=0.</li>
+</ul>
+<h3 id="d-extract-the-ratio-estimate-and-ci">d) Extract the Ratio
+Estimate and CI</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>coef <span class="op">=</span> model.params</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>conf <span class="op">=</span> model.conf_int()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>coef_treatment <span class="op">=</span> coef[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>conf_lower, conf_upper <span class="op">=</span> conf.loc[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ratio_est <span class="op">=</span> np.exp(coef_treatment)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ratio_lower <span class="op">=</span> np.exp(conf_lower)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>ratio_upper <span class="op">=</span> np.exp(conf_upper)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Estimated log-coefficient for treatment:&quot;</span>, coef_treatment)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI in log-scale: [</span><span class="sc">{</span>conf_lower<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>conf_upper<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;</span><span class="ch">\n</span><span class="ss">Estimated ratio (treatment vs. control): </span><span class="sc">{</span>ratio_est<span class="sc">:.3f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI for ratio: [</span><span class="sc">{</span>ratio_lower<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ratio_upper<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>percent_increase_est <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_est <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>percent_increase_lower <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_lower <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>percent_increase_upper <span class="op">=</span> <span class="dv">100</span><span class="op">*</span>(ratio_upper <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;</span><span class="ch">\n</span><span class="ss">Estimated % increase: </span><span class="sc">{</span>percent_increase_est<span class="sc">:.1f}</span><span class="ss">%&quot;</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI for % increase: [</span><span class="sc">{</span>percent_increase_lower<span class="sc">:.1f}</span><span class="ss">%, </span><span class="sc">{</span>percent_increase_upper<span class="sc">:.1f}</span><span class="ss">%]&quot;</span>)</span></code></pre></div>
+<hr />
+<h2 id="comparing-glm-to-log-ols">3. Comparing GLM to “Log + OLS”</h2>
+<p><strong>Log + OLS</strong> approach:</p>
+<ol type="1">
+<li>You <strong>log‐transform</strong> the outcome directly and then use
+a standard linear model (OLS).</li>
+<li>This basically assumes ((Y)) is normally distributed (i.e., (Y) is
+log‐normal).</li>
+</ol>
+<p><strong>Gamma GLM</strong> approach:</p>
+<ul>
+<li>You explicitly specify a <strong>Gamma family</strong> with
+<strong>log link</strong>.</li>
+<li>Similar assumption that the mean of (Y) is on the log scale, but the
+variance structure and distribution come from the Gamma family.</li>
+<li>This can be more realistic if your data are skewed, strictly
+positive, and variance scales with the mean.</li>
+</ul>
+<p><strong>Which to choose?</strong></p>
+<ul>
+<li><strong>Log+OLS</strong> is simpler and often does fine in practice
+for many “positive, skewed” outcomes—especially if sample sizes are not
+too small and the distribution is not severely skewed.</li>
+<li>A <strong>Gamma GLM</strong> is a more statistically formal
+approach, giving you a likelihood-based method with a distribution
+that’s explicitly for positive data.</li>
+<li>Often you’ll get very similar point estimates of the ratio either
+way, but the standard errors might differ if the Gamma assumption fits
+better than a normal assumption on the log scale.</li>
+</ul>
+<hr />
+<h2 id="bottom-line">4. Bottom Line</h2>
+<ol type="1">
+<li><strong>Yes</strong>, generalized linear models (like a Gamma
+regression with a <strong>log link</strong>) can help when your data are
+strictly positive and you want to interpret <em>multiplicative</em>
+(ratio) effects.</li>
+<li>The coefficient on <code>treatment</code> in a GLM with log link is
+directly interpretable as a <strong>log‐ratio</strong> of means.
+Exponentiating it gives you the ratio of means.</li>
+<li>This is conceptually similar to doing OLS on the
+<strong>log‐transformed</strong> outcome, but it incorporates the
+<strong>Gamma</strong> distribution’s variance assumptions, which can be
+more appropriate for positive, skewed data.</li>
+</ol>
+<h2 id="question-5">Question 5</h2>
+<p>suppose the score is always between 0 and 1</p>
+<h2 id="answer-5">Answer 5</h2>
+<p>If your outcome variable is strictly between 0 and 1 (e.g., a
+proportion or percentage), then modeling a <strong>ratio of
+means</strong> on the original (0,1) scale becomes trickier. In
+practice, <strong>generalized linear models</strong> that are designed
+for data in ((0,1)) often use a <strong>logit link</strong> (or another
+link) and focus on modeling <strong>odds</strong> (or another
+transformation), rather than directly modeling a ratio of raw means.
+Below are some common considerations and approaches.</p>
+<hr />
+<h2 id="typical-approaches-for-y-01">1. Typical Approaches for (Y
+(0,1))</h2>
+<h3 id="beta-regression">1.1 Beta Regression</h3>
+<p>A common choice for continuous data strictly in ((0, 1)) is
+<strong>Beta regression</strong>. A Beta distribution can flexibly model
+various shapes on ((0,1)), and you typically choose a link (like
+<strong>logit</strong>) for the mean parameter (). For example, with a
+<strong>logit</strong> link:</p>
+<p>[ (_i) ;=; () ;=; _0 + _1 , + ]</p>
+<ul>
+<li>(_i = E[Y_i]) is then in ((0,1)).</li>
+<li>(_1) represents the difference in <strong>log-odds</strong> between
+treatment groups, so exponentiating (_1) yields an <strong>odds
+ratio</strong>, not a <strong>ratio of means</strong>.</li>
+<li>Beta regression can also use other links (e.g.,
+<strong>probit</strong>, <strong>cauchit</strong>,
+<strong>cloglog</strong>).</li>
+<li>A <strong>log link</strong> is <em>theoretically</em> possible in
+Beta regression, but it can be awkward because (()) can exceed 1. You
+would need constraints to guarantee predictions remain in (0,1).</li>
+</ul>
+<p><strong>In Python</strong>:</p>
+<ul>
+<li>As of this writing, <strong>statsmodels</strong> does not have fully
+finalized Beta regression in its main release, though there are
+developer branches or pull requests that implement it.</li>
+<li>Another option is the <strong>`betareg`</strong> package in R, which
+is quite popular for Beta regression.</li>
+</ul>
+<h3 id="fractional-logistic-regression">1.2 Fractional Logistic
+Regression</h3>
+<p>For proportions, a simpler version is sometimes called
+<strong>fractional logistic regression</strong>, which is effectively a
+<strong>binomial GLM</strong> with a <strong>logit link</strong> but
+allowing for continuous (Y(0,1)). The interpretation is still in terms
+of <strong>odds ratios</strong>.</p>
+<hr />
+<h2 id="what-if-i-really-want-a-ratio-of-means">2. What if I Really Want
+a “Ratio of Means”?</h2>
+<p>When your outcome is (Y (0,1)), talking about a
+<em>multiplicative</em> difference of the raw means can be conceptually
+challenging, because the means themselves are in ((0,1)). For example,
+if the control mean is 0.2 and the treatment mean is 0.3, the ratio is
+(0.3/0.2 = 1.5), which is a 50% increase. That is mathematically
+fine—but to model that ratio <em>directly</em> within ((0,1)) data can
+get tricky.</p>
+<h3 id="logtransform-approach">2.1 Log‐Transform Approach?</h3>
+<ul>
+<li>You might think: “Take ((Y))” and do a linear model.</li>
+<li><strong>Problem</strong>: If (Y) can be near 0, ((Y)) can go to (-).
+Also, if some (Y = 0) exactly, ((0)) is undefined. So you must either
+add a small constant or exclude zeros.</li>
+<li>Even if you do manage this transform, a linear model on ((Y)) does
+not ensure predicted means stay in ((0,1)).</li>
+</ul>
+<h3 id="beta-regression-with-a-log-link">2.2 Beta Regression with a Log
+Link?</h3>
+<ul>
+<li>You could, in principle, specify a Beta regression with<br />
+[ (_i) ;=; _0 + _1 ,, _i (0,1). ]</li>
+<li>But you’d need to ensure that ((_0 + _1 ,) ) for all your data—this
+is an awkward constraint to enforce in a standard GLM setting.</li>
+</ul>
+<p>Hence, in practice, if your outcome is bounded by 1 and you want an
+<em>easy interpretation</em>, you typically wind up focusing on
+<strong>log-odds (odds ratios)</strong> instead of raw <strong>ratios of
+means</strong>.</p>
+<hr />
+<h2 id="practical-suggestions">3. Practical Suggestions</h2>
+<ol type="1">
+<li><p><strong>Ask what interpretation you really need</strong>. For
+data in ((0,1)), the most common “effect size” interpretations are:</p>
+<ul>
+<li><strong>Odds Ratio</strong> (via logit link): e.g., “Treatment is
+associated with 1.5 times the odds of a higher proportion.”</li>
+<li><strong>Mean Difference</strong> on some bounded scale: e.g., “The
+average proportion increases by 0.05 from 0.25 to 0.30.”</li>
+</ul></li>
+<li><p><strong>If you truly need “ratio of means”</strong>:</p>
+<ul>
+<li>You <em>can</em> do a direct “two-sample ratio of means” estimate:
+({y}<em>{} / {y}</em>{}). Then use a <strong>bootstrap</strong> to get a
+confidence interval.</li>
+<li>Or do a (careful) <strong>Beta regression with a custom
+link</strong> ensuring the predicted mean is always below 1. But that
+typically requires specialized software or a custom routine.</li>
+</ul></li>
+<li><p><strong>If 0 or 1 occur often</strong>:</p>
+<ul>
+<li>Beta regression becomes even trickier (because the Beta density is
+zero at exactly 0 or 1). People sometimes do transformations like () for
+binomial data, or ((y(N-1)+0.5)/N) pseudo-counts.</li>
+<li>Or you consider a hurdle model or zero‐one–inflated Beta regression
+(which is more complex).</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="bottom-line-1">4. Bottom Line</h2>
+<ul>
+<li><strong>Yes</strong>, you can in principle talk about a ratio of
+means when the outcome is between 0 and 1, but standard GLM frameworks
+for bounded data (like Beta regression with a logit link) usually yield
+<em>odds ratios</em>, not <em>ratios of means</em>.</li>
+<li>A direct ratio‐of‐means approach is much simpler if your data are
+unbounded positive (e.g., via Gamma with log link) or at least strictly
+(&gt; 0).</li>
+<li>With (0,1) data, the conventional, easy‐to‐interpret approach is
+<strong>Beta (or fractional) regression</strong> with a
+<strong>logit</strong> link, yielding an <strong>odds ratio</strong>. If
+you really need a ratio of raw means, you can:
+<ol type="1">
+<li>Compute sample means by group and form the ratio, then
+<strong>bootstrap</strong> for a confidence interval
+(nonparametric).</li>
+<li>Use a specialized <strong>Beta regression</strong> with a custom
+link that fits your ratio‐of‐means concept—but this can be more
+complicated in practice.</li>
+</ol></li>
+</ul>
+<p>Most analysts who have data in ((0,1)) end up preferring
+<strong>logistic‐type interpretations</strong> (odds ratios) or simple
+mean differences on the 0–1 scale, rather than a ratio of (0–1)
+means.</p>
+<h2 id="question-6">Question 6</h2>
+<p>can you give me code on how to do the bootstrap confidence
+interval</p>
+<h2 id="answer-5-1">Answer 5</h2>
+<p>Below is an example of how to compute a <strong>bootstrap confidence
+interval</strong> for the <strong>ratio of means</strong> in Python,
+specifically when you have an outcome (Y(0,1)) and a binary treatment
+indicator (<code>treatment = 0</code> or
+<code>treatment = 1</code>).</p>
+<p>We’ll illustrate two possible bootstrap approaches:</p>
+<ol type="1">
+<li><strong>Group-wise Bootstrap</strong>: Resample separately within
+each treatment group to preserve the distribution of each group
+independently. Then compute the ratio of the new group means.</li>
+<li><strong>Full-sample Bootstrap</strong>: Resample from the entire
+dataset (pairs of <code>(score, treatment)</code>), re-fit your group
+means, and compute the ratio.</li>
+</ol>
+<p>Often, for a “ratio of means” comparison, a <strong>group-wise
+bootstrap</strong> is more straightforward because it directly resamples
+from each group’s observed distribution.</p>
+<hr />
+<h2 id="example-setup">Example Setup</h2>
+<p>Let’s assume we have a <code>DataFrame</code> <code>df</code> with
+columns:</p>
+<ul>
+<li><code>treatment</code> (0 or 1)</li>
+<li><code>score</code> (a value in (0,1))</li>
+</ul>
+<p>We’ll generate synthetic data for the demonstration.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># For reproducibility</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data: 100 obs, half treatment=1, half treatment=0</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;treatment&#39;</span>: np.random.binomial(<span class="dv">1</span>, <span class="fl">0.5</span>, size<span class="op">=</span>n),</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;score&#39;</span>: np.random.beta(a<span class="op">=</span><span class="dv">2</span>, b<span class="op">=</span><span class="dv">5</span>, size<span class="op">=</span>n)  <span class="co"># some Beta(a,b) distribution</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<hr />
+<h2 id="group-wise-bootstrap">1. Group-wise Bootstrap</h2>
+<p>In this approach:</p>
+<ol type="1">
+<li>Split the dataset into <strong>control</strong>
+(<code>treatment=0</code>) and <strong>treatment</strong>
+(<code>treatment=1</code>).</li>
+<li>Draw a bootstrap sample (with replacement) from
+<strong>each</strong> group <strong>separately</strong>.</li>
+<li>Compute the mean score in each bootstrapped group.</li>
+<li>Form the ratio of these two means.</li>
+<li>Repeat many times (e.g., 10,000) to build the empirical distribution
+of the ratio.</li>
+<li>Take percentiles (2.5%, 97.5%) as your confidence interval.</li>
+</ol>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bootstrap_ratio_of_means_groupwise(df, treatment_col<span class="op">=</span><span class="st">&#39;treatment&#39;</span>, score_col<span class="op">=</span><span class="st">&#39;score&#39;</span>,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                       n_boot<span class="op">=</span><span class="dv">10000</span>, ci<span class="op">=</span><span class="fl">0.95</span>):</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a bootstrap confidence interval for ratio of means between treatment=1 and treatment=0.</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Resamples each group separately to preserve the distribution in each group.</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">    -----------</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">    df : pandas DataFrame</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">        Must contain treatment_col and score_col.</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">    treatment_col : str</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">        Name of the column that identifies treatment (0/1).</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">    score_col : str</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">        Name of the column with the score in (0,1).</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">    n_boot : int</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">        Number of bootstrap iterations.</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">    ci : float</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">        Confidence level (e.g. 0.95 for 95% CI).</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">    --------</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">    ratio_est : float</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">        Observed ratio of means (treatment / control) in the original data.</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">    lower_bound : float</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">        Lower bound of the CI.</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">    upper_bound : float</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">        Upper bound of the CI.</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">    ratios : numpy array</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">        All bootstrap ratio estimates (for optional further analysis).</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split data</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>    df_control <span class="op">=</span> df[df[treatment_col] <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>    df_treatment <span class="op">=</span> df[df[treatment_col] <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Observed means</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>    mean_control <span class="op">=</span> df_control[score_col].mean()</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    mean_treatment <span class="op">=</span> df_treatment[score_col].mean()</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>    ratio_est <span class="op">=</span> mean_treatment <span class="op">/</span> mean_control  <span class="co"># Observed ratio</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prepare for bootstrap</span></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    control_scores <span class="op">=</span> df_control[score_col].values</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>    treatment_scores <span class="op">=</span> df_treatment[score_col].values</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>    n_control <span class="op">=</span> <span class="bu">len</span>(control_scores)</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>    n_treatment <span class="op">=</span> <span class="bu">len</span>(treatment_scores)</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>    ratios <span class="op">=</span> []</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_boot):</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Resample each group with replacement</span></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>        boot_control <span class="op">=</span> np.random.choice(control_scores, size<span class="op">=</span>n_control, replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>        boot_treatment <span class="op">=</span> np.random.choice(treatment_scores, size<span class="op">=</span>n_treatment, replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Compute means</span></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>        m_control <span class="op">=</span> boot_control.mean()</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>        m_treatment <span class="op">=</span> boot_treatment.mean()</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Ratio: watch out for zero means</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> m_control <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If we get an extreme case where boot mean is 0, skip or set ratio to np.inf</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>            <span class="co"># but this is very rare if a&gt;0 in Beta distribution</span></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>        ratios.append(m_treatment <span class="op">/</span> m_control)</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute CI from percentiles</span></span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> ci</span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>    lower_pct <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> (alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>    upper_pct <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>    lower_bound, upper_bound <span class="op">=</span> np.percentile(ratios, [lower_pct, upper_pct])</span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ratio_est, lower_bound, upper_bound, np.array(ratios)</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>ratio_est_gw, lb_gw, ub_gw, boot_dist_gw <span class="op">=</span> bootstrap_ratio_of_means_groupwise(df)</span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Group-wise bootstrap ratio of means: </span><span class="sc">{</span>ratio_est_gw<span class="sc">:.3f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI: [</span><span class="sc">{</span>lb_gw<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ub_gw<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span></code></pre></div>
+<h3 id="notes-on-group-wise-bootstrap">Notes on Group-wise
+Bootstrap</h3>
+<ul>
+<li>This preserves the within-group distribution exactly.</li>
+<li>The ratio distribution might be skewed, so percentile-based
+intervals are often used.</li>
+<li>If either group’s sample mean can be 0 in the bootstrap, the ratio
+can blow up to infinity or be undefined. For Beta-distributed data with
+parameters (a&gt;0) and (b&gt;0), a mean of exactly 0 in a bootstrap
+sample is possible (though rare). Depending on your data, you might
+handle that edge case differently (e.g., skip it, or use a small
+epsilon).</li>
+</ul>
+<hr />
+<h2 id="full-sample-bootstrap">2. Full-sample Bootstrap</h2>
+<p>Alternatively, you can <strong>resample the entire dataset</strong>
+(pairs of <code>(treatment, score)</code>) all at once, then compute
+group means and the ratio. This approach preserves any correlation
+structure between <code>treatment</code> and <code>score</code> if, for
+example, treatment assignment was not exactly 50/50 in your data or was
+associated with other covariates.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bootstrap_ratio_of_means_full(df, treatment_col<span class="op">=</span><span class="st">&#39;treatment&#39;</span>, score_col<span class="op">=</span><span class="st">&#39;score&#39;</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                                  n_boot<span class="op">=</span><span class="dv">10000</span>, ci<span class="op">=</span><span class="fl">0.95</span>):</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a bootstrap confidence interval for ratio of means between treatment=1 and treatment=0,</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">    by resampling the entire dataset at once.</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Observed ratio</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    mean_control <span class="op">=</span> df.loc[df[treatment_col] <span class="op">==</span> <span class="dv">0</span>, score_col].mean()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    mean_treatment <span class="op">=</span> df.loc[df[treatment_col] <span class="op">==</span> <span class="dv">1</span>, score_col].mean()</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    ratio_est <span class="op">=</span> mean_treatment <span class="op">/</span> mean_control</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    ratios <span class="op">=</span> []</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_boot):</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        boot_sample <span class="op">=</span> df.sample(n<span class="op">=</span><span class="bu">len</span>(df), replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        m_control <span class="op">=</span> boot_sample.loc[boot_sample[treatment_col] <span class="op">==</span> <span class="dv">0</span>, score_col].mean()</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        m_treatment <span class="op">=</span> boot_sample.loc[boot_sample[treatment_col] <span class="op">==</span> <span class="dv">1</span>, score_col].mean()</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> m_control <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        ratios.append(m_treatment <span class="op">/</span> m_control)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> ci</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    lower_pct <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> (alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    upper_pct <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> alpha <span class="op">/</span> <span class="dv">2</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    lower_bound, upper_bound <span class="op">=</span> np.percentile(ratios, [lower_pct, upper_pct])</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ratio_est, lower_bound, upper_bound, np.array(ratios)</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Example usage:</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>ratio_est_fs, lb_fs, ub_fs, boot_dist_fs <span class="op">=</span> bootstrap_ratio_of_means_full(df)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Full-sample bootstrap ratio of means: </span><span class="sc">{</span>ratio_est_fs<span class="sc">:.3f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI: [</span><span class="sc">{</span>lb_fs<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ub_fs<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span></code></pre></div>
+<h3 id="comparison-group-wise-vs.-full-sample">Comparison: Group-wise
+vs. Full-sample</h3>
+<ul>
+<li><strong>Group-wise</strong>: Treats each group’s empirical
+distribution independently. This is often the simplest interpretation
+for a “ratio of means” question (like a two-sample problem).</li>
+<li><strong>Full-sample</strong>: Resamples from the entire dataset,
+preserving the original proportion of <code>treatment=1</code>
+vs. <code>treatment=0</code>. If the proportion is not exactly half, the
+ratio is also subject to the random variation in how many times
+<code>treatment=1</code> is drawn.</li>
+</ul>
+<p>In many 2-group scenarios, <strong>group-wise</strong> is typically
+used to isolate the variation within each group’s distribution.</p>
+<hr />
+<h2 id="interpreting-the-results">3. Interpreting the Results</h2>
+<p>The output gives you:</p>
+<ol type="1">
+<li><strong><code>ratio_est</code></strong>: The observed ratio of the
+sample means in your dataset (({y}<em>{1}/{y}</em>{0})).</li>
+<li><strong>Bootstrap CI</strong> ((95%) by default): The
+percentile-based lower and upper bounds.</li>
+<li>The entire distribution of bootstrap ratio estimates, which you can
+further analyze or plot if desired.</li>
+</ol>
+<hr />
+<h2 id="edge-cases-to-watch-out-for">4. Edge Cases to Watch Out For</h2>
+<ol type="1">
+<li><strong>Zeros in data</strong>: If any bootstrap sample for the
+control group has mean=0, you’ll get an infinite ratio. We handled this
+by skipping that iteration, but you could also handle it differently
+(e.g., add a small epsilon).</li>
+<li><strong>Small sample sizes</strong>: Bootstrap intervals can be
+noisy if (n) is very small.</li>
+<li><strong>High or low means</strong>: Because your data are in
+((0,1)), the ratio can become quite large if the control mean is very
+small.</li>
+<li><strong>Confidence Interval method</strong>: We used
+<strong>percentile</strong> intervals. You might also consider
+<strong>BCa</strong> intervals or other bias‐corrected methods,
+depending on your needs.</li>
+</ol>
+<hr />
+<h2 id="final-remarks">5. Final Remarks</h2>
+<ul>
+<li><strong>Bootstrap</strong> is a very flexible, distribution-free way
+to get a confidence interval for a ratio of means (or almost any
+statistic).</li>
+<li>For data ((0,1)), if you <strong>really</strong> want a ratio of
+means, these bootstraps are a straightforward approach.</li>
+<li>If you prefer a parametric approach (like Beta regression) or want
+odds ratios, you’d use a <strong>GLM</strong> with a logit link. But
+that yields an <strong>odds ratio</strong>, not a ratio of raw
+means.</li>
+</ul>
+<p>With the above code, you can <strong>play around</strong> with the
+bootstrap approach, see how the interval changes with more replications
+(<code>n_boot</code>), and compare the group-wise vs. full-sample
+methods.</p>
+<h2 id="question-6-1">Question 6</h2>
+<p>is it possible to get a “significant” result using the bootstrap
+approach but a “non significant result” using other methods? (e.g.,
+linear regression)</p>
+<h2 id="answer-6">Answer 6</h2>
+<p><strong>Short Answer</strong><br />
+Yes, it’s entirely possible to get a statistically “significant” result
+(in the sense of rejecting a null hypothesis) using a bootstrap approach
+while getting a “non‐significant” result using a classical parametric
+method like linear regression—and vice versa. Different methods rely on
+different assumptions and yield different standard errors and confidence
+intervals. That can lead to divergent conclusions in borderline or
+small‐sample situations, or when model assumptions are violated.</p>
+<p>Below are some key reasons why this can happen.</p>
+<hr />
+<h2 id="differences-in-assumptions">1. Differences in Assumptions</h2>
+<h3 id="parametric-methods-e.g.-linear-regression">1.1 Parametric
+Methods (e.g., Linear Regression)</h3>
+<ul>
+<li><strong>Distribution Assumptions</strong>: Linear regression
+commonly assumes normally distributed errors, constant variance,
+linearity in parameters, and no heavy outliers, etc.</li>
+<li><strong>Transformations</strong>: Sometimes you might do a
+log-transform or other transformations to try to meet these
+assumptions.</li>
+<li><strong>Inference</strong>: The standard errors, test statistics,
+and p-values rely on these assumptions being at least approximately
+true.</li>
+</ul>
+<h3 id="bootstrap-approaches">1.2 Bootstrap Approaches</h3>
+<ul>
+<li><strong>Fewer Distributional Assumptions</strong>: Nonparametric
+bootstrap methods resample from the empirical distribution of the data.
+They do not assume normality or a specific parametric form.</li>
+<li><strong>Sampling Variability</strong>: You estimate the variability
+of your statistic (e.g., ratio of means) by looking at how it changes
+across many resampled datasets.</li>
+<li><strong>Potential for High/Low Tail Probability
+Differences</strong>: If the actual data distribution is skewed, has
+heavy tails, or includes outliers, the bootstrap might give more (or
+less) spread in the estimated statistic than a standard parametric
+approach. This can affect confidence intervals and p-values.</li>
+</ul>
+<hr />
+<h2 id="violations-of-or-fit-to-assumptions">2. Violations of (or Fit
+to) Assumptions</h2>
+<ol type="1">
+<li><strong>If the parametric assumptions hold reasonably well</strong>,
+linear regression might produce narrower confidence intervals (if the
+data are well-behaved) or more stable estimates of variance. In this
+scenario, the bootstrap and parametric methods often agree (both might
+give significant or non-significant results).</li>
+<li><strong>If the parametric assumptions are violated</strong>—for
+instance, the outcome is skewed, bounded, or includes outliers—the
+standard linear regression might produce misleadingly large (or small)
+standard errors.
+<ul>
+<li>A bootstrap approach could yield larger intervals if the data show a
+lot of variability when resampled.</li>
+<li>Alternatively, if the data have a structure that the regression
+model doesn’t capture, the bootstrap might reveal more “signal” or less
+“noise,” leading to a smaller p-value in some borderline cases.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="small-sample-sizes-or-extreme-ratios">3. Small Sample Sizes or
+Extreme Ratios</h2>
+<ul>
+<li>In <strong>small samples</strong> or when your statistic (e.g.,
+ratio of means) can blow up under certain resamples (like dividing by a
+near-zero mean), the distribution of the test statistic can become quite
+different from what the standard parametric theory predicts.</li>
+<li>A <strong>bootstrap</strong> might show a wide distribution or a
+heavily skewed distribution of the estimator—making the confidence
+interval or p-value differ significantly from classical methods.</li>
+</ul>
+<hr />
+<h2 id="practical-examples-where-results-might-differ">4. Practical
+Examples Where Results Might Differ</h2>
+<ol type="1">
+<li><p><strong>Ratio of Means for (0,1) Data</strong></p>
+<ul>
+<li>Using a <strong>standard linear regression</strong> on the
+log-transformed data might be tricky (because of zeros, bounds, etc.).
+The normal-theory confidence intervals might be off if the
+distributional assumptions are poor.</li>
+<li>A <strong>bootstrap</strong> (especially group-wise) might more
+accurately capture the sampling distribution of the ratio in borderline
+or skewed scenarios, potentially leading to a different conclusion about
+significance.</li>
+</ul></li>
+<li><p><strong>Heavy Outliers</strong></p>
+<ul>
+<li>In a parametric approach, outliers can inflate the variance estimate
+or shift the mean in an unexpected way.</li>
+<li>A bootstrap might better reflect the real variability if you
+resample those outliers in proportion to their frequency. This can lead
+to different standard errors than the parametric method.</li>
+</ul></li>
+<li><p><strong>Nonlinear Statistics</strong></p>
+<ul>
+<li>If the statistic of interest is inherently nonlinear (like a ratio,
+or a difference of medians, etc.), the normal approximation used by many
+parametric methods might be poor.</li>
+<li>A bootstrap will capture the actual shape of the sampling
+distribution more directly.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="significance-is-always-method-dependent">5. “Significance” Is
+Always Method-Dependent</h2>
+<p>Because each inference method makes different assumptions about how
+the data are generated and how the statistic’s distribution behaves,
+it’s possible for one method to yield a p-value just below 0.05
+(significant) and another to yield a p-value just above 0.05
+(non-significant). Especially in “borderline” cases (p close to 0.05),
+small changes in assumptions or estimation methods can shift the p-value
+enough to change the significance label.</p>
+<hr />
+<h2 id="which-method-to-trust">6. Which Method to Trust?</h2>
+<ol type="1">
+<li><p><strong>Check Assumptions</strong></p>
+<ul>
+<li>If your data genuinely violate the distributional assumptions of
+linear regression (or some parametric model), the bootstrap might be
+more reliable (although still not a magic bullet).</li>
+<li>If your data are large enough and the parametric assumptions are
+roughly met, classical methods can be quite robust and often more
+precise.</li>
+</ul></li>
+<li><p><strong>Diagnostic Tools</strong></p>
+<ul>
+<li>Inspect residual plots, check for skewness or heavy tails, consider
+outliers, and attempt transformations if it makes sense.</li>
+<li>Compare parametric and bootstrap estimates—if they’re similar,
+that’s reassuring. If they differ greatly, investigate why.</li>
+</ul></li>
+<li><p><strong>Context Matters</strong></p>
+<ul>
+<li>If your primary interest is directly in a ratio of means, a
+bootstrap may be more straightforward for that exact question.</li>
+<li>If you want to control for other covariates, you might use a
+generalized linear model (GLM) with an appropriate link function (e.g.,
+log link for ratio, logit link for bounded data). Then you can still do
+a bootstrap on top of that model if needed.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="final-takeaways">Final Takeaways</h2>
+<ul>
+<li><strong>Yes</strong>, you can absolutely see a discrepancy in
+“significance” between a bootstrap approach and a parametric approach
+like linear regression.</li>
+<li>This discrepancy typically arises from different assumptions about
+the data distribution and the sampling distribution of your
+statistic.</li>
+<li>Neither method is guaranteed to be “right” in all circumstances. If
+assumptions are well met, parametric methods and bootstrap often agree;
+if assumptions are questionable or the sample is small/quirky, they can
+diverge.</li>
+<li>Ultimately, always evaluate how well the methods’ assumptions match
+your data, and consider using diagnostic checks or simulation (including
+the bootstrap) to gauge the robustness of your results.</li>
+</ul>
+<h2 id="question-7">Question 7</h2>
+<p>is it possible to use “predictive margins” and “non linear
+combinations” to get the ratio? I’m thinking of something that can be
+done with Stata</p>
+<h2 id="answer-7">Answer 7</h2>
+<p><strong>Short Answer</strong><br />
+Yes. In <strong>Stata</strong>, you can use <strong>predictive
+margins</strong> (via the <code>margins</code> command) and then use
+<strong>non‐linear combinations</strong> (via the <code>nlcom</code>
+command) to obtain a ratio of predictions (e.g., a ratio of means for
+treatment vs. control) directly from your fitted model. This is very
+common for GLMs with a log link, but you can also do it with a
+log‐transformed OLS model or other regressions.</p>
+<p>Below are some conceptual examples and typical Stata syntax
+approaches.</p>
+<hr />
+<h2 id="glm-example-gamma-with-log-link">1. GLM Example (Gamma with Log
+Link)</h2>
+<p>Let’s say you run a Gamma regression with a log link, something
+like:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">glm</span> <span class="kw">score</span> i.treatment, <span class="kw">family</span>(<span class="kw">gamma</span>) <span class="kw">link</span>(<span class="fu">log</span>)</span></code></pre></div>
+<p>Here, <code>i.treatment</code> treats your <code>treatment</code>
+variable (0/1) as a factor (categorical).</p>
+<h3 id="a-predictive-margins">a) Predictive Margins</h3>
+<p>After fitting the model, you can use:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>margins treatment</span></code></pre></div>
+<p>This will give you the <strong>predicted mean</strong> of
+<code>score</code> at each level of <code>treatment</code> (on the
+original scale) since the link is log but <code>margins</code>
+back‐transforms the predictions by default.</p>
+<p>For example, Stata might produce something like:</p>
+<pre><code>   Predictive margins
+   ------------------------------------------------
+   treatment |   Margin   Std. Err.      [95% CI]
+   -----------+------------------------------------
+           0  |  10.1234    ...
+           1  |  13.5432    ...</code></pre>
+<p>Here, the predicted mean for <code>treatment=0</code> is about
+10.1234, and for <code>treatment=1</code> is about 13.5432.</p>
+<h3 id="b-ratio-via-nlcom">b) Ratio via <code>nlcom</code></h3>
+<p>You can then use <code>nlcom</code> to form a ratio (e.g., () in the
+example) along with a confidence interval. For instance, the margins
+result is stored in temporary estimations that you can reference. One
+approach is:</p>
+<ol type="1">
+<li>Save the margins as variables (using <code>predict</code> after
+margins, or using post‐estimation expressions).</li>
+<li>Use <code>nlcom</code> with the expressions for the ratio.</li>
+</ol>
+<h4 id="example-approach">Example Approach</h4>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>margins treatment, <span class="kw">predict</span>(mu)  <span class="co">// &quot;mu&quot; means predicted mean on original scale</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">// The margins results are stored in e(b) as transformation of the linear predictors.</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Suppose, for treatment=0, we get _b[_at1]</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">// and for treatment=1, we get _b[_at2].</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">// You can check exactly how Stata labels them with &quot;ereturn list&quot; or &quot;matrix list e(b)&quot;</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<ul>
+<li><p>This tells Stata to compute () and give a standard error / CI via
+the delta method.</p></li>
+<li><p>You’ll end up with output like:</p>
+<pre><code>ratio | Coef.   Std. Err.   z   P&gt;|z|  [95% Conf. Interval]
+----------------------------------------------------------
+ratio | 1.337   0.210      ...</code></pre>
+<p>indicating about a 33.7% higher mean for treatment=1 vs. 0, with a
+confidence interval.</p></li>
+</ul>
+<p><em>(Exact <code>_at1</code>/<code>_at2</code> labels can
+differ—sometimes Stata uses <code>_b[1._predict]</code>, etc. The best
+practice is to run <code>margins</code>, then type
+<code>ereturn list</code>, and see how Stata is labeling the margin
+estimates.)</em></p>
+<hr />
+<h2 id="logtransformed-ols-example">2. Log‐Transformed OLS Example</h2>
+<p>Suppose you run:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">regress</span> ln_score i.treatment</span></code></pre></div>
+<p>where you have <code>ln_score = log(score)</code>. Then the
+coefficient on <code>treatment</code> is a <strong>difference in
+logs</strong>, i.e. (_1 ()).</p>
+<h3 id="a-getting-the-exponentiated-difference">a) Getting the
+Exponentiated Difference</h3>
+<p>You can directly use <code>lincom</code> or <code>nlcom</code> to
+exponentiate that coefficient. For example:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: <span class="fu">exp</span>(_b[treatment]))</span></code></pre></div>
+<p>This yields the estimate ((_1)) and standard errors by the delta
+method. That’s effectively the ratio of geometric means if the model is
+strictly linear in log space.</p>
+<h3 id="b-predictive-margins-approach">b) Predictive Margins
+Approach</h3>
+<p>Alternatively, after the log‐transformed OLS, you can do:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>margins treatment, expression(<span class="fu">exp</span>(<span class="kw">predict</span>(<span class="kw">xb</span>)))</span></code></pre></div>
+<ul>
+<li><code>predict(xb)</code> is the linear predictor (on the log
+scale).</li>
+<li><code>exp(predict(xb))</code> transforms it back to the original
+scale, giving the <em>predicted geometric mean</em> (or a close
+approximation to the arithmetic mean under log-normal assumptions).</li>
+<li>Then, as before, you can use <code>nlcom</code> or the
+<code>margins</code> contrast options to get the ratio.</li>
+</ul>
+<p>For example:</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>margins treatment, expression(<span class="fu">exp</span>(<span class="kw">predict</span>(<span class="kw">xb</span>)))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Then</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<p>(or whatever labels your margins adopt.)</p>
+<hr />
+<h2 id="logistic-or-other-nonlinear-models">3. Logistic or Other
+Nonlinear Models</h2>
+<p>If your outcome is binary (0/1) and you run
+<code>logit y i.treatment</code>, then <code>margins, at()</code>
+typically gives <strong>predicted probabilities</strong>. The ratio of
+probabilities is not the same as a ratio of means (though the mean for a
+binary outcome is the probability). Some people do:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>margins treatment</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (risk_ratio: _b[_at2] / _b[_at1])</span></code></pre></div>
+<p>This yields a <strong>risk ratio</strong> (probability ratio), which
+might be of interest. But for logistic regression, the default
+interpretation is typically an <strong>odds ratio</strong>. You can also
+do a Poisson model with a log link for binary data to get a direct risk
+ratio.</p>
+<hr />
+<h2 id="putting-it-all-together-1">4. Putting It All Together</h2>
+<ul>
+<li><strong>Predictive margins</strong> in Stata let you get adjusted
+predictions for each group (treatment=0 vs. 1, or other covariates fixed
+at certain values).</li>
+<li>Then <strong><code>nlcom</code></strong> (or <code>lincom</code>)
+can combine these predicted values (or the model coefficients) in a
+<strong>nonlinear</strong> way to produce a ratio (or percent
+difference, or difference of logs, etc.) with a proper standard error
+and confidence interval.</li>
+<li>This is exactly how you can replicate the idea of “estimate the
+ratio of means on the original scale” that you might do in R or Python
+with exponentiation, or with custom code. Stata just handles the
+transformations in a more command-driven “margins + nlcom”
+approach.</li>
+</ul>
+<hr />
+<h2 id="example-syntax-summary">Example Syntax Summary</h2>
+<p>Here is a typical pattern for a Gamma model with log link, to get a
+ratio of means:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">glm</span> <span class="kw">score</span> i.treatment, <span class="kw">family</span>(<span class="kw">gamma</span>) <span class="kw">link</span>(<span class="fu">log</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>margins treatment</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<p>Or for a log‐transformed OLS:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">reg</span> ln_score i.treatment</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>margins treatment, expression(<span class="fu">exp</span>(<span class="kw">predict</span>(<span class="kw">xb</span>)))</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<p><em>(Again, the <code>_at1</code>/<code>_at2</code> labels might
+differ in your setup, so check <code>ereturn list</code>.)</em></p>
+<p>That’s how you can get the ratio estimate (with CI) using predictive
+margins and non‐linear combinations in Stata.</p>
+<h2 id="question-8">Question 8</h2>
+<p>do you know how margins and nlcom works behind the scenes? can you
+write python code that mimic the behavior?</p>
+<h2 id="answer-9">Answer 9</h2>
+<p>Below is an <strong>illustrative</strong> explanation and
+<strong>Python code</strong> showing the general idea behind what
+Stata’s <code>margins</code> and <code>nlcom</code> do “behind the
+scenes”—and how to replicate (or at least approximate) that
+functionality using <strong>statsmodels</strong>,
+<strong>numpy</strong>, and the <strong>delta method</strong>.</p>
+<hr />
+<h1 id="conceptual-background">1. Conceptual Background</h1>
+<p>When you run in Stata:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>margins treatment</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<p>Stata is doing roughly the following:</p>
+<ol type="1">
+<li><strong>Obtain predicted means</strong> (or probabilities, etc.) for
+specified covariate values (e.g., <code>treatment=0</code> and
+<code>treatment=1</code>).</li>
+<li><strong>Compute some function</strong> of those predictions (e.g., a
+ratio, difference, or any other non-linear combination).</li>
+<li><strong>Use the delta method</strong> (or sometimes a more direct
+approach) to get standard errors and confidence intervals for that
+function.</li>
+</ol>
+<p>In a nutshell, if we have a parametric model with parameter vector ()
+(dimension (p)), and an estimated covariance matrix () (a (pp) matrix),
+and we want to estimate a function:</p>
+<p>[ () = f(, ) ]</p>
+<p>then the <strong>delta method</strong> tells us that:</p>
+<p>[ ;; |<em>{} ;; |</em>{}^, ]</p>
+<p>where (_{} ) is the gradient of () with respect to (). The standard
+error is then the square root of that variance, and we get confidence
+intervals by (typically) using a Normal approximation.</p>
+<hr />
+<h1 id="simple-example-glm-with-a-log-link">2. Simple Example: GLM with
+a Log Link</h1>
+<p>Let’s demonstrate how to replicate something like:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">glm</span> <span class="fu">y</span> i.treat, <span class="kw">family</span>(<span class="kw">gamma</span>) <span class="kw">link</span>(<span class="fu">log</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>margins treat</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<p>in Python. For simplicity, we’ll:</p>
+<ol type="1">
+<li>Fit a <strong>Gamma GLM</strong> with a <strong>log link</strong> in
+statsmodels.</li>
+<li>Manually compute the predicted <strong>mean</strong> at
+<code>treatment=0</code> and at <code>treatment=1</code>.</li>
+<li>Form the <strong>ratio</strong> of those two means.</li>
+<li>Use the <strong>delta method</strong> to get a standard error and
+confidence interval for that ratio.</li>
+</ol>
+<h2 id="generate-synthetic-data">2.1 Generate Synthetic Data</h2>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">200</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>treatment <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, <span class="fl">0.5</span>, size<span class="op">=</span>n)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;True&quot; means: control ~ exp(2.0) = ~7.39, treatment 30% higher =&gt; exp(2.0 + log(1.3))</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>log_mean_control <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>log_mean_treatment <span class="op">=</span> log_mean_control <span class="op">+</span> np.log(<span class="fl">1.3</span>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Gamma shape</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">2.0</span>  <span class="co"># shape parameter (sometimes noted as 1/alpha)</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> []</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> treatment:</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>    mean_log <span class="op">=</span> log_mean_control <span class="cf">if</span> t<span class="op">==</span><span class="dv">0</span> <span class="cf">else</span> log_mean_treatment</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># draw from a gamma with log-link style</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We&#39;ll do: Y ~ Gamma(mean=exp(mean_log), shape=phi)</span></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> np.exp(mean_log)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># statsmodels uses mean = shape * scale, so let&#39;s manually sample using np.random.gamma</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># but we want mean = mu, shape = phi =&gt; scale = mu / phi</span></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>    scale <span class="op">=</span> mu <span class="op">/</span> phi</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>    val <span class="op">=</span> np.random.gamma(shape<span class="op">=</span>phi, scale<span class="op">=</span>scale)</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>    y.append(val)</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;treatment&#39;</span>: treatment,</span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;y&#39;</span>: y</span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<h2 id="fit-the-gamma-glm">2.2 Fit the Gamma GLM</h2>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.glm(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    formula<span class="op">=</span><span class="st">&#39;y ~ treatment&#39;</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>df,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    family<span class="op">=</span>sm.families.Gamma(link<span class="op">=</span>sm.families.links.log())</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> model.fit()</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res.summary())</span></code></pre></div>
+<ul>
+<li>We’ll get parameter estimates (_0) (intercept) and (_1) (coefficient
+for <code>treatment</code>).</li>
+</ul>
+<hr />
+<h1 id="margins-predicted-means-at-treatment0-and-treatment1">3.
+Margins: Predicted Means at <code>treatment=0</code> and
+<code>treatment=1</code></h1>
+<p>In a <strong>Gamma with log link</strong>, the linear predictor for
+an observation (i) is:</p>
+<p>[ _i = _0 + _1 ,_i. ]</p>
+<p>The predicted mean on the original scale is:</p>
+<p>[ _i = (_i). ]</p>
+<p>For <code>treatment=0</code>, the linear predictor is (_0), so the
+predicted mean is ((_0)).<br />
+For <code>treatment=1</code>, the linear predictor is (_0 + _1), so the
+predicted mean is ((_0 + _1)).</p>
+<p>Let’s compute those explicitly, as “margins” does:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> res.params  <span class="co"># [intercept, treatment]</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>cov <span class="op">=</span> res.cov_params()  <span class="co"># covariance matrix of the parameter estimates</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>beta0 <span class="op">=</span> params[<span class="st">&#39;Intercept&#39;</span>]</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>beta1 <span class="op">=</span> params[<span class="st">&#39;treatment&#39;</span>]</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicted means:</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>mu0 <span class="op">=</span> np.exp(beta0)          <span class="co"># treat=0</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>mu1 <span class="op">=</span> np.exp(beta0 <span class="op">+</span> beta1)  <span class="co"># treat=1</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Predicted mean for treatment=0:&quot;</span>, mu0)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Predicted mean for treatment=1:&quot;</span>, mu1)</span></code></pre></div>
+<hr />
+<h1 id="nlcom-ratio-mu1-mu0">4. nlcom (Ratio = mu1 / mu0)</h1>
+<p>In Stata, <code>nlcom (ratio: _b[_at2] / _b[_at1])</code> basically
+says:<br />
+[ = = = (_1). ]</p>
+<p><strong>Mathematically</strong>, for a two-parameter model ((_0,
+_1)), we have:</p>
+<p>[ (_0, _1) ;=; ;=; (_1). ]</p>
+<p>So we could skip the full ratio approach and just note that (=
+e^{_1}). But let’s do it the “long way,” as if we literally want the
+ratio of ((_0 + _1)) over ((_0)) and use the delta method for a
+2-parameter function.</p>
+<h2 id="delta-method-for-ratio">4.1 Delta Method for Ratio</h2>
+<p>Define: [ (_0, _1) = = (_1). ]</p>
+<p>The gradient wrt (_0, _1) is:</p>
+<p>[ = ( ,, ). ]</p>
+<ul>
+<li>(/ _0 = 0) because () depends on (_1) alone.</li>
+<li>(/ _1 = (_1) = .)</li>
+</ul>
+<p>So, (= (0,, )). Then:</p>
+[ () ;; (0, )
+<p>. ]</p>
+<p>This collapses to:</p>
+<p>[ () = ^2,(_1). ]</p>
+<p>Hence,</p>
+<p>[ () = . ]</p>
+<p>And then a 95% CI is:</p>
+<p>[ z_{0.975},(). ]</p>
+<p>Let’s implement that. (We’ll also do the more general approach for
+the “ratio = mu1 / mu0” expression, which yields the same result.)</p>
+<hr />
+<h2 id="python-code-for-the-ratio-via-delta-method">4.2 Python Code for
+the Ratio via Delta Method</h2>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Method 1: Direct approach for ratio = exp(beta1)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>ratio_direct <span class="op">=</span> np.exp(beta1)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Variance of ratio (delta method):</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>var_beta1 <span class="op">=</span> cov.loc[<span class="st">&#39;treatment&#39;</span>,<span class="st">&#39;treatment&#39;</span>]  <span class="co"># Var(\hat{\beta}_1)</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>se_ratio_direct <span class="op">=</span> ratio_direct <span class="op">*</span> np.sqrt(var_beta1)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Ratio (exp(beta1))        =&quot;</span>, ratio_direct)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;StdErr via delta method   =&quot;</span>, se_ratio_direct)</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% CI:</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="fl">1.96</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>ci_lower_direct <span class="op">=</span> ratio_direct <span class="op">-</span> z<span class="op">*</span>se_ratio_direct</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>ci_upper_direct <span class="op">=</span> ratio_direct <span class="op">+</span> z<span class="op">*</span>se_ratio_direct</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI: [</span><span class="sc">{</span>ci_lower_direct<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ci_upper_direct<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span></code></pre></div>
+<h3 id="method-2-full-ratio-_1-_0-expression">Method 2: Full ratio (_1 /
+_0) expression</h3>
+<p>If we literally define: [ (_0, _1) = = (_1), ] we can code a small
+helper function:</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ratio_of_means(params):</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    b0, b1 <span class="op">=</span> params</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(b0 <span class="op">+</span> b1) <span class="op">/</span> np.exp(b0)  <span class="co"># or simply np.exp(b1)</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grad_ratio_of_means(params):</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gradient wrt (b0, b1)</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># partial wrt b0 = 0</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># partial wrt b1 = exp(b1)</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    b0, b1 <span class="op">=</span> params</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    val <span class="op">=</span> np.exp(b1)  <span class="co"># ratio</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array([<span class="fl">0.0</span>, val])</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the ratio at the MLE params:</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="op">=</span> ratio_of_means((beta0, beta1))</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate gradient at MLE:</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>grad <span class="op">=</span> grad_ratio_of_means((beta0, beta1))</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="co"># var-cov:</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>Sigma <span class="op">=</span> cov.values  <span class="co"># 2x2 matrix in our case</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="co"># var(theta) = grad^T * Sigma * grad</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>var_theta <span class="op">=</span> grad <span class="op">@</span> Sigma <span class="op">@</span> grad</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>se_theta <span class="op">=</span> np.sqrt(var_theta)</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>ci_lower <span class="op">=</span> theta_hat <span class="op">-</span> z <span class="op">*</span> se_theta</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>ci_upper <span class="op">=</span> theta_hat <span class="op">+</span> z <span class="op">*</span> se_theta</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Ratio (mu1 / mu0)        =&quot;</span>, theta_hat)</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;StdErr via delta method  =&quot;</span>, se_theta)</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;95% CI: [</span><span class="sc">{</span>ci_lower<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>ci_upper<span class="sc">:.3f}</span><span class="ss">]&quot;</span>)</span></code></pre></div>
+<p>You’ll see it matches exactly the “Method 1” result.</p>
+<hr />
+<h1 id="extending-to-arbitrary-margins-or-covariate-patterns">5.
+Extending to Arbitrary “Margins” or Covariate Patterns</h1>
+<p>In a more complicated model (multiple covariates, factors,
+interactions), <strong>Stata’s</strong> <code>margins treat</code>
+effectively:</p>
+<ol type="1">
+<li>Constructs a “reference” data row for <code>treatment=0</code> (with
+other covariates at certain values or at means, depending on
+syntax).</li>
+<li>Computes (_0 = X_0 ) for that row, and the predicted mean (_0 =
+g^{-1}(_0)).</li>
+<li>Repeats for <code>treatment=1</code>: (_1 = X_1 ).</li>
+<li>Then if you do <code>nlcom (ratio: _b[_at2]/_b[_at1])</code>, it is
+taking (_1 / _0).</li>
+<li>Behind the scenes, it uses the <strong>delta method</strong> by
+computing the gradient of that ratio expression wrt ().</li>
+</ol>
+<p>In Python/statsmodels, you’d do something like:</p>
+<ol type="1">
+<li>Manually create the <strong>design matrices</strong> for each
+scenario (<code>treatment=0</code>, or <code>treatment=1</code>, plus
+how you set other covariates).</li>
+<li>Compute the linear predictor (= X ).</li>
+<li>Transform: (= g^{-1}()).</li>
+<li>Define your function of interest (()) = (some expression of
+(_0,_1)), e.g. (_1 - _0), (_1 / _0), etc.</li>
+<li>Compute the gradient wrt (). (This is just partial derivatives. If
+(= ()), then (/ _j = X_j).)</li>
+<li>Multiply the gradient by () to get the variance.</li>
+</ol>
+<p>Because all of this can be tedious by hand for large models, Stata
+(and R packages like <strong>margins</strong> or
+<strong>emmeans</strong>) do it automatically.</p>
+<hr />
+<h1 id="summary">6. Summary</h1>
+<ul>
+<li><p><strong>Yes</strong>, you can mimic <strong>Stata’s
+<code>margins</code> and <code>nlcom</code></strong> in Python by:</p>
+<ol type="1">
+<li><strong>Computing predicted values</strong> (on the original scale)
+for specific covariate patterns.</li>
+<li><strong>Constructing a non-linear function</strong> (like a ratio,
+difference, etc.).</li>
+<li><strong>Using the delta method</strong> to get standard errors and
+confidence intervals from the covariance matrix of ().</li>
+</ol></li>
+<li><p>The <strong>key</strong> is to carefully compute:</p>
+<ul>
+<li>The <strong>predicted</strong> values (which often involves (()) for
+log link, logistic function for a logit link, etc.).</li>
+<li>The <strong>gradient</strong> of your non-linear combination wrt the
+parameters.</li>
+<li>Then multiply that gradient by the model’s <strong>covariance
+matrix</strong> of parameters.</li>
+</ul></li>
+<li><p>In <strong>simple</strong> two-parameter cases, you can do it by
+hand. For more complex designs (interactions, multiple covariates),
+you’d systematically build the design matrix, evaluate partial
+derivatives, and do the matrix multiplication. That’s precisely what
+Stata does behind the scenes with <code>margins</code> +
+<code>nlcom</code>.</p></li>
+</ul>
+<hr />
+<h2 id="final-note">Final Note</h2>
+<p>This code is meant as a <strong>didactic</strong> outline. In
+practice:</p>
+<ul>
+<li>For large models, you may want a function that automatically
+constructs these gradients by <strong>symbolic</strong> or
+<strong>automatic differentiation</strong>.</li>
+<li>The <strong>statsmodels</strong> package has some helper tools
+(e.g., <code>get_prediction()</code>) that can give you predictions and
+standard errors. But it stops short of providing a built-in “ratio of
+margins” function, so you’d still do a bit of custom code for the ratio
+(and use the delta method approach described here).</li>
+</ul>
+<p>This is effectively how Stata’s commands are computing those margins
+and non-linear combos behind the scenes.</p>
+<h2 id="summary-1">Summary</h2>
+<p>Below is a cohesive “blog‐style” post that brings together all the
+major points from our conversation. It walks through why you might want
+to estimate a <strong>ratio of means</strong> (instead of a difference)
+between treatment and control groups, how to do it in Python (including
+log‐transform or GLM approaches), considerations when data are in
+((0,1)), the use of bootstrap methods (and why results can differ from
+classical parametric methods), and finally how <strong>Stata</strong>’s
+<code>margins</code> and <code>nlcom</code> can be replicated (or
+approximated) in Python. Enjoy!</p>
+<hr />
+<h1
+id="analyzing-ratios-of-means-for-treatment-vs.-control-a-practical-guide">Analyzing
+Ratios of Means for Treatment vs. Control: A Practical Guide</h1>
+<p>In many data analyses, we’re interested in how a
+<strong>treatment</strong> affects an outcome variable. A common
+approach is to compute the <strong>difference</strong> in means. But
+sometimes, a <strong>ratio</strong> of means is more
+intuitive—especially if the outcome is strictly positive or we want to
+talk about “percent increase.”</p>
+<p>This post explores:</p>
+<ol type="1">
+<li><strong>Why and how</strong> to estimate a ratio of means.</li>
+<li><strong>Log transforms</strong> and <strong>Generalized Linear
+Models (GLMs)</strong> for ratio estimates.</li>
+<li><strong>Bounded data</strong> in ((0,1)) and why that complicates
+things.</li>
+<li><strong>Bootstrap</strong> confidence intervals for ratio
+estimates.</li>
+<li><strong>Differences</strong> in significance between bootstrap and
+parametric methods.</li>
+<li><strong>Stata</strong>’s <code>margins</code> and <code>nlcom</code>
+approach, and how you can replicate it in <strong>Python</strong> with
+the <strong>delta method</strong>.</li>
+</ol>
+<hr />
+<h2 id="why-estimate-a-ratio-not-just-a-difference">1. Why Estimate a
+Ratio, Not Just a Difference?</h2>
+<ul>
+<li>A <strong>difference</strong> in means: “Treatment group’s average
+is 10 points higher.”</li>
+<li>A <strong>ratio</strong> of means: “Treatment group’s average is 30%
+higher.”</li>
+</ul>
+<p>If your outcome is positive and multiplicative changes make sense, a
+<strong>ratio</strong> is often more compelling. For example, if you
+want to say “The treatment increases the average outcome by 25%,” that’s
+a direct ratio interpretation: ( = 1.25).</p>
+<h3 id="log-transform-trick">Log Transform Trick</h3>
+<p>A <strong>log transform</strong> can convert multiplicative
+relationships into additive ones. If you let (X = (Y)), then:</p>
+<p>[ (_1) - (_0) ;=; !(). ]</p>
+<p>In practice, you can:</p>
+<ol type="1">
+<li><strong>Log‐transform</strong> the outcome (Y).</li>
+<li><strong>Fit</strong> a linear model (like OLS) on ((Y)).</li>
+<li><strong>Exponentiate</strong> coefficients to interpret them as
+ratios.</li>
+</ol>
+<hr />
+<h2 id="doing-this-in-python-with-statsmodels">2. Doing This in Python
+with <code>statsmodels</code></h2>
+<h3 id="simple-ols-on-the-log-scale">2.1 Simple OLS on the Log
+Scale</h3>
+<p>Suppose you have data with columns: <code>treatment</code> (0 or 1)
+and <code>score</code> (positive). In Python:</p>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;log_score&#39;</span>] <span class="op">=</span> np.log(df[<span class="st">&#39;score&#39;</span>])</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">&#39;log_score ~ treatment&#39;</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary())</span></code></pre></div>
+<ul>
+<li>The coefficient on <code>treatment</code> is (_1()).</li>
+<li><strong>Exponentiate</strong> that coefficient to get the
+ratio:<br />
+[ (_1) = . ]</li>
+<li>The <strong>confidence interval</strong> for the ratio is the
+exponentiated confidence interval of (_1).</li>
+</ul>
+<h3 id="generalized-linear-models-glm">2.2 Generalized Linear Models
+(GLM)</h3>
+<p>If your outcome is strictly positive, you can use a
+<strong>Gamma</strong> family with a <strong>log link</strong>:</p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>model_glm <span class="op">=</span> smf.glm(</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    formula<span class="op">=</span><span class="st">&#39;score ~ treatment&#39;</span>,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>df,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    family<span class="op">=</span>sm.families.Gamma(link<span class="op">=</span>sm.families.links.log())</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>).fit()</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model_glm.summary())</span></code></pre></div>
+<ul>
+<li>Here, the model directly assumes (([Y]) = _0 + _1()).</li>
+<li>((_1)) is again the ratio of means.</li>
+</ul>
+<p>This can be more appropriate if your data follow a
+<strong>Gamma‐like</strong> skewed distribution.</p>
+<hr />
+<h2 id="what-if-the-outcome-is-in-01">3. What If the Outcome Is in
+((0,1))?</h2>
+<p>When <code>score</code> is a proportion, using a ratio of means can
+be trickier:</p>
+<ul>
+<li>Many standard methods for <strong>bounded</strong> data focus on
+<strong>odds ratios</strong> (logit link) or <strong>Beta
+regression</strong> for modeling the mean in ((0,1)).</li>
+<li>If you really want the raw ratio of means (like (_1/_0) where each
+((0,1))), you can still do it, but it’s not as standard as a logistic
+link approach for binary or fractional data.</li>
+<li>Alternatively, you could do a <strong>nonparametric
+bootstrap</strong> for the ratio of group means.</li>
+</ul>
+<p>A direct ratio remains mathematically valid, but keep in mind that as
+means approach 0 or 1, that ratio can get unwieldy or even blow up if
+the denominator is near zero.</p>
+<hr />
+<h2 id="bootstrap-for-a-ratio-of-means">4. Bootstrap for a Ratio of
+Means</h2>
+<h3 id="why-bootstrap">4.1 Why Bootstrap?</h3>
+<p>A <strong>bootstrap</strong> can provide a
+<strong>distribution‐free</strong> way to estimate confidence intervals.
+You don’t assume normality or any specific parametric form. Here’s a
+sketch of the <strong>group‐wise</strong> bootstrap in Python (assuming
+two groups):</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bootstrap_ratio_of_means_groupwise(df, n_boot<span class="op">=</span><span class="dv">10000</span>):</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    df0 <span class="op">=</span> df[df[<span class="st">&#39;treatment&#39;</span>]<span class="op">==</span><span class="dv">0</span>]</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    df1 <span class="op">=</span> df[df[<span class="st">&#39;treatment&#39;</span>]<span class="op">==</span><span class="dv">1</span>]</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    mean_ratio_vals <span class="op">=</span> []</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_boot):</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>        samp0 <span class="op">=</span> df0[<span class="st">&#39;score&#39;</span>].sample(frac<span class="op">=</span><span class="dv">1</span>, replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>        samp1 <span class="op">=</span> df1[<span class="st">&#39;score&#39;</span>].sample(frac<span class="op">=</span><span class="dv">1</span>, replace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>        m0 <span class="op">=</span> samp0.mean()</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>        m1 <span class="op">=</span> samp1.mean()</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> m0 <span class="op">!=</span> <span class="dv">0</span>:</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>            mean_ratio_vals.append(m1<span class="op">/</span>m0)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    lower, upper <span class="op">=</span> np.percentile(mean_ratio_vals, [<span class="fl">2.5</span>, <span class="fl">97.5</span>])</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.mean(mean_ratio_vals), (lower, upper)</span></code></pre></div>
+<ul>
+<li>This resamples each group separately, computes the ratio of means,
+and builds a percentile‐based CI.</li>
+<li>A <strong>full-sample</strong> bootstrap is also possible
+(resampling the entire dataset together).</li>
+</ul>
+<h3 id="different-methods-can-yield-different-significance">4.2
+Different Methods Can Yield Different “Significance”</h3>
+<p>You can get a “significant” (below 0.05) result via bootstrap but a
+“non‐significant” result via parametric methods (or vice versa).
+Why?</p>
+<ul>
+<li>The <strong>parametric method</strong> (e.g., linear regression)
+assumes certain distributional forms (like normality on the log
+scale).</li>
+<li>The <strong>bootstrap</strong> approach uses the data’s empirical
+distribution.</li>
+<li>If assumptions are off, or the sample is small, the variability
+estimates can differ enough to change the final p‐value or confidence
+interval boundary.</li>
+</ul>
+<hr />
+<h2 id="margins-and-nlcom-in-stata">5. <code>margins</code> and
+<code>nlcom</code> in Stata</h2>
+<p>In <strong>Stata</strong>, a common approach is:</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode stata"><code class="sourceCode stata"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">glm</span> <span class="kw">score</span> i.treatment, <span class="kw">family</span>(<span class="kw">gamma</span>) <span class="kw">link</span>(<span class="fu">log</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>margins treatment</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">nlcom</span> (<span class="kw">ratio</span>: _b[_at2] / _b[_at1])</span></code></pre></div>
+<ol type="1">
+<li><strong><code>margins treatment</code></strong> computes predicted
+means for <code>treatment=0</code> and <code>treatment=1</code>.</li>
+<li><strong><code>nlcom</code></strong> (nonlinear combinations) forms a
+ratio (or any function) of those predicted values, and uses the
+<strong>delta method</strong> to compute standard errors and confidence
+intervals.</li>
+</ol>
+<h3 id="replicating-in-python">5.1 Replicating in Python</h3>
+<p>Under the hood:</p>
+<ul>
+<li>“Predictive margins” is about constructing predicted means on the
+original scale for different levels of <code>treatment</code>.</li>
+<li>“<code>nlcom</code> ratio” is about forming a non‐linear function
+(like (_1 / _0)) and applying the <strong>delta method</strong> to find
+the standard error from the covariance matrix of ().</li>
+</ul>
+<p>In Python with <strong>statsmodels</strong>, you can:</p>
+<ol type="1">
+<li>Obtain parameter estimates (()) and their covariance matrix.</li>
+<li>Compute predicted means for each scenario (like
+<code>treatment=0</code> vs. <code>treatment=1</code>).</li>
+<li>Form the ratio, and compute its gradient wrt the parameters.</li>
+<li>Multiply that gradient by the covariance matrix to get the variance
+(the delta method).</li>
+</ol>
+<p>For a <strong>Gamma log‐link</strong> with a single predictor:</p>
+<p>[ _0 = e^{_0}, _1 = e^{_0 + _1}, = = e^{_1}. ]</p>
+<p>Hence the standard error of ((_1)) follows from:</p>
+<p>[ (e^{_1}) = e^{2_1},(_1). ]</p>
+<p>That’s exactly what <code>nlcom</code> does in one line.</p>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<ol type="1">
+<li><strong>Ratio of Means</strong>: A great measure if you care about
+multiplicative or percentage changes.</li>
+<li><strong>Log‐Transform or GLM</strong>: Usually the simplest
+parametric approach—fit a log link (either OLS on log(Y) or a Gamma GLM)
+and exponentiate.</li>
+<li><strong>Bounded (0,1) Data</strong>: Often approached with
+logistic/Beta methods (which yield odds ratios or parameter estimates on
+the probability scale). If you insist on a ratio of means, you can still
+do it, but watch out for 0’s or near‐0 means.</li>
+<li><strong>Bootstrap</strong>: Provides a flexible way to get
+confidence intervals for the ratio without heavy parametric assumptions.
+But you may see differences in significance compared to classical
+methods.</li>
+<li><strong>Stata’s <code>margins</code> &amp;
+<code>nlcom</code></strong>: They combine predicted values on the
+original scale (for each group or covariate level) with a non‐linear
+function (ratio, difference, etc.) and apply the delta method for
+standard errors.</li>
+<li><strong>Python Replication</strong>: In
+<strong>statsmodels</strong>, you can replicate the same logic by
+manually computing predicted means (or probabilities), then forming your
+ratio/difference, and applying the delta method.</li>
+</ol>
+<p>Ultimately, the choice of approach depends on <strong>data
+characteristics</strong>, <strong>assumptions</strong>, and
+<strong>interpretation needs</strong>. For many positive outcomes, a log
+link or a bootstrap approach that targets the ratio directly is a clean
+way to express “percent increase.” If you’re in Stata,
+<code>margins</code> + <code>nlcom</code> provides a one‐stop solution
+to get those ratio estimates and confidence intervals. In Python, with a
+bit of manual gradient work (or a function that automates it), you can
+replicate that same robust inference.</p>
+<hr />
+<p><strong>Further Resources</strong></p>
+<ul>
+<li><a href="https://www.statsmodels.org/"><strong>Statsmodels
+Documentation</strong></a> – for GLM, OLS, and how to extract
+parameters/covariances.</li>
+<li><a href="https://www.stata.com/manuals13/rmargins.pdf"><strong>Stata
+margins</strong> Guide</a> – details on predictive margins.</li>
+<li><a href="https://en.wikipedia.org/wiki/Delta_method"><strong>Delta
+Method</strong> Reference</a> – the mathematical formula behind
+non‐linear combinations of estimates.</li>
+<li><a
+href="https://onlinelibrary.wiley.com/doi/10.1002/9781118445112.stat01167.pub2"><strong>Bootstrapping</strong>
+Intro</a> – for distribution-free CI approaches.</li>
+</ul>
+<p>Hopefully this helps you confidently estimate ratio effects—whether
+you’re using Python, Stata, or another data analysis toolkit!</p>
+    
+</body>
+</html>
