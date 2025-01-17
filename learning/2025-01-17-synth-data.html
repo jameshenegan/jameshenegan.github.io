@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="hazy">Hazy</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can Hazy
+work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, Hazy can work both “on-prem” and “in the cloud”:</p>
+<p><strong>On-Premises Deployment:</strong> Hazy offers on-premises
+deployment options for customers who prefer to keep their sensitive data
+within their own infrastructure[1]. This approach ensures that no data
+leaves the customer’s secure environment.</p>
+<p><strong>Cloud Deployment:</strong> Hazy also supports cloud
+deployments, offering flexibility for organizations that have migrated
+to cloud infrastructure[1]. Specifically:</p>
+<ol type="1">
+<li>Hazy is available on AWS Marketplace, allowing customers to deploy
+it effortlessly in their private cloud[2].</li>
+<li>It can be deployed on various cloud platforms, including AWS, Azure,
+and Google Cloud[1].</li>
+</ol>
+<p>Hazy’s distributed architecture, which runs on Kubernetes, enables
+both on-premises and cloud deployments, providing scalability and
+flexibility for enterprises with complex infrastructure needs[1][3].</p>
+<p>This flexibility in deployment options allows organizations to choose
+the most suitable approach based on their security requirements,
+existing infrastructure, and data governance policies.</p>
+<p>Citations: [1]
+https://hazy.com/resources/2024/01/12/distributed-architecture [2]
+https://hazy.com/resources/2024/01/23/hazy-aws-marketplace-launch [3]
+https://hazy.com/resources/2024/01/25/enterprise-multi-zone-approach</p>
+<h1 id="syntho">Syntho</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can
+Syntho work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, Syntho offers flexible deployment options that allow it to work
+both “on-premise” and “in the cloud”. Here are the key points about
+Syntho’s deployment capabilities:</p>
+<h2 id="on-premise-deployment">On-Premise Deployment</h2>
+<p>Syntho can be deployed on-premise, which means it can be installed
+and run on your organization’s own hardware and infrastructure. This
+option provides maximum control over your data and environment.</p>
+<h2 id="cloud-deployment">Cloud Deployment</h2>
+<p>Syntho also supports deployment in various cloud environments,
+including:</p>
+<ul>
+<li>Private clouds (e.g., your organization’s own cloud
+infrastructure)</li>
+<li>Public clouds (such as AWS, Azure, or Google Cloud)</li>
+<li>Syntho’s own cloud (as an optional offering)</li>
+</ul>
+<h2 id="flexible-deployment-options">Flexible Deployment Options</h2>
+<p>The Syntho Engine, which is the core of their synthetic data
+generation platform, offers the following deployment possibilities:</p>
+<ul>
+<li>On-premise</li>
+<li>Any private cloud</li>
+<li>Any public cloud (AWS, Azure, Google Cloud, etc.)</li>
+<li>Syntho cloud</li>
+<li>Any other environment that supports Docker or Kubernetes</li>
+</ul>
+<h2 id="deployment-benefits">Deployment Benefits</h2>
+<ol type="1">
+<li><p><strong>Data Privacy</strong>: Syntho typically deploys within
+the customer’s secure environment, ensuring sensitive data never leaves
+the trusted environment[1][5].</p></li>
+<li><p><strong>Seamless Integration</strong>: The platform can be easily
+plugged into your chosen environment and connected to your existing
+databases, applications, and file systems[5].</p></li>
+<li><p><strong>Containerization</strong>: Syntho uses Docker containers,
+making it highly portable and easy to deploy across different
+environments[2].</p></li>
+<li><p><strong>Scalability</strong>: For production settings, Kubernetes
+deployment is recommended for better stability and
+scalability[4].</p></li>
+</ol>
+<p>By offering these flexible deployment options, Syntho ensures that
+organizations can choose the setup that best fits their security
+requirements, infrastructure preferences, and compliance needs.</p>
+<p>Citations: [1] https://www.syntho.ai/integration/ [2]
+https://github.com/syntho-ai/deployment-tools [3]
+https://www.syntho.ai/syntho-engine/ [4]
+https://www.youtube.com/watch?v=t3W4LNwstjA [5]
+https://www.syntho.ai/frequently-asked-questions/ [6]
+https://www.syntho.ai [7]
+https://docs.solo.io/gloo-mesh-enterprise/latest/setup/prod/ext_workload_int/on-prem/
+[8] https://www.aitechsuite.com/tools/syntho.ai [9]
+https://support.landing.ai/docs/deployment-options [10]
+https://www.softwareworld.co/software/syntho-reviews/ [11]
+https://sourceforge.net/software/product/Syntho/integrations/ [12]
+https://slashdot.org/software/comparison/Qlik-Gold-Client-vs-Syntho/
+[13] https://slashdot.org/software/p/Syntho/integrations/ [14]
+https://slashdot.org/software/cloud-hosting/for-syntho/</p>
+<h1 id="statice">Statice</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can
+Statice work “on prem”? Can it work “in the cloud”?</p>
+<p>Statice offers both on-premises and cloud deployment options for its
+synthetic data generation platform:</p>
+<h2 id="on-premises-deployment">On-Premises Deployment</h2>
+<p>Statice supports on-premises deployment, which allows organizations
+to run the Statice platform within their own data centers or private
+infrastructure. This option provides several benefits:</p>
+<ul>
+<li><strong>Enhanced Data Control</strong>: Sensitive data remains
+within the organization’s own environment, addressing strict data
+privacy and security requirements.</li>
+<li><strong>Customization</strong>: On-premises deployment allows for
+greater customization to fit specific infrastructure needs.</li>
+<li><strong>Compliance</strong>: It helps meet regulatory requirements
+that mandate keeping data within certain geographical boundaries or
+under direct organizational control.</li>
+</ul>
+<h2 id="cloud-deployment-1">Cloud Deployment</h2>
+<p>Statice also offers cloud deployment options, which provide
+flexibility and scalability:</p>
+<ul>
+<li><strong>Managed Service</strong>: Statice can be deployed as a
+managed service in the cloud, reducing the operational burden on the
+organization.</li>
+<li><strong>Scalability</strong>: Cloud deployment allows for easy
+scaling of resources as needed.</li>
+<li><strong>Integration</strong>: It can integrate with existing cloud
+infrastructure and services.</li>
+</ul>
+<h2 id="hybrid-approaches">Hybrid Approaches</h2>
+<p>Statice’s flexibility allows for hybrid approaches, combining
+on-premises and cloud deployments to suit specific organizational needs
+and use cases.</p>
+<p>The choice between on-premises and cloud deployment often depends on
+factors such as:</p>
+<ul>
+<li>Data sensitivity and regulatory requirements</li>
+<li>Existing infrastructure and IT strategy</li>
+<li>Required performance and scalability</li>
+<li>Cost considerations</li>
+</ul>
+<p>By offering both deployment options, Statice caters to a wide range
+of organizational needs and preferences in synthetic data
+generation.</p>
+<p>Citations: [1]
+https://www.reddit.com/r/azuredevops/comments/vmich1/static_website_on_premise_deployment_on_a_iss/
+[2]
+https://docs.uipath.com/orchestrator/standalone/2020.10/installation-guide/deployment-in-the-cloud
+[3]
+https://docs.aws.amazon.com/pdfs/whitepapers/latest/overview-deployment-options/overview-deployment-options.pdf
+[4]
+https://docs.cloudbees.com/docs/cloudbees-cd/latest/plan/deployment-strategies
+[5]
+https://d1.awsstatic.com/whitepapers/overview-of-deployment-options-on-aws.pdf
+[6] https://cloud.google.com/storage/docs/hosting-static-website [7]
+https://experienceleague.adobe.com/en/docs/commerce-operations/implementation-playbook/best-practices/development/static-content-deployment
+[8] https://cloud.gov/docs/deployment/static/ [9]
+https://www.hurix.com/aem-deployment-strategies-on-premise-vs-cloud-deployment-options/
+[10]
+https://networklessons.com/cisco/ccnp-encor-350-401/cloud-deployment-models
+[11] https://www.softwareworld.co/software/statice-reviews/ [12]
+https://support.magento.com/hc/en-us/articles/360004861194-Static-content-deployment-options-to-reduce-deployment-downtime-on-Cloud
+[13] https://docs.brightsec.com/docs/private-cloud [14]
+https://docs.netskope.com/en/deployment-options/ [15]
+https://cloud.google.com/appengine/docs/standard/hosting-a-static-website</p>
+<h1 id="gretel">Gretel</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can
+Gretel work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, Gretel.ai offers both on-premises and cloud deployment
+options:</p>
+<h2 id="on-premises-deployment-gretel-hybrid">On-Premises Deployment
+(Gretel Hybrid)</h2>
+<p>Gretel Hybrid allows customers to deploy the Gretel Data Plane within
+their own cloud environment:</p>
+<ul>
+<li>Runs in the customer’s preferred cloud tenant (AWS, Azure, or
+GCP)</li>
+<li>Deployed on Kubernetes within the customer’s infrastructure</li>
+<li>Data and models remain within the customer’s environment</li>
+<li>Ideal for handling sensitive or regulated data</li>
+<li>Interfaces with Gretel’s Control Plane API for job orchestration,
+but customer data never leaves their cloud</li>
+</ul>
+<h2 id="cloud-deployment-gretel-cloud">Cloud Deployment (Gretel
+Cloud)</h2>
+<p>Gretel Cloud is their fully managed service:</p>
+<ul>
+<li>Operates within Gretel’s cloud compute infrastructure</li>
+<li>Handles all compute, automation, and scalability concerns</li>
+<li>Provides instant access upon account creation</li>
+<li>Simplifies the technical demands of setting up ML
+infrastructure</li>
+</ul>
+<h2 id="flexibility-and-hybrid-approach">Flexibility and Hybrid
+Approach</h2>
+<ul>
+<li>Customers can use both options, starting with Gretel Cloud for
+experimentation and then moving to Gretel Hybrid for large-scale
+deployment</li>
+<li>The Gretel Console allows management of both cloud and on-premises
+deployments</li>
+<li>Gretel’s APIs and SDKs support both deployment models</li>
+</ul>
+<p>This flexibility allows organizations to choose the deployment option
+that best fits their data security requirements and operational
+needs.</p>
+<p>Citations: [1] https://gretel.ai [2]
+https://gretel.ai/videos/developing-multi-modal-generative-ai-programs-for-enterprises
+[3] https://docs.gretel.ai/operate-and-manage-gretel/gretel-hybrid [4]
+https://docs.gretel.ai/gretel-basics/fundamentals/deployment-options [5]
+https://docs.gretel.ai/gretel-basics/fundamentals/architecture [6]
+https://gretel.ai/blog/bring-your-own-cloud [7]
+https://gretel.ai/videos/deploying-gretel-hybrid-on-aws-with-terraform
+[8]
+https://docs.gretel.ai/operate-and-manage-gretel/gretel-hybrid/deployment
+[9] https://gretel.ai/university/enterprise-grade-platform [10]
+https://docs.gretel.ai/create-synthetic-data/models/synthetics/gretel-amplify
+[11] https://gretel.ai/pricing [12]
+https://www.aitoolhunt.com/tool/gretel.ai</p>
+<h1 id="tonic">Tonic</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can Tonic
+work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, Tonic.ai offers both on-premises (“on-prem”) and cloud-based
+deployment options for its products, providing flexibility to meet
+various organizational needs and requirements.</p>
+<h2 id="on-premises-deployment-1">On-Premises Deployment</h2>
+<p>Tonic.ai supports self-hosted, on-premises deployment for its
+products:</p>
+<ul>
+<li><strong>Tonic Structural</strong>: You can deploy a self-hosted
+instance on your own infrastructure[1][5].</li>
+<li><strong>Tonic Textual</strong>: Self-hosted deployment is available
+using either Kubernetes or Docker[4].</li>
+</ul>
+<p>Key aspects of on-premises deployment:</p>
+<ul>
+<li>Deployed to your public cloud account (e.g., AWS, GCP, Azure) or
+data center[3].</li>
+<li>Provides administrator tools for monitoring services and managing
+users[1].</li>
+<li>Allows customization of environment settings[1].</li>
+<li>Requires meeting specific system requirements, including CPU,
+memory, and storage specifications[5].</li>
+</ul>
+<h2 id="cloud-based-deployment">Cloud-Based Deployment</h2>
+<p>Tonic.ai also offers cloud-based solutions:</p>
+<ul>
+<li><strong>Structural Cloud</strong>: A secure hosted environment
+managed by Tonic.ai[1].</li>
+<li>Available on Google Cloud Marketplace, allowing quick deployment of
+Tonic.ai’s solutions on Google Cloud infrastructure[2].</li>
+</ul>
+<p>Benefits of cloud deployment:</p>
+<ul>
+<li>Tonic.ai handles monitoring and updates[1].</li>
+<li>Streamlined procurement process through cloud marketplaces[2].</li>
+<li>Integration with cloud services like Google Cloud’s Vertex AI
+platform and BigQuery[2].</li>
+</ul>
+<h2 id="deployment-flexibility">Deployment Flexibility</h2>
+<p>Tonic.ai’s deployment options cater to different organizational
+needs:</p>
+<ul>
+<li>On-premises deployment provides greater control and may be preferred
+for stringent data security requirements.</li>
+<li>Cloud-based options offer ease of management and integration with
+cloud services.</li>
+<li>Hybrid approaches are possible, allowing organizations to balance
+control and convenience.</li>
+</ul>
+<p>Regardless of the deployment method, Tonic.ai maintains a strong
+focus on data privacy and security, ensuring that sensitive information
+is protected throughout the synthetic data generation process.</p>
+<p>Citations: [1]
+https://docs.tonic.ai/app/readme-1/tonic-deployment-types [2]
+https://www.businesswire.com/news/home/20241029503320/en/Tonic.ai-Joins-Forces-with-Google-Cloud-to-Accelerate-Software-and-AI-Progress-with-Privacy-First-Synthetic-Data-Solutions-Now-Available-on-Google-Cloud-Marketplace
+[3]
+https://docs.tonic.ai/app/admin/on-premise-deployment/tonic-deployment-checklist
+[4]
+https://docs.tonic.ai/textual/textual-install-administer/deploying-a-self-hosted-instance
+[5]
+https://docs.tonic.ai/app/admin/on-premise-deployment/tonic-system-requirements
+[6] https://docs.tonic.ai/app/admin/environment-variables-setting [7]
+https://docs.tonic.ai/app/admin/on-premise-deployment [8]
+https://www.katonic.ai/deploy.html [9]
+https://docs.tonic.ai/app/admin/on-premise-deployment/deploying-with-helm
+[10]
+https://docs.tonic.ai/app/admin/on-premise-deployment/deploying-with-docker-compose
+[11]
+https://www.tonic.ai/guides/integrating-tonic-into-your-data-refresh-and-ci-cd-pipelines</p>
+<h1 id="mostly-ai">Mostly AI</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can
+Mostly AI work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, MOSTLY AI offers flexible deployment options that allow it to
+work both “on-premises” and “in the cloud”.</p>
+<h2 id="on-premises-deployment-2">On-Premises Deployment</h2>
+<p>MOSTLY AI can be deployed on-premises, which means running the
+platform within an organization’s own infrastructure[2][5]. Key points
+about on-premises deployment include:</p>
+<ul>
+<li>Deployment via Kubernetes/OpenShift for scalable cluster
+environments[6]</li>
+<li>Minimum requirements for a single-node deployment:
+<ul>
+<li>24 CPU cores</li>
+<li>48 GB RAM</li>
+<li>256 GB storage[5]</li>
+</ul></li>
+<li>Multi-node deployments are also supported, with separate
+requirements for application and worker nodes[5]</li>
+<li>Allows for greater control over data and compliance with internal
+security policies[7]</li>
+</ul>
+<h2 id="cloud-deployment-2">Cloud Deployment</h2>
+<p>MOSTLY AI can also be deployed in cloud environments[2]. This offers
+benefits such as:</p>
+<ul>
+<li>Easier scalability and management</li>
+<li>Reduced need for upfront infrastructure investment</li>
+<li>Flexibility to start small and scale as needed</li>
+</ul>
+<h2 id="hybrid-options">Hybrid Options</h2>
+<p>MOSTLY AI supports hybrid deployment models, allowing organizations
+to combine on-premises and cloud resources as needed[2]. This
+flexibility enables companies to:</p>
+<ul>
+<li>Keep sensitive data on-premises while leveraging cloud resources for
+compute-intensive tasks</li>
+<li>Gradually transition from cloud to on-premises as projects
+scale</li>
+</ul>
+<p>The choice between on-premises, cloud, or hybrid deployment depends
+on factors such as data sensitivity, scalability requirements, existing
+infrastructure, and compliance needs. MOSTLY AI’s platform is designed
+to accommodate these various deployment scenarios, giving organizations
+the flexibility to choose the option that best fits their specific
+requirements and constraints.</p>
+<p>Citations: [1]
+https://www.techtarget.com/searchenterpriseai/tip/Compare-enterprise-generative-AI-deployment-options
+[2] https://mostly.ai/docs/install/architecture [3]
+https://www.deepset.ai/blog/ai-deployment-options-quest1 [4]
+https://www.abiresearch.com/blog/comparison-of-generative-ai-deployment-options
+[5] https://mostly.ai/docs/install/requirements [6]
+https://mostly.ai/features [7] https://ubuntu.com/blog/ai-on-prem [8]
+https://mostly.ai/docs/install/config [9]
+https://www.businesswire.com/news/home/20250116487759/en/%C2%A0Gcore-Enhances-Everywhere-Inference-With-Flexible-Deployment-Options-Including-Cloud-On-Premise-and-Hybrid
+[10] https://mostly.ai/docs/whats-new [11]
+https://www.reddit.com/r/mlops/comments/1fe5i82/how_to_get_started_with_building_an_on_premises/
+[12]
+https://www.datacenterdynamics.com/en/opinions/understanding-ai-deployment-methods-and-locations/</p>
+<h1 id="genrocket">GenRocket</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can
+GenRocket work “on prem”? Can it work “in the cloud”?</p>
+<p>GenRocket offers a hybrid approach that combines both on-premises and
+cloud-based components, allowing for flexibility in deployment while
+maintaining security and scalability.</p>
+<h2 id="on-premises-capabilities">On-Premises Capabilities</h2>
+<p>GenRocket can indeed work on-premises in several ways:</p>
+<ol type="1">
+<li><p><strong>GenRocket Runtime</strong>: This core component is
+designed to be installed and run on-premises, behind the customer’s
+corporate firewall[1][3]. It can be deployed on:</p>
+<ul>
+<li>Individual developer or tester machines</li>
+<li>Centralized test automation servers</li>
+<li>Containers (e.g., Docker)[1]</li>
+</ul></li>
+<li><p><strong>G-Repository</strong>: This is a centralized and secure
+repository that manages configuration files, user access, and system
+usage. It exists on-premises within the corporate
+environment[3].</p></li>
+<li><p><strong>GenRocket Multi-User Server (GMUS)</strong>: This shared
+environment can be deployed on-premises to manage test data requests and
+delivery[1].</p></li>
+</ol>
+<h2 id="cloud-capabilities">Cloud Capabilities</h2>
+<p>GenRocket also leverages cloud technology:</p>
+<ol type="1">
+<li><p><strong>GenRocket Cloud</strong>: This component is hosted on AWS
+and is used for test data design[3]. It provides:</p>
+<ul>
+<li>A secure multitenant environment</li>
+<li>Self-service components for licensed users</li>
+<li>High availability and scalability</li>
+</ul></li>
+<li><p><strong>Virtual Private Cloud (VPC)</strong>: Most customers
+(90%) are hosted in a secure VPC environment on AWS[3].</p></li>
+<li><p><strong>Dedicated Private Cloud (DPC)</strong>: An optional
+offering for customers who require a dedicated cloud
+environment[3].</p></li>
+</ol>
+<h2 id="hybrid-approach">Hybrid Approach</h2>
+<p>GenRocket’s architecture is designed as a secure hybrid cloud
+environment:</p>
+<ul>
+<li>Test data design takes place in the cloud</li>
+<li>Test data generation occurs on-premises, behind the customer’s
+firewall[3]</li>
+</ul>
+<p>This separation enhances security while allowing for scalability and
+ease of use. The G-Repository acts as a secure proxy, facilitating
+communication between on-premises components and GenRocket Cloud
+Services[3][4].</p>
+<p>In conclusion, GenRocket offers a flexible solution that can work
+both on-premises and in the cloud, with a hybrid approach that leverages
+the strengths of both deployment models.</p>
+<p>Citations: [1] https://www.genrocket.com/ci-cd-integration/ [2]
+https://genrocket.freshdesk.com/support/solutions/folders/19000164790
+[3] https://www.genrocket.com/genrocket-security/ [4]
+https://www.genrocket.com/g-repository/ [5]
+https://www.genrocket.com/enterprise-scalability/ [6]
+https://genrocket.freshdesk.com/support/solutions/articles/19000136875-automating-data-generation-using-ci-cd-pipeline
+[7] https://www.genrocket.com/enterprise-features/ [8]
+https://genrocket.freshdesk.com/support/solutions/articles/19000123292-how-to-best-deploy-g-repository-servers-and-clients</p>
+<h1 id="k2view">K2View</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can
+K2View work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, K2View offers flexible deployment options that include both
+on-premises and cloud-based solutions:</p>
+<h2 id="on-premises-deployment-3">On-Premises Deployment</h2>
+<p>K2View supports on-premises deployment, allowing organizations to
+install and run the platform within their own data centers. This option
+provides:</p>
+<ul>
+<li>Full control over hardware and infrastructure</li>
+<li>Compliance with specific data residency requirements</li>
+<li>Integration with existing on-premises systems</li>
+</ul>
+<h2 id="cloud-deployment-3">Cloud Deployment</h2>
+<p>K2View also offers cloud-based deployment options, including:</p>
+<ul>
+<li>Public cloud deployment as an integration Platform as a Service
+(iPaaS)</li>
+<li>Support for major cloud providers like AWS, Google Cloud, and
+Azure</li>
+<li>Multi-tenancy support and Single Sign-On (SSO) authentication</li>
+</ul>
+<h2 id="hybrid-deployment">Hybrid Deployment</h2>
+<p>K2View’s architecture is versatile, supporting hybrid deployments
+that combine on-premises and cloud environments. This allows
+organizations to:</p>
+<ul>
+<li>Leverage existing on-premises infrastructure while adopting cloud
+capabilities</li>
+<li>Gradually transition from on-premises to cloud at their own
+pace</li>
+<li>Connect data sources across on-premises and cloud environments</li>
+</ul>
+<h2 id="key-features">Key Features</h2>
+<p>Regardless of the deployment model, K2View provides:</p>
+<ul>
+<li>Scalability to manage billions of Micro-Databases concurrently</li>
+<li>Support for various data integration methods (ETL, JDBC, Messaging,
+Streaming, CDC, APIs)</li>
+<li>Ability to connect any data sources to any targets, spanning
+on-premises and cloud systems</li>
+</ul>
+<p>By offering these flexible deployment options, K2View enables
+organizations to choose the approach that best fits their specific
+needs, infrastructure, and data management strategies[3][4][5].</p>
+<p>Citations: [1] https://www.k2view.com [2]
+https://www.prnewswire.com/il/news-releases/k2view-launches-real-time-data-product-platform-available-now-with-a-30-day-free-trial-301513583.html
+[3] https://www.k2view.com/what-is-data-fabric/ [4]
+https://www.k2view.com/platform/ipaas-platform/ [5]
+https://www.k2view.com/hubfs/K2View%20DPM%20Product%20Brief.pdf [6]
+https://www.k2view.com/platform/pricing [7]
+https://support.k2view.com/Academy/articles/16_deploy_fabric/01_deploy_Fabric_project.html
+[8]
+https://support.k2view.com/Academy/articles/98_maintenance_and_operational/Hardware/2_All_Environments/03_hardware_req_for_prod.html
+[9]
+https://community.nintex.com/nintex-k2-cloud-12/is-it-possible-to-package-and-deployment-from-k2-five-on-prem-to-k2-cloud-9707
+[10]
+https://community.nintex.com/nintex-k2-cloud-37/overview-installation-and-configuration-of-k2-cloud-on-prem-data-access-28363</p>
+<h1 id="ydata">YData</h1>
+<p>I am curious about working “on-prem” versus “in the cloud”. Can YData
+work “on prem”? Can it work “in the cloud”?</p>
+<p>Yes, YData Fabric can work both “on-premises” and “in the cloud”,
+offering flexibility to meet different deployment preferences and
+requirements:</p>
+<h2 id="on-premises-deployment-4">On-Premises Deployment</h2>
+<p>YData Fabric supports on-premises deployment:</p>
+<ul>
+<li>It is described as a kubernetes-native solution that can be deployed
+in any infrastructure[1].</li>
+<li>This allows organizations to keep their data and processing within
+their own data centers, which can be crucial for companies with strict
+data security and compliance requirements.</li>
+</ul>
+<h2 id="cloud-deployment-4">Cloud Deployment</h2>
+<p>YData Fabric also offers cloud deployment options:</p>
+<ul>
+<li>The platform can be deployed on major cloud providers like Microsoft
+Azure and Amazon Web Services (AWS)[2][4].</li>
+<li>It provides one-click deployment options for both Azure and AWS,
+making it easy to set up in cloud environments[4][6].</li>
+</ul>
+<h2 id="key-features-of-cloud-deployment">Key Features of Cloud
+Deployment</h2>
+<ol type="1">
+<li>Scalability: Cloud deployment allows for rapid scaling of resources
+to meet varying workloads[2].</li>
+<li>Global Infrastructure: Cloud providers’ global infrastructure
+enables deployment in multiple regions for low latency and high
+availability[2].</li>
+<li>Security: Cloud deployments leverage comprehensive security features
+of providers like Azure, including data encryption, network firewalls,
+and identity management[2].</li>
+<li>Integration: YData Fabric can connect to various cloud-based
+databases, warehouses, and data lakes[4][6].</li>
+</ol>
+<h2 id="flexibility">Flexibility</h2>
+<p>The ability to deploy both on-premises and in the cloud gives
+organizations the flexibility to choose the deployment model that best
+fits their needs, whether it’s for data security, compliance,
+scalability, or integration with existing infrastructure.</p>
+<p>Citations: [1] https://ydata.ai [2]
+https://docs.fabric.ydata.ai/latest/deployment_and_security/deployment/azure/pre_deploy_checklist/
+[3]
+https://legacy.017.docs.greatexpectations.io/docs/0.16.16/deployment_patterns/how_to_use_great_expectations_with_ydata_synthetic/
+[4] https://aws.amazon.com/marketplace/pp/prodview-hgrqd5lqnqblm [5]
+https://docs.fabric.ydata.ai/latest/deployment_and_security/deployment/aws/deploy/
+[6]
+https://azuremarketplace.microsoft.com/en-us/marketplace/apps/ydatalda1622051287515.ydata1?tab=overview
+[7] https://pypi.org/project/ydata-profiling/ [8]
+https://docs.fabric.ydata.ai/latest/deployment_and_security/security/
+[9]
+https://docs.fabric.ydata.ai/latest/deployment_and_security/deployment/azure/deploy/
+[10] https://welcome.ai/solution/ydata</p>
+    
+</body>
+</html>
