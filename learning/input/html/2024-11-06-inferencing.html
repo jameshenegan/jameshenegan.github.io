@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1
+id="tutorial-key-concepts-in-machine-learning---inferencing-predictions-and-scoring">Tutorial:
+Key Concepts in Machine Learning - Inferencing, Predictions, and
+Scoring</h1>
+<p>Welcome to this tutorial on some foundational terms in the machine
+learning lifecycle. This guide is structured to clarify each term’s
+role, helping you understand how they fit together in building, testing,
+and deploying a machine learning model.</p>
+<hr />
+<h2 id="step-1-training-your-model">Step 1: Training Your Model</h2>
+<h3 id="what-is-training">What is Training?</h3>
+<p><strong>Training</strong> is the first step in creating a machine
+learning model. Here, we feed the model a labeled dataset (where the
+outcome is known), so it can learn patterns and relationships within the
+data.</p>
+<h3 id="goal-of-training">Goal of Training</h3>
+<p>The goal is for the model to understand how input data relates to an
+output label. For instance, in image classification, the model will
+learn features in images that correspond to specific categories (e.g.,
+“cat” vs. “dog”).</p>
+<h3 id="example">Example</h3>
+<p>Imagine a model that predicts house prices based on features like
+square footage, location, and number of rooms. During training, the
+model analyzes the historical data, finding relationships between house
+features and their prices.</p>
+<hr />
+<h2 id="step-2-model-evaluation">Step 2: Model Evaluation</h2>
+<h3 id="what-is-evaluation">What is Evaluation?</h3>
+<p><strong>Evaluation</strong> tests the model’s performance by
+assessing how well it generalizes to data outside the training set. This
+step usually involves a separate dataset, often called a
+<em>validation</em> or <em>test set</em>, to simulate new, unseen
+data.</p>
+<h3 id="why-evaluation-matters">Why Evaluation Matters</h3>
+<p>Model evaluation tells us whether the model is likely to perform well
+on real-world data. Poor results indicate the model might be overfitting
+(too specific to the training data) or underfitting (too
+simplistic).</p>
+<h3 id="example-1">Example</h3>
+<p>Continuing with our house price model, we might evaluate it on a
+different set of houses to see if it accurately predicts their prices.
+Common evaluation metrics include accuracy, precision, recall, and mean
+squared error (for regression).</p>
+<hr />
+<h2 id="step-3-deploying-the-model-serving">Step 3: Deploying the Model
+(Serving)</h2>
+<h3 id="what-is-serving">What is Serving?</h3>
+<p>Once you’re satisfied with the model’s performance,
+<strong>serving</strong> is the process of making the model accessible
+for real-time or batch predictions. This typically involves setting up
+the model as a microservice or endpoint that can receive data and return
+predictions.</p>
+<h3 id="options-for-serving">Options for Serving</h3>
+<ul>
+<li><strong>On-Device</strong>: Deploying the model on local devices
+(e.g., mobile apps).</li>
+<li><strong>On-Premises</strong>: Hosting within a controlled, local
+environment.</li>
+<li><strong>Cloud-Based</strong>: Deploying on cloud infrastructure,
+which is ideal for scalability and accessibility.</li>
+</ul>
+<hr />
+<h2 id="step-4-understanding-predictions">Step 4: Understanding
+Predictions</h2>
+<h3 id="what-is-a-prediction">What is a Prediction?</h3>
+<p>Once the model is deployed, it can start generating
+<strong>predictions</strong>—the process of using the model to analyze
+new input data and produce an output.</p>
+<p>There are two types of predictions:</p>
+<ol type="1">
+<li><strong>Online Prediction</strong>: Used for real-time predictions,
+often when quick response times are needed. For example, an online
+product recommendation system updates in real time as a user
+browses.</li>
+<li><strong>Batch Prediction</strong>: Used for generating predictions
+on large datasets offline. This is ideal for cases like analyzing
+customer data overnight to prepare recommendations for the next
+day.</li>
+</ol>
+<h3 id="when-to-use-prediction">When to Use Prediction</h3>
+<p>Predictions can apply to different use cases:</p>
+<ul>
+<li><strong>Forecasting Future Outcomes</strong>: Predicting a value,
+such as the likelihood of customer churn or the demand for a
+product.</li>
+<li><strong>Classification Tasks</strong>: Assigning labels, like
+identifying spam emails or determining the sentiment of a text.</li>
+</ul>
+<hr />
+<h2 id="step-5-inferencing">Step 5: Inferencing</h2>
+<h3 id="what-is-inferencing">What is Inferencing?</h3>
+<p>In <strong>inferencing</strong>, we use a trained model to generate
+predictions from new data. While the term “prediction” is often used for
+forecasting future values, <em>inferencing</em> can encompass broader
+applications, such as image or text classification where we aren’t
+predicting the future but are instead classifying or identifying
+patterns in the data.</p>
+<p>Inferencing is a term you’ll see a lot in production machine learning
+systems, referring to using the model’s learned knowledge to process new
+data.</p>
+<h3 id="example-2">Example</h3>
+<p>In an image classification system, inferencing might involve
+analyzing a new image and determining that it contains a dog. This isn’t
+a “prediction” in the temporal sense but rather a classification based
+on the model’s learned understanding.</p>
+<hr />
+<h2 id="step-6-scoring">Step 6: Scoring</h2>
+<h3 id="what-is-scoring">What is Scoring?</h3>
+<p><strong>Scoring</strong> is the process of applying the trained model
+to data to produce a numerical score or classification. In some fields,
+particularly in finance and marketing, scoring is commonly used to
+assign a numeric value to a specific outcome.</p>
+<h3 id="why-scoring-is-useful">Why Scoring is Useful</h3>
+<p>Scoring often applies when predictions need to be in the form of a
+score, risk level, or probability. This approach can be crucial for:</p>
+<ul>
+<li><strong>Risk Assessment</strong>: Assigning a credit risk score
+based on financial history.</li>
+<li><strong>Customer Segmentation</strong>: Scoring potential leads to
+determine marketing priority.</li>
+<li><strong>Ranking</strong>: Assigning relevance scores in
+recommendation systems.</li>
+</ul>
+<h3 id="example-3">Example</h3>
+<p>A credit scoring model might analyze a customer’s financial data and
+produce a risk score, indicating the likelihood they will repay a loan.
+In this context, “scoring” emphasizes the generation of a specific,
+actionable number.</p>
+<hr />
+<h2 id="summary-table">Summary Table</h2>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 40%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Term</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Example Use Case</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Training</strong></td>
+<td>Learning from labeled data to create a model</td>
+<td>Identifying patterns in house prices</td>
+</tr>
+<tr>
+<td><strong>Evaluation</strong></td>
+<td>Testing model on unseen data</td>
+<td>Testing house price model on new houses</td>
+</tr>
+<tr>
+<td><strong>Serving</strong></td>
+<td>Making model available for predictions</td>
+<td>Deploying credit scoring model on cloud</td>
+</tr>
+<tr>
+<td><strong>Prediction</strong></td>
+<td>Using model to analyze new data</td>
+<td>Predicting next week’s sales or classifying emails</td>
+</tr>
+<tr>
+<td><strong>Inferencing</strong></td>
+<td>Applying model knowledge to new data</td>
+<td>Identifying sentiment in text reviews</td>
+</tr>
+<tr>
+<td><strong>Scoring</strong></td>
+<td>Generating a numeric output or risk score</td>
+<td>Credit risk score for loan applicants</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="putting-it-all-together">Putting It All Together</h2>
+<p>The machine learning workflow typically follows a sequence of:</p>
+<ol type="1">
+<li><strong>Training</strong> → 2. <strong>Evaluation</strong> → 3.
+<strong>Serving</strong> → 4.
+<strong>Prediction/Inferencing/Scoring</strong>.</li>
+</ol>
+<p>Each term reflects a distinct aspect of the model’s lifecycle,
+whether it’s learning from data, being evaluated, generating results, or
+being deployed for real-time or batch use.</p>
+<hr />
+<p>In this tutorial, you’ve learned about the key stages in deploying a
+machine learning model and the purpose behind terms like
+<em>inferencing</em>, <em>prediction</em>, and <em>scoring</em>.
+Understanding these terms will clarify the goals and outcomes at each
+step of your machine learning projects.</p>
+    
+</body>
+</html>

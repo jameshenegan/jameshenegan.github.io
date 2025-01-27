@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="question-1">Question 1</h2>
+<p>I’m trying to learn more about MLOps on Azure. I’ve been learning
+about Azure Machine Learning (AML) Studio and Azure DevOps. My
+understanding is that it is possible to run a pipeline job in AML. It is
+also possible to trigger an AML pipeline from an Azure DevOps pipeline.
+What would be the benefit of triggering an AML pipeline from an Azure
+DevOps pipeline, as opposed to running an AML pipeline by itself? It
+seems that using Azure DevOps adds another layer of complexity that is
+unnecessary.</p>
+<h2 id="response">Response</h2>
+<p>Your understanding of Azure Machine Learning (AML) Studio and Azure
+DevOps pipelines is correct, and you’re right in observing that
+triggering an AML pipeline from an Azure DevOps pipeline introduces
+another layer. However, this additional complexity can actually bring
+several advantages, especially when you consider the needs of a robust,
+end-to-end MLOps workflow. Here are some benefits of using Azure DevOps
+to trigger an AML pipeline, rather than running it directly in AML:</p>
+<h3 id="full-lifecycle-management-and-automation">1. <strong>Full
+Lifecycle Management and Automation</strong></h3>
+<ul>
+<li><strong>Version Control and Tracking</strong>: Azure DevOps provides
+strong integration with Git for version control, so all code, including
+pipeline definitions and configurations, can be versioned. This setup
+makes it easier to track changes over time, enabling better
+reproducibility.</li>
+<li><strong>Continuous Integration (CI) and Continuous Deployment
+(CD)</strong>: By using DevOps, you can create a CI/CD pipeline that
+integrates both the ML model training and deployment. AML pipelines can
+handle the training steps, while Azure DevOps can manage dependencies,
+testing, and deployment, bringing ML pipelines into the broader CI/CD
+process.</li>
+<li><strong>Automated Testing and Quality Control</strong>: You can
+automate pre-pipeline checks (e.g., code quality, data validation) in
+DevOps, ensuring only high-quality code or data reaches the AML
+pipeline.</li>
+</ul>
+<h3 id="environment-consistency-and-dependency-management">2.
+<strong>Environment Consistency and Dependency Management</strong></h3>
+<ul>
+<li>Azure DevOps allows you to define and enforce consistent
+environments and dependencies across different stages (e.g.,
+development, staging, production) of the MLOps lifecycle. DevOps
+pipelines can automatically build, test, and containerize environments
+before triggering the AML pipeline, ensuring that the AML pipeline is
+always run in a controlled and reproducible environment.</li>
+</ul>
+<h3 id="flexibility-with-multi-cloud-and-hybrid-integrations">3.
+<strong>Flexibility with Multi-Cloud and Hybrid
+Integrations</strong></h3>
+<ul>
+<li>If your organization uses multiple services or has a hybrid cloud
+infrastructure, DevOps provides flexibility. You can use Azure DevOps to
+orchestrate steps across different environments, clouds, or on-prem
+resources, and then use AML for the specific machine learning
+components. This approach is especially useful in complex systems where
+AML is just one piece of the pipeline.</li>
+</ul>
+<h3 id="improved-monitoring-notifications-and-control">4.
+<strong>Improved Monitoring, Notifications, and Control</strong></h3>
+<ul>
+<li>Azure DevOps offers centralized logging, monitoring, and alerting
+capabilities that span the entire CI/CD process. By integrating AML with
+DevOps, you can have more granular notifications and status checks, as
+well as standardized auditing logs for all pipeline steps. If a problem
+arises, it can be identified and addressed at any stage, even before the
+AML pipeline starts.</li>
+</ul>
+<h3 id="granular-access-control-and-permissions">5. <strong>Granular
+Access Control and Permissions</strong></h3>
+<ul>
+<li>In many organizations, different teams or roles need to manage
+different parts of the pipeline. Azure DevOps allows you to control
+permissions separately for different steps, artifacts, and environments.
+By splitting the responsibilities between DevOps and AML, you can
+enforce security and compliance requirements more effectively.</li>
+</ul>
+<h3 id="enhanced-modularity-and-reusability">6. <strong>Enhanced
+Modularity and Reusability</strong></h3>
+<ul>
+<li>Using DevOps to trigger AML pipelines enables modular pipeline
+design. You can define reusable templates in DevOps that include both
+AML and non-AML steps. This approach provides flexibility if your
+organization later decides to use a different ML platform or if your
+pipeline requires additional steps outside of AML.</li>
+</ul>
+<h3 id="cost-and-resource-optimization">7. <strong>Cost and Resource
+Optimization</strong></h3>
+<ul>
+<li>By using DevOps as the orchestrator, you can introduce cost
+controls. For example, you can add steps that check for resource
+availability, cost thresholds, or data freshness before triggering a
+compute-intensive AML pipeline. If conditions aren’t met, the DevOps
+pipeline can stop the process early, saving time and resources.</li>
+</ul>
+<h3 id="key-takeaway">Key Takeaway</h3>
+<p>The main value of integrating Azure DevOps and AML lies in the
+holistic control DevOps provides for the entire lifecycle of your ML
+project. It’s especially valuable for organizations that require robust
+CI/CD, enhanced security, or integration with broader IT infrastructure.
+If you’re managing smaller, isolated ML projects, running AML pipelines
+independently might indeed be simpler. But for teams and organizations
+aiming for fully automated, scalable, and maintainable MLOps solutions,
+Azure DevOps adds significant value by serving as the orchestrator
+across all stages.</p>
+<h2 id="question-2">Question 2</h2>
+<p>My understanding is that an AML pipeline could do the following
+things: load raw data, clean the raw data and save the clean, raw data
+as a data asset, perform a training / testing split on the clean data,
+train a model, evaluate the model, register the model. Is that about all
+that you would want an AML pipeline to do?</p>
+<p>Your outline is spot on for what an AML pipeline would typically
+handle, covering the main steps of a machine learning workflow. An AML
+pipeline is designed to handle the end-to-end ML process, from data
+preparation to model registration, and the steps you listed are the core
+tasks. However, depending on the complexity of your project and the
+needs of the organization, there may be a few additional stages or
+considerations you might want to incorporate into an AML pipeline for a
+more robust MLOps workflow. Let’s walk through both your core steps and
+some optional additions:</p>
+<h3 id="core-steps-of-an-aml-pipeline">Core Steps of an AML
+Pipeline</h3>
+<ol type="1">
+<li><p><strong>Load Raw Data</strong>:</p>
+<ul>
+<li>This is where you retrieve the raw data, possibly from a data lake,
+database, or blob storage.</li>
+<li>If data versions are important, you might version this raw data as
+an asset in Azure Machine Learning so you can track specific versions of
+data used for different training runs.</li>
+</ul></li>
+<li><p><strong>Data Cleaning and Preprocessing</strong>:</p>
+<ul>
+<li>Cleaning the data involves handling missing values, outliers, and
+incorrect data entries, as well as normalizing or scaling features as
+needed.</li>
+<li>Saving this cleaned data as a data asset is useful for
+reproducibility and tracking purposes, enabling you to revert to a
+specific data version if needed.</li>
+</ul></li>
+<li><p><strong>Train-Test Split</strong>:</p>
+<ul>
+<li>Splitting the data into training, validation, and/or testing sets is
+essential for ensuring that the model can generalize to new data.</li>
+<li>Some teams save these splits as separate data assets, particularly
+in situations where reproducibility is a priority.</li>
+</ul></li>
+<li><p><strong>Model Training</strong>:</p>
+<ul>
+<li>This is where the model is trained using the training data.
+Hyperparameter tuning might also happen here, either as part of this
+training step or as a separate optimization stage.</li>
+<li>You might log various metrics during training for monitoring and
+later analysis.</li>
+</ul></li>
+<li><p><strong>Model Evaluation</strong>:</p>
+<ul>
+<li>Evaluate the model’s performance on the test set, logging metrics
+like accuracy, precision, recall, and any other relevant evaluation
+metrics.</li>
+<li>At this stage, you might include custom checks, such as bias
+analysis or interpretability metrics, to ensure the model meets certain
+criteria before being registered.</li>
+</ul></li>
+<li><p><strong>Model Registration</strong>:</p>
+<ul>
+<li>Registering the model in the AML model registry allows it to be
+tracked, versioned, and later retrieved for deployment.</li>
+<li>Registration also helps manage different model versions and ties
+them to specific datasets and training runs for traceability.</li>
+</ul></li>
+</ol>
+<p>These steps form a strong foundation for an AML pipeline. However, in
+a production-grade MLOps environment, there are often additional stages
+and considerations to improve the robustness, automation, and
+maintainability of the pipeline.</p>
+<h3 id="additional-optional-steps-to-consider">Additional (Optional)
+Steps to Consider</h3>
+<ol type="1">
+<li><p><strong>Data Quality Validation</strong>:</p>
+<ul>
+<li>Before proceeding with data cleaning, you might add a step to
+validate the raw data, checking for issues like data drift, missing
+values, or unexpected distributions.</li>
+<li>This step can help detect data issues early and prevent training on
+low-quality or problematic data.</li>
+</ul></li>
+<li><p><strong>Feature Engineering and Transformation</strong>:</p>
+<ul>
+<li>You might have a step specifically for feature engineering, where
+new features are created or existing ones are transformed.</li>
+<li>If the transformations are complex or costly, consider saving these
+engineered features as a separate data asset.</li>
+</ul></li>
+<li><p><strong>Hyperparameter Optimization</strong>:</p>
+<ul>
+<li>If hyperparameter tuning is part of your workflow, you could add a
+step to systematically optimize the model’s hyperparameters.</li>
+<li>AML has built-in support for hyperparameter sweeps, making it easy
+to add this as a separate stage.</li>
+</ul></li>
+<li><p><strong>Bias Detection and Fairness Assessment</strong>:</p>
+<ul>
+<li>For regulated industries or applications where fairness is
+important, you might have a step dedicated to bias detection and
+fairness assessment.</li>
+<li>Tools like Fairlearn in Azure ML can be used to analyze and mitigate
+model biases at this stage.</li>
+</ul></li>
+<li><p><strong>Model Validation and Approval Gate</strong>:</p>
+<ul>
+<li>After evaluation, you might add an approval gate to ensure that the
+model meets certain performance criteria before it’s registered.</li>
+<li>This step could include stakeholder review or automated checks on
+evaluation metrics, and can help prevent underperforming models from
+being registered and deployed.</li>
+</ul></li>
+<li><p><strong>Staging and Deployment Steps</strong>:</p>
+<ul>
+<li>If you want to test the model in a production-like environment
+before full deployment, you can add a staging step.</li>
+<li>This can include deploying the model to a staging environment for
+A/B testing or shadow testing.</li>
+</ul></li>
+<li><p><strong>Notification and Reporting</strong>:</p>
+<ul>
+<li>Automated notifications can alert stakeholders when certain steps
+are completed, failed, or require manual approval.</li>
+<li>Automated reporting can also provide summaries of model performance
+and pipeline execution.</li>
+</ul></li>
+<li><p><strong>Artifact and Metadata Logging</strong>:</p>
+<ul>
+<li>Tracking artifacts (like trained model files, feature transformers)
+and metadata (e.g., version of the dataset, code) can provide
+traceability for each run.</li>
+<li>This logging can be critical for auditing, reproducing results, and
+debugging.</li>
+</ul></li>
+</ol>
+<h3 id="why-stick-to-core-steps-in-aml-vs.-using-azure-devops">Why Stick
+to Core Steps in AML vs. Using Azure DevOps?</h3>
+<p>An AML pipeline is typically optimized for the steps directly related
+to model development. The added complexity of Azure DevOps is often
+valuable when you need to integrate with broader CI/CD processes,
+external systems, or custom approval workflows. However, if your MLOps
+process is mostly focused on the model’s lifecycle within Azure ML and
+the additional integrations are minimal, the AML pipeline with the core
+steps you mentioned can be fully sufficient and efficient.</p>
+<p>In summary, for many use cases, sticking to the core pipeline steps
+you outlined provides a solid, manageable foundation. The additional
+steps add value as you scale or encounter specific requirements around
+automation, compliance, or deployment workflows.</p>
+<h2 id="question-3">Question 3</h2>
+<p>I’m a little confused by your response. You mentioned an approval
+gate. Is that something that can happen in Azure Machine Learning
+Studio? I thought we needed Azure DevOps to set up an approval gate.
+Also, you mentioned staging and deployment steps. I thought that was
+something that happened in Azure DevOps. You see, what I’m trying to do
+now is understand the differences between an AML pipeline and an Azure
+DevOps pipeline. What are the core steps that are done in an AML
+pipeline? What are the other steps that we need to reach to an Azure
+DevOps pipeline in order to perform?</p>
+<h2 id="response-1">Response</h2>
+<p>Your question gets to the heart of how AML pipelines and Azure DevOps
+pipelines work together. The goal is to clarify which parts of the MLOps
+process are best handled in AML versus those that require Azure DevOps.
+Here’s a breakdown of core responsibilities for each, and how they
+complement each other in a complete MLOps pipeline:</p>
+<h3 id="core-responsibilities-of-an-aml-pipeline">Core Responsibilities
+of an AML Pipeline</h3>
+<p>An <strong>Azure Machine Learning (AML) pipeline</strong> is designed
+to handle the machine learning-specific tasks, focusing primarily on
+data processing, model training, evaluation, and registration. Here are
+the steps typically handled within AML:</p>
+<ol type="1">
+<li><p><strong>Data Ingestion and Preprocessing</strong>:</p>
+<ul>
+<li>Loading raw data from storage.</li>
+<li>Cleaning, preprocessing, and saving cleaned data as an asset.</li>
+<li>Performing train-test splits or other data partitioning.</li>
+</ul></li>
+<li><p><strong>Feature Engineering and Transformation</strong>:</p>
+<ul>
+<li>Transforming or engineering features that will be used for
+training.</li>
+<li>Saving engineered features as a data asset if needed.</li>
+</ul></li>
+<li><p><strong>Model Training</strong>:</p>
+<ul>
+<li>Training the model on the training data, including running
+hyperparameter tuning (if required).</li>
+<li>Logging training metrics for tracking and comparison.</li>
+</ul></li>
+<li><p><strong>Model Evaluation</strong>:</p>
+<ul>
+<li>Evaluating the model on a test or validation dataset.</li>
+<li>Logging evaluation metrics to understand model performance.</li>
+</ul></li>
+<li><p><strong>Model Registration</strong>:</p>
+<ul>
+<li>Registering the model in the AML model registry if it meets
+predefined criteria.</li>
+<li>This step creates a versioned model artifact that can be deployed
+later.</li>
+</ul></li>
+</ol>
+<p><strong>In summary, the AML pipeline focuses on the data preparation,
+model training, and evaluation cycle.</strong> Its goal is to produce a
+model artifact that’s ready for deployment or further testing.
+<strong>An AML pipeline doesn’t inherently manage deployment, approvals,
+or productionization steps</strong> — this is where Azure DevOps or
+another CI/CD tool comes into play.</p>
+<h3 id="core-responsibilities-of-an-azure-devops-pipeline">Core
+Responsibilities of an Azure DevOps Pipeline</h3>
+<p>An <strong>Azure DevOps pipeline</strong> serves as the overarching
+orchestrator, enabling CI/CD processes that manage code, artifacts, and
+deployment in a controlled way. In MLOps, it’s often used to handle
+<strong>approval workflows, staging, and deployment</strong>, which go
+beyond what AML pipelines offer. Here’s how DevOps pipelines complement
+the AML pipeline:</p>
+<ol type="1">
+<li><p><strong>Triggering AML Pipelines</strong>:</p>
+<ul>
+<li>The DevOps pipeline can trigger the AML pipeline when new data,
+code, or configuration changes are detected.</li>
+<li>This triggers a retraining workflow in AML, ensuring the pipeline
+starts with the latest version of code and data.</li>
+</ul></li>
+<li><p><strong>Environment Setup and Dependency Management</strong>:</p>
+<ul>
+<li>Azure DevOps can build and package environments or Docker images
+required for AML pipelines, ensuring consistent environments across
+stages.</li>
+</ul></li>
+<li><p><strong>Approval Gates</strong>:</p>
+<ul>
+<li>DevOps provides <strong>approval gates</strong> as part of its
+workflow management. For example, after the AML pipeline completes and
+registers a model, DevOps can insert a manual approval step, where
+stakeholders verify that the model’s metrics are acceptable before it’s
+promoted to production.</li>
+</ul></li>
+<li><p><strong>Staging and Deployment</strong>:</p>
+<ul>
+<li>The DevOps pipeline can deploy the model to different environments,
+such as <strong>staging, production, or even a shadow
+environment</strong> where it runs alongside an existing model for
+comparison.</li>
+<li>This deployment can use the registered model artifact from AML,
+deploying it as a web service or containerized application in Azure
+Kubernetes Service (AKS), Azure Container Instances (ACI), or other
+environments.</li>
+</ul></li>
+<li><p><strong>Integration with Monitoring and Rollback
+Processes</strong>:</p>
+<ul>
+<li>Azure DevOps can automate monitoring and rollback processes,
+integrating with logging and monitoring tools to check the performance
+of deployed models.</li>
+<li>If the model in production fails to meet certain criteria, DevOps
+can trigger a rollback or alert to redeploy a previous model
+version.</li>
+</ul></li>
+<li><p><strong>Automated Notifications and Reporting</strong>:</p>
+<ul>
+<li>DevOps can handle notifications and reporting at various stages of
+the pipeline, sending alerts when the pipeline completes, fails, or
+requires manual intervention.</li>
+</ul></li>
+</ol>
+<h3 id="why-use-both-pipelines-together">Why Use Both Pipelines
+Together?</h3>
+<p>The AML pipeline is focused on the <strong>machine learning
+tasks</strong> (data processing, training, and evaluation) and ensures
+that the model development and testing happen in a controlled,
+repeatable way. Azure DevOps, on the other hand, is designed to
+orchestrate <strong>end-to-end CI/CD workflows</strong>, including
+integration with code repositories, environment setup, and model
+deployment to production.</p>
+<p>Using them together allows you to:</p>
+<ul>
+<li>Automate the <strong>entire MLOps lifecycle</strong> from model
+development (AML) to deployment and monitoring (Azure DevOps).</li>
+<li>Set up <strong>approval and staging gates</strong> before
+deployment, which AML pipelines alone don’t offer.</li>
+<li>Manage <strong>versioning and tracking</strong> across multiple
+environments, keeping a consistent setup from training to
+deployment.</li>
+</ul>
+<h3 id="summary-when-to-use-each">Summary: When to Use Each</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>AML Pipeline</strong></th>
+<th><strong>Azure DevOps Pipeline</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data ingestion and cleaning</td>
+<td>Orchestration and triggering of AML pipeline</td>
+</tr>
+<tr>
+<td>Feature engineering</td>
+<td>Approval gates before moving to production</td>
+</tr>
+<tr>
+<td>Model training</td>
+<td>Environment setup and dependency management</td>
+</tr>
+<tr>
+<td>Model evaluation</td>
+<td>Model staging and deployment to production</td>
+</tr>
+<tr>
+<td>Model registration</td>
+<td>Integration with monitoring, notifications, and rollback</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In short:</strong> AML pipelines are specialized for the ML
+workflow, while Azure DevOps adds the orchestration, approvals, and
+deployment to production, providing full lifecycle management for
+MLOps.</p>
+<h2 id="question-4">Question 4</h2>
+<p>I’ve been trying to learn about MLOps. In particular, I’ve been
+trying to learn about how some “traditional DevOps” (i.e., DevOps for
+traditional software) principles are used for MLOps. But I see that a
+lot of documentation on the web about DevOps is geared towards more
+traditional software development. This makes it hard for me to
+understand how certain things can apply to MLOps. For example, I
+sometimes hear the phrase “build and test code”. What does this phrase
+mean in the context of traditional DevOps? What might it mean in
+MLOps?</p>
+<h2 id="response-2">Response</h2>
+<p>You’re absolutely right: much of DevOps documentation focuses on
+traditional software development, where the processes and artifacts
+differ from those in machine learning. MLOps, however, does adapt many
+core principles from traditional DevOps but tailors them to address the
+unique aspects of machine learning, such as managing data, models, and
+the iterative nature of experimentation. Let’s explore what “build and
+test code” typically means in both contexts and how these concepts are
+adapted for MLOps.</p>
+<h3 id="traditional-devops-build-and-test-code">Traditional DevOps:
+“Build and Test Code”</h3>
+<p>In traditional DevOps, “build and test code” refers to taking source
+code and converting it into an executable format, followed by running
+tests to verify its correctness. Here’s what this process generally
+involves:</p>
+<ol type="1">
+<li><p><strong>Build</strong>:</p>
+<ul>
+<li>The “build” step compiles the source code into binaries or an
+executable format. For example, in compiled languages like Java, C++, or
+Go, the code is compiled into a binary. For interpreted languages like
+Python or JavaScript, the build phase might involve packaging the code
+along with dependencies into a deployable format, like a Docker
+container or zip file.</li>
+<li>Building often includes steps like dependency resolution, packaging,
+and containerization.</li>
+</ul></li>
+<li><p><strong>Test</strong>:</p>
+<ul>
+<li>In traditional DevOps, tests include <strong>unit tests, integration
+tests, and end-to-end tests</strong> to ensure that the code behaves as
+expected.</li>
+<li>Tests verify individual components, interactions between components,
+and overall application functionality.</li>
+<li>Automated testing ensures that new changes don’t break existing
+functionality (regression testing) and that the application behaves as
+expected under different scenarios.</li>
+</ul></li>
+</ol>
+<p><strong>The goal in traditional DevOps</strong> for this phase is to
+ensure that any code changes are properly built, packaged, and
+thoroughly tested before moving to deployment. This minimizes the risk
+of deploying defective code into production.</p>
+<hr />
+<h3 id="mlops-build-and-test-code-adapted">MLOps: “Build and Test Code”
+Adapted</h3>
+<p>In MLOps, the “build and test” process differs significantly because
+it involves more than just code. MLOps has to consider three primary
+components:</p>
+<ul>
+<li><strong>Code</strong>: Scripts and logic for data processing, model
+training, and evaluation.</li>
+<li><strong>Data</strong>: The datasets used to train, validate, and
+test the model.</li>
+<li><strong>Model</strong>: The trained model artifact, which is the end
+result of applying code to data.</li>
+</ul>
+<p>Here’s what “build and test” might look like in MLOps:</p>
+<h4 id="build-in-mlops">1. <strong>Build</strong> in MLOps</h4>
+<ul>
+<li><strong>Data Processing and Feature Engineering</strong>: In MLOps,
+the “build” phase often includes preparing and transforming data, which
+is foundational to model training. This can involve extracting features,
+handling missing values, and performing data splits (e.g., train-test
+split).</li>
+<li><strong>Model Training</strong>: Instead of just compiling code, the
+“build” process might include training the model itself. This involves
+applying the training code to data, producing a model artifact that can
+later be tested and deployed.</li>
+<li><strong>Dependency Management and Environment Setup</strong>: Just
+like in traditional DevOps, it’s essential to ensure the environment is
+consistent and reproducible. This might involve containerizing the
+training code with all dependencies or setting up a virtual
+environment.</li>
+</ul>
+<h4 id="test-in-mlops">2. <strong>Test</strong> in MLOps</h4>
+<ul>
+<li><strong>Code Testing (Unit and Integration Tests)</strong>: This
+includes testing individual functions and modules (e.g., data
+transformation functions or model training functions) to ensure they
+work as intended.</li>
+<li><strong>Data Validation and Quality Checks</strong>: Because data is
+a core component in MLOps, it’s crucial to test data quality. This could
+include checks for missing values, data drift, or outliers, ensuring
+that the data meets certain quality thresholds before model
+training.</li>
+<li><strong>Model Validation</strong>:
+<ul>
+<li><strong>Performance Testing</strong>: This is equivalent to
+integration testing in traditional software but applied to model
+evaluation. Once the model is trained, it’s tested for performance on a
+separate validation or test dataset, using metrics like accuracy,
+precision, recall, etc.</li>
+<li><strong>Bias and Fairness Testing</strong>: MLOps pipelines may also
+include bias or fairness tests, especially if the model impacts
+decisions related to individuals or groups (e.g., in hiring or
+lending).</li>
+</ul></li>
+<li><strong>Regression Testing for Model Performance</strong>: In MLOps,
+we often track the model’s historical performance on a fixed test set to
+ensure that changes in code, data, or model parameters don’t negatively
+impact performance.</li>
+</ul>
+<p><strong>The goal in MLOps</strong> for “build and test” is to ensure
+that data, model code, and the trained model meet quality and
+performance standards before they are registered or deployed.</p>
+<hr />
+<h3
+id="how-build-and-test-differs-between-traditional-devops-and-mlops">How
+“Build and Test” Differs between Traditional DevOps and MLOps</h3>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 34%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Aspect</strong></th>
+<th><strong>Traditional DevOps</strong></th>
+<th><strong>MLOps</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Build</strong></td>
+<td>Compile code and package dependencies</td>
+<td>Data processing, feature engineering, model training, and
+environment setup</td>
+</tr>
+<tr>
+<td><strong>Code Testing</strong></td>
+<td>Unit, integration, and end-to-end tests</td>
+<td>Similar tests, but may also include tests for data pipelines and
+data transformations</td>
+</tr>
+<tr>
+<td><strong>Data Testing</strong></td>
+<td>Not applicable</td>
+<td>Data quality checks, data drift checks, and validation of data
+splits</td>
+</tr>
+<tr>
+<td><strong>Model Testing</strong></td>
+<td>Not applicable</td>
+<td>Model evaluation, performance testing, and bias/fairness
+testing</td>
+</tr>
+<tr>
+<td><strong>Regression Testing</strong></td>
+<td>Ensuring code changes don’t break existing functionality</td>
+<td>Ensuring model performance doesn’t degrade over time, tracking
+metrics across versions</td>
+</tr>
+</tbody>
+</table>
+<p>In MLOps, the “build and test” process encompasses <strong>data,
+model training, and model evaluation</strong> — all of which contribute
+to the final model artifact. Traditional DevOps, by contrast, is largely
+code-focused.</p>
+<h3 id="example-workflow-in-mlops">Example Workflow in MLOps</h3>
+<p>Here’s an example of how an MLOps pipeline might implement “build and
+test” in a CI/CD pipeline:</p>
+<ol type="1">
+<li><p><strong>Data Validation Stage</strong>:</p>
+<ul>
+<li>Run tests to ensure the incoming data is complete, consistent, and
+within expected ranges.</li>
+</ul></li>
+<li><p><strong>Feature Engineering and Training Code
+Testing</strong>:</p>
+<ul>
+<li>Run unit tests on code functions for data transformations, feature
+engineering, and training logic.</li>
+</ul></li>
+<li><p><strong>Model Training</strong> (Build Step):</p>
+<ul>
+<li>Execute the training pipeline, which may include hyperparameter
+tuning.</li>
+<li>Track all artifacts, parameters, and metrics for
+reproducibility.</li>
+</ul></li>
+<li><p><strong>Model Validation (Testing)</strong>:</p>
+<ul>
+<li>Evaluate model performance on a test dataset to ensure it meets
+baseline metrics.</li>
+<li>Run bias/fairness assessments if required.</li>
+</ul></li>
+<li><p><strong>Regression Testing (Model Performance)</strong>:</p>
+<ul>
+<li>Compare the current model’s performance against previously deployed
+models to ensure no degradation in key metrics.</li>
+</ul></li>
+<li><p><strong>Approval Gate</strong>:</p>
+<ul>
+<li>Set up an approval step to verify the model’s metrics meet
+production standards before it’s registered or deployed.</li>
+</ul></li>
+</ol>
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ul>
+<li><strong>In traditional DevOps</strong>, “build and test” focuses on
+code compilation and testing to ensure correct software
+functionality.</li>
+<li><strong>In MLOps</strong>, “build and test” involves building data
+processing and model training steps, testing data quality and
+transformations, and validating model performance and fairness.</li>
+</ul>
+<p>Adapting these DevOps principles to MLOps ensures a robust pipeline
+that handles not only code but also data and models, addressing the
+unique needs of machine learning systems in production.</p>
+<h2 id="question-5">Question 5</h2>
+<p>Would it be possible to perform a Machine Learning project in Azure
+DevOps without using Azure Machine Learning Studio at all? If so, then
+what are the advantages of using AML Studio?</p>
+<h2 id="response-3">Response</h2>
+<p>Yes, it is technically possible to perform a machine learning project
+using <strong>Azure DevOps alone</strong>, without Azure Machine
+Learning (AML) Studio. By leveraging Azure DevOps pipelines, you can
+manage code, run training scripts, and handle deployments directly,
+especially if you use compute resources (like Azure VMs or AKS) that are
+orchestrated through DevOps. However, this approach has some limitations
+and may require significant custom setup and maintenance. Here’s a
+comparison of what can be done solely in Azure DevOps versus the
+advantages of using AML Studio:</p>
+<hr />
+<h3
+id="project-without-azure-machine-learning-studio-using-azure-devops-only">1.
+<strong>Project Without Azure Machine Learning Studio</strong> (Using
+Azure DevOps Only)</h3>
+<p>Using only Azure DevOps, you can build and run a machine learning
+workflow by doing the following:</p>
+<h4 id="core-components-in-azure-devops">Core Components in Azure
+DevOps</h4>
+<ol type="1">
+<li><p><strong>Source Code Management and Version Control</strong>:</p>
+<ul>
+<li>Use Git repositories in Azure DevOps to manage and version control
+your ML code and configuration files.</li>
+</ul></li>
+<li><p><strong>Pipeline Orchestration</strong>:</p>
+<ul>
+<li>Set up Azure DevOps pipelines to automate the steps of an ML
+workflow, including data processing, training, and testing. These
+pipelines can use shell scripts or Docker containers to run your
+training code on Azure compute resources or external cloud
+resources.</li>
+</ul></li>
+<li><p><strong>Environment and Dependency Management</strong>:</p>
+<ul>
+<li>Use Docker to create consistent environments for training, and
+manage dependencies directly within your DevOps pipelines.</li>
+</ul></li>
+<li><p><strong>Model Artifact Storage</strong>:</p>
+<ul>
+<li>Store trained models in Azure Artifacts or other storage services
+(e.g., Azure Blob Storage) as files, and manually manage versioning and
+metadata.</li>
+</ul></li>
+<li><p><strong>Model Deployment</strong>:</p>
+<ul>
+<li>Set up DevOps pipelines to deploy models to Azure Kubernetes Service
+(AKS), Azure App Service, or other deployment targets, potentially using
+tools like Docker for containerization and Kubernetes for
+orchestration.</li>
+</ul></li>
+<li><p><strong>Manual Tracking and Experimentation</strong>:</p>
+<ul>
+<li>Track metrics and logs using custom scripts or third-party tools
+(like MLflow, which you can integrate with DevOps for experiment
+tracking), but this is more manual and less integrated compared to
+AML.</li>
+</ul></li>
+</ol>
+<p><strong>Limitations</strong>:</p>
+<ul>
+<li><strong>Limited Experiment Tracking</strong>: Azure DevOps doesn’t
+have built-in tools for tracking experiments, hyperparameters, and
+performance metrics, which are critical for ML.</li>
+<li><strong>No Model Registry</strong>: DevOps doesn’t have a native
+model registry, so you would need to use external storage solutions for
+model versioning and manual tracking.</li>
+<li><strong>Resource Management Challenges</strong>: Running large-scale
+ML tasks in DevOps pipelines can be challenging without the resource
+management, compute scaling, and optimization that AML offers.</li>
+</ul>
+<hr />
+<h3 id="advantages-of-using-azure-machine-learning-studio-aml-studio">2.
+<strong>Advantages of Using Azure Machine Learning Studio (AML
+Studio)</strong></h3>
+<p>Azure Machine Learning Studio is specifically designed for managing
+end-to-end machine learning workflows, making it easier and more
+efficient than using only DevOps. Here’s why:</p>
+<h4 id="key-benefits-of-aml-studio">Key Benefits of AML Studio</h4>
+<ol type="1">
+<li><p><strong>Experiment Tracking and Metrics Logging</strong>:</p>
+<ul>
+<li>AML provides <strong>built-in experiment tracking</strong> that
+automatically logs parameters, metrics, and outputs from each run,
+making it easier to compare model performance across different
+experiments.</li>
+<li>The AML UI offers visualizations of runs, which makes analyzing
+results faster and more intuitive than managing logs manually in
+DevOps.</li>
+</ul></li>
+<li><p><strong>Managed Model Registry</strong>:</p>
+<ul>
+<li>AML includes a <strong>model registry</strong> that version-controls
+models, tracks dependencies, and records model metadata (e.g., the
+dataset used, metrics, etc.), allowing for seamless management of
+multiple model versions.</li>
+<li>This registry directly integrates with deployment workflows, making
+it easier to promote models to production.</li>
+</ul></li>
+<li><p><strong>Automated Machine Learning (AutoML)</strong>:</p>
+<ul>
+<li>AML offers <strong>Automated Machine Learning (AutoML)</strong>,
+which automates feature engineering, model selection, and hyperparameter
+tuning. This can significantly speed up model development for structured
+data problems.</li>
+</ul></li>
+<li><p><strong>Built-in Hyperparameter Tuning</strong>:</p>
+<ul>
+<li>AML provides tools to perform <strong>hyperparameter tuning</strong>
+as a managed service, offering a streamlined and automated way to find
+the best parameters for your models.</li>
+<li>You can run parallel trials with optimized resource management,
+saving time and reducing costs.</li>
+</ul></li>
+<li><p><strong>Compute Management and Scaling</strong>:</p>
+<ul>
+<li>AML lets you manage compute clusters (e.g., Azure Machine Learning
+Compute, AKS) that can autoscale based on demand, which is efficient for
+training large models or handling multiple experiments.</li>
+<li>You can use spot instances for cost savings and define different
+compute targets for training, evaluation, and deployment.</li>
+</ul></li>
+<li><p><strong>Data and Dataset Management</strong>:</p>
+<ul>
+<li>AML has built-in support for managing datasets, including
+versioning, snapshots, and access control, making it easier to manage
+large-scale data and avoid data drift.</li>
+<li>Data stored as AML Datasets can be directly used across different
+runs, enabling consistent data access across experiments.</li>
+</ul></li>
+<li><p><strong>Model Deployment and MLOps Integration</strong>:</p>
+<ul>
+<li>AML simplifies <strong>model deployment</strong> with managed
+endpoints, supporting various deployment targets (e.g., AKS, ACI, Azure
+Functions).</li>
+<li>With the AML deployment API, you can deploy directly from the model
+registry, ensuring reproducibility and traceability.</li>
+<li>AML integrates with Azure DevOps to create MLOps workflows,
+supporting approval gates, rollback options, and production monitoring,
+all with strong DevOps integration.</li>
+</ul></li>
+<li><p><strong>Integrated Monitoring and Fairness/Bias
+Assessment</strong>:</p>
+<ul>
+<li>AML includes features for <strong>model monitoring</strong>,
+fairness, and bias assessment, particularly useful in production
+settings where model accountability and performance tracking are
+crucial.</li>
+<li>Model drift detection and automated retraining workflows are also
+supported within AML, allowing proactive model management.</li>
+</ul></li>
+</ol>
+<h4 id="why-combine-aml-and-azure-devops">Why Combine AML and Azure
+DevOps?</h4>
+<p>Using AML Studio for ML-specific tasks and Azure DevOps for CI/CD
+orchestration and approvals creates a streamlined MLOps pipeline:</p>
+<ul>
+<li><strong>AML Studio</strong> handles the data preparation,
+experimentation, model tracking, and model registration, providing a
+structured environment for all ML tasks.</li>
+<li><strong>Azure DevOps</strong> triggers and orchestrates the AML
+pipelines, manages approval workflows, and handles deployment to
+production environments.</li>
+</ul>
+<hr />
+<h3
+id="summary-choosing-between-aml-studio-and-azure-devops-alone">Summary:
+Choosing Between AML Studio and Azure DevOps Alone</h3>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 28%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Feature</strong></th>
+<th><strong>Azure DevOps Alone</strong></th>
+<th><strong>Azure DevOps + AML Studio</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Experiment Tracking</td>
+<td>Manual or external tools required</td>
+<td>Built-in experiment tracking and visualization</td>
+</tr>
+<tr>
+<td>Model Registry</td>
+<td>Manual tracking and storage</td>
+<td>Built-in model registry with versioning and metadata</td>
+</tr>
+<tr>
+<td>Hyperparameter Tuning</td>
+<td>Custom scripts needed</td>
+<td>Managed hyperparameter tuning</td>
+</tr>
+<tr>
+<td>Compute Scaling and Management</td>
+<td>Requires manual setup and maintenance</td>
+<td>Managed compute clusters with autoscaling</td>
+</tr>
+<tr>
+<td>Data and Dataset Management</td>
+<td>No native dataset management</td>
+<td>Built-in dataset versioning, management, and consistency checks</td>
+</tr>
+<tr>
+<td>Model Deployment</td>
+<td>Custom deployment steps</td>
+<td>Managed deployment options with simplified API</td>
+</tr>
+<tr>
+<td>Monitoring and Fairness Checks</td>
+<td>Custom monitoring setup required</td>
+<td>Built-in model drift, bias, and fairness assessment</td>
+</tr>
+</tbody>
+</table>
+<p>Using Azure DevOps alone may work for simple ML workflows, but Azure
+Machine Learning Studio adds significant value for machine learning
+projects by reducing the manual work, providing a seamless interface for
+ML tasks, and enabling easier scaling and monitoring of experiments and
+models.</p>
+<h2 id="question-6">Question 6</h2>
+<p>Suppose I’m working on a team where the only people who use our
+models to make inferences are us. So far, we haven’t deployed any models
+that other people can use. We are the only people using the models we
+have trained. Many of the examples I see online about what MLOps is
+useful for is presented in the context of teams who deploy models that
+others can use. What do you think about this? Do we need to have
+separate environments if we’re the only ones who are using our models to
+generate inferences (i.e., predictions)?</p>
+<h2 id="response-4">Response</h2>
+<p>If your team is the only one using the models for inference, and
+there are no external users or clients relying on these predictions,
+then your MLOps needs and the complexity of your setup may indeed be
+simpler than for a team deploying models for broader use. However, there
+are still some MLOps practices that can be valuable even in this
+internal-use scenario, particularly when it comes to
+<strong>reproducibility, scalability, and model reliability</strong>.
+Let’s break down some considerations:</p>
+<h3 id="environment-isolation-and-version-control">1.
+<strong>Environment Isolation and Version Control</strong></h3>
+<ul>
+<li><strong>Environment Consistency</strong>: Even if your team is the
+only user of the models, ensuring environment consistency (for example,
+with Docker or virtual environments) helps avoid “it works on my
+machine” issues. This is especially important if team members are using
+different machines or compute clusters.</li>
+<li><strong>Development vs. Production-Like Environments</strong>: While
+you may not need a fully isolated production environment, having at
+least a <strong>“production-like” environment</strong> helps ensure that
+models behave the same way in your testing and operational stages as
+they do in development.</li>
+<li><strong>Version Control</strong>: Versioning models, data, and code
+is essential for reproducibility, regardless of whether others use the
+models. This practice helps you track the versions of models and
+datasets associated with specific outputs, allowing you to revert or
+reproduce results if needed.</li>
+</ul>
+<h3 id="pipeline-automation-and-reproducibility">2. <strong>Pipeline
+Automation and Reproducibility</strong></h3>
+<ul>
+<li>MLOps practices like pipeline automation (e.g., with Azure DevOps or
+AML pipelines) can still benefit your team by making the ML workflow
+<strong>repeatable</strong>. This ensures that the model training,
+evaluation, and inference steps can be reproduced, which is helpful if
+new data is incorporated or models need retraining.</li>
+<li>Automated pipelines make it easy for other team members to rerun or
+update the process without manually configuring each step, which
+improves collaboration and reduces the chances of error.</li>
+</ul>
+<h3 id="experiment-tracking-and-model-management">3. <strong>Experiment
+Tracking and Model Management</strong></h3>
+<ul>
+<li>Even if only your team uses the models, <strong>experiment
+tracking</strong> (logging metrics, hyperparameters, data versions, and
+model outputs) is valuable for keeping track of which model versions and
+data produced specific results.</li>
+<li>Tracking experiments and managing model versions ensure that you can
+analyze the outcomes, evaluate different models, and easily access past
+models if you need to revert due to performance issues.</li>
+</ul>
+<h3 id="testing-and-validation-of-models">4. <strong>Testing and
+Validation of Models</strong></h3>
+<ul>
+<li><strong>Model Testing</strong>: Before using models in any
+decision-making process, it’s important to test and validate them, even
+in internal settings. For example, it’s beneficial to create thresholds
+or benchmarks for model performance and ensure the model meets them
+before using it operationally.</li>
+<li><strong>Validation Gates</strong>: If there’s a risk of model
+performance degrading over time, you could still introduce minimal
+validation gates to make sure models meet certain quality standards
+before they’re used for inference. This can be as simple as setting up a
+threshold for key metrics (like accuracy or F1 score) that models must
+meet to be considered acceptable.</li>
+</ul>
+<h3 id="separate-environments-do-you-really-need-them">5.
+<strong>Separate Environments: Do You Really Need Them?</strong></h3>
+<ul>
+<li>Since your team is the only user, you may not need fully isolated
+environments (like development, staging, and production) as you would if
+deploying models for wider use.</li>
+<li>However, it’s still advisable to have <strong>at least two
+environments</strong>:
+<ul>
+<li><strong>Development</strong>: For experimentation, feature
+development, and training new models.</li>
+<li><strong>Production-Like</strong>: This environment mimics the
+settings of your intended inference environment and allows you to test
+models in conditions similar to where they’ll ultimately be used.</li>
+</ul></li>
+<li>Having at least a separate production-like environment prevents bugs
+or unintended consequences from experimental code and ensures that
+models are tested in a consistent environment before being used for
+final predictions.</li>
+</ul>
+<h3 id="data-and-model-drift-monitoring">6. <strong>Data and Model Drift
+Monitoring</strong></h3>
+<ul>
+<li>Even if models are only used internally, monitoring for <strong>data
+drift and model drift</strong> can be valuable to detect changes in data
+patterns or model performance over time. This is especially relevant if
+your data changes frequently or if model performance could degrade due
+to evolving patterns.</li>
+<li>Monitoring alerts can be set up to notify you when retraining might
+be necessary, reducing the chances of using outdated models.</li>
+</ul>
+<h3 id="documentation-and-knowledge-sharing">7. <strong>Documentation
+and Knowledge Sharing</strong></h3>
+<ul>
+<li>Internal-use models can still benefit greatly from
+<strong>documentation</strong> around pipelines, model metrics,
+experiment results, and best practices.</li>
+<li>If team members change or if you need to revisit models later,
+documented workflows ensure that everyone has the context and
+understanding needed to work with existing models and pipelines.</li>
+</ul>
+<h3 id="when-to-add-more-complex-mlops-practices">When to Add More
+Complex MLOps Practices</h3>
+<p>If your team’s needs grow, or if you start providing models for other
+users or teams, expanding the MLOps setup to include stricter controls,
+multiple environments, and formalized deployment pipelines can add
+value. For instance, if your models become critical to business
+decisions or are exposed to users outside your team, having a more
+robust MLOps pipeline with multiple environments, approval gates, and
+real-time monitoring becomes essential.</p>
+<h3
+id="summary-do-you-need-full-mlops-with-separate-environments">Summary:
+Do You Need Full MLOps with Separate Environments?</h3>
+<p>In your case, where models are used only by your team:</p>
+<ul>
+<li><strong>A simplified MLOps pipeline</strong> is often enough,
+focusing on experiment tracking, model versioning, automated training
+pipelines, and reproducibility.</li>
+<li><strong>Two environments</strong> (development and production-like)
+should suffice to test models in a controlled environment before they’re
+used for operational predictions.</li>
+<li><strong>Additional steps</strong> like validation checks and data
+drift monitoring can be selectively added to maintain model quality over
+time without introducing unnecessary complexity.</li>
+</ul>
+<p>Using these practices allows you to maintain reliability,
+reproducibility, and consistency without needing the full complexity of
+MLOps that a public-facing model might require.</p>
+<h2 id="question-7">Question 7</h2>
+<p>Okay, this is starting to make sense. But let’s dive into some of
+these details more deeply. Let’s suppose that we have two environments.
+One is a development environment and the other is a “production-like”
+environment. Suppose we are using Azure Machine Learning studio and
+Azure DevOps. Would we want a separate AML workspace for the development
+environment and the production environment? If so, what sort of stuff
+would happen in the development environment? What sort of stuff would
+happen in the production environment?</p>
+<h2 id="response-5">Response</h2>
+<p>Yes, if you’re using both <strong>Azure Machine Learning (AML)
+Studio</strong> and <strong>Azure DevOps</strong> with separate
+development and production-like environments, it’s a good idea to have
+two separate AML workspaces — one for development and one for
+production. Each workspace can be configured to have different access
+controls, resource settings, and isolation levels, ensuring that
+experimentation and testing in development don’t interfere with stable
+operations in production.</p>
+<p>Let’s break down what each environment would contain and what
+activities typically happen in each.</p>
+<hr />
+<h3 id="development-environment-development-aml-workspace">1.
+<strong>Development Environment (Development AML
+Workspace)</strong></h3>
+<p>The <strong>development environment</strong> (development AML
+workspace) is where experimentation, prototyping, and testing of new
+ideas happen. In this workspace, data scientists and ML engineers have
+the flexibility to iterate quickly, try different approaches, and tune
+models without worrying about affecting production. This environment can
+be more permissive and can focus on agility.</p>
+<h4 id="key-activities-in-the-development-aml-workspace">Key Activities
+in the Development AML Workspace</h4>
+<ol type="1">
+<li><p><strong>Experimentation and Prototyping</strong>:</p>
+<ul>
+<li>Data scientists can experiment with different models, architectures,
+and feature engineering techniques.</li>
+<li>They can test various datasets, hyperparameters, and configurations,
+logging results as they go.</li>
+</ul></li>
+<li><p><strong>Data Preparation and Feature Engineering</strong>:</p>
+<ul>
+<li>Datasets may be modified, preprocessed, or augmented in the
+development environment.</li>
+<li>New feature engineering pipelines or data transformations are tested
+here.</li>
+</ul></li>
+<li><p><strong>Experiment Tracking and Hyperparameter
+Tuning</strong>:</p>
+<ul>
+<li>AML’s experiment tracking is heavily used here to track runs, log
+metrics, and compare results across different model configurations.</li>
+<li>Hyperparameter tuning experiments are set up and run to identify the
+best-performing configurations.</li>
+</ul></li>
+<li><p><strong>Testing and Validation</strong>:</p>
+<ul>
+<li>Code modules (e.g., data transformation functions or model training
+scripts) are tested with unit and integration tests.</li>
+<li>Basic model validation checks (accuracy, precision, recall, etc.)
+are performed to ensure models are meeting baseline requirements.</li>
+</ul></li>
+<li><p><strong>Artifact Management and Pre-Deployment</strong>:</p>
+<ul>
+<li>Models that pass initial validation are saved as artifacts, either
+within the development workspace or exported to storage for potential
+deployment.</li>
+<li>These artifacts are not yet considered final or production-ready but
+can be reviewed by other team members.</li>
+</ul></li>
+<li><p><strong>Automated Pipelines</strong>:</p>
+<ul>
+<li>Training pipelines may be automated in the development environment
+using AML pipelines to ensure that experiments are repeatable.</li>
+<li>These pipelines can be triggered manually or automatically on
+data/code changes but are isolated from production pipelines.</li>
+</ul></li>
+</ol>
+<h4 id="advantages-of-a-separate-development-aml-workspace">Advantages
+of a Separate Development AML Workspace</h4>
+<ul>
+<li><strong>Isolated Resource Usage</strong>: Experiments in development
+won’t consume resources in the production environment, avoiding
+unintended costs or performance impacts on production.</li>
+<li><strong>Flexibility</strong>: Data scientists have the freedom to
+experiment and fail fast without strict requirements, making it easier
+to try out novel techniques or approaches.</li>
+<li><strong>Lowered Risk</strong>: The separate environment reduces the
+risk of accidental model or data changes affecting production.</li>
+</ul>
+<hr />
+<h3 id="production-like-environment-production-aml-workspace">2.
+<strong>Production-Like Environment (Production AML
+Workspace)</strong></h3>
+<p>The <strong>production-like environment</strong> (production AML
+workspace) is intended to mimic a production setting closely. It’s the
+environment where “approved” models are tested under conditions similar
+to how they will be used in an actual production environment. This
+environment focuses on <strong>stability, reproducibility, and quality
+control</strong> and enforces more strict controls than the development
+environment.</p>
+<h4 id="key-activities-in-the-production-aml-workspace">Key Activities
+in the Production AML Workspace</h4>
+<ol type="1">
+<li><p><strong>Model Promotion and Approval</strong>:</p>
+<ul>
+<li>Once models in the development environment meet the necessary
+performance metrics and are ready for production, they are promoted to
+the production workspace.</li>
+<li>This promotion can happen through an Azure DevOps pipeline, which
+ensures that only approved models make it into the production
+environment.</li>
+</ul></li>
+<li><p><strong>Final Testing and Validation</strong>:</p>
+<ul>
+<li>Models are tested in a production-like setting with controlled data
+to verify they meet strict performance requirements.</li>
+<li>This includes additional checks, like data drift analysis,
+robustness tests, or bias/fairness tests if relevant to ensure the model
+will perform well in production.</li>
+</ul></li>
+<li><p><strong>Deployment Preparation</strong>:</p>
+<ul>
+<li>Models in the production environment can be prepared for deployment,
+including packaging with any necessary dependencies and
+containerization.</li>
+<li>This step includes running integration tests to ensure the model
+functions correctly in the production pipeline and with production
+datasets.</li>
+</ul></li>
+<li><p><strong>Model Registry and Version Control</strong>:</p>
+<ul>
+<li>Only the production workspace should register final,
+production-ready models. This creates a clear separation between
+experimental models (stored in development) and approved models ready
+for inference.</li>
+<li>The production model registry allows version control and
+traceability for models, making it easy to deploy specific versions or
+roll back if necessary.</li>
+</ul></li>
+<li><p><strong>Inference and Scoring Pipelines</strong>:</p>
+<ul>
+<li>Production AML workspaces often include scoring or inference
+pipelines that automate the process of making predictions on new
+data.</li>
+<li>These pipelines can be integrated with Azure DevOps or other
+services to ensure models are available for batch or real-time
+inference.</li>
+</ul></li>
+<li><p><strong>Monitoring and Logging</strong>:</p>
+<ul>
+<li>The production-like environment can include monitoring to track
+model performance over time, detecting any performance degradation or
+data drift.</li>
+<li>This includes logging for key metrics, inference times, and
+potential issues, making it easier to maintain model health.</li>
+</ul></li>
+</ol>
+<h4 id="advantages-of-a-separate-production-aml-workspace">Advantages of
+a Separate Production AML Workspace</h4>
+<ul>
+<li><strong>Stability and Reproducibility</strong>: By isolating
+production-like operations, you can ensure that only vetted,
+reproducible models are used for final predictions, reducing the risk of
+issues.</li>
+<li><strong>Controlled Access and Security</strong>: Access can be
+restricted to allow only certain team members or workflows to modify
+production-ready models, improving security and compliance.</li>
+<li><strong>Operational Monitoring</strong>: The production workspace
+enables monitoring and performance tracking in a controlled environment,
+making it easier to detect and resolve issues.</li>
+</ul>
+<hr />
+<h3 id="how-azure-devops-supports-both-environments">How Azure DevOps
+Supports Both Environments</h3>
+<p>Azure DevOps can orchestrate workflows that manage the separation
+between development and production AML workspaces:</p>
+<ol type="1">
+<li><p><strong>CI/CD Pipelines</strong>:</p>
+<ul>
+<li>In the development environment, a DevOps CI pipeline can trigger
+training workflows, run tests, and push approved models to the model
+registry within the development AML workspace.</li>
+<li>When a model meets the necessary performance benchmarks and is ready
+for production, a CD pipeline can promote it from the development
+workspace to the production workspace.</li>
+</ul></li>
+<li><p><strong>Environment-Specific Pipelines</strong>:</p>
+<ul>
+<li>DevOps pipelines can target specific environments, making it easy to
+define different steps and requirements for development versus
+production.</li>
+<li>For example, development pipelines may skip certain tests, while
+production pipelines enforce stricter validation, testing, and approval
+gates.</li>
+</ul></li>
+<li><p><strong>Automated Promotion Process</strong>:</p>
+<ul>
+<li>Using Azure DevOps, you can set up an automated process where models
+that meet performance criteria are reviewed and, if approved, moved to
+the production AML workspace.</li>
+<li>This ensures a controlled handoff, reducing the chances of unvetted
+models being used in production-like settings.</li>
+</ul></li>
+<li><p><strong>Access Control and Permissions</strong>:</p>
+<ul>
+<li>DevOps can help enforce permissions by controlling who can trigger
+specific pipelines or access specific workspaces.</li>
+<li>Only certain users or service accounts might be allowed to deploy
+models to production, adding an extra layer of security.</li>
+</ul></li>
+</ol>
+<h3 id="summary-what-happens-in-each-aml-workspace">Summary: What
+Happens in Each AML Workspace</h3>
+<table>
+<colgroup>
+<col style="width: 51%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Development AML Workspace</strong></th>
+<th><strong>Production AML Workspace</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Experimentation, prototyping, and testing</td>
+<td>Final validation and approval</td>
+</tr>
+<tr>
+<td>Data preparation and feature engineering testing</td>
+<td>Model registry with production-ready versions</td>
+</tr>
+<tr>
+<td>Experiment tracking and hyperparameter tuning</td>
+<td>Inference and scoring pipelines</td>
+</tr>
+<tr>
+<td>Initial testing and validation</td>
+<td>Monitoring, data drift detection, and logging</td>
+</tr>
+<tr>
+<td>Flexible, lower resource constraints</td>
+<td>Strict controls, high stability requirements</td>
+</tr>
+</tbody>
+</table>
+<p>In short, the <strong>development environment</strong> is for
+experimentation and initial validation, while the
+<strong>production-like environment</strong> ensures stable,
+reproducible, and vetted models ready for real-world use. This
+separation allows your team to experiment freely without compromising
+production stability, while Azure DevOps provides a streamlined process
+for model promotion and controlled deployment.</p>
+<h2 id="question-8">Question 8</h2>
+<p>Suppose that we are using our models to make batch inferences. When
+we make “real” inferences (i.e., inferences that may get used in
+business decisions), we should be using the model that has made its way
+to the production like environment? If so, where does the “scoring data”
+live? Should we “register” it anywhere?</p>
+<h2 id="response-6">Response</h2>
+<p>Yes, when making “real” inferences that may impact business
+decisions, you should use the model that has made its way to the
+<strong>production-like environment</strong>. This ensures that the
+inferences are generated using a vetted, reproducible, and stable model
+version, minimizing the risk of unintended behavior.</p>
+<p>Regarding the “scoring data” (the data you want to generate
+predictions on), there are a few best practices to consider, especially
+around data management, versioning, and traceability.</p>
+<hr />
+<h3 id="where-should-the-scoring-data-live">1. <strong>Where Should the
+Scoring Data Live?</strong></h3>
+<ul>
+<li><strong>Centralized Storage</strong>: Scoring data should typically
+live in a centralized storage location, such as <strong>Azure Blob
+Storage, Azure Data Lake Storage</strong>, or a database. This makes it
+easily accessible to the production AML environment and ensures data
+consistency.</li>
+<li><strong>Access Control and Security</strong>: Since scoring data may
+contain sensitive information, it’s essential to set up access controls
+and data encryption to ensure that only authorized users and systems can
+access it.</li>
+</ul>
+<p>Centralized storage also helps with batch processing. For example, if
+your production AML environment runs a batch scoring job, it can
+retrieve the data directly from a designated folder or container within
+Azure Blob Storage.</p>
+<h3 id="should-you-register-scoring-data">2. <strong>Should You Register
+Scoring Data?</strong></h3>
+<ul>
+<li><strong>Yes, registering scoring data can be a valuable
+practice</strong>, especially for traceability and reproducibility.
+While it’s not strictly necessary, treating scoring data as a registered
+asset in AML (similar to training or validation datasets) has several
+benefits.</li>
+</ul>
+<p>Here’s how registering scoring data might work:</p>
+<ul>
+<li><strong>Dataset Versioning</strong>: By registering scoring data in
+AML as a dataset, you can version it, allowing you to track which
+version of the scoring data was used with each model version.</li>
+<li><strong>Lineage and Traceability</strong>: Registered datasets in
+AML maintain metadata and lineage information. This enables you to trace
+which scoring data was used in specific inference runs, making it easier
+to audit and reproduce inferences if needed.</li>
+<li><strong>Integration with Pipelines</strong>: Registered datasets can
+be directly integrated into AML pipelines, making it easy to automate
+batch scoring jobs. For example, you can set up a pipeline that
+automatically triggers a scoring job whenever a new version of the
+scoring dataset is registered.</li>
+</ul>
+<h3
+id="recommended-approach-for-batch-inference-with-registered-scoring-data">3.
+<strong>Recommended Approach for Batch Inference with Registered Scoring
+Data</strong></h3>
+<p>In a production-like environment, where batch inference jobs need to
+be controlled and reproducible, here’s a recommended approach:</p>
+<ol type="1">
+<li><p><strong>Data Ingestion and Registration</strong>:</p>
+<ul>
+<li>When new scoring data becomes available (e.g., a new batch arrives),
+upload it to the centralized storage location (e.g., Azure Blob
+Storage).</li>
+<li>Register this data as a <strong>new version</strong> of a scoring
+dataset in AML. This way, each batch of scoring data has its own
+version, which you can reference in future runs.</li>
+</ul></li>
+<li><p><strong>Pipeline for Batch Inference</strong>:</p>
+<ul>
+<li>Create an AML pipeline specifically for batch inference, which
+includes steps like data ingestion, preprocessing (if needed), model
+loading, and scoring.</li>
+<li>Configure the pipeline to accept the registered scoring dataset as
+an input, so each time you run the pipeline, you specify which version
+of the scoring data to use.</li>
+</ul></li>
+<li><p><strong>Model Loading and Scoring</strong>:</p>
+<ul>
+<li>In the pipeline, retrieve the production-ready model from the AML
+model registry. The model registry maintains version control, so you can
+ensure that the correct, approved model version is always used for batch
+scoring.</li>
+<li>Perform batch inference on the scoring data, generating predictions
+or classifications.</li>
+</ul></li>
+<li><p><strong>Output and Storage of Results</strong>:</p>
+<ul>
+<li>After scoring, save the predictions in a designated storage
+location, typically within the same centralized storage where the
+original scoring data resides.</li>
+<li>You can also register the scored results as a new dataset in AML,
+which helps with traceability and enables downstream analytics if
+needed.</li>
+</ul></li>
+</ol>
+<h3 id="why-registering-scoring-data-and-results-adds-value">4.
+<strong>Why Registering Scoring Data and Results Adds
+Value</strong></h3>
+<ul>
+<li><strong>Auditability</strong>: Registered scoring data makes it easy
+to trace what data was used to generate specific inference results,
+which is important for accountability in business decision-making.</li>
+<li><strong>Reproducibility</strong>: Versioned datasets allow you to
+re-run the same scoring job in the future with the exact data, which is
+useful if you need to revalidate results or debug issues.</li>
+<li><strong>Simplified Pipeline Automation</strong>: AML pipelines work
+seamlessly with registered datasets and models, allowing you to set up
+an automated process for scoring each new batch of data.</li>
+</ul>
+<h3
+id="example-workflow-for-batch-inference-with-registered-scoring-data">Example
+Workflow for Batch Inference with Registered Scoring Data</h3>
+<p>Let’s outline a sample batch inference workflow using AML and Azure
+DevOps:</p>
+<ol type="1">
+<li><p><strong>New Scoring Data Available</strong>:</p>
+<ul>
+<li>Upload the new scoring data to Azure Blob Storage (or another
+centralized storage).</li>
+<li>Register the scoring data in AML as a new version of a dataset
+called <code>ScoringData</code>.</li>
+</ul></li>
+<li><p><strong>Trigger the Inference Pipeline</strong>:</p>
+<ul>
+<li>An Azure DevOps pipeline detects the new dataset version (or is
+manually triggered when new data is available) and triggers the batch
+inference pipeline in AML.</li>
+<li>In the AML batch inference pipeline, specify the registered
+<code>ScoringData</code> dataset version as the input.</li>
+</ul></li>
+<li><p><strong>Run Batch Scoring</strong>:</p>
+<ul>
+<li>The pipeline retrieves the production-ready model from the AML model
+registry.</li>
+<li>It loads the specified version of the scoring data, processes it,
+and generates predictions.</li>
+</ul></li>
+<li><p><strong>Store and Register Results</strong>:</p>
+<ul>
+<li>Store the results (e.g., predictions) in a designated output folder
+in Azure Blob Storage.</li>
+<li>Optionally, register the scored results as a dataset in AML to track
+inferences over time.</li>
+</ul></li>
+<li><p><strong>Monitoring and Logging</strong>:</p>
+<ul>
+<li>AML can log the batch inference metrics, including execution time,
+model version used, and data version used, for traceability.</li>
+<li>Notifications can be set up in DevOps to alert stakeholders when
+batch scoring completes or if any issues arise.</li>
+</ul></li>
+</ol>
+<hr />
+<h3
+id="summary-using-production-like-environment-and-registered-scoring-data">Summary:
+Using Production-Like Environment and Registered Scoring Data</h3>
+<ol type="1">
+<li><strong>Use the production-like environment for all real
+inferences</strong>, ensuring the models are vetted, reproducible, and
+reliable for business decisions.</li>
+<li><strong>Store scoring data centrally</strong> (Azure Blob Storage or
+Data Lake), but register it as a dataset in AML to enable version
+control, traceability, and integration with batch inference
+pipelines.</li>
+<li><strong>Use a batch inference pipeline</strong> in AML for automated
+and reproducible scoring jobs, pulling models from the production AML
+model registry and using the versioned scoring dataset.</li>
+<li><strong>Store inference results</strong> in a centralized location
+and optionally register the results as a new dataset in AML for auditing
+and future analysis.</li>
+</ol>
+<p>By following this approach, you ensure that your batch inference
+process is controlled, reproducible, and easy to trace — all of which
+are valuable for both operational reliability and business
+accountability, even in an internal-use scenario.</p>
+<h2 id="question-9">Question 9</h2>
+<p>Suppose that a model is registered in our development azure ml
+workspace. How do we get that model to the production-like environment?
+Is there an easy way to “transfer” it over?</p>
+<h2 id="response-7">Response</h2>
+<p>Yes, there is a straightforward way to promote a model registered in
+your <strong>development Azure ML workspace</strong> to your
+<strong>production-like Azure ML workspace</strong>. The process
+typically involves either exporting the model artifact from the
+development workspace and importing it into the production workspace or
+using Azure DevOps to automate this promotion process. Here’s a
+step-by-step guide on how to do it, along with some automation
+options.</p>
+<hr />
+<h3 id="method-1-manual-promotion-using-the-azure-ml-sdk">Method 1:
+Manual Promotion Using the Azure ML SDK</h3>
+<p>You can use the <strong>Azure ML SDK</strong> in Python to download a
+model from the development workspace and upload it to the production
+workspace.</p>
+<h4 id="step-by-step-instructions">Step-by-Step Instructions</h4>
+<ol type="1">
+<li><p><strong>Connect to Both Workspaces</strong>:</p>
+<ul>
+<li>First, you’ll need to connect to both the development and
+production-like workspaces using their respective credentials
+(subscription ID, resource group, and workspace name).</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Model</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to the development workspace</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dev_workspace <span class="op">=</span> Workspace(subscription_id<span class="op">=</span><span class="st">&quot;your_dev_subscription_id&quot;</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                          resource_group<span class="op">=</span><span class="st">&quot;your_dev_resource_group&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                          workspace_name<span class="op">=</span><span class="st">&quot;your_dev_workspace&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to the production workspace</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>prod_workspace <span class="op">=</span> Workspace(subscription_id<span class="op">=</span><span class="st">&quot;your_prod_subscription_id&quot;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                           resource_group<span class="op">=</span><span class="st">&quot;your_prod_resource_group&quot;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                           workspace_name<span class="op">=</span><span class="st">&quot;your_prod_workspace&quot;</span>)</span></code></pre></div></li>
+<li><p><strong>Retrieve the Model from the Development
+Workspace</strong>:</p>
+<ul>
+<li>Use the model name and version to retrieve the model from the
+development workspace.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the model from the development workspace</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">&quot;your_model_name&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>model_version <span class="op">=</span> <span class="dv">1</span>  <span class="co"># Replace with the desired version</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dev_model <span class="op">=</span> Model(dev_workspace, name<span class="op">=</span>model_name, version<span class="op">=</span>model_version)</span></code></pre></div></li>
+<li><p><strong>Download the Model Artifacts</strong>:</p>
+<ul>
+<li>Download the model file(s) from the development workspace.</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download model artifacts to a local directory</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> dev_model.download(target_dir<span class="op">=</span><span class="st">&quot;./model_download&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span></code></pre></div></li>
+<li><p><strong>Register the Model in the Production
+Workspace</strong>:</p>
+<ul>
+<li>Upload the downloaded model artifacts to the production workspace,
+effectively registering it there.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Register the model in the production workspace</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>prod_model <span class="op">=</span> Model.register(workspace<span class="op">=</span>prod_workspace,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                            model_path<span class="op">=</span>model_path,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                            model_name<span class="op">=</span>model_name,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                            tags<span class="op">=</span>dev_model.tags,  <span class="co"># Transfer tags if needed</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                            description<span class="op">=</span>dev_model.description)</span></code></pre></div></li>
+<li><p><strong>Verify Model Registration</strong>:</p>
+<ul>
+<li>Confirm that the model has been registered successfully in the
+production workspace.</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Model registered in production workspace with ID: </span><span class="sc">{</span>prod_model<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div></li>
+</ol>
+<p>This manual method works well if you want to transfer models
+occasionally. However, for regular promotions, it’s recommended to set
+up an automated pipeline using Azure DevOps.</p>
+<hr />
+<h3 id="method-2-automated-promotion-with-azure-devops-pipelines">Method
+2: Automated Promotion with Azure DevOps Pipelines</h3>
+<p>If you’re using <strong>Azure DevOps</strong>, you can automate the
+model promotion process by creating a pipeline that:</p>
+<ol type="1">
+<li>Downloads the model from the development workspace.</li>
+<li>Uploads and registers it in the production workspace.</li>
+</ol>
+<h4
+id="steps-to-set-up-an-azure-devops-pipeline-for-model-promotion">Steps
+to Set Up an Azure DevOps Pipeline for Model Promotion</h4>
+<ol type="1">
+<li><p><strong>Create a Pipeline in Azure DevOps</strong>:</p>
+<ul>
+<li>Start a new pipeline in Azure DevOps, and use the <strong>Azure
+CLI</strong> or <strong>Azure ML SDK</strong> to connect to the
+workspaces.</li>
+</ul></li>
+<li><p><strong>Define Pipeline Steps for Model Download and
+Upload</strong>:</p>
+<ul>
+<li>Use the <code>azureml-sdk</code> in the pipeline to automate the
+same steps as outlined in Method 1.</li>
+<li>You can add conditional steps to ensure only approved models (e.g.,
+those that pass testing) are promoted.</li>
+</ul></li>
+</ol>
+<h4 id="sample-azure-devops-yaml-for-model-promotion">Sample Azure
+DevOps YAML for Model Promotion</h4>
+<p>Below is a sample YAML file for an Azure DevOps pipeline that
+promotes a model from the development to the production workspace.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">branches</span><span class="kw">:</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> main</span><span class="co"> # Trigger on changes to the main branch</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@0</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      pip install azureml-core</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      python promote_model.py</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install Azure ML SDK and Run Model Promotion Script&quot;</span></span></code></pre></div>
+<h4 id="sample-promote_model.py-script">Sample
+<code>promote_model.py</code> Script</h4>
+<p>Here’s what the Python script might look like for downloading the
+model from the development workspace and uploading it to the production
+workspace.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Model</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Credentials or environment variables for workspace connections</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>dev_workspace <span class="op">=</span> Workspace(subscription_id<span class="op">=</span><span class="st">&quot;your_dev_subscription_id&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                          resource_group<span class="op">=</span><span class="st">&quot;your_dev_resource_group&quot;</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                          workspace_name<span class="op">=</span><span class="st">&quot;your_dev_workspace&quot;</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>prod_workspace <span class="op">=</span> Workspace(subscription_id<span class="op">=</span><span class="st">&quot;your_prod_subscription_id&quot;</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                           resource_group<span class="op">=</span><span class="st">&quot;your_prod_resource_group&quot;</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                           workspace_name<span class="op">=</span><span class="st">&quot;your_prod_workspace&quot;</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve the model from the development workspace</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">&quot;your_model_name&quot;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>model_version <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>dev_model <span class="op">=</span> Model(dev_workspace, name<span class="op">=</span>model_name, version<span class="op">=</span>model_version)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Download model locally</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> dev_model.download(target_dir<span class="op">=</span><span class="st">&quot;./model_download&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Register the model in the production workspace</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>prod_model <span class="op">=</span> Model.register(workspace<span class="op">=</span>prod_workspace,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>                            model_path<span class="op">=</span>model_path,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                            model_name<span class="op">=</span>model_name,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>                            tags<span class="op">=</span>dev_model.tags,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>                            description<span class="op">=</span>dev_model.description)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Model registered in production workspace with ID: </span><span class="sc">{</span>prod_model<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p>With this approach, you can configure Azure DevOps to trigger this
+pipeline whenever a model is approved in the development
+environment.</p>
+<hr />
+<h3
+id="method-3-using-azure-machine-learning-model-registry-with-multiple-environments-advanced">Method
+3: Using Azure Machine Learning Model Registry with Multiple
+Environments (Advanced)</h3>
+<p>In more advanced setups, you can create a <strong>centralized model
+registry</strong> that both development and production workspaces
+access. This allows you to register the model in one workspace and then
+promote it within the same registry to a production stage.</p>
+<ol type="1">
+<li><strong>Create Centralized Model Registry</strong>:
+<ul>
+<li>Use a single AML workspace as the primary model registry.</li>
+</ul></li>
+<li><strong>Promote Across Stages</strong>:
+<ul>
+<li>You can tag models to indicate stages (e.g., <code>staging</code>,
+<code>production</code>) or promote them by updating their metadata in
+the centralized registry.</li>
+<li>This approach allows you to manage multiple environments without
+needing to duplicate model registrations.</li>
+</ul></li>
+</ol>
+<p>This method works well for larger setups but requires careful
+management of access controls and permissions to prevent accidental
+overwrites in production.</p>
+<hr />
+<h3 id="summary-of-promotion-methods">Summary of Promotion Methods</h3>
+<ol type="1">
+<li><strong>Manual Promotion (Method 1)</strong>: Good for occasional
+transfers. Use the Azure ML SDK to manually download and upload the
+model.</li>
+<li><strong>Automated Promotion with Azure DevOps (Method 2)</strong>:
+Set up a DevOps pipeline to automate model promotion, ideal for teams
+advancing in MLOps maturity.</li>
+<li><strong>Centralized Model Registry (Method 3)</strong>: Suitable for
+advanced setups with centralized control, allowing models to be tagged
+or staged directly.</li>
+</ol>
+<p>By following these steps, you can streamline the process of moving a
+model from development to production, ensuring that only validated
+models are used in your production-like environment.</p>
+<h2 id="question-10">Question 10</h2>
+<p>Suppose we have an Azure Repo that contains all of the code we are
+using. Can you help me come up with a folder structure and explain what
+all gets stored in the repo?</p>
+<h2 id="response-8">Response</h2>
+<p>Absolutely! A well-organized folder structure is essential for
+managing machine learning projects, especially as you implement MLOps
+practices. A clear structure helps keep code, configurations, models,
+data, and documentation organized, making it easier to manage,
+collaborate, and scale.</p>
+<p>Here’s a suggested folder structure for an MLOps project in Azure
+Repos, along with an explanation of what each folder contains.</p>
+<hr />
+<h3 id="suggested-folder-structure-for-mlops-project">Suggested Folder
+Structure for MLOps Project</h3>
+<pre><code>├── .azure-pipelines/     # Pipeline configurations for Azure DevOps
+├── data/                 # Data management and scripts for data preprocessing
+│   ├── raw/              # Raw datasets (external, not stored directly in repo)
+│   ├── processed/        # Processed datasets ready for modeling (external, not stored directly in repo)
+│   └── data_prep.py      # Scripts for data ingestion and preprocessing
+├── experiments/          # Experimentation notebooks and initial scripts
+├── models/               # Trained models and model management
+│   ├── model_registry/   # Directory for model versioning and saved artifacts
+│   └── model_code/       # Model training and evaluation scripts
+├── src/                  # Source code for the ML pipeline and project-specific modules
+│   ├── features/         # Feature engineering and transformation functions
+│   ├── training/         # Model training pipeline scripts
+│   ├── inference/        # Model inference and scoring scripts
+│   └── utils/            # Utility functions (e.g., logging, metric calculation)
+├── tests/                # Unit tests and integration tests
+│   ├── data_tests/       # Tests for data validation and preprocessing functions
+│   ├── model_tests/      # Tests for model training, evaluation, and scoring functions
+│   └── pipeline_tests/   # End-to-end tests for the ML pipeline
+├── config/               # Configuration files
+│   ├── env/              # Environment and dependency configurations
+│   ├── pipeline_config.yaml  # Configurations for ML pipeline (e.g., parameters, paths)
+│   └── model_config.yaml     # Model hyperparameters and training configuration
+├── notebooks/            # Jupyter notebooks for exploratory analysis and prototyping
+├── scripts/              # Scripts for managing the end-to-end pipeline
+│   ├── train_model.py    # Script to run the model training
+│   ├── score_model.py    # Script to run model scoring/inference
+│   ├── deploy_model.py   # Script to deploy model to production
+│   └── monitor_model.py  # Script to monitor model performance in production
+├── README.md             # Project overview and instructions
+└── requirements.txt      # List of project dependencies</code></pre>
+<h3 id="explanation-of-each-folder">Explanation of Each Folder</h3>
+<h4 id="azure-pipelines"><code>.azure-pipelines/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Contains Azure DevOps pipeline
+configuration files (YAML) for CI/CD pipelines.</li>
+<li><strong>Files</strong>: Pipeline definitions for training,
+validation, deployment, and monitoring workflows.</li>
+<li><strong>Example Files</strong>:
+<ul>
+<li><code>ci_pipeline.yaml</code>: Defines continuous integration
+pipeline to run tests.</li>
+<li><code>cd_pipeline.yaml</code>: Defines continuous deployment
+pipeline for model deployment and monitoring.</li>
+</ul></li>
+</ul>
+<h4 id="data"><code>data/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Contains data ingestion and preprocessing
+scripts.</li>
+<li><strong>Folders</strong>:
+<ul>
+<li><code>raw/</code>: Placeholder for raw datasets (not stored directly
+in the repo). Instead, store paths or references to data storage
+locations (like Azure Blob Storage).</li>
+<li><code>processed/</code>: Placeholder for processed datasets (also
+not stored directly in the repo).</li>
+</ul></li>
+<li><strong>Scripts</strong>:
+<ul>
+<li><code>data_prep.py</code>: Scripts to load, clean, and preprocess
+raw data and prepare it for model training.</li>
+</ul></li>
+</ul>
+<h4 id="experiments"><code>experiments/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: A space for initial exploratory scripts,
+experiments, and prototyping before code is moved to the main project
+structure.</li>
+<li><strong>Contents</strong>:
+<ul>
+<li>Jupyter notebooks or scripts used for exploring data, prototyping
+models, and testing ideas.</li>
+<li>Experimental models and outputs (typically not
+production-ready).</li>
+</ul></li>
+</ul>
+<h4 id="models"><code>models/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Holds all model-related files, including
+training scripts and model artifacts.</li>
+<li><strong>Subfolders</strong>:
+<ul>
+<li><code>model_registry/</code>: Contains saved versions of trained
+models (metadata only, or pointers to Azure ML model registry).</li>
+<li><code>model_code/</code>: Scripts and configurations for model
+training, tuning, and evaluation.</li>
+</ul></li>
+<li><strong>Files</strong>:
+<ul>
+<li><code>train.py</code>, <code>evaluate.py</code>: Main scripts to
+train and evaluate models.</li>
+</ul></li>
+</ul>
+<h4 id="src"><code>src/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Holds modular, reusable source code
+specific to the ML pipeline, often organized by function.</li>
+<li><strong>Subfolders</strong>:
+<ul>
+<li><code>features/</code>: Scripts for feature engineering, such as
+functions for transforming raw data into features.</li>
+<li><code>training/</code>: Main model training scripts that might
+include the training loop and any associated functions.</li>
+<li><code>inference/</code>: Code for inference and scoring, usually the
+code that gets packaged with the deployed model.</li>
+<li><code>utils/</code>: Utility functions, such as logging, data
+validation, and metric calculations.</li>
+</ul></li>
+<li><strong>Files</strong>: Python modules, organized to support the ML
+pipeline and structured for reuse across pipelines.</li>
+</ul>
+<h4 id="tests"><code>tests/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Contains tests to ensure code quality,
+correctness, and robustness.</li>
+<li><strong>Subfolders</strong>:
+<ul>
+<li><code>data_tests/</code>: Tests for data loading, cleaning, and
+preprocessing functions.</li>
+<li><code>model_tests/</code>: Tests for model training, evaluation, and
+inference.</li>
+<li><code>pipeline_tests/</code>: End-to-end tests for verifying that
+the entire ML pipeline works as expected.</li>
+</ul></li>
+<li><strong>Files</strong>: Test files for each component, often
+organized using a test framework (e.g., <code>pytest</code>).</li>
+</ul>
+<h4 id="config"><code>config/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Stores configuration files that define
+parameters, hyperparameters, and environment settings.</li>
+<li><strong>Files</strong>:
+<ul>
+<li><code>pipeline_config.yaml</code>: Configurations for the pipeline,
+such as data paths, output directories, and batch sizes.</li>
+<li><code>model_config.yaml</code>: Model-specific parameters, such as
+learning rates, number of epochs, etc.</li>
+<li><code>env/</code>: Environment files (e.g., <code>Dockerfile</code>,
+<code>conda.yaml</code>) for consistent environments across development
+and production.</li>
+</ul></li>
+</ul>
+<h4 id="notebooks"><code>notebooks/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Holds Jupyter notebooks for data
+exploration, EDA (Exploratory Data Analysis), feature engineering, and
+initial prototyping.</li>
+<li><strong>Contents</strong>: Notebooks used to analyze data, visualize
+results, or test new features. These are often archived or converted to
+scripts once code becomes stable.</li>
+</ul>
+<h4 id="scripts"><code>scripts/</code></h4>
+<ul>
+<li><strong>Purpose</strong>: Contains high-level scripts to manage the
+ML pipeline, enabling easy execution of key steps.</li>
+<li><strong>Files</strong>:
+<ul>
+<li><code>train_model.py</code>: Script to trigger the training
+pipeline.</li>
+<li><code>score_model.py</code>: Script to perform model inference on
+new data.</li>
+<li><code>deploy_model.py</code>: Script to deploy the model to a
+production environment.</li>
+<li><code>monitor_model.py</code>: Script to monitor model performance
+in production, checking for drift or degradation.</li>
+</ul></li>
+</ul>
+<h4 id="root-files">Root Files</h4>
+<ul>
+<li><strong>README.md</strong>: The main project overview, including
+setup instructions, purpose, usage notes, and contribution
+guidelines.</li>
+<li><strong>requirements.txt</strong>: A list of dependencies required
+for the project, which can be used to set up the environment.</li>
+</ul>
+<hr />
+<h3 id="best-practices-for-using-the-folder-structure">Best Practices
+for Using the Folder Structure</h3>
+<ol type="1">
+<li><p><strong>Use Version Control for Everything in the Repo</strong>:
+Ensure that all scripts, configurations, and test files are under
+version control. Use descriptive commit messages and consider adopting
+branching strategies (e.g., feature branches) to separate experimental
+code from stable code.</p></li>
+<li><p><strong>Keep Large Data Files Out of the Repo</strong>: Use Azure
+Blob Storage, Azure Data Lake, or another external data storage service
+for raw and processed data. Store data paths in the configuration files
+instead of keeping data in the repo.</p></li>
+<li><p><strong>Use the Model Registry for Model Artifacts</strong>: When
+a model is trained, store it in Azure ML’s model registry rather than
+saving model artifacts directly in the repo. You can keep pointers to
+model versions in the <code>models/model_registry/</code> folder if
+needed for tracking.</p></li>
+<li><p><strong>Automate Scripts in Azure DevOps Pipelines</strong>: Use
+the <code>.azure-pipelines/</code> directory to store YAML configuration
+files for Azure DevOps pipelines. Set up pipelines for:</p>
+<ul>
+<li>Running tests on new code.</li>
+<li>Training and evaluating models.</li>
+<li>Deploying the model to the production environment.</li>
+<li>Monitoring and alerting on model performance.</li>
+</ul></li>
+<li><p><strong>Document and Organize Experimentation Code in
+<code>notebooks/</code> and <code>experiments/</code></strong>: Keep the
+<code>notebooks/</code> and <code>experiments/</code> folders for
+initial exploration, experimentation, and EDA. Once code becomes stable
+and useful for production, migrate it to modularized scripts in the
+<code>src/</code> and <code>models/</code> directories.</p></li>
+<li><p><strong>Structure Tests for Reusability</strong>: Use
+<code>tests/</code> to organize tests by component, covering unit tests
+for individual functions, integration tests for model and pipeline
+functionality, and end-to-end tests for the entire ML pipeline.</p></li>
+<li><p><strong>Use Configurations to Keep Parameters
+Consistent</strong>: Store all configurations in the
+<code>config/</code> folder, allowing you to easily adjust parameters
+without hardcoding values in scripts.</p></li>
+</ol>
+<hr />
+<p>This folder structure will help you manage a scalable and
+well-organized ML project, making it easier to collaborate, maintain,
+and automate as your team progresses through MLOps maturity levels. This
+organization also supports future deployment, model monitoring, and
+CI/CD integration, providing a foundation to build upon as you grow.</p>
+<h2 id="question-11">Question 11</h2>
+<p>Can you talk about the purpose of having compute instances in Azure
+ML Studio? How do these compute instances differ from the smaller
+lightweight VM’s (“agents”) that are used in Azure DevOps?</p>
+<h2 id="response-9">Response</h2>
+<p>In <strong>Azure Machine Learning (AML) Studio</strong>, compute
+instances and compute clusters play a central role in supporting the
+end-to-end machine learning lifecycle. Let’s dive into the purpose of
+compute instances in AML, their main use cases, and how they differ from
+the lightweight VMs (also called “agents”) used in <strong>Azure
+DevOps</strong>.</p>
+<hr />
+<h3
+id="purpose-of-compute-instances-in-azure-machine-learning-studio">Purpose
+of Compute Instances in Azure Machine Learning Studio</h3>
+<p><strong>Compute instances in Azure ML Studio</strong> are dedicated
+virtual machines specifically designed to support the machine learning
+workflow. They are often used by data scientists, ML engineers, and
+other team members who require powerful resources for data exploration,
+model training, and experimentation. Here’s how they are typically
+used:</p>
+<ol type="1">
+<li><p><strong>Interactive Development and Experimentation</strong>:</p>
+<ul>
+<li>Compute instances are commonly used for <strong>interactive
+development</strong> with Jupyter notebooks, RStudio, or VS Code within
+AML Studio. They provide a convenient environment for <strong>data
+exploration</strong>, <strong>feature engineering</strong>, and
+<strong>model prototyping</strong>.</li>
+<li>These instances are often preconfigured with the necessary ML
+libraries, frameworks (e.g., TensorFlow, PyTorch, Scikit-Learn), and
+integrations, allowing data scientists to get started without setting up
+dependencies from scratch.</li>
+</ul></li>
+<li><p><strong>Running Experimentation and Testing
+Pipelines</strong>:</p>
+<ul>
+<li>In addition to interactive work, compute instances can be used to
+<strong>run experiment pipelines</strong> in Azure ML. These pipelines
+might include data processing, model training, evaluation, and
+hyperparameter tuning steps.</li>
+<li>For lightweight training or experimentation that doesn’t require a
+distributed setup, compute instances provide enough resources to
+complete these tasks efficiently.</li>
+</ul></li>
+<li><p><strong>Resource Isolation and Reproducibility</strong>:</p>
+<ul>
+<li>Compute instances provide a consistent and isolated environment for
+experiments. Each instance can have its own configuration and
+dependencies, making it easier to reproduce results across different
+runs.</li>
+<li>The environment remains stable across sessions, unlike the ephemeral
+VMs used in DevOps, which are spun up and down per pipeline job.</li>
+</ul></li>
+<li><p><strong>Scaling Up to Compute Clusters for Larger
+Jobs</strong>:</p>
+<ul>
+<li>Compute instances are typically intended for single-user or
+lightweight multi-process workflows. However, they can also serve as a
+testing ground for workflows that will later be scaled up to larger
+<strong>compute clusters</strong> for parallel or distributed
+training.</li>
+</ul></li>
+<li><p><strong>Persistent Storage and Data Access</strong>:</p>
+<ul>
+<li>Compute instances are connected to a persistent Azure ML workspace,
+allowing users to save files, download data, and store intermediary
+artifacts without losing them between sessions.</li>
+<li>Data stored in the workspace’s file storage is accessible across
+multiple compute instances, supporting seamless collaboration within the
+workspace.</li>
+</ul></li>
+</ol>
+<h3 id="types-of-compute-in-azure-machine-learning-studio">Types of
+Compute in Azure Machine Learning Studio</h3>
+<p>Azure ML provides several types of compute resources, including:</p>
+<ul>
+<li><strong>Compute Instances</strong>: Single-user, interactive VMs for
+development, experimentation, and lightweight training.</li>
+<li><strong>Compute Clusters</strong>: Managed clusters for running
+large-scale distributed training, parallel hyperparameter tuning, and
+batch inference. These clusters can autoscale based on demand.</li>
+<li><strong>Inference Clusters</strong>: VMs or AKS clusters used for
+deploying models for real-time inference.</li>
+</ul>
+<p>Each of these types serves a different purpose in supporting the ML
+lifecycle, but compute instances are primarily used for development and
+experimentation.</p>
+<hr />
+<h3
+id="differences-between-azure-ml-compute-instances-and-azure-devops-agents">Differences
+Between Azure ML Compute Instances and Azure DevOps Agents</h3>
+<p>While both <strong>AML compute instances</strong> and <strong>Azure
+DevOps agents</strong> are virtual machines, they serve very different
+purposes in the ML and CI/CD lifecycle.</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 43%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th><strong>Azure ML Compute Instances</strong></th>
+<th><strong>Azure DevOps Agents</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Interactive ML development, experimentation, and lightweight model
+training</td>
+<td>Run CI/CD tasks in DevOps pipelines</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td>Data scientists, ML engineers</td>
+<td>CI/CD pipelines, typically automated</td>
+</tr>
+<tr>
+<td><strong>Lifespan</strong></td>
+<td>Persistent (until stopped by user)</td>
+<td>Ephemeral (created and destroyed per pipeline job)</td>
+</tr>
+<tr>
+<td><strong>Environment Consistency</strong></td>
+<td>Stable environment for reproducibility across ML sessions</td>
+<td>Temporary environment; set up and torn down per job</td>
+</tr>
+<tr>
+<td><strong>Compute Power and Flexibility</strong></td>
+<td>Highly configurable, supports GPU-enabled instances for deep
+learning</td>
+<td>Typically lower power, designed for CI/CD tasks</td>
+</tr>
+<tr>
+<td><strong>Dependency Management</strong></td>
+<td>Pre-configured with ML libraries and frameworks, customizable</td>
+<td>Customizable via pipeline YAML or install scripts</td>
+</tr>
+<tr>
+<td><strong>Storage and Data Persistence</strong></td>
+<td>Persistent storage in Azure ML workspace; keeps data across
+sessions</td>
+<td>Temporary storage per job, data not retained across jobs</td>
+</tr>
+<tr>
+<td><strong>Use Cases</strong></td>
+<td>Interactive coding, model training, data exploration</td>
+<td>Code building, testing, deployment automation</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>Can scale up to clusters for distributed training</td>
+<td>Limited to single-job execution, optimized for lightweight
+tasks</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-differences-explained">Key Differences Explained</h3>
+<ol type="1">
+<li><p><strong>Purpose and User Interaction</strong>:</p>
+<ul>
+<li><strong>AML Compute Instances</strong>: Primarily designed for data
+scientists and ML engineers who need an interactive, persistent
+environment for exploratory work, experimentation, and model training.
+They support a variety of ML tools and frameworks directly within the
+AML Studio, which makes it easier for users to run complex ML
+workflows.</li>
+<li><strong>Azure DevOps Agents</strong>: Used by DevOps pipelines to
+run CI/CD tasks. These tasks can include code builds, testing, and
+deployment. Agents are part of an automated pipeline and are not
+intended for interactive development.</li>
+</ul></li>
+<li><p><strong>Lifespan and Persistence</strong>:</p>
+<ul>
+<li><strong>AML Compute Instances</strong>: These are persistent VMs
+that remain active until they are manually stopped or deleted. This
+persistence means data scientists can retain files, data, and
+environment configurations across multiple sessions.</li>
+<li><strong>Azure DevOps Agents</strong>: DevOps agents are ephemeral;
+they are created when a pipeline job starts and are terminated at the
+end of the job. This setup ensures that each job has a clean
+environment, preventing any potential conflicts from previous jobs.</li>
+</ul></li>
+<li><p><strong>Environment and Dependency Management</strong>:</p>
+<ul>
+<li><strong>AML Compute Instances</strong>: Compute instances are
+preconfigured with popular ML libraries and frameworks, and users can
+install additional packages or configure custom environments (e.g.,
+through conda or Docker) to match their specific ML needs.</li>
+<li><strong>Azure DevOps Agents</strong>: DevOps agents run in a clean
+environment each time, so dependencies for each job are typically
+installed within the pipeline script. This temporary setup ensures that
+the CI/CD process is repeatable but requires installation steps to be
+specified for each run.</li>
+</ul></li>
+<li><p><strong>Storage and Data Access</strong>:</p>
+<ul>
+<li><strong>AML Compute Instances</strong>: AML workspaces provide
+persistent storage, so files and datasets remain accessible across
+sessions on the same instance. This is particularly useful for ML
+workflows where large datasets and intermediate outputs need to be
+retained.</li>
+<li><strong>Azure DevOps Agents</strong>: Each DevOps job has access to
+a temporary storage location for that specific job. Once the job
+completes, the storage is cleared, and data is not retained. For CI/CD,
+this setup works well since each job is often independent of the
+previous one, but it’s not ideal for ML workflows that require
+persistent data storage.</li>
+</ul></li>
+<li><p><strong>Compute Power and Flexibility</strong>:</p>
+<ul>
+<li><strong>AML Compute Instances</strong>: Support for high-compute
+VMs, including GPU-enabled instances, is available for training deep
+learning models. This flexibility is essential for ML tasks that require
+significant processing power.</li>
+<li><strong>Azure DevOps Agents</strong>: While DevOps agents can be
+configured to use different machine types, they’re typically smaller,
+more cost-effective VMs optimized for CI/CD tasks like building and
+testing code, which usually require less computational power.</li>
+</ul></li>
+</ol>
+<h3 id="typical-use-cases">Typical Use Cases</h3>
+<p><strong>Azure ML Compute Instances</strong>:</p>
+<ul>
+<li><strong>Data Exploration and Analysis</strong>: Using Jupyter
+notebooks or VS Code for data visualization, feature engineering, and
+initial data analysis.</li>
+<li><strong>Model Training and Experimentation</strong>: Running
+training scripts, hyperparameter tuning, and tracking experiments within
+the AML Studio environment.</li>
+<li><strong>Pipeline Development and Testing</strong>: Developing and
+testing individual components of a machine learning pipeline, ensuring
+compatibility and correctness before scaling to production.</li>
+</ul>
+<p><strong>Azure DevOps Agents</strong>:</p>
+<ul>
+<li><strong>Continuous Integration (CI)</strong>: Building and testing
+code upon changes, ensuring that new commits do not break existing
+functionality.</li>
+<li><strong>Continuous Deployment (CD)</strong>: Deploying models,
+applications, or infrastructure as part of a CI/CD pipeline.</li>
+<li><strong>Automated Testing</strong>: Running unit tests, integration
+tests, and end-to-end tests as part of a CI pipeline, particularly for
+application code and infrastructure.</li>
+</ul>
+<hr />
+<h3 id="summary">Summary</h3>
+<p>In short, <strong>Azure ML compute instances</strong> are tailored
+for ML-specific tasks like interactive exploration, model training, and
+experimentation. They provide persistent storage, GPU options, and a
+stable environment that remains available across sessions. Meanwhile,
+<strong>Azure DevOps agents</strong> are lightweight, ephemeral VMs
+optimized for CI/CD tasks such as building, testing, and deploying code
+in a clean environment each time. These agents are not ideal for tasks
+requiring persistent storage or heavy computation but excel in
+automating DevOps pipelines.</p>
+<p>By using AML compute instances for ML development and Azure DevOps
+agents for CI/CD automation, you can create a balanced MLOps workflow
+that leverages the strengths of each platform, supporting both ML
+experimentation and operational deployment.</p>
+<h2 id="question-12">Question 12</h2>
+<p>I’ve heard the term “Infrastructure as Code” in the context of
+traditional DevOps. What does it mean in the context of MLOps?</p>
+<h2 id="response-10">Response</h2>
+<p>“Infrastructure as Code” (IaC) in traditional DevOps refers to
+managing and provisioning computing infrastructure (servers, storage,
+networks, etc.) through code, rather than manual configuration. By
+defining infrastructure through code, teams can version, automate, and
+reproduce infrastructure setups consistently, making deployment faster,
+more reliable, and easier to maintain.</p>
+<p>In the context of <strong>MLOps</strong>, IaC retains its core
+purpose but takes on additional significance due to the unique
+infrastructure and workflows involved in machine learning. MLOps
+infrastructure often includes specialized compute resources, data
+storage, model registries, monitoring setups, and deployment endpoints,
+all of which can be provisioned and managed through IaC to enable robust
+and scalable ML operations.</p>
+<p>Let’s explore what IaC means for MLOps and the specific components it
+helps manage.</p>
+<hr />
+<h3 id="key-benefits-of-infrastructure-as-code-in-mlops">Key Benefits of
+Infrastructure as Code in MLOps</h3>
+<ol type="1">
+<li><p><strong>Reproducibility and Consistency</strong>:</p>
+<ul>
+<li>In MLOps, IaC ensures that ML environments — including compute
+resources, storage, and configurations — are consistent across
+<strong>development, testing, and production</strong> environments. This
+is especially useful when working with different environments for
+experimentation versus production.</li>
+<li>With IaC, teams can recreate infrastructure setups across regions,
+workspaces, or even cloud providers if needed, without configuration
+drift.</li>
+</ul></li>
+<li><p><strong>Version Control and Collaboration</strong>:</p>
+<ul>
+<li>IaC files are stored in version control systems (e.g., Git)
+alongside other project code. This allows for <strong>collaborative
+development and code review</strong> of infrastructure setups, providing
+an auditable history of changes.</li>
+<li>Infrastructure changes can go through the same CI/CD process as
+code, making it easy to review, test, and roll back infrastructure
+setups if issues arise.</li>
+</ul></li>
+<li><p><strong>Automation and Scalability</strong>:</p>
+<ul>
+<li>Using IaC, infrastructure can be provisioned automatically as part
+of an MLOps pipeline, eliminating the need for manual configuration and
+speeding up the process of setting up environments.</li>
+<li>IaC supports the automatic scaling of resources, which is
+particularly useful for handling <strong>highly variable ML
+workloads</strong> (e.g., scaling up compute clusters for training and
+scaling down afterward).</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="components-managed-by-iac-in-mlops">Components Managed by IaC in
+MLOps</h3>
+<p>In an MLOps context, IaC can be used to define and manage the
+following components:</p>
+<ol type="1">
+<li><p><strong>Compute Resources</strong>:</p>
+<ul>
+<li><strong>Compute Instances</strong>: Define and provision compute
+instances for development and experimentation (e.g., Jupyter notebooks,
+interactive sessions).</li>
+<li><strong>Compute Clusters</strong>: Provision clusters for
+distributed training, hyperparameter tuning, and batch scoring jobs. IaC
+allows clusters to be automatically created and scaled, with parameters
+like node type, number of nodes, and scaling policies specified in
+code.</li>
+<li><strong>Inference Clusters</strong>: Deploy scalable endpoints for
+real-time model serving, such as Azure Kubernetes Service (AKS) clusters
+or Azure Container Instances (ACI), using IaC for configuration and
+scaling.</li>
+</ul></li>
+<li><p><strong>Data and Storage</strong>:</p>
+<ul>
+<li><strong>Data Storage</strong>: Provision and configure data storage
+resources, such as <strong>Azure Blob Storage</strong> or <strong>Azure
+Data Lake Storage</strong>, for storing raw data, processed data, and
+model artifacts.</li>
+<li><strong>Feature Stores</strong>: Define feature store
+infrastructure, if used, to serve consistent feature sets for both
+training and inference. IaC ensures the feature store environment is
+correctly configured and accessible from other resources.</li>
+</ul></li>
+<li><p><strong>Model Registry and Experiment Tracking</strong>:</p>
+<ul>
+<li><strong>Model Registry</strong>: Configure resources for managing
+model artifacts, including version control, metadata tracking, and
+lineage information, ensuring reproducibility of models.</li>
+<li><strong>Experiment Tracking</strong>: Provision services for logging
+and tracking experiments, hyperparameters, and metrics, so results can
+be stored and compared over time (e.g., using Azure ML Experiment or
+MLflow).</li>
+</ul></li>
+<li><p><strong>Networking and Security</strong>:</p>
+<ul>
+<li><strong>Networking</strong>: Configure VPCs, subnets, firewall
+rules, and virtual networks to control access to resources. For example,
+you can use IaC to isolate training clusters from production scoring
+endpoints.</li>
+<li><strong>Identity and Access Management</strong>: Define policies for
+managing access to data, compute resources, and models. For instance,
+you can use IaC to grant specific users or services permission to access
+certain datasets or deploy models.</li>
+</ul></li>
+<li><p><strong>CI/CD Pipelines</strong>:</p>
+<ul>
+<li><strong>DevOps Agents and Pipelines</strong>: Provision DevOps
+agents and configure pipeline workflows for CI/CD, enabling the
+automation of model training, testing, and deployment.</li>
+<li><strong>Environment Setup for Pipelines</strong>: Use IaC to ensure
+that each stage of the pipeline (e.g., training, validation, deployment)
+has the required infrastructure set up, with proper permissions,
+resources, and network configurations.</li>
+</ul></li>
+<li><p><strong>Monitoring and Logging</strong>:</p>
+<ul>
+<li><strong>Monitoring Tools</strong>: Provision monitoring and logging
+tools to track model performance, system health, and data drift in
+production. IaC can set up resources like Azure Monitor, Application
+Insights, or custom logging solutions.</li>
+<li><strong>Alerting and Notification</strong>: Configure alerting
+systems to notify the team if a model’s performance degrades, if data
+drift is detected, or if compute usage exceeds certain thresholds.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="example-of-how-iac-works-in-mlops">Example of How IaC Works in
+MLOps</h3>
+<p>Let’s walk through a simple example of using IaC for an MLOps setup,
+using <strong>Azure Resource Manager (ARM) templates</strong> or
+<strong>Terraform</strong> as IaC tools to define and manage
+resources.</p>
+<h4 id="defining-infrastructure-with-iac">1. <strong>Defining
+Infrastructure with IaC</strong></h4>
+<p>In your IaC configuration file (e.g., <code>main.tf</code> for
+Terraform or <code>azuredeploy.json</code> for ARM), you define each
+resource required for the ML pipeline. Here’s an example of defining
+some core resources:</p>
+<pre class="hcl"><code># Terraform example for defining an Azure ML workspace and a compute cluster
+
+provider &quot;azurerm&quot; {
+  features = {}
+}
+
+resource &quot;azurerm_resource_group&quot; &quot;rg&quot; {
+  name     = &quot;mlops-resource-group&quot;
+  location = &quot;East US&quot;
+}
+
+# Define the Azure ML workspace
+resource &quot;azurerm_machine_learning_workspace&quot; &quot;aml_workspace&quot; {
+  name                = &quot;mlops-workspace&quot;
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = &quot;Basic&quot;
+}
+
+# Define a compute cluster for model training
+resource &quot;azurerm_machine_learning_compute_cluster&quot; &quot;training_cluster&quot; {
+  name                = &quot;training-cluster&quot;
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  workspace_name      = azurerm_machine_learning_workspace.aml_workspace.name
+
+  scale_settings {
+    minimum_node_count = 0
+    maximum_node_count = 4
+  }
+  vm_size = &quot;Standard_DS3_v2&quot;
+}</code></pre>
+<h4 id="provisioning-resources">2. <strong>Provisioning
+Resources</strong></h4>
+<ul>
+<li>Once the IaC file is defined, it can be deployed using a command
+like <code>terraform apply</code> (for Terraform) or
+<code>az deployment create</code> (for ARM templates). This command
+reads the configuration and provisions the infrastructure on Azure.</li>
+</ul>
+<h4 id="integrating-iac-with-cicd-pipelines">3. <strong>Integrating IaC
+with CI/CD Pipelines</strong></h4>
+<ul>
+<li>In Azure DevOps, IaC definitions can be included in the pipeline as
+part of the setup process. For example, a YAML pipeline could be
+configured to first run the IaC file to set up the infrastructure, and
+then execute ML tasks like training or deploying models.</li>
+<li>This makes it easy to set up and tear down environments as part of
+the CI/CD process, ensuring that each pipeline run has the required
+infrastructure ready.</li>
+</ul>
+<h4 id="updating-infrastructure-with-iac">4. <strong>Updating
+Infrastructure with IaC</strong></h4>
+<ul>
+<li>If your team needs to change infrastructure settings (e.g., increase
+the number of nodes in the compute cluster), they can modify the IaC
+configuration and re-run it. This updates the infrastructure
+automatically, without manual reconfiguration.</li>
+</ul>
+<hr />
+<h3 id="tools-for-infrastructure-as-code-in-mlops">Tools for
+Infrastructure as Code in MLOps</h3>
+<ol type="1">
+<li><strong>Terraform</strong>: A widely-used IaC tool that supports
+multi-cloud environments and provides modular templates, making it easy
+to define and manage Azure resources for ML.</li>
+<li><strong>Azure Resource Manager (ARM) Templates</strong>: Native
+Azure IaC option, ideal for Azure-specific configurations. ARM templates
+work well with Azure ML and other Azure services.</li>
+<li><strong>Bicep</strong>: A domain-specific language that simplifies
+ARM templates, making it easier to author and deploy infrastructure in
+Azure.</li>
+<li><strong>Azure CLI and PowerShell</strong>: Useful for quick
+IaC-style scripts to provision resources, though less feature-rich than
+Terraform or ARM templates.</li>
+</ol>
+<hr />
+<h3 id="summary-why-iac-is-valuable-in-mlops">Summary: Why IaC is
+Valuable in MLOps</h3>
+<p>In MLOps, Infrastructure as Code allows teams to:</p>
+<ul>
+<li><strong>Standardize environments</strong> for reproducibility,
+ensuring consistent setups for training and deployment.</li>
+<li><strong>Automate provisioning and scaling</strong> of compute
+resources, supporting dynamic ML workloads.</li>
+<li><strong>Enable version control</strong> of infrastructure, making it
+easy to track and roll back configuration changes.</li>
+<li><strong>Integrate infrastructure into CI/CD pipelines</strong>,
+allowing infrastructure to be set up and validated as part of the ML
+lifecycle.</li>
+</ul>
+<p>By using IaC, teams can efficiently manage the complex infrastructure
+needs of ML projects, improve collaboration, and ensure that
+infrastructure is as agile and scalable as the ML applications it
+supports.</p>
+    
+</body>
+</html>

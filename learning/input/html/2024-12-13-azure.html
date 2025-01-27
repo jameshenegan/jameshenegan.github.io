@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="question-1">Question 1</h2>
+<p>Suppose that I have</p>
+<ul>
+<li>A Microsoft Azure Account</li>
+<li>An Azure Machine Learning Workspace</li>
+<li>An Azure DevOps Project</li>
+<li>A dataset registered to the AML Workspace</li>
+<li>A python script that loads the registered dataset, trains a logistic
+regression model, and prints out the accuracy for the model</li>
+</ul>
+<p>The python script is stored in the Notebooks section of the AML
+workspace.</p>
+<p>I want to learn more about how to integrate Azure DevOps with my AML
+workspace. My ultimate goal is to have “everything” stored in Azure
+DevOps for auditing purposes. I want relevant “source code” for my
+project to be stored in an Azure DevOps repo. I want the Azure DevOps
+repo to be a source of truth for what was used to train a model.</p>
+<p>I feel like there are some issues that I don’t quite understand
+yet.</p>
+<p>One of these issues is related to “best practices for dealing with
+data” when using Azure DevOps with Azure Machine Learning. Or even best
+practices for dealing with data when working with Azure Machine Learing
+by itself. What do I mean by this? Well, right now, I have a static
+dataset that has been registered as a data asset in the Azure Machine
+Learning workspace. I’m using that dataset to train the logistic
+regression model. But suppose that I plan on getting more data in the
+next month. I will want to create a new dataset that’s a combination of
+the dataset I have now with the new data that I get next month. Then I
+want to re-run everything so that I get a new model. I’m not sure what
+the best way to do this is.</p>
+<p>Another issue has to do with connecting Azure DevOps to AML. I want
+to create an Azure DevOps pipeline that, when triggered, executes and
+AML pipeline that executes my python script. Or, if it would be better
+to convert the script to components, then maybe I would like to do that.
+This whole thing is another area that I’m not quite clear on.</p>
+<p>Another issue that I’m still getting familiar with is the concept of
+“environments” in AML. I feel like I need to create an environment for
+my AML pipeline to run in. But I’m not quite sure what packages I need
+for that environment, or what the best practices are for setting up the
+environment.</p>
+<p>Can you give me a “curriculum” to follow to help me reach my
+goals?</p>
+<h2 id="response-1">Response 1</h2>
+<p>Here’s a suggested <strong>curriculum</strong> to help you integrate
+Azure DevOps with Azure Machine Learning (AML), manage your datasets
+effectively, and establish best practices for pipelines and
+environments. This curriculum is divided into stages, each with clear
+learning goals and actions.</p>
+<hr />
+<h3 id="stage-1-foundational-concepts-and-setup"><strong>Stage 1:
+Foundational Concepts and Setup</strong></h3>
+<h4 id="goals"><strong>Goals:</strong></h4>
+<ul>
+<li>Understand the core concepts of Azure DevOps and AML
+integration.</li>
+<li>Familiarize yourself with the role of repositories, pipelines,
+datasets, and environments in AML and DevOps.</li>
+</ul>
+<h4 id="actions"><strong>Actions:</strong></h4>
+<ol type="1">
+<li><p><strong>Learn Azure DevOps Basics:</strong></p>
+<ul>
+<li>Explore Azure DevOps Repositories: <a
+href="https://learn.microsoft.com/en-us/azure/devops/repos/git/overview?view=azure-devops">Documentation</a>.</li>
+<li>Understand Pipelines and how they work: <a
+href="https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops">Documentation</a>.</li>
+</ul></li>
+<li><p><strong>AML Basics:</strong></p>
+<ul>
+<li>Understand Azure Machine Learning Pipelines: <a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-machine-learning-pipelines">Documentation</a>.</li>
+<li>Learn about environments in AML: <a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-use-environments">Documentation</a>.</li>
+</ul></li>
+<li><p><strong>Integrate Azure DevOps with AML:</strong></p>
+<ul>
+<li>Link your Azure DevOps project to your AML workspace: <a
+href="https://learn.microsoft.com/en-us/training/modules/introduction-development-operations-principles-for-machine-learn/4-integrate-azure-development-operations-tools">Documentation</a>.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="stage-2-managing-data-in-aml"><strong>Stage 2: Managing Data in
+AML</strong></h3>
+<h4 id="goals-1"><strong>Goals:</strong></h4>
+<ul>
+<li>Establish a workflow for managing and versioning datasets.</li>
+<li>Learn best practices for dealing with dynamic data updates.</li>
+</ul>
+<h4 id="actions-1"><strong>Actions:</strong></h4>
+<ol type="1">
+<li><p><strong>Learn Data Management in AML:</strong></p>
+<ul>
+<li>Understand how to register and use datasets in AML: <a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-register-datasets">Documentation</a>.</li>
+<li>Explore <strong>data versioning</strong> for tracking changes in
+datasets.</li>
+</ul></li>
+<li><p><strong>Automate Dataset Updates:</strong></p>
+<ul>
+<li>Write a Python script to append new data to your existing dataset
+and re-register it.</li>
+<li>Use Azure DevOps pipelines to automate this process.</li>
+</ul></li>
+<li><p><strong>Best Practices for Handling Data:</strong></p>
+<ul>
+<li>Store data preprocessing scripts in your Azure DevOps repo for
+traceability.</li>
+<li>Use version-controlled datasets in AML to ensure reproducibility of
+your models.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="stage-3-aml-pipelines-and-devops-integration"><strong>Stage 3:
+AML Pipelines and DevOps Integration</strong></h3>
+<h4 id="goals-2"><strong>Goals:</strong></h4>
+<ul>
+<li>Build and trigger AML pipelines from Azure DevOps.</li>
+<li>Manage the connection between Azure DevOps pipelines and AML.</li>
+</ul>
+<h4 id="actions-2"><strong>Actions:</strong></h4>
+<ol type="1">
+<li><p><strong>Convert Python Script to AML Pipeline Component (if
+needed):</strong></p>
+<ul>
+<li>Break down your script into reusable components: <a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-components">Documentation</a>.</li>
+</ul></li>
+<li><p><strong>Create an AML Pipeline:</strong></p>
+<ul>
+<li>Use the AML Studio or SDK to create a pipeline that trains your
+logistic regression model.</li>
+</ul></li>
+<li><p><strong>Connect Azure DevOps to AML Pipeline:</strong></p>
+<ul>
+<li>Create an Azure DevOps pipeline to trigger your AML pipeline using
+the Azure Machine Learning CLI or SDK: <a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-trigger-published-pipeline-devops">Documentation</a>.</li>
+</ul></li>
+<li><p><strong>Monitor and Audit Pipelines:</strong></p>
+<ul>
+<li>Enable pipeline logging and tracking for better auditing in
+DevOps.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="stage-4-best-practices-for-environments"><strong>Stage 4: Best
+Practices for Environments</strong></h3>
+<h4 id="goals-3"><strong>Goals:</strong></h4>
+<ul>
+<li>Create an environment for your AML pipeline with all necessary
+dependencies.</li>
+<li>Understand how to manage and version environments.</li>
+</ul>
+<h4 id="actions-3"><strong>Actions:</strong></h4>
+<ol type="1">
+<li><p><strong>Learn about AML Environments:</strong></p>
+<ul>
+<li>Create and register environments: <a
+href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-use-environments#create-and-register-an-environment">Documentation</a>.</li>
+</ul></li>
+<li><p><strong>Set Up Environment for Logistic Regression
+Model:</strong></p>
+<ul>
+<li>Include essential Python packages like <code>scikit-learn</code>,
+<code>pandas</code>, and <code>numpy</code>.</li>
+<li>Use Conda or Docker for defining environments.</li>
+</ul></li>
+<li><p><strong>Best Practices for Environments:</strong></p>
+<ul>
+<li>Version your environment for reproducibility.</li>
+<li>Store environment definitions (YAML files) in your Azure DevOps
+repo.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="stage-5-advanced-topics"><strong>Stage 5: Advanced
+Topics</strong></h3>
+<h4 id="goals-4"><strong>Goals:</strong></h4>
+<ul>
+<li>Automate and scale your processes.</li>
+<li>Ensure best practices for reproducibility, auditing, and version
+control.</li>
+</ul>
+<h4 id="actions-4"><strong>Actions:</strong></h4>
+<ol type="1">
+<li><p><strong>Advanced Data Management:</strong></p>
+<ul>
+<li>Automate data ingestion pipelines using Azure Data Factory or Logic
+Apps.</li>
+<li>Incorporate data validation steps into your pipeline.</li>
+</ul></li>
+<li><p><strong>Model Versioning and Deployment:</strong></p>
+<ul>
+<li>Learn about AML’s model registry to track versions of trained
+models.</li>
+<li>Explore MLOps principles for CI/CD in machine learning.</li>
+</ul></li>
+<li><p><strong>Auditing and Traceability:</strong></p>
+<ul>
+<li>Use DevOps Boards and Wikis to document changes in data, models, and
+scripts.</li>
+<li>Integrate metrics and logs into Azure Monitor for end-to-end
+visibility.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="stage-6-practice-and-project"><strong>Stage 6: Practice and
+Project</strong></h3>
+<h4 id="goals-5"><strong>Goals:</strong></h4>
+<ul>
+<li>Apply everything you’ve learned to build an end-to-end reproducible
+workflow.</li>
+</ul>
+<h4 id="actions-5"><strong>Actions:</strong></h4>
+<ol type="1">
+<li><p><strong>Refactor Your Project:</strong></p>
+<ul>
+<li>Store all source code, data preprocessing scripts, and environment
+YAML files in Azure DevOps.</li>
+<li>Create an AML pipeline for your logistic regression script.</li>
+</ul></li>
+<li><p><strong>Automate the Workflow:</strong></p>
+<ul>
+<li>Set up an Azure DevOps pipeline to trigger the AML pipeline, train
+the model, and log results.</li>
+<li>Automate dataset updates and environment creation.</li>
+</ul></li>
+<li><p><strong>Validate and Improve:</strong></p>
+<ul>
+<li>Test your end-to-end pipeline for reproducibility and
+efficiency.</li>
+<li>Gather feedback to refine your setup.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="suggested-resources">Suggested Resources:</h3>
+<ol type="1">
+<li><p><strong>Microsoft Learn Paths:</strong></p>
+<ul>
+<li><a
+href="https://learn.microsoft.com/en-us/learn/modules/introduction-to-devops/">Azure
+DevOps Learning Path</a>.</li>
+<li><a
+href="https://learn.microsoft.com/en-us/learn/modules/introduction-to-azure-machine-learning/">Azure
+Machine Learning Learning Path</a>.</li>
+</ul></li>
+<li><p><strong>Books:</strong></p>
+<ul>
+<li><em>Hands-On Machine Learning with Azure</em> by Thomas K
+Abraham.</li>
+<li><em>Azure DevOps Explained</em> by Sjoukje Zaal.</li>
+</ul></li>
+<li><p><strong>Community:</strong></p>
+<ul>
+<li>Join forums like the <a
+href="https://developercommunity.visualstudio.com/azuredevops">Azure
+DevOps Community</a> or <a
+href="https://techcommunity.microsoft.com/t5/azure-ai-blog/bg-p/Azure-AI">AML
+Community</a>.</li>
+</ul></li>
+</ol>
+<hr />
+<p>By following this curriculum, you’ll gain the skills and knowledge
+needed to integrate Azure DevOps with AML, manage datasets, and
+implement reproducible and auditable machine learning workflows. Let me
+know if you’d like assistance with any specific stage or concept!</p>
+<h2 id="question-2">Question 2</h2>
+<p>Let’s jump right to the ending: Set up an Azure DevOps pipeline to
+trigger the AML pipeline, train the model, and log results.</p>
+<h2 id="answer-2">Answer 2</h2>
+<p>Here’s a detailed step-by-step guide to set up an Azure DevOps
+pipeline to trigger the AML pipeline, train the model, and log the
+results:</p>
+<hr />
+<h3 id="pre-requisites"><strong>1. Pre-requisites</strong></h3>
+<p>Before proceeding, ensure you have:</p>
+<ul>
+<li><strong>Azure DevOps Repository</strong>: Your code and
+configuration files are stored here.</li>
+<li><strong>Azure Machine Learning Workspace</strong>: AML pipeline is
+created and ready to be triggered.</li>
+<li><strong>AML Pipeline Published</strong>: Your AML pipeline has been
+published, generating a REST endpoint.</li>
+<li><strong>Service Principal</strong>: A service principal with
+sufficient permissions to access the AML workspace.</li>
+<li><strong>Azure CLI Installed</strong>: Azure CLI extension for Azure
+ML is installed on your build agent.</li>
+</ul>
+<hr />
+<h3 id="create-a-service-connection-in-azure-devops"><strong>2. Create a
+Service Connection in Azure DevOps</strong></h3>
+<ol type="1">
+<li>Go to your Azure DevOps project and navigate to <strong>Project
+Settings &gt; Service connections</strong>.</li>
+<li>Create a new service connection of type <strong>Azure Resource
+Manager</strong>.</li>
+<li>Choose <strong>Service principal (automatic)</strong> or
+<strong>Service principal (manual)</strong> and follow the steps.</li>
+<li>Test the connection and give it a recognizable name (e.g.,
+<code>AzureMachineLearningConnection</code>).</li>
+</ol>
+<hr />
+<h3 id="prepare-the-aml-pipeline-for-triggering"><strong>3. Prepare the
+AML Pipeline for Triggering</strong></h3>
+<ol type="1">
+<li><p><strong>Publish the AML Pipeline:</strong></p>
+<ul>
+<li><p>If you haven’t published your pipeline yet, run the following in
+a Python script:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.core <span class="im">import</span> Pipeline</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline(workspace<span class="op">=</span>ws, steps<span class="op">=</span>[step1, step2])  <span class="co"># Replace with your pipeline steps</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>published_pipeline <span class="op">=</span> pipeline.publish(name<span class="op">=</span><span class="st">&quot;MyAML_Pipeline&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Published pipeline endpoint: </span><span class="sc">{</span>published_pipeline<span class="sc">.</span>endpoint<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div></li>
+</ul></li>
+<li><p><strong>Obtain the REST Endpoint URL</strong>:</p>
+<ul>
+<li>Go to the <strong>Pipelines</strong> section of your AML
+workspace.</li>
+<li>Locate your pipeline, click on it, and copy the REST endpoint
+URL.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="add-aml-pipeline-trigger-logic-to-your-repo"><strong>4. Add AML
+Pipeline Trigger Logic to Your Repo</strong></h3>
+<ol type="1">
+<li><p>Add a Python script (<code>trigger_aml_pipeline.py</code>) to
+your Azure DevOps repository:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trigger_pipeline():</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Replace these with your values</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    workspace_name <span class="op">=</span> <span class="st">&quot;YOUR_WORKSPACE_NAME&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    resource_group <span class="op">=</span> <span class="st">&quot;YOUR_RESOURCE_GROUP&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    subscription_id <span class="op">=</span> <span class="st">&quot;YOUR_SUBSCRIPTION_ID&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    aml_pipeline_endpoint <span class="op">=</span> <span class="st">&quot;YOUR_AML_PIPELINE_REST_ENDPOINT&quot;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Acquire an Azure authentication token</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    credential <span class="op">=</span> DefaultAzureCredential()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    token <span class="op">=</span> credential.get_token(<span class="st">&quot;https://management.azure.com/.default&quot;</span>).token</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trigger the pipeline</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    headers <span class="op">=</span> {</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Authorization&quot;</span>: <span class="ss">f&quot;Bearer </span><span class="sc">{</span>token<span class="sc">}</span><span class="ss">&quot;</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Content-Type&quot;</span>: <span class="st">&quot;application/json&quot;</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> requests.post(aml_pipeline_endpoint, headers<span class="op">=</span>headers)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Pipeline triggered: </span><span class="sc">{</span>response<span class="sc">.</span>status_code<span class="sc">}</span><span class="ss"> - </span><span class="sc">{</span>response<span class="sc">.</span>text<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    trigger_pipeline()</span></code></pre></div></li>
+<li><p>Commit this file to your Azure DevOps repository.</p></li>
+</ol>
+<hr />
+<h3 id="define-the-azure-devops-pipeline-yaml"><strong>5. Define the
+Azure DevOps Pipeline (YAML)</strong></h3>
+<p>Create an Azure DevOps pipeline YAML file (e.g.,
+<code>azure-pipelines.yml</code>) in your repository:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> main</span><span class="co"> # Trigger pipeline on changes to the main branch</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span><span class="co"> # Use a Microsoft-hosted agent</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">AML_WORKSPACE_NAME</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;YOUR_WORKSPACE_NAME&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">AML_RESOURCE_GROUP</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;YOUR_RESOURCE_GROUP&quot;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">AML_SUBSCRIPTION_ID</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;YOUR_SUBSCRIPTION_ID&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@1</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span><span class="co"> # Specify Python version</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">addToPath</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      python -m pip install --upgrade pip</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      pip install azure-identity requests</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install dependencies&quot;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>      python trigger_aml_pipeline.py</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Trigger AML Pipeline&quot;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>      echo &quot;Pipeline triggered successfully!&quot;</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Logging Pipeline Status&quot;</span></span></code></pre></div>
+<p>Replace the placeholders in <code>variables</code> with the values
+for your AML workspace.</p>
+<hr />
+<h3 id="create-and-run-the-azure-devops-pipeline"><strong>6. Create and
+Run the Azure DevOps Pipeline</strong></h3>
+<ol type="1">
+<li>In Azure DevOps, go to <strong>Pipelines &gt; New
+Pipeline</strong>.</li>
+<li>Select <strong>Azure Repos Git</strong> and choose your
+repository.</li>
+<li>Select <strong>Existing Azure Pipelines YAML file</strong> and point
+to the <code>azure-pipelines.yml</code> file you created.</li>
+<li>Save and run the pipeline.</li>
+</ol>
+<hr />
+<h3 id="verify-results"><strong>7. Verify Results</strong></h3>
+<ol type="1">
+<li>Monitor the <strong>Runs</strong> section in Azure DevOps to confirm
+that the pipeline executed successfully.</li>
+<li>Check the <strong>AML Workspace</strong> to verify that the pipeline
+was triggered and completed successfully.</li>
+<li>Review logs in both Azure DevOps and AML to ensure everything is
+logged and auditable.</li>
+</ol>
+<hr />
+<p>This setup establishes an Azure DevOps pipeline that serves as a
+trigger for your AML pipeline, ensuring a fully auditable,
+version-controlled, and automated workflow. Let me know if you’d like
+more details or adjustments!</p>
+<h2 id="question-3">Question 3</h2>
+<p>Can you tell me more about what my AML pipeline might look like? What
+are the “steps” that you mentioned above?</p>
+<h2 id="answer-3">Answer 3</h2>
+<p>An Azure Machine Learning (AML) pipeline is a sequence of steps,
+where each step performs a specific task in the machine learning
+workflow. These steps can include data preprocessing, model training,
+model evaluation, and deployment. Below is an overview of what your AML
+pipeline might look like, including its typical steps and how to define
+them programmatically.</p>
+<hr />
+<h3 id="typical-steps-in-an-aml-pipeline"><strong>Typical Steps in an
+AML Pipeline</strong></h3>
+<ol type="1">
+<li><p><strong>Data Preprocessing</strong></p>
+<ul>
+<li>Ingest and clean raw data.</li>
+<li>Perform transformations such as normalization, feature extraction,
+or feature engineering.</li>
+</ul></li>
+<li><p><strong>Dataset Registration</strong></p>
+<ul>
+<li>Save preprocessed data as a dataset in the AML workspace for
+tracking and reuse.</li>
+</ul></li>
+<li><p><strong>Model Training</strong></p>
+<ul>
+<li>Train the logistic regression model (or other models) using the
+preprocessed data.</li>
+</ul></li>
+<li><p><strong>Model Evaluation</strong></p>
+<ul>
+<li>Evaluate the model’s performance, such as calculating accuracy,
+precision, recall, or other metrics.</li>
+</ul></li>
+<li><p><strong>Model Registration</strong></p>
+<ul>
+<li>Save the trained model to the AML Model Registry to track versions
+and facilitate deployment.</li>
+</ul></li>
+<li><p><strong>Model Deployment (Optional)</strong></p>
+<ul>
+<li>Deploy the model as a web service or endpoint for inference.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="how-to-define-an-aml-pipeline"><strong>How to Define an AML
+Pipeline</strong></h3>
+<p>Here’s how you can define and implement these steps programmatically
+using the Azure ML SDK:</p>
+<h4 id="setup"><strong>1. Setup</strong></h4>
+<p>First, set up your AML workspace and dependencies:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Datastore, Dataset, Environment</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.steps <span class="im">import</span> PythonScriptStep</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.core <span class="im">import</span> Pipeline, PipelineData</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core.runconfig <span class="im">import</span> RunConfiguration</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to your AML workspace</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the compute target (cluster or local machine)</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>compute_target <span class="op">=</span> ws.compute_targets[<span class="st">&#39;your-cluster-name&#39;</span>]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a run configuration (environment with required packages)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>run_config <span class="op">=</span> RunConfiguration()</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>run_config.target <span class="op">=</span> compute_target</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>run_config.environment <span class="op">=</span> Environment.from_pip_requirements(</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;logistic-env&quot;</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    file_path<span class="op">=</span><span class="st">&quot;requirements.txt&quot;</span>  <span class="co"># Include necessary packages like scikit-learn, pandas</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h4 id="define-steps"><strong>2. Define Steps</strong></h4>
+<p>Here’s an example of what each step might look like:</p>
+<h5 id="data-preprocessing-step"><strong>Data Preprocessing
+Step</strong></h5>
+<p>This step reads raw data, processes it, and outputs cleaned data:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.core <span class="im">import</span> PipelineData</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define intermediate data output</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>preprocessed_data <span class="op">=</span> PipelineData(<span class="st">&quot;preprocessed_data&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the step</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>data_prep_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Data Preprocessing&quot;</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;data_preprocessing.py&quot;</span>,  <span class="co"># Script for preprocessing</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--output&quot;</span>, preprocessed_data],</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[preprocessed_data],</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    runconfig<span class="op">=</span>run_config,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span>  <span class="co"># Directory where your script is located</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h5 id="model-training-step"><strong>Model Training Step</strong></h5>
+<p>This step uses preprocessed data to train the model:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>trained_model <span class="op">=</span> PipelineData(<span class="st">&quot;trained_model&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>train_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Model Training&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;train_model.py&quot;</span>,  <span class="co"># Script for training</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--input&quot;</span>, preprocessed_data, <span class="st">&quot;--output&quot;</span>, trained_model],</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>[preprocessed_data],</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[trained_model],</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    runconfig<span class="op">=</span>run_config,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h5 id="model-evaluation-step"><strong>Model Evaluation
+Step</strong></h5>
+<p>Evaluate the trained model and log metrics:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>evaluation_output <span class="op">=</span> PipelineData(<span class="st">&quot;evaluation_output&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>evaluate_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Model Evaluation&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;evaluate_model.py&quot;</span>,  <span class="co"># Script for evaluation</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--model&quot;</span>, trained_model, <span class="st">&quot;--output&quot;</span>, evaluation_output],</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>[trained_model],</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[evaluation_output],</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    runconfig<span class="op">=</span>run_config,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h5 id="model-registration-step"><strong>Model Registration
+Step</strong></h5>
+<p>Register the model for later use:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>register_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Model Registration&quot;</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;register_model.py&quot;</span>,  <span class="co"># Script for model registration</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--model&quot;</span>, trained_model],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>[trained_model],</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    runconfig<span class="op">=</span>run_config,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<h4 id="create-and-publish-the-pipeline"><strong>3. Create and Publish
+the Pipeline</strong></h4>
+<p>Combine the steps into a pipeline:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline(workspace<span class="op">=</span>ws, steps<span class="op">=</span>[data_prep_step, train_step, evaluate_step, register_step])</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate and publish the pipeline</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>pipeline.validate()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>published_pipeline <span class="op">=</span> pipeline.publish(name<span class="op">=</span><span class="st">&quot;LogisticRegressionPipeline&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Published pipeline ID: </span><span class="sc">{</span>published_pipeline<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 id="best-practices-for-pipeline-steps"><strong>Best Practices for
+Pipeline Steps</strong></h3>
+<ul>
+<li><strong>Reusability:</strong> Keep your scripts modular and reusable
+(e.g., <code>data_preprocessing.py</code>,
+<code>train_model.py</code>).</li>
+<li><strong>Version Control:</strong> Store all scripts and
+configurations in your Azure DevOps repository.</li>
+<li><strong>Intermediate Data:</strong> Use <code>PipelineData</code>
+objects to store intermediate outputs for traceability.</li>
+<li><strong>Environment Management:</strong> Use consistent environments
+across steps to avoid dependency conflicts.</li>
+</ul>
+<hr />
+<h3 id="pipeline-trigger-from-devops"><strong>Pipeline Trigger from
+DevOps</strong></h3>
+<p>Once the pipeline is created and published, it can be triggered from
+Azure DevOps as explained earlier. Each step will run in sequence or in
+parallel (if configured) and log the outputs for auditability.</p>
+<p>Let me know if you’d like help with any of the steps or scripts!</p>
+<h2 id="question-4">Question 4</h2>
+<p>In the curriculum you provided above, you made the following
+suggestion: — Store data preprocessing scripts in your Azure DevOps repo
+for traceability. — Can you expand on this and perhaps give me an
+example of what such a python script might look like?</p>
+<h2 id="question-5">Question 5</h2>
+<p>Storing data preprocessing scripts in your Azure DevOps repository is
+a best practice for ensuring traceability, reproducibility, and version
+control. By keeping preprocessing logic in a version-controlled
+repository, you can:</p>
+<ol type="1">
+<li>Track changes made to the data preparation logic over time.</li>
+<li>Ensure consistent preprocessing across different environments.</li>
+<li>Facilitate debugging by linking preprocessing to specific model
+versions.</li>
+</ol>
+<p>Below is an example of a <strong>data preprocessing script</strong>
+that could be stored in your Azure DevOps repository.</p>
+<hr />
+<h3 id="example-data_preprocessing.py"><strong>Example:
+<code>data_preprocessing.py</code></strong></h3>
+<p>This script reads raw data from a datastore, applies cleaning and
+transformations, and outputs the preprocessed data.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Dataset, Workspace</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core.run <span class="im">import</span> Run</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse input and output arguments</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">&quot;Data Preprocessing Script&quot;</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">&quot;--input-dataset&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Name of the registered dataset in AML workspace&quot;</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">&quot;--output-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to save preprocessed data&quot;</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Get current AML Run</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>run <span class="op">=</span> Run.get_context()</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Access AML Workspace</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>workspace <span class="op">=</span> run.experiment.workspace</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the input dataset from the AML workspace</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Loading dataset: </span><span class="sc">{</span>args<span class="sc">.</span>input_dataset<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> Dataset.get_by_name(workspace, name<span class="op">=</span>args.input_dataset)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>raw_data <span class="op">=</span> dataset.to_pandas_dataframe()</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Data Cleaning and Transformation</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Starting data preprocessing...&quot;</span>)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Example transformation: Drop rows with missing values</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>processed_data <span class="op">=</span> raw_data.dropna()</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Example transformation: Normalize a column</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">&quot;age&quot;</span> <span class="kw">in</span> processed_data.columns:</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    processed_data[<span class="st">&quot;age&quot;</span>] <span class="op">=</span> (processed_data[<span class="st">&quot;age&quot;</span>] <span class="op">-</span> processed_data[<span class="st">&quot;age&quot;</span>].mean()) <span class="op">/</span> processed_data[<span class="st">&quot;age&quot;</span>].std()</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Example transformation: Encode categorical variables</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">&quot;gender&quot;</span> <span class="kw">in</span> processed_data.columns:</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>    processed_data <span class="op">=</span> pd.get_dummies(processed_data, columns<span class="op">=</span>[<span class="st">&quot;gender&quot;</span>], drop_first<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the preprocessed data to the specified output path</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Saving preprocessed data to: </span><span class="sc">{</span>args<span class="sc">.</span>output_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>os.makedirs(os.path.dirname(args.output_path), exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>processed_data.to_csv(args.output_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Log metrics for audit</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>run.log(<span class="st">&quot;Rows before preprocessing&quot;</span>, <span class="bu">len</span>(raw_data))</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>run.log(<span class="st">&quot;Rows after preprocessing&quot;</span>, <span class="bu">len</span>(processed_data))</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>run.log(<span class="st">&quot;Columns after preprocessing&quot;</span>, <span class="bu">len</span>(processed_data.columns))</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Data preprocessing completed successfully.&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 id="explanation-of-key-sections"><strong>Explanation of Key
+Sections</strong></h3>
+<ol type="1">
+<li><p><strong>Inputs and Outputs:</strong></p>
+<ul>
+<li>The script accepts an input dataset (<code>--input-dataset</code>)
+and an output path (<code>--output-path</code>).</li>
+<li>This allows flexibility in running the script in different
+environments, whether locally, in Azure ML pipelines, or elsewhere.</li>
+</ul></li>
+<li><p><strong>Accessing Data:</strong></p>
+<ul>
+<li>The script fetches a registered dataset from the AML workspace for
+preprocessing.</li>
+</ul></li>
+<li><p><strong>Preprocessing Logic:</strong></p>
+<ul>
+<li>The script includes common preprocessing steps such as handling
+missing values, normalization, and encoding categorical variables.</li>
+<li>You can customize this logic based on your data and model
+requirements.</li>
+</ul></li>
+<li><p><strong>Output:</strong></p>
+<ul>
+<li>The preprocessed data is saved to a specified location for
+subsequent pipeline steps (e.g., model training).</li>
+</ul></li>
+<li><p><strong>Logging:</strong></p>
+<ul>
+<li>Important statistics (e.g., rows before/after preprocessing) are
+logged to the AML Run for traceability and debugging.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="how-to-integrate-into-azure-devops"><strong>How to Integrate
+into Azure DevOps</strong></h3>
+<ol type="1">
+<li><p><strong>Store the Script in Your Repo:</strong></p>
+<ul>
+<li>Save the script (e.g., <code>data_preprocessing.py</code>) in a
+<code>scripts</code> directory in your Azure DevOps repository.</li>
+</ul></li>
+<li><p><strong>Use the Script in AML Pipelines:</strong></p>
+<ul>
+<li>Use the script as part of an Azure Machine Learning pipeline step
+(as shown in the earlier section on AML pipelines).</li>
+</ul></li>
+<li><p><strong>Version Control Benefits:</strong></p>
+<ul>
+<li>Any changes to the script are tracked in the repo, enabling you to
+tie specific preprocessing logic to specific model versions.</li>
+</ul></li>
+<li><p><strong>Automated Preprocessing:</strong></p>
+<ul>
+<li>Trigger the script as part of an automated DevOps pipeline or AML
+pipeline.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="aml-pipeline-integration-example"><strong>AML Pipeline
+Integration Example</strong></h3>
+<p>Here’s how this script could be integrated into an AML pipeline
+step:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.core <span class="im">import</span> PipelineData</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.steps <span class="im">import</span> PythonScriptStep</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the output of the preprocessing step</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>preprocessed_data <span class="op">=</span> PipelineData(<span class="st">&quot;preprocessed_data&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the data preprocessing step</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>data_preprocessing_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Data Preprocessing&quot;</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;data_preprocessing.py&quot;</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;--input-dataset&quot;</span>, <span class="st">&quot;raw_dataset&quot;</span>,  <span class="co"># Replace with the name of your registered dataset</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;--output-path&quot;</span>, preprocessed_data</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[preprocessed_data],</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span>,  <span class="co"># Directory where the script is stored</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    runconfig<span class="op">=</span>run_config</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<hr />
+<h3 id="traceability"><strong>Traceability</strong></h3>
+<ul>
+<li>By storing preprocessing scripts in Azure DevOps, every change to
+the script is tied to a commit in your repository.</li>
+<li>Combine this with AML Run logging to ensure you can trace every
+aspect of your data preparation.</li>
+</ul>
+<p>Let me know if you’d like further elaboration on any part of this
+setup!</p>
+<h2 id="question-6">Question 6</h2>
+<p>In the curriculum you provided above, you mentioned the following: —
+Use version-controlled datasets in AML to ensure reproducibility of your
+models. — Can you expand on this?</p>
+<h2 id="answer-6">Answer 6</h2>
+<h3
+id="expanding-on-version-controlled-datasets-in-azure-machine-learning-aml">Expanding
+on Version-Controlled Datasets in Azure Machine Learning (AML)</h3>
+<p>Using <strong>version-controlled datasets</strong> in Azure Machine
+Learning (AML) is essential for ensuring reproducibility, traceability,
+and consistency in your machine learning workflows. Version control for
+datasets allows you to manage changes in your data over time, enabling
+you to reproduce past experiments, track how changes in data affect
+model performance, and collaborate effectively with your team.</p>
+<hr />
+<h3 id="what-are-version-controlled-datasets"><strong>What are
+Version-Controlled Datasets?</strong></h3>
+<p>In AML, datasets can be registered in the workspace. A dataset is a
+reusable object that points to data in a datastore or local storage.
+Every time you register or update a dataset, a new version can be
+created. Each version retains a snapshot of the dataset’s state,
+ensuring that:</p>
+<ul>
+<li>Models trained with a specific dataset version can always be
+reproduced.</li>
+<li>Data changes can be tracked systematically.</li>
+</ul>
+<hr />
+<h3 id="benefits-of-version-controlled-datasets"><strong>Benefits of
+Version-Controlled Datasets</strong></h3>
+<ol type="1">
+<li><strong>Reproducibility</strong>: Ensures experiments and models are
+tied to a specific dataset version.</li>
+<li><strong>Auditability</strong>: Provides a record of data changes for
+compliance and debugging.</li>
+<li><strong>Collaboration</strong>: Enables teams to work with the same
+dataset version.</li>
+<li><strong>Traceability</strong>: Links datasets to model versions,
+preprocessing scripts, and pipeline runs.</li>
+</ol>
+<hr />
+<h3 id="how-to-implement-version-controlled-datasets-in-aml"><strong>How
+to Implement Version-Controlled Datasets in AML</strong></h3>
+<p>Here’s how you can create and manage version-controlled datasets in
+Azure Machine Learning:</p>
+<h4 id="registering-a-dataset"><strong>1. Registering a
+Dataset</strong></h4>
+<p>You can register a dataset to make it available for reuse and version
+control.</p>
+<h5 id="example-register-a-tabular-dataset">Example: Register a Tabular
+Dataset</h5>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Dataset</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to your workspace</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the data source (e.g., a CSV file in a datastore)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>datastore <span class="op">=</span> ws.get_default_datastore()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> Dataset.Tabular.from_delimited_files(path<span class="op">=</span>(datastore, <span class="st">&#39;path/to/your/data.csv&#39;</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Register the dataset</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> dataset.register(workspace<span class="op">=</span>ws,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>                           name<span class="op">=</span><span class="st">&quot;my_dataset&quot;</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                           description<span class="op">=</span><span class="st">&quot;Dataset for logistic regression model&quot;</span>,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>                           tags<span class="op">=</span>{<span class="st">&quot;source&quot;</span>: <span class="st">&quot;raw_data&quot;</span>},</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>                           create_new_version<span class="op">=</span><span class="va">True</span>)  <span class="co"># This enables versioning</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Dataset registered: </span><span class="sc">{</span>dataset<span class="sc">.</span><span class="bu">id</span><span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h4 id="using-a-specific-dataset-version"><strong>2. Using a Specific
+Dataset Version</strong></h4>
+<p>When using datasets in your experiments or pipelines, you can specify
+a version to ensure reproducibility.</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a specific version of the dataset</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> Dataset.get_by_name(workspace<span class="op">=</span>ws, name<span class="op">=</span><span class="st">&quot;my_dataset&quot;</span>, version<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset to pandas DataFrame for processing</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> dataset.to_pandas_dataframe()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span></code></pre></div>
+<hr />
+<h4 id="updating-a-dataset"><strong>3. Updating a Dataset</strong></h4>
+<p>When new data arrives, you can update the dataset and create a new
+version.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume new data is available at the same or a different location</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>new_dataset <span class="op">=</span> Dataset.Tabular.from_delimited_files(path<span class="op">=</span>(datastore, <span class="st">&#39;path/to/updated/data.csv&#39;</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Register the new dataset version</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>new_dataset <span class="op">=</span> new_dataset.register(workspace<span class="op">=</span>ws,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                    name<span class="op">=</span><span class="st">&quot;my_dataset&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                                    description<span class="op">=</span><span class="st">&quot;Updated dataset with new records&quot;</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>                                    create_new_version<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;New dataset version: </span><span class="sc">{</span>new_dataset<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h4 id="tracking-dataset-versions-in-experiments"><strong>4. Tracking
+Dataset Versions in Experiments</strong></h4>
+<p>When you run an experiment or pipeline, explicitly log the dataset
+version being used. This helps you trace which version was used for a
+specific model or experiment.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Run</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>run <span class="op">=</span> Run.get_context()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>dataset_version <span class="op">=</span> dataset.version</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>run.log(<span class="st">&quot;Dataset Version&quot;</span>, dataset_version)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Your experiment code here...</span></span></code></pre></div>
+<hr />
+<h4 id="using-version-controlled-datasets-in-pipelines"><strong>5. Using
+Version-Controlled Datasets in Pipelines</strong></h4>
+<p>You can pass versioned datasets to AML pipelines as inputs to
+steps.</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.steps <span class="im">import</span> PythonScriptStep</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify a versioned dataset as an input</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> Dataset.get_by_name(workspace<span class="op">=</span>ws, name<span class="op">=</span><span class="st">&quot;my_dataset&quot;</span>, version<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>data_processing_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Data Processing&quot;</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;process_data.py&quot;</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--input-dataset&quot;</span>, dataset.as_named_input(<span class="st">&quot;input_dataset&quot;</span>).as_mount()],</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    runconfig<span class="op">=</span>run_config,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<hr />
+<h4
+id="viewing-and-managing-dataset-versions-in-the-aml-studio"><strong>6.
+Viewing and Managing Dataset Versions in the AML Studio</strong></h4>
+<ol type="1">
+<li>Go to the <strong>Datasets</strong> section of your Azure Machine
+Learning Studio.</li>
+<li>Select a dataset to see its details, including all registered
+versions.</li>
+<li>Compare versions to track changes and ensure you’re using the
+correct version in your experiments.</li>
+</ol>
+<hr />
+<h3 id="best-practices-for-version-controlled-datasets"><strong>Best
+Practices for Version-Controlled Datasets</strong></h3>
+<ol type="1">
+<li><strong>Automate Updates</strong>: Use Azure DevOps pipelines or
+other automation tools to add new data and create new dataset
+versions.</li>
+<li><strong>Consistent Naming and Metadata</strong>: Use meaningful
+dataset names and metadata (e.g., tags and descriptions) to identify and
+differentiate versions easily.</li>
+<li><strong>Data Validation</strong>: Validate new versions of datasets
+to ensure they meet quality standards before registering them.</li>
+<li><strong>Link to Experiments</strong>: Always log dataset versions in
+your experiments to ensure traceability.</li>
+<li><strong>Immutable Datasets</strong>: Treat registered datasets as
+immutable; avoid modifying the underlying data source for a given
+version.</li>
+</ol>
+<hr />
+<h3 id="integrating-with-azure-devops"><strong>Integrating with Azure
+DevOps</strong></h3>
+<p>To fully integrate dataset versioning into your MLOps workflow:</p>
+<ol type="1">
+<li><strong>Version-Controlled Scripts</strong>: Keep dataset update
+scripts in your Azure DevOps repository.</li>
+<li><strong>Pipeline for Data Updates</strong>:
+<ul>
+<li>Automate dataset version updates with an Azure DevOps pipeline.</li>
+<li>Example pipeline steps:
+<ul>
+<li>Fetch new data.</li>
+<li>Validate data quality.</li>
+<li>Register the new dataset version.</li>
+</ul></li>
+</ul></li>
+<li><strong>Track Changes</strong>: Use Azure DevOps Boards or Wikis to
+document changes made to datasets across versions.</li>
+</ol>
+<hr />
+<h3 id="example-workflow-for-dataset-versioning-in-mlops">Example
+Workflow for Dataset Versioning in MLOps</h3>
+<ol type="1">
+<li><p><strong>Raw Data Ingestion</strong>:</p>
+<ul>
+<li>Fetch raw data periodically or upon updates.</li>
+<li>Store raw data in an Azure Blob Storage linked to the AML
+datastore.</li>
+</ul></li>
+<li><p><strong>Preprocessing and Validation</strong>:</p>
+<ul>
+<li>Run preprocessing and validation scripts to clean and prepare
+data.</li>
+<li>Save the processed data in a new location (e.g.,
+<code>processed/2024-01-01</code>).</li>
+</ul></li>
+<li><p><strong>Dataset Registration</strong>:</p>
+<ul>
+<li>Register the processed data as a new version of an existing
+dataset.</li>
+</ul></li>
+<li><p><strong>Pipeline Execution</strong>:</p>
+<ul>
+<li>Trigger your AML pipeline using the new dataset version for model
+training and evaluation.</li>
+</ul></li>
+</ol>
+<hr />
+<p>By versioning your datasets, you ensure every model and experiment is
+reproducible and auditable, which is a cornerstone of effective MLOps
+practices. Let me know if you’d like help implementing any part of this
+process!</p>
+<h2 id="question-7">Question 7</h2>
+<p>n teh curriculum above, you mentioned the following: — Automate
+Dataset Updates:</p>
+<p>Write a Python script to append new data to your existing dataset and
+re-register it. Use Azure DevOps pipelines to automate this process. —
+Can you expand on this?</p>
+<h2 id="answer-7">Answer 7</h2>
+<p>Automating dataset updates in Azure Machine Learning (AML) is a
+crucial step for maintaining a dynamic, reproducible, and scalable MLOps
+workflow. This involves appending new data to an existing dataset,
+re-registering it in AML as a new version, and automating this process
+using Azure DevOps pipelines.</p>
+<p>Here’s a detailed breakdown of how to achieve this:</p>
+<hr />
+<h3
+id="write-a-python-script-to-append-new-data-and-re-register-the-dataset"><strong>1.
+Write a Python Script to Append New Data and Re-Register the
+Dataset</strong></h3>
+<p>This script performs the following steps:</p>
+<ol type="1">
+<li>Loads the current dataset from AML.</li>
+<li>Loads new data (e.g., from a datastore or external source).</li>
+<li>Appends the new data to the existing dataset.</li>
+<li>Saves the combined data to a new location.</li>
+<li>Re-registers the updated dataset as a new version in AML.</li>
+</ol>
+<h4 id="example-script-update_dataset.py">Example Script:
+<code>update_dataset.py</code></h4>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Dataset</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Argument parsing</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">&quot;Update and Register Dataset&quot;</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">&quot;--existing-dataset&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Name of the existing registered dataset&quot;</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">&quot;--new-data-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the new data file&quot;</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">&quot;--output-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to save the updated dataset&quot;</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to AML Workspace</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Load existing dataset</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Loading existing dataset: </span><span class="sc">{</span>args<span class="sc">.</span>existing_dataset<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>existing_dataset <span class="op">=</span> Dataset.get_by_name(workspace<span class="op">=</span>ws, name<span class="op">=</span>args.existing_dataset)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>existing_data <span class="op">=</span> existing_dataset.to_pandas_dataframe()</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Load new data</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Loading new data from: </span><span class="sc">{</span>args<span class="sc">.</span>new_data_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>new_data <span class="op">=</span> pd.read_csv(args.new_data_path)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine datasets</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Appending new data to existing dataset...&quot;</span>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>updated_data <span class="op">=</span> pd.concat([existing_data, new_data])</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the updated dataset</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Saving updated dataset to: </span><span class="sc">{</span>args<span class="sc">.</span>output_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>os.makedirs(os.path.dirname(args.output_path), exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>updated_data.to_csv(args.output_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Register the updated dataset</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Registering updated dataset as a new version...&quot;</span>)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>updated_dataset <span class="op">=</span> Dataset.Tabular.from_delimited_files(path<span class="op">=</span>[(ws.get_default_datastore(), args.output_path)])</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>updated_dataset <span class="op">=</span> updated_dataset.register(</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>    workspace<span class="op">=</span>ws,</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span>args.existing_dataset,</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Updated dataset with new records&quot;</span>,</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>    create_new_version<span class="op">=</span><span class="va">True</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;New dataset version registered: </span><span class="sc">{</span>updated_dataset<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 id="store-the-script-in-your-azure-devops-repository"><strong>2.
+Store the Script in Your Azure DevOps Repository</strong></h3>
+<p>Save the <code>update_dataset.py</code> script in your Azure DevOps
+repository under a directory like <code>scripts/</code>.</p>
+<p>This ensures the script is version-controlled, auditable, and
+accessible for use in DevOps pipelines.</p>
+<hr />
+<h3
+id="create-an-azure-devops-pipeline-to-automate-dataset-updates"><strong>3.
+Create an Azure DevOps Pipeline to Automate Dataset
+Updates</strong></h3>
+<p>Set up an Azure DevOps pipeline to run the
+<code>update_dataset.py</code> script whenever new data becomes
+available.</p>
+<h4 id="pipeline-steps"><strong>Pipeline Steps:</strong></h4>
+<ol type="1">
+<li><strong>Fetch New Data</strong>: Fetch or upload the new data (e.g.,
+from an external source or a blob storage).</li>
+<li><strong>Run Update Script</strong>: Run the
+<code>update_dataset.py</code> script to append the new data and
+re-register the dataset.</li>
+<li><strong>Log Results</strong>: Log dataset details (e.g., version
+number) for traceability.</li>
+</ol>
+<h4 id="example-azure-devops-pipeline-yaml-azure-pipelines.yml">Example
+Azure DevOps Pipeline YAML: <code>azure-pipelines.yml</code></h4>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> main</span><span class="co"> # Trigger pipeline on changes to the main branch</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span><span class="co"> # Use a Microsoft-hosted agent</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">DATASET_NAME</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my_dataset&quot;</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">NEW_DATA_PATH</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;new_data/new_data.csv&quot;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">OUTPUT_PATH</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;updated_data/updated_dataset.csv&quot;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@1</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span><span class="co"> # Use Python 3.x</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">addToPath</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>      python -m pip install --upgrade pip</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>      pip install azureml-core pandas</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install Dependencies&quot;</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>      python scripts/update_dataset.py \</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        --existing-dataset $(DATASET_NAME) \</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        --new-data-path $(NEW_DATA_PATH) \</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        --output-path $(OUTPUT_PATH)</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Update and Register Dataset&quot;</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>      echo &quot;Dataset $(DATASET_NAME) updated and registered successfully.&quot;</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Log Update Completion&quot;</span></span></code></pre></div>
+<hr />
+<h3 id="automate-the-trigger-for-new-data"><strong>4. Automate the
+Trigger for New Data</strong></h3>
+<ol type="1">
+<li><strong>Manual Trigger</strong>:
+<ul>
+<li>Use the Azure DevOps pipeline manually when new data is
+available.</li>
+</ul></li>
+<li><strong>Scheduled Trigger</strong>:
+<ul>
+<li><p>Configure the pipeline to run on a schedule (e.g., nightly or
+weekly) to fetch and update data:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">schedules</span><span class="kw">:</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">cron</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;0 0 * * *&quot;</span><span class="co"> # Run daily at midnight</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> Daily Dataset Update</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> main</span></span></code></pre></div></li>
+</ul></li>
+<li><strong>Event-Based Trigger</strong>:
+<ul>
+<li>Trigger the pipeline when new data is uploaded to a storage account
+(e.g., using Azure Blob Storage Event Grid and DevOps REST API).</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="monitor-and-audit-dataset-updates"><strong>5. Monitor and Audit
+Dataset Updates</strong></h3>
+<ol type="1">
+<li><p><strong>Log Details</strong>:</p>
+<ul>
+<li><p>Log the new dataset version and other metadata (e.g., number of
+rows, columns, or records added) in the pipeline for
+traceability.</p></li>
+<li><p>Example:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">- </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    echo &quot;Dataset Version: $(DATASET_VERSION)&quot;</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    echo &quot;Rows Added: $(ROWS_ADDED)&quot;</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Log Dataset Version&quot;</span></span></code></pre></div></li>
+</ul></li>
+<li><p><strong>Validate Data Quality</strong>:</p>
+<ul>
+<li>Add a data validation step in the pipeline to ensure the new data
+meets quality standards before appending it to the dataset.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="benefits-of-this-approach"><strong>6. Benefits of This
+Approach</strong></h3>
+<ul>
+<li><strong>Reproducibility</strong>: Each dataset version is tied to a
+pipeline run, ensuring full traceability.</li>
+<li><strong>Scalability</strong>: The pipeline can handle frequent
+updates with minimal manual intervention.</li>
+<li><strong>Auditability</strong>: All changes are tracked in Azure
+DevOps, including pipeline logs and dataset metadata.</li>
+</ul>
+<hr />
+<h3 id="advanced-enhancements"><strong>Advanced
+Enhancements</strong></h3>
+<ol type="1">
+<li><strong>Validation Logic</strong>:
+<ul>
+<li>Add a data validation script (e.g., <code>validate_data.py</code>)
+to check for anomalies, duplicates, or missing values.</li>
+</ul></li>
+<li><strong>Automate Downstream Processes</strong>:
+<ul>
+<li>Trigger the AML training pipeline automatically after the dataset
+update pipeline completes.</li>
+</ul></li>
+<li><strong>Monitoring</strong>:
+<ul>
+<li>Use Azure Monitor or custom alerts to notify your team about dataset
+updates or failures.</li>
+</ul></li>
+</ol>
+<hr />
+<p>By following this approach, you ensure that your datasets remain
+up-to-date, consistent, and traceable, all while leveraging Azure DevOps
+to automate and audit the entire process. Let me know if you’d like help
+implementing any specific part!</p>
+<h2 id="question-8">Question 8</h2>
+<p>In your curriculum, in step 6, you said: — Refactor Your Project:</p>
+<p>Store all source code, data preprocessing scripts, and environment
+YAML files in Azure DevOps. Create an AML pipeline for your logistic
+regression script. — Can you flesh out an example with as much detail as
+you can muster?</p>
+<h2 id="answer-8">Answer 8</h2>
+<h3
+id="detailed-example-refactoring-a-machine-learning-project">Detailed
+Example: Refactoring a Machine Learning Project</h3>
+<p>In this detailed example, we’ll go step by step to <strong>refactor a
+project</strong> for Azure Machine Learning (AML) and Azure DevOps. This
+includes organizing source code, storing preprocessing scripts, and
+managing environment YAML files for reproducibility, traceability, and
+automation. We’ll create an <strong>AML pipeline</strong> for training a
+logistic regression model and integrate everything into an Azure DevOps
+repository.</p>
+<hr />
+<h3 id="organizing-the-project-directory"><strong>1. Organizing the
+Project Directory</strong></h3>
+<p>A clear directory structure is essential for modularity and
+maintainability. Here’s an example structure:</p>
+<pre class="plaintext"><code>project/
+├── aml_config/
+│   ├── environment.yml         # Conda environment definition
+│   └── aml_compute.json        # Compute configuration
+├── data/
+│   ├── raw/                    # Raw data files
+│   └── processed/              # Preprocessed data files
+├── scripts/
+│   ├── data_preprocessing.py   # Preprocessing script
+│   ├── train_model.py          # Model training script
+│   ├── evaluate_model.py       # Model evaluation script
+│   ├── register_model.py       # Model registration script
+│   └── __init__.py             # To make it a package
+├── tests/
+│   ├── test_preprocessing.py   # Unit tests for preprocessing
+│   ├── test_training.py        # Unit tests for training
+├── pipelines/
+│   ├── aml_pipeline.py         # Code to define the AML pipeline
+│   └── trigger_pipeline.py     # Script to trigger the pipeline
+├── .azureml/
+│   └── config.json             # AML workspace configuration
+├── azure-pipelines.yml         # Azure DevOps pipeline YAML
+└── README.md                   # Project documentation</code></pre>
+<hr />
+<h3 id="refactor-source-code"><strong>2. Refactor Source
+Code</strong></h3>
+<p>Each script should handle a specific part of the machine learning
+workflow.</p>
+<h4
+id="data_preprocessing.py"><strong><code>data_preprocessing.py</code></strong></h4>
+<p>Handles data cleaning, transformations, and saves preprocessed
+data.</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Run</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess_data(input_path, output_path):</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(input_path)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.dropna()  <span class="co"># Drop missing values</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">&#39;age&#39;</span>] <span class="op">=</span> (df[<span class="st">&#39;age&#39;</span>] <span class="op">-</span> df[<span class="st">&#39;age&#39;</span>].mean()) <span class="op">/</span> df[<span class="st">&#39;age&#39;</span>].std()  <span class="co"># Normalize</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    df.to_csv(output_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--input-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to raw data&quot;</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--output-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to save preprocessed data&quot;</span>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    preprocess_data(args.input_path, args.output_path)</span></code></pre></div>
+<h4
+id="train_model.py"><strong><code>train_model.py</code></strong></h4>
+<p>Trains a logistic regression model.</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Run</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>run <span class="op">=</span> Run.get_context()</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_model(input_path, output_path):</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(input_path)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df.drop(<span class="st">&quot;target&quot;</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[<span class="st">&quot;target&quot;</span>]</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> LogisticRegression()</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    model.fit(X, y)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="op">=</span> accuracy_score(y, model.predict(X))</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    run.log(<span class="st">&quot;accuracy&quot;</span>, accuracy)</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    joblib.dump(model, output_path)</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--input-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to preprocessed data&quot;</span>)</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--output-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to save the model&quot;</span>)</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    train_model(args.input_path, args.output_path)</span></code></pre></div>
+<h4
+id="environment.yml"><strong><code>environment.yml</code></strong></h4>
+<p>Defines the environment for the AML pipeline.</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> logistic-env</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dependencies</span><span class="kw">:</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> python=3.8</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> pandas</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> scikit-learn</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> joblib</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> pip</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="fu">pip</span><span class="kw">:</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> azureml-core</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> azureml-dataprep</span></span></code></pre></div>
+<hr />
+<h3 id="create-the-aml-pipeline"><strong>3. Create the AML
+Pipeline</strong></h3>
+<h4
+id="aml_pipeline.py"><strong><code>aml_pipeline.py</code></strong></h4>
+<p>Defines the steps of the AML pipeline.</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.steps <span class="im">import</span> PythonScriptStep</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.core <span class="im">import</span> Pipeline, PipelineData</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Experiment, Environment</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core.compute <span class="im">import</span> ComputeTarget, AmlCompute</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to workspace</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Define compute target</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>compute_target <span class="op">=</span> ws.compute_targets[<span class="st">&quot;cpu-cluster&quot;</span>]</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Define environment</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> Environment.from_conda_specification(name<span class="op">=</span><span class="st">&quot;logistic-env&quot;</span>, file_path<span class="op">=</span><span class="st">&quot;aml_config/environment.yml&quot;</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Define intermediate data outputs</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>preprocessed_data <span class="op">=</span> PipelineData(<span class="st">&quot;preprocessed_data&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>trained_model <span class="op">=</span> PipelineData(<span class="st">&quot;trained_model&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Define pipeline steps</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>data_preprocessing_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Preprocess Data&quot;</span>,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;data_preprocessing.py&quot;</span>,</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--input-path&quot;</span>, <span class="st">&quot;data/raw/raw_data.csv&quot;</span>, <span class="st">&quot;--output-path&quot;</span>, preprocessed_data],</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[preprocessed_data],</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span>,</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>env,</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>train_model_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Train Model&quot;</span>,</span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;train_model.py&quot;</span>,</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[<span class="st">&quot;--input-path&quot;</span>, preprocessed_data, <span class="st">&quot;--output-path&quot;</span>, trained_model],</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>[preprocessed_data],</span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[trained_model],</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span>,</span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>env,</span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Create pipeline</span></span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline(workspace<span class="op">=</span>ws, steps<span class="op">=</span>[data_preprocessing_step, train_model_step])</span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Publish pipeline</span></span>
+<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>pipeline.validate()</span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a>pipeline.publish(name<span class="op">=</span><span class="st">&quot;LogisticRegressionPipeline&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 id="azure-devops-pipeline"><strong>4. Azure DevOps
+Pipeline</strong></h3>
+<h4
+id="azure-pipelines.yml"><strong><code>azure-pipelines.yml</code></strong></h4>
+<p>Integrates AML pipeline execution into Azure DevOps.</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> main</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">WORKSPACE_NAME</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my_workspace&quot;</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">RESOURCE_GROUP</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my_resource_group&quot;</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">SUBSCRIPTION_ID</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my_subscription_id&quot;</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@1</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">addToPath</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>      python -m pip install --upgrade pip</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>      pip install azureml-core</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install Azure ML SDK&quot;</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>      python pipelines/aml_pipeline.py</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Run AML Pipeline Script&quot;</span></span></code></pre></div>
+<hr />
+<h3 id="store-everything-in-azure-devops"><strong>5. Store Everything in
+Azure DevOps</strong></h3>
+<p>Push the entire project directory to your Azure DevOps
+repository:</p>
+<ol type="1">
+<li><p><strong>Commit and Push</strong>:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;Initial commit&quot;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main</span></code></pre></div></li>
+<li><p><strong>Run the DevOps Pipeline</strong>:</p>
+<ul>
+<li>Go to Azure DevOps Pipelines and configure the YAML file.</li>
+<li>Trigger the pipeline.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="run-and-monitor-the-pipeline"><strong>6. Run and Monitor the
+Pipeline</strong></h3>
+<ol type="1">
+<li><p><strong>Monitor AML Pipeline</strong>:</p>
+<ul>
+<li>In the AML workspace, navigate to
+<code>Pipelines &gt; Pipeline Runs</code> to monitor the pipeline
+execution.</li>
+<li>View logs, metrics (e.g., accuracy), and outputs (e.g., model
+artifacts).</li>
+</ul></li>
+<li><p><strong>Monitor DevOps Pipeline</strong>:</p>
+<ul>
+<li>View the Azure DevOps pipeline logs to ensure the integration works
+seamlessly.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="outcome"><strong>Outcome</strong></h3>
+<p>By following this setup:</p>
+<ul>
+<li>All source code, configuration files, and pipelines are
+version-controlled in Azure DevOps.</li>
+<li>The AML pipeline ensures modular, reproducible, and traceable
+workflows.</li>
+<li>Automation through Azure DevOps streamlines dataset updates,
+training, and deployment.</li>
+</ul>
+<p>Let me know if you’d like clarification or enhancements to this
+example!</p>
+<h2 id="question-9">Question 9</h2>
+<p>Thank you for this. You have managed to give enough detail so that I
+can identify something that I’m still unsure about. In your example, you
+are using a CSV file to train the model. But my understanding is that
+this doesn’t use the concept of of a “registered data asset” in an Azure
+Machine Learning workspace. I mean, would the CSV file even be tracked
+by the repository? This is one of the key issues that I’m unclear on.
+How to use a registered data asset in the workflow. Or even if that is
+the best practice.</p>
+<h2 id="answer-9">Answer 9</h2>
+<p>Great observation! You’re absolutely correct that directly using a
+CSV file in the workflow does not take full advantage of
+<strong>registered data assets</strong> in Azure Machine Learning (AML).
+Using registered data assets is a best practice for ensuring
+traceability, reproducibility, and proper versioning in an AML
+workspace.</p>
+<p>Here’s a detailed explanation of how to work with <strong>registered
+data assets</strong> in AML and how they fit into your workflow.</p>
+<hr />
+<h3 id="why-use-registered-data-assets"><strong>1. Why Use Registered
+Data Assets?</strong></h3>
+<ol type="1">
+<li><p><strong>Traceability</strong>:</p>
+<ul>
+<li>Registered data assets are versioned, enabling you to track which
+dataset version was used for a specific experiment or pipeline.</li>
+</ul></li>
+<li><p><strong>Reproducibility</strong>:</p>
+<ul>
+<li>You can always re-run experiments using the exact same dataset
+version.</li>
+</ul></li>
+<li><p><strong>Auditability</strong>:</p>
+<ul>
+<li>Datasets are centrally managed in the AML workspace, making them
+easier to audit compared to CSV files stored in random locations.</li>
+</ul></li>
+<li><p><strong>Collaboration</strong>:</p>
+<ul>
+<li>Teams can reuse registered datasets across projects without worrying
+about duplication or inconsistencies.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="registering-a-dataset-in-aml"><strong>2. Registering a Dataset
+in AML</strong></h3>
+<p>You can register datasets in the AML workspace from a datastore or
+local file.</p>
+<h4 id="example-registering-a-dataset">Example: Registering a
+Dataset</h4>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Dataset</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to AML workspace</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Access the default datastore (e.g., Azure Blob Storage)</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>datastore <span class="op">=</span> ws.get_default_datastore()</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Upload CSV file to the datastore</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>datastore.upload_files(</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    files<span class="op">=</span>[<span class="st">&#39;data/raw/raw_data.csv&#39;</span>],</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    target_path<span class="op">=</span><span class="st">&#39;raw_data/&#39;</span>,</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    overwrite<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Tabular Dataset</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> Dataset.Tabular.from_delimited_files(path<span class="op">=</span>(datastore, <span class="st">&#39;raw_data/raw_data.csv&#39;</span>))</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Register the dataset in AML workspace</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> dataset.register(</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    workspace<span class="op">=</span>ws,</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&#39;raw_dataset&#39;</span>,</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&#39;Raw dataset for logistic regression&#39;</span>,</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    create_new_version<span class="op">=</span><span class="va">True</span></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Dataset registered: </span><span class="sc">{</span>dataset<span class="sc">.</span>name<span class="sc">}</span><span class="ss"> (Version: </span><span class="sc">{</span>dataset<span class="sc">.</span>version<span class="sc">}</span><span class="ss">)&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 id="using-registered-data-assets-in-your-workflow"><strong>3. Using
+Registered Data Assets in Your Workflow</strong></h3>
+<p>Instead of hardcoding paths to a CSV file, you can load and use the
+registered dataset in your preprocessing or training scripts.</p>
+<h4 id="updated-data_preprocessing.py"><strong>Updated
+<code>data_preprocessing.py</code></strong></h4>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Dataset, Run</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess_data(dataset_name, output_path):</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the AML run context</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    run <span class="op">=</span> Run.get_context()</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    ws <span class="op">=</span> run.experiment.workspace</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the dataset by name</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    dataset <span class="op">=</span> Dataset.get_by_name(workspace<span class="op">=</span>ws, name<span class="op">=</span>dataset_name)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> dataset.to_pandas_dataframe()</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Preprocess the data</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.dropna()  <span class="co"># Drop missing values</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">&#39;age&#39;</span>] <span class="op">=</span> (df[<span class="st">&#39;age&#39;</span>] <span class="op">-</span> df[<span class="st">&#39;age&#39;</span>].mean()) <span class="op">/</span> df[<span class="st">&#39;age&#39;</span>].std()  <span class="co"># Normalize</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save the preprocessed data</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>    df.to_csv(output_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--dataset-name&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Name of the registered dataset&quot;</span>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--output-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to save the preprocessed data&quot;</span>)</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>    preprocess_data(args.dataset_name, args.output_path)</span></code></pre></div>
+<h4 id="pipeline-step-for-preprocessing"><strong>Pipeline Step for
+Preprocessing</strong></h4>
+<p>In the pipeline, replace the hardcoded CSV path with the registered
+dataset:</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.pipeline.steps <span class="im">import</span> PythonScriptStep</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define intermediate output</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>preprocessed_data <span class="op">=</span> PipelineData(<span class="st">&quot;preprocessed_data&quot;</span>, datastore<span class="op">=</span>ws.get_default_datastore())</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the step</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>data_preprocessing_step <span class="op">=</span> PythonScriptStep(</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;Data Preprocessing&quot;</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    script_name<span class="op">=</span><span class="st">&quot;data_preprocessing.py&quot;</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    arguments<span class="op">=</span>[</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;--dataset-name&quot;</span>, <span class="st">&quot;raw_dataset&quot;</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;--output-path&quot;</span>, preprocessed_data</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>[preprocessed_data],</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>    compute_target<span class="op">=</span>compute_target,</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    source_directory<span class="op">=</span><span class="st">&quot;scripts&quot;</span>,</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>env,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<hr />
+<h3 id="best-practices-for-using-registered-data-assets"><strong>4. Best
+Practices for Using Registered Data Assets</strong></h3>
+<ol type="1">
+<li><p><strong>Version Your Data</strong>:</p>
+<ul>
+<li><p>Every time your data changes (e.g., new records are added),
+create a new dataset version.</p></li>
+<li><p>Example:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> dataset.register(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    workspace<span class="op">=</span>ws,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;raw_dataset&quot;</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Updated dataset with new records&quot;</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    create_new_version<span class="op">=</span><span class="va">True</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;New dataset version: </span><span class="sc">{</span>dataset<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div></li>
+</ul></li>
+<li><p><strong>Document Changes</strong>:</p>
+<ul>
+<li>Use tags and descriptions when registering datasets to document
+changes (e.g., <code>"Added Q4 2024 data"</code>).</li>
+</ul></li>
+<li><p><strong>Log Dataset Versions</strong>:</p>
+<ul>
+<li><p>Log the dataset version used in each experiment for
+traceability:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>run.log(<span class="st">&quot;Dataset Version&quot;</span>, dataset.version)</span></code></pre></div></li>
+</ul></li>
+<li><p><strong>Automate Dataset Updates</strong>:</p>
+<ul>
+<li>Use an Azure DevOps pipeline to upload new data to the datastore and
+register it as a new dataset version.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="using-registered-data-assets-for-training"><strong>5. Using
+Registered Data Assets for Training</strong></h3>
+<p>In the training script, load the preprocessed dataset using its
+registered name:</p>
+<h4 id="updated-train_model.py"><strong>Updated
+<code>train_model.py</code></strong></h4>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Run, Dataset</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>run <span class="op">=</span> Run.get_context()</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_model(dataset_name, output_path):</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Access AML workspace</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    ws <span class="op">=</span> run.experiment.workspace</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the preprocessed dataset</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    dataset <span class="op">=</span> Dataset.get_by_name(workspace<span class="op">=</span>ws, name<span class="op">=</span>dataset_name)</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> dataset.to_pandas_dataframe()</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split data into features and target</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df.drop(<span class="st">&quot;target&quot;</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[<span class="st">&quot;target&quot;</span>]</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Train a logistic regression model</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> LogisticRegression()</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>    model.fit(X, y)</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Log accuracy</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="op">=</span> accuracy_score(y, model.predict(X))</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>    run.log(<span class="st">&quot;accuracy&quot;</span>, accuracy)</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save the model</span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>    joblib.dump(model, output_path)</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--dataset-name&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Name of the registered dataset&quot;</span>)</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--output-path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to save the model&quot;</span>)</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>    train_model(args.dataset_name, args.output_path)</span></code></pre></div>
+<hr />
+<h3 id="benefits-of-this-approach-1"><strong>6. Benefits of This
+Approach</strong></h3>
+<ol type="1">
+<li><p><strong>Tracking and Versioning</strong>:</p>
+<ul>
+<li>Each dataset version is linked to the corresponding pipeline run and
+model version.</li>
+</ul></li>
+<li><p><strong>Reusability</strong>:</p>
+<ul>
+<li>The same dataset can be reused across different projects and
+pipelines.</li>
+</ul></li>
+<li><p><strong>Centralized Data Management</strong>:</p>
+<ul>
+<li>All datasets are managed in the AML workspace, avoiding scattered
+files in multiple locations.</li>
+</ul></li>
+<li><p><strong>Scalability</strong>:</p>
+<ul>
+<li>When the dataset grows or changes, you only need to register the new
+version without modifying your scripts.</li>
+</ul></li>
+</ol>
+<hr />
+<p>By incorporating <strong>registered data assets</strong> into your
+AML workflows, you ensure traceability and reproducibility, which are
+critical for MLOps. This approach also aligns with the best practices of
+using AML as a centralized, auditable platform for machine learning. Let
+me know if you’d like further clarification or help implementing this
+workflow!</p>
+    
+</body>
+</html>

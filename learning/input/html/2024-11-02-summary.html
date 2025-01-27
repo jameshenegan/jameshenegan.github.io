@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="azure-devops-and-azure-machine-learning-studio">Azure DevOps and
+Azure Machine Learning Studio</h1>
+<h2 id="azure-devops-project">1. <strong>Azure DevOps
+Project</strong>:</h2>
+<ul>
+<li>We will have a single DevOps project encompassing multiple ML
+projects, with each ML project managed in its own Azure Repo. This
+organization is practical for managing distinct ML initiatives while
+maintaining separation between projects.</li>
+</ul>
+<h2 id="branches-in-each-azure-repo">2. <strong>Branches in Each Azure
+Repo</strong>:</h2>
+<ul>
+<li>We will have two main branches in each repo:
+<strong><code>Prod</code></strong> and
+<strong><code>Dev</code></strong>.</li>
+<li>The <code>Prod</code> branch is the main or master branch,
+representing stable code that should be deployed to the production
+environment (the <strong>Prod AML workspace</strong>).</li>
+<li>The <code>Dev</code> branch is a child of the <code>Prod</code>
+branch, acting as a staging or integration branch where we consolidate
+work from feature branches before promoting it to production.</li>
+<li>This structure lets us keep production-ready code isolated from
+ongoing development work while still maintaining a direct relationship
+between the code and the target environment.</li>
+</ul>
+<h2 id="azure-machine-learning-aml-workspaces">3. <strong>Azure Machine
+Learning (AML) Workspaces</strong>:</h2>
+<ul>
+<li>We will have two AML workspaces: one for production
+(<code>prod workspace</code>) and one for development/testing
+(<code>dev workspace</code>).</li>
+<li>This separation is standard in ML operations, allowing you to test
+and iterate on models in a <strong>non-production environment</strong>
+(the <code>dev workspace</code>) before deploying to
+<strong>production</strong>.</li>
+</ul>
+<h2 id="branch-workspace-correspondence">4. <strong>Branch-Workspace
+Correspondence</strong>:</h2>
+<ul>
+<li>The <code>Prod</code> branch should always mirror the code currently
+in production, and therefore corresponds to the <strong>Prod
+workspace</strong>.</li>
+<li>The <code>Dev</code> branch is a staging ground, representing what’s
+currently in development/testing, corresponding to the <strong>Dev
+workspace</strong>.</li>
+<li>This correspondence ensures that changes are tested in the Dev
+workspace before reaching production, maintaining consistency and
+stability.</li>
+</ul>
+<h2 id="feature-branches">5. <strong>Feature Branches</strong>:</h2>
+<ul>
+<li>Feature branches come off of the <code>Dev</code> branch, providing
+isolated areas for contributors to work on specific features without
+affecting the main development branch.</li>
+<li>Once feature branches are completed, tested, and reviewed, they are
+merged back into <code>Dev</code>. After further validation,
+<code>Dev</code> can then be merged into <code>Prod</code>.</li>
+</ul>
+<h2 id="branch-based-approval-gates-also-called-branch-policies">6.
+<strong>Branch-Based Approval Gates</strong> (also called Branch
+Policies)</h2>
+<p><strong>Where It’s Applied</strong>:</p>
+<ul>
+<li>These gates are set directly on branches within your <strong>Azure
+Repos</strong> (such as <code>Dev</code>, <code>Prod</code>, or feature
+branches).</li>
+<li>They act as “policies” that control what happens when developers
+want to merge code from one branch into another (e.g., merging a feature
+branch into <code>Dev</code> or merging <code>Dev</code> into
+<code>Prod</code>).</li>
+</ul>
+<p><strong>Purpose</strong>:</p>
+<ul>
+<li>To enforce code quality and review standards <strong>before code is
+merged</strong> into a critical branch.</li>
+<li>This ensures that only reviewed, approved, and tested code is
+integrated into branches that represent different stages of development
+(like <code>Dev</code> or <code>Prod</code>).</li>
+</ul>
+<p><strong>How It Works</strong>:</p>
+<ul>
+<li>When a developer wants to merge code (often through a Pull Request)
+from, say, a feature branch into <code>Dev</code> or <code>Dev</code>
+into <code>Prod</code>, the branch policies specify what conditions must
+be met.</li>
+<li>For example, a branch-based approval gate might require:
+<ul>
+<li>Code review by one or more team members.</li>
+<li>Successful completion of automated tests.</li>
+<li>Static code analysis or linting.</li>
+</ul></li>
+<li>If these conditions (or “gates”) aren’t met, the merge cannot
+proceed.</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<ul>
+<li>Imagine you’re merging a feature branch into <code>Dev</code>. The
+branch-based approval gate could require:
+<ul>
+<li>2 code reviews.</li>
+<li>Passing test results.</li>
+</ul></li>
+<li>Only after these conditions are satisfied can the code be merged
+into the <code>Dev</code> branch.</li>
+</ul>
+<p><strong>In Summary</strong>: Branch-based approval gates
+<strong>control what code gets merged into a branch</strong>, ensuring
+that only approved, quality-checked code makes it into important
+branches like <code>Dev</code> or <code>Prod</code>.</p>
+<h2 id="pipeline-and-deployment-gates">7. <strong>Pipeline and
+Deployment Gates</strong>:</h2>
+<p><strong>Where It’s Applied</strong>:</p>
+<ul>
+<li>These gates are set within <strong>Azure Pipelines</strong>,
+specifically in the <strong>release or deployment pipeline</strong> for
+moving code from one environment to another (e.g., deploying from
+<code>Dev</code> to <code>Staging</code> to <code>Prod</code>
+environments).</li>
+<li>Environment-based gates are associated with deployment stages in a
+pipeline, rather than directly with code branches.</li>
+</ul>
+<p><strong>Purpose</strong>:</p>
+<ul>
+<li>To enforce checks and approvals <strong>before deploying</strong>
+code to specific environments (like a Dev, Staging, or Production
+environment).</li>
+<li>This ensures that code is only deployed to these environments after
+getting the necessary approvals, adding a layer of control over the
+deployment process.</li>
+</ul>
+<p><strong>How It Works</strong>:</p>
+<ul>
+<li>When a pipeline tries to deploy code to an environment, the
+environment-based approval gates specify the conditions that must be met
+before deployment can proceed.</li>
+<li>For example, environment-based approval gates might require:
+<ul>
+<li>Manual approval from a specific team or individual.</li>
+<li>Successful completion of tests in a lower environment.</li>
+<li>Validation checks, such as security or compliance scans.</li>
+</ul></li>
+</ul>
+<p><strong>Example</strong>:</p>
+<ul>
+<li>Suppose you have a release pipeline that deploys code from
+<code>Dev</code> to <code>Staging</code> and then to
+<code>Prod</code>.</li>
+<li>Before deploying to the <code>Prod</code> environment, you could set
+an environment-based approval gate requiring:
+<ul>
+<li>Approval from a product owner or manager.</li>
+<li>Passing tests in the <code>Staging</code> environment.</li>
+</ul></li>
+<li>Only after these conditions are satisfied will the pipeline deploy
+to <code>Prod</code>.</li>
+</ul>
+<p><strong>In Summary</strong>: Environment-based approval gates
+<strong>control when code is deployed to an environment</strong>,
+ensuring that only authorized and verified code reaches sensitive
+environments like <code>Production</code>.</p>
+<h2 id="putting-it-all-together">8. Putting It All Together</h2>
+<ul>
+<li><p><strong>Branch-Based Approval Gates</strong>:</p>
+<ul>
+<li>Control code merges <strong>within the repository</strong> (e.g.,
+from feature branches to <code>Dev</code>, from <code>Dev</code> to
+<code>Prod</code>).</li>
+<li>Ensure code quality through reviews and tests <strong>before code is
+merged</strong>.</li>
+</ul></li>
+<li><p><strong>Environment-Based Approval Gates</strong>:</p>
+<ul>
+<li>Control deployments <strong>within the pipeline</strong> (e.g.,
+deploying from <code>Dev</code> workspace to <code>Staging</code>, or
+<code>Staging</code> to <code>Prod</code>).</li>
+<li>Ensure deployment approval through checks and authorizations
+<strong>before code is deployed</strong> to specific environments.</li>
+</ul></li>
+</ul>
+<p>Using both types of gates gives you control over code quality at both
+the <strong>source (in branches)</strong> and <strong>destination (in
+environments)</strong> levels. This combination helps manage both
+development flow and production stability effectively.</p>
+<h2 id="code-in-repositories-vs.-code-in-a-workspace">Code in
+Repositories vs. Code in a Workspace</h2>
+<p>In the context of Azure DevOps and Azure Machine Learning (AML),
+there’s a difference between <strong>having code in a
+repository</strong> and <strong>deploying code to a workspace</strong>.
+Let’s clarify this:</p>
+<hr />
+<h3 id="code-in-a-repository">1. <strong>Code in a
+Repository</strong></h3>
+<ul>
+<li><p><strong>Definition</strong>: This is the source code stored in
+your <strong>Azure Repos</strong>. The repository contains all the
+files, scripts, configurations, and notebooks needed for your ML
+project. Code in a repo is version-controlled, meaning it tracks changes
+over time and allows multiple contributors to work together.</p></li>
+<li><p><strong>Purpose</strong>: The code in the repo serves as the
+<strong>single source of truth</strong>. It’s where all development,
+reviews, and approvals happen, and it allows your team to track
+progress, manage branches, and ensure that changes meet quality
+standards before they’re used in production.</p></li>
+<li><p><strong>Example</strong>: A <code>Prod</code> branch in the
+repository represents production-ready code, while a <code>Dev</code>
+branch might contain work-in-progress code that is still being developed
+and tested.</p></li>
+</ul>
+<h3 id="deploying-code-to-a-workspace">2. <strong>Deploying Code to a
+Workspace</strong></h3>
+<ul>
+<li><p><strong>Definition</strong>: Deploying code to a workspace means
+<strong>moving the code (or models) from the repository to the AML
+environment</strong> where it can actually run. This workspace
+deployment includes all necessary scripts, data connections,
+configurations, and dependencies so the code can be executed in the AML
+workspace.</p></li>
+<li><p><strong>Purpose</strong>: Deployment is about operationalizing
+your code and making it available for use. When code is deployed to a
+workspace, it typically runs in a <strong>compute environment</strong>
+or is deployed as a <strong>service</strong> (e.g., a REST API for a
+model). In AML, deploying to the workspace may mean setting up the code
+to run training pipelines, scoring models, or handling other ML
+tasks.</p></li>
+<li><p><strong>Example</strong>: After merging changes into the
+<code>Prod</code> branch and passing all branch-based approval gates,
+the pipeline deploys this version of the code to the <strong>prod
+workspace</strong>. This deployment could involve executing the latest
+ML model in production or updating a service endpoint.</p></li>
+</ul>
+<hr />
+<h3 id="why-this-distinction-matters">Why This Distinction Matters</h3>
+<ul>
+<li><p><strong>Code in Repository = Development and Control</strong>:
+Code stored in the repository is there for collaboration, version
+control, and quality assurance. It remains “static” until deployed but
+goes through reviews, testing, and other checks before it’s ever run in
+a live environment.</p></li>
+<li><p><strong>Deployment = Operationalization</strong>: Once the code
+meets quality standards and passes all approvals, it’s deployed to an
+AML workspace where it can run in an environment. This operational stage
+is where the code has a direct impact on ML models, data processing, or
+services running in production or testing environments.</p></li>
+</ul>
+<h3 id="workflow-example-to-illustrate">Workflow Example to
+Illustrate</h3>
+<ol type="1">
+<li><p><strong>Develop in Repository</strong>: A team member works on a
+feature branch in the repo, iterating on code until it’s ready for
+testing.</p></li>
+<li><p><strong>Merge and Approve</strong>: The feature branch is merged
+into the <code>Dev</code> branch. Branch-based approval gates enforce
+that the code is reviewed and tested before it merges.</p></li>
+<li><p><strong>Deploy to Dev Workspace</strong>: The code from the
+<code>Dev</code> branch is deployed to the <strong>dev
+workspace</strong> in AML, where it can be run for further testing in a
+real environment, but separate from production.</p></li>
+<li><p><strong>Promotion to Production</strong>: After testing, the
+<code>Dev</code> branch is merged into the <code>Prod</code> branch.
+Once approved, the code in the <code>Prod</code> branch is deployed to
+the <strong>prod workspace</strong>.</p></li>
+</ol>
+<p>In summary:</p>
+<ul>
+<li><strong>Repository = Development, Quality Control,
+Versioning</strong></li>
+<li><strong>Workspace = Execution, Testing, and Deployment of Code in
+Real Environments</strong></li>
+</ul>
+<p>Understanding this distinction helps you manage both the
+<strong>development process</strong> and <strong>operational
+readiness</strong> of your ML projects effectively.</p>
+<h2 id="stages-in-azure-devops">Stages in Azure DevOps</h2>
+<p>In Azure DevOps, <strong>stages</strong> are a way to break down a
+pipeline into logical phases. Each stage represents a distinct part of
+the workflow, allowing you to organize, control, and monitor the flow of
+tasks. In the context of a machine learning (ML) project, stages can
+help manage the progression of code, data, and models through
+<strong>development, testing, and production</strong> phases. They also
+provide a way to implement <strong>gated approvals</strong> and
+<strong>quality checks</strong> before moving to subsequent stages,
+which is particularly useful when deploying ML models.</p>
+<p>Here’s how stages might be used in an ML project in Azure DevOps:</p>
+<hr />
+<h3 id="typical-stages-in-an-ml-project-pipeline">1. <strong>Typical
+Stages in an ML Project Pipeline</strong></h3>
+<p>In a machine learning pipeline in Azure DevOps, you might commonly
+see stages such as:</p>
+<ol type="1">
+<li><p><strong>Data Preparation Stage</strong>:</p>
+<ul>
+<li><strong>Objective</strong>: Prepare and preprocess data, including
+cleaning, feature engineering, and splitting data for training,
+validation, and testing.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Load raw data from a storage location (e.g., a data lake or Blob
+storage).</li>
+<li>Run data preprocessing scripts that perform cleaning, encoding, or
+feature extraction.</li>
+<li>Split the data into training, validation, and test sets.</li>
+</ul></li>
+<li><strong>Compute Resources</strong>: This stage can use dedicated AML
+Studio compute resources for data-intensive operations.</li>
+<li><strong>Outputs</strong>: The processed data is stored as artifacts
+or registered datasets in the AML Studio workspace for later
+stages.</li>
+</ul></li>
+<li><p><strong>Model Training and Validation Stage</strong>:</p>
+<ul>
+<li><strong>Objective</strong>: Train the model using the prepared data
+and validate its performance.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Execute training scripts to train models using the processed
+datasets.</li>
+<li>Run hyperparameter tuning experiments.</li>
+<li>Validate model performance against metrics like accuracy, F1 score,
+or mean squared error on a validation set.</li>
+</ul></li>
+<li><strong>Environment</strong>: This stage typically runs in the
+<strong>development AML workspace</strong>.</li>
+<li><strong>Outputs</strong>: Save model artifacts, metrics, and logs.
+Optionally register the trained model in the AML workspace if it meets
+the required performance thresholds.</li>
+</ul></li>
+<li><p><strong>Testing Stage</strong>:</p>
+<ul>
+<li><strong>Objective</strong>: Test the model and code to ensure
+quality, reliability, and reproducibility.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Run unit tests on code scripts (e.g., data processing, model
+training, and evaluation scripts).</li>
+<li>Perform integration tests to check that different components (e.g.,
+data pipeline and model training pipeline) work well together.</li>
+<li>Run any additional testing on model performance, such as stress
+tests or A/B testing on a validation dataset.</li>
+</ul></li>
+<li><strong>Environment</strong>: Usually configured to run on AML
+Studio compute for consistency with the development and production
+environments.</li>
+<li><strong>Approval Gates</strong>: If the model meets predefined
+performance and testing standards, it can move to the staging or
+production stage.</li>
+</ul></li>
+<li><p><strong>Staging Stage</strong>:</p>
+<ul>
+<li><strong>Objective</strong>: Deploy the model to a staging
+environment that mimics production for further testing and
+evaluation.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Deploy the model to the <strong>staging AML workspace</strong>
+(optional, if the project has one), where it can be tested in an
+environment closely resembling production.</li>
+<li>Run inference tests to ensure that the model serves predictions as
+expected.</li>
+<li>Evaluate any monitoring tools to ensure they are capturing the
+necessary metrics for the model in a production-like setting.</li>
+</ul></li>
+<li><strong>Approval Gates</strong>: Require managerial or engineering
+approval before moving the model to production.</li>
+</ul></li>
+<li><p><strong>Production Stage</strong>:</p>
+<ul>
+<li><strong>Objective</strong>: Deploy the final, validated model to the
+production AML workspace for live use.</li>
+<li><strong>Tasks</strong>:
+<ul>
+<li>Deploy the model to the <strong>production AML workspace</strong>
+and set up endpoints for real-time or batch inference.</li>
+<li>Monitor model performance in production and set up alerts for data
+drift, performance degradation, or other issues.</li>
+</ul></li>
+<li><strong>Approval Gates</strong>: Final approval, typically from a
+manager or ML engineer, is often required to complete this stage.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="benefits-of-using-stages-in-ml-pipelines">2. <strong>Benefits of
+Using Stages in ML Pipelines</strong></h3>
+<ul>
+<li><strong>Organized Workflow</strong>: Stages logically divide the ML
+pipeline into distinct, manageable phases. Each stage can have specific
+tasks tailored to its objective, making the entire workflow easier to
+understand and manage.</li>
+<li><strong>Controlled Progression</strong>: Stages help enforce a
+structured flow where work progresses from one phase to the next only if
+it meets certain criteria. This is crucial in ML projects where data
+quality, model performance, and testing rigor affect the final
+output.</li>
+<li><strong>Approval Gates</strong>: By setting up approval gates at
+critical points (e.g., before deploying to production), stages allow a
+designated reviewer to assess the work and approve or reject it. This is
+particularly useful for controlling production deployments.</li>
+<li><strong>Parallel Execution</strong>: Some stages, such as data
+preparation and testing, can potentially run in parallel to save
+time.</li>
+<li><strong>Environment-Specific Resources</strong>: You can allocate
+specific compute resources to each stage depending on its needs,
+ensuring that data preparation, training, and production deployment run
+optimally.</li>
+</ul>
+<hr />
+<h3 id="how-to-implement-stages-in-azure-devops-for-ml-projects">3.
+<strong>How to Implement Stages in Azure DevOps for ML
+Projects</strong></h3>
+<p>Azure DevOps allows you to define stages in YAML, each with its own
+set of jobs and tasks. Here’s an example YAML configuration for a basic
+ML pipeline with three stages: <strong>data-preparation</strong>,
+<strong>train-validate</strong>, and
+<strong>deploy-to-production</strong>.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">branches</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> dev</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> DataPreparation</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Data Preparation&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> data_prep</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Prepare and Process Data&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>              az ml data process --name processed_data</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Run Data Preparation Scripts&quot;</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> TrainValidate</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Train and Validate Model&quot;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> DataPreparation</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> train_model</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Train Model&quot;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>              az ml model train --data processed_data</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Train Model with Processed Data&quot;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> DeployToProduction</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Deploy to Production&quot;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> TrainValidate</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> succeeded()</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">deployment</span><span class="kw">:</span><span class="at"> deploy_model</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Deploy Model to Production&quot;</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;production&quot;</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>              az ml model deploy --model-id my_model_id</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Deploy Model to Production AML Workspace&quot;</span></span></code></pre></div>
+<p>In this YAML example:</p>
+<ol type="1">
+<li><p><strong>DataPreparation Stage</strong>:</p>
+<ul>
+<li>Executes data processing scripts and registers the output.</li>
+<li>Sets up processed data that’s used in the next stage.</li>
+</ul></li>
+<li><p><strong>TrainValidate Stage</strong>:</p>
+<ul>
+<li>Runs the model training using the processed data.</li>
+<li>Depends on the successful completion of the
+<code>DataPreparation</code> stage.</li>
+<li>Logs and registers the trained model if it meets validation
+criteria.</li>
+</ul></li>
+<li><p><strong>DeployToProduction Stage</strong>:</p>
+<ul>
+<li>Deploys the validated model to production.</li>
+<li>Includes an approval gate for the final production deployment.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="approval-gates-between-stages">4. <strong>Approval Gates Between
+Stages</strong></h3>
+<p>Approval gates are key in ML pipelines to ensure quality before
+proceeding, especially when transitioning to production. In Azure
+DevOps, you can set up approval gates to pause the pipeline and wait for
+a designated person to approve it.</p>
+<ul>
+<li><strong>Example</strong>:
+<ul>
+<li>After the <code>TrainValidate</code> stage, an approval gate could
+require the ML engineer or manager to review model metrics and ensure it
+meets business requirements.</li>
+<li>Only after approval can the <code>DeployToProduction</code> stage
+start, deploying the model to the production AML workspace.</li>
+</ul></li>
+</ul>
+<p>Approval gates help maintain oversight and ensure that only models
+meeting specific standards and approvals are deployed to production.</p>
+<hr />
+<h3 id="summary">Summary</h3>
+<p>Using stages in Azure DevOps for ML projects offers a structured,
+secure, and efficient workflow by breaking the pipeline into distinct,
+logical phases. Stages allow for controlled progression, quality checks,
+and approvals, making it easier to manage complex ML projects where
+model quality, data preparation, and deployment security are
+critical.</p>
+<p>Each stage can have its own environment, compute resources, and
+approval requirements, providing fine-grained control over every step of
+the ML lifecycle. This setup aligns closely with best practices in
+MLOps, allowing teams to streamline ML development, testing, and
+deployment.</p>
+<h2
+id="pipelines-with-yaml-files-azure-devops-pipelines-and-aml-pipelines">Pipelines
+with YAML files: Azure DevOps Pipelines and AML Pipelines</h2>
+<p>You can write YAML files to control how <strong>Azure DevOps
+Pipelines</strong> and <strong>Azure Machine Learning (AML)
+Pipelines</strong> run. Each YAML file type serves a different purpose
+and operates in its respective environment, but both are essential for
+automating workflows in machine learning projects.</p>
+<p>Here’s an overview of each type of YAML file and how they’re
+used:</p>
+<hr />
+<h3 id="azure-devops-pipeline-yaml">1. <strong>Azure DevOps Pipeline
+YAML</strong></h3>
+<p>The <strong>Azure DevOps pipeline YAML</strong> file is used to
+define the steps and stages of a pipeline in <strong>Azure
+DevOps</strong>. This file is typically named
+<code>azure-pipelines.yml</code> and lives in the root of your Git
+repository. It provides instructions on what should happen in each stage
+of the DevOps pipeline, such as:</p>
+<ul>
+<li><strong>Triggering conditions</strong>: Specifying when the pipeline
+should run (e.g., on code commits, pull requests).</li>
+<li><strong>Jobs and stages</strong>: Organizing tasks into stages
+(e.g., build, test, deploy).</li>
+<li><strong>Tasks</strong>: Defining individual steps to run, such as
+running scripts, building artifacts, or triggering other workflows.</li>
+<li><strong>Environment configurations</strong>: Setting up variables,
+environments, and approvals.</li>
+<li><strong>Integrating with AML</strong>: Using commands to trigger AML
+pipelines and jobs within Azure DevOps.</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">branches</span><span class="kw">:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> dev</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> main</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> DataPreparation</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> preprocess</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>              python data_preprocess.py</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Run Data Preprocessing&quot;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> TrainModel</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> DataPreparation</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> training</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>              az ml job create --file aml_pipeline.yml</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Run AML Pipeline for Model Training&quot;</span></span></code></pre></div>
+<p>In this example:</p>
+<ul>
+<li>The <code>azure-pipelines.yml</code> file defines a
+<strong>two-stage pipeline</strong> in Azure DevOps:
+<code>DataPreparation</code> and <code>TrainModel</code>.</li>
+<li>The <code>TrainModel</code> stage contains a step to trigger an
+<strong>AML pipeline</strong> by referencing another YAML file
+(<code>aml_pipeline.yml</code>) stored in AML.</li>
+</ul>
+<hr />
+<h3 id="aml-pipeline-yaml">2. <strong>AML Pipeline YAML</strong></h3>
+<p>The <strong>AML pipeline YAML</strong> file defines the steps and
+configurations for <strong>Azure Machine Learning (AML)
+pipelines</strong>. This YAML file is used specifically within AML to
+organize and automate machine learning workflows, such as data
+processing, training, and deployment.</p>
+<p>Key elements of the AML pipeline YAML file include:</p>
+<ul>
+<li><strong>Jobs</strong>: Each job represents a step in the pipeline
+(e.g., data processing, model training).</li>
+<li><strong>Environment</strong>: Specifies the AML environment required
+to run the job, such as a Docker image or a set of Python
+dependencies.</li>
+<li><strong>Compute resources</strong>: Specifies the compute targets
+(e.g., GPU or CPU clusters in AML) on which to run the job.</li>
+<li><strong>Inputs and outputs</strong>: Defines data sources and
+locations for storing outputs (like trained models).</li>
+<li><strong>Dependencies</strong>: Specifies how jobs depend on one
+another within the pipeline.</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">type</span><span class="kw">:</span><span class="at"> pipeline</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">display_name</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;My ML Pipeline&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">data_prep</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">raw_data</span><span class="kw">:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_file</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">path</span><span class="kw">:</span><span class="at"> azureml://datastores/workspaceblobstore/paths/raw_data.csv</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">processed_data</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">    command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      python data_preparation.py --raw_data ${{inputs.raw_data}} --processed_data ${{outputs.processed_data}}</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:AML-Env@latest</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:cpu-cluster</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">train_model</span><span class="kw">:</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">training_data</span><span class="kw">:</span><span class="at"> ${{parent.jobs.data_prep.outputs.processed_data}}</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_output</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">    command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>      python train_model.py --data ${{inputs.training_data}} --model_output ${{outputs.model_output}}</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:AML-Env@latest</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:gpu-cluster</span></span></code></pre></div>
+<p>In this example:</p>
+<ul>
+<li>The <strong>AML pipeline YAML</strong> file defines a
+<strong>two-step pipeline</strong> in AML: <code>data_prep</code> and
+<code>train_model</code>.</li>
+<li><code>data_prep</code> performs data preprocessing and passes its
+output to <code>train_model</code>, which then trains a model using this
+processed data.</li>
+<li>The <code>compute</code> parameter specifies which compute cluster
+in AML to use (e.g., <code>cpu-cluster</code> for data prep,
+<code>gpu-cluster</code> for training).</li>
+</ul>
+<hr />
+<h3
+id="differences-and-interaction-between-azure-devops-and-aml-pipelines">Differences
+and Interaction Between Azure DevOps and AML Pipelines</h3>
+<ul>
+<li><p><strong>Azure DevOps Pipeline YAML</strong>:</p>
+<ul>
+<li>Controls <strong>CI/CD workflows</strong>.</li>
+<li>Runs within Azure DevOps and is responsible for orchestrating and
+automating the entire machine learning lifecycle.</li>
+<li>Can include steps that <strong>trigger AML pipelines</strong> using
+commands like
+<code>az ml job create --file aml_pipeline.yml</code>.</li>
+</ul></li>
+<li><p><strong>AML Pipeline YAML</strong>:</p>
+<ul>
+<li>Controls <strong>machine learning-specific workflows</strong> within
+Azure Machine Learning.</li>
+<li>Runs in the <strong>AML Studio environment</strong> and specifies
+steps like data processing, training, and evaluation using AML compute
+resources.</li>
+<li>Can be triggered from Azure DevOps or from within AML Studio
+itself.</li>
+</ul></li>
+</ul>
+<h3 id="how-they-work-together">How They Work Together</h3>
+<p>Typically, you would use both YAML files to automate an end-to-end
+machine learning project:</p>
+<ol type="1">
+<li><p><strong>Start in Azure DevOps</strong>: The
+<code>azure-pipelines.yml</code> file orchestrates the overall CI/CD
+workflow. It can trigger on code changes or specific branch updates, and
+run a sequence of steps, including triggering AML pipelines.</p></li>
+<li><p><strong>Trigger AML Pipeline</strong>: As part of the Azure
+DevOps pipeline, you would use
+<code>az ml job create --file aml_pipeline.yml</code> to initiate the
+AML pipeline defined in <code>aml_pipeline.yml</code>.</p></li>
+<li><p><strong>Run Machine Learning Tasks in AML</strong>: The AML
+pipeline runs each machine learning step as defined in
+<code>aml_pipeline.yml</code> on AML compute resources, handling
+everything from data processing to model training and
+validation.</p></li>
+<li><p><strong>Return to DevOps for Deployment</strong>: After the AML
+pipeline completes, the Azure DevOps pipeline may continue with other
+tasks, such as deploying the model, updating production environments, or
+generating reports.</p></li>
+</ol>
+<hr />
+<h3 id="summary-1">Summary</h3>
+<ul>
+<li><strong>Azure DevOps YAML</strong>
+(<code>azure-pipelines.yml</code>): Defines CI/CD processes in Azure
+DevOps and can trigger AML pipelines.</li>
+<li><strong>AML Pipeline YAML</strong> (<code>aml_pipeline.yml</code>):
+Defines machine learning-specific workflows in AML, specifying compute
+resources, environments, and dependencies.</li>
+<li><strong>Interaction</strong>: Azure DevOps pipelines often trigger
+AML pipelines as part of a CI/CD workflow, with each YAML file
+controlling different aspects of the process.</li>
+</ul>
+<p>Using both types of YAML files together enables you to manage complex
+ML workflows in a structured and automated manner, ensuring consistent
+and repeatable processes across both Azure DevOps and Azure Machine
+Learning environments.</p>
+<h2
+id="a-job-in-an-azure-pipeline-can-trigger-a-job-in-azure-machine-learning-studio">A
+Job in an Azure Pipeline can trigger a Job in Azure Machine Learning
+Studio</h2>
+<p>In an Azure DevOps pipeline, a job such as <code>data_prep</code> can
+trigger a job or pipeline that runs in <strong>Azure Machine Learning
+(AML) Studio</strong>. This setup allows the Azure DevOps pipeline to
+orchestrate workflows that span across both <strong>Azure
+DevOps</strong> and <strong>AML Studio</strong>, which is common in
+machine learning projects.</p>
+<p>Here’s how it works and how you would set it up:</p>
+<ol type="1">
+<li><p><strong>Define the Job in Azure DevOps</strong>:</p>
+<ul>
+<li>In your <strong>Azure DevOps pipeline YAML</strong> (e.g.,
+<code>azure-pipelines.yml</code>), you define a job named
+<code>data_prep</code>.</li>
+<li>This job can include steps that use the <strong>Azure CLI</strong>
+or <strong>AML SDK</strong> to interact with AML Studio.</li>
+</ul></li>
+<li><p><strong>Triggering AML Jobs from Azure DevOps</strong>:</p>
+<ul>
+<li>Within the <code>data_prep</code> job in Azure DevOps, you can use a
+command like <code>az ml job create</code> to trigger a specific job in
+AML Studio.</li>
+<li>This command points to an <strong>AML pipeline YAML file</strong>
+(e.g., <code>aml_pipeline.yml</code>) that defines the ML-specific
+tasks, such as data processing, training, or evaluation.</li>
+</ul></li>
+<li><p><strong>AML Studio Execution</strong>:</p>
+<ul>
+<li>When <code>az ml job create</code> is executed in the Azure DevOps
+pipeline, it triggers the corresponding job in AML Studio.</li>
+<li>The job runs on AML Studio’s compute resources, such as AML clusters
+or VMs, allowing heavy ML workloads like data processing, model
+training, and evaluation to be managed in the AML environment.</li>
+</ul></li>
+</ol>
+<h3 id="example-workflow">Example Workflow</h3>
+<p>Here’s an example of how you could structure this in the Azure DevOps
+YAML file:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">branches</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> main</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> dev</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> DataPreparation</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> data_prep</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Data Preparation Job in DevOps&quot;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">checkout</span><span class="kw">:</span><span class="at"> self</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> UsePythonVersion@0</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">versionSpec</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3.x&quot;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>              az login --service-principal -u $(servicePrincipalId) -p $(servicePrincipalKey) --tenant $(tenantId)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>              az ml job create --file aml_pipeline.yml</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Trigger Data Preparation Job in AML Studio&quot;</span></span></code></pre></div>
+<h3 id="explanation-of-the-example">Explanation of the Example</h3>
+<ul>
+<li><strong>Azure DevOps Job (<code>data_prep</code>)</strong>: This job
+is defined within a stage in Azure DevOps.</li>
+<li><strong>Triggering AML Job</strong>: The <code>data_prep</code> job
+uses <code>az ml job create --file aml_pipeline.yml</code> to start the
+specified job in AML Studio.</li>
+<li><strong>AML Pipeline</strong>: The command in <code>data_prep</code>
+references <code>aml_pipeline.yml</code>, which contains the
+instructions for the AML job. This job will run directly in AML Studio
+using its compute resources.</li>
+</ul>
+<h3 id="summary-2">Summary</h3>
+<ul>
+<li><strong>True Statement</strong>: A job in an Azure DevOps pipeline,
+such as <code>data_prep</code>, can indeed trigger an AML Studio
+job.</li>
+<li><strong>Execution</strong>: The <code>data_prep</code> job in DevOps
+initiates the job, but the actual execution (data processing, training,
+etc.) happens in AML Studio.</li>
+<li><strong>Benefit</strong>: This approach combines the orchestration
+power of Azure DevOps with the ML capabilities of AML Studio, enabling a
+seamless workflow across both platforms.</li>
+</ul>
+    
+</body>
+</html>

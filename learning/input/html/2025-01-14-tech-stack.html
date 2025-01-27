@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p><strong>Google Programmable Search Engine</strong><br />
+We used Google Programmable Search Engine (formerly Custom Search
+Engine) to programmatically submit queries and compile a list of
+relevant links. This automation ensured we captured a broad range of
+results from Google without manual intervention.</p>
+<p><strong>Selenium</strong><br />
+After gathering the links, we used Selenium to navigate each page and
+retrieve textual content. Because Selenium handles dynamic and
+JavaScript-heavy websites, it provided more comprehensive results than a
+basic HTTP library. This approach also ensured our collected text
+accurately reflected what end-users see on their screens.</p>
+<p><strong>Azure OpenAI Service</strong><br />
+We requested an Azure OpenAI service through Azure AI Foundry and
+deployed two GPT-4-based models: <em>GPT-4o</em> for advanced reasoning
+and content creation, and <em>GPT-4o-mini</em> for quickly scanning
+large volumes of text. By obtaining the <em>Cognitive Services OpenAI
+User</em> role and authenticating via the Azure CLI, we were able to
+access the Azure OpenAI endpoints with Python. We then serialized all
+model responses to JSON for efficient storage and review.</p>
+<p><strong>Pandas and Statsmodels</strong><br />
+Data processing and statistical analysis were carried out using
+<em>pandas</em> and <em>statsmodels</em>, providing a robust framework
+for handling and analyzing our dataset.</p>
+<p>Google Programmable Search Engine We used Google Programmable Search
+Engine (formerly known as Custom Search Engine) to programmatically
+submit queries and gather a list of relevant links. This allowed us to
+automate the process of finding the most pertinent web pages for our
+project, ensuring we captured a broad range of results from Google
+without manual intervention. Selenium Once we had the list of links, we
+relied on Selenium to navigate through each page and retrieve its
+textual content. Selenium excels at handling dynamic or JavaScript-heavy
+sites, providing more accurate and complete results than a basic HTTP
+library would. This approach gave us confidence that the text we
+collected was representative of what end-users actually see on their
+screens. Azure OpenAI Service We requested an Azure Open AI service in
+Azure AI Foundry. There, we deployed two GPT-4 based models: GPT-4o for
+advanced reasoning and content creation, and GPT-4o-mini for quickly
+scanning large chunks of text. By requesting the “Cognitive Services
+OpenAI User” role and using the Azure CLI for authentication, we were
+able to interact with the Azure OpenAI endpoints through Python. We
+serialized the model responses to JSON for easy storage and review.
+Pandas and Statsmodels Data Processing and Statistical analysis was done
+with pandas and statsmodels.</p>
+    
+</body>
+</html>

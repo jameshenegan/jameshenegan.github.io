@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="employer---employee-relationships-in-sql">Employer - Employee
+Relationships in SQL</h2>
+<p>Here’s a detailed step-by-step tutorial based on your request for
+analyzing relationships between employers and employees using SQL. This
+tutorial assumes you have two tables, <code>employer</code> and
+<code>employee</code>, and that you want to answer the following
+questions:</p>
+<ol type="1">
+<li>Is every employer associated with at least one employee?</li>
+<li>What is the largest number of employees associated with a single
+employer?</li>
+<li>Is every employee associated with an employer?</li>
+<li>What is the largest number of employers associated with a single
+employee?</li>
+</ol>
+<h3 id="database-schema">1. Database Schema</h3>
+<p>Let’s start by assuming the following basic structure of your
+tables:</p>
+<ul>
+<li><p><strong>Employer Table</strong> (<code>employer</code>):</p>
+<ul>
+<li><code>employer_id</code> (Primary Key)</li>
+<li><code>employer_name</code></li>
+</ul></li>
+<li><p><strong>Employee Table</strong> (<code>employee</code>):</p>
+<ul>
+<li><code>employee_id</code> (Primary Key)</li>
+<li><code>employee_name</code></li>
+<li><code>employer_id</code> (Foreign Key referencing
+<code>employer.employer_id</code>)</li>
+</ul></li>
+</ul>
+<p>Example schema:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> employer (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    employer_id <span class="dt">INT</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    employer_name <span class="dt">VARCHAR</span>(<span class="dv">255</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> employee (</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    employee_id <span class="dt">INT</span> <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    employee_name <span class="dt">VARCHAR</span>(<span class="dv">255</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    employer_id <span class="dt">INT</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (employer_id) <span class="kw">REFERENCES</span> employer(employer_id)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h3 id="sample-data">2. Sample Data</h3>
+<p>Let’s insert some sample data for testing the queries:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Insert into employer table</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> employer (employer_id, employer_name) <span class="kw">VALUES</span> (<span class="dv">1</span>, <span class="st">&#39;Company A&#39;</span>), (<span class="dv">2</span>, <span class="st">&#39;Company B&#39;</span>), (<span class="dv">3</span>, <span class="st">&#39;Company C&#39;</span>);</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- Insert into employee table</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> employee (employee_id, employee_name, employer_id) <span class="kw">VALUES</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span>, <span class="st">&#39;John Doe&#39;</span>, <span class="dv">1</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>(<span class="dv">2</span>, <span class="st">&#39;Jane Smith&#39;</span>, <span class="dv">1</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>(<span class="dv">3</span>, <span class="st">&#39;Bob Johnson&#39;</span>, <span class="dv">2</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>(<span class="dv">4</span>, <span class="st">&#39;Alice Brown&#39;</span>, <span class="dv">2</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>(<span class="dv">5</span>, <span class="st">&#39;Chris Green&#39;</span>, <span class="kw">NULL</span>);  <span class="co">-- Employee without an employer</span></span></code></pre></div>
+<h3 id="answering-the-questions">3. Answering the Questions</h3>
+<h4
+id="question-1-is-every-employer-associated-with-at-least-one-employee"><strong>Question
+1: Is every employer associated with at least one
+employee?</strong></h4>
+<p>To check if every employer has at least one employee, we need to find
+out if there are any employers that are not referenced by any employee
+in the <code>employee</code> table. This can be done using a
+<code>LEFT JOIN</code> between the <code>employer</code> and
+<code>employee</code> tables.</p>
+<p><strong>SQL Query:</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> e.employer_id, e.employer_name</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employer e</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> employee emp <span class="kw">ON</span> e.employer_id <span class="op">=</span> emp.employer_id</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> emp.employer_id <span class="kw">IS</span> <span class="kw">NULL</span>;</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><code>LEFT JOIN</code>: This joins the <code>employer</code> table
+with the <code>employee</code> table, keeping all employers, even if
+they don’t have any employees.</li>
+<li><code>WHERE emp.employer_id IS NULL</code>: This filters out the
+rows where there is no matching employee for a particular employer.</li>
+</ul>
+<p><strong>Result:</strong></p>
+<ul>
+<li>If no rows are returned, then all employers are associated with at
+least one employee.</li>
+<li>If some rows are returned, those represent employers with no
+associated employees.</li>
+</ul>
+<h4
+id="question-2-what-is-the-largest-number-of-employees-associated-with-a-single-employer"><strong>Question
+2: What is the largest number of employees associated with a single
+employer?</strong></h4>
+<p>We can use <code>GROUP BY</code> and <code>COUNT()</code> to find how
+many employees are associated with each employer. Then, we can sort the
+result in descending order and take the top value.</p>
+<p><strong>SQL Query:</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employer_id, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> employee_count</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employee</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> employer_id</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> employee_count <span class="kw">DESC</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><code>COUNT(*)</code>: This counts the number of rows (employees)
+for each <code>employer_id</code>.</li>
+<li><code>GROUP BY employer_id</code>: This groups the results by
+employer, so the count is calculated for each employer.</li>
+<li><code>ORDER BY employee_count DESC</code>: Sorts the results by the
+count in descending order, so the employer with the most employees
+appears first.</li>
+<li><code>LIMIT 1</code>: This restricts the result to only the employer
+with the largest number of employees.</li>
+</ul>
+<p><strong>Result:</strong></p>
+<p>This will return the <code>employer_id</code> and the maximum number
+of employees associated with that employer.</p>
+<h4
+id="question-3-is-every-employee-associated-with-an-employer"><strong>Question
+3: Is every employee associated with an employer?</strong></h4>
+<p>To check if every employee has an associated employer, you can look
+for rows in the <code>employee</code> table where
+<code>employer_id</code> is <code>NULL</code>.</p>
+<p><strong>SQL Query:</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, employee_name</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employee</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> employer_id <span class="kw">IS</span> <span class="kw">NULL</span>;</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><code>WHERE employer_id IS NULL</code>: This filters the employees
+who do not have an associated employer.</li>
+</ul>
+<p><strong>Result:</strong></p>
+<ul>
+<li>If no rows are returned, then every employee is associated with an
+employer.</li>
+<li>If rows are returned, those are the employees without an associated
+employer.</li>
+</ul>
+<h4
+id="question-4-what-is-the-largest-number-of-employers-associated-with-a-single-employee"><strong>Question
+4: What is the largest number of employers associated with a single
+employee?</strong></h4>
+<p>If an employee can be associated with multiple employers (in a
+many-to-many relationship), you would typically have an additional join
+table, say <code>employee_employer</code>, to store these
+relationships.</p>
+<p><strong>Schema for Many-to-Many Relationship:</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> employee_employer (</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    employee_id <span class="dt">INT</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    employer_id <span class="dt">INT</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (employee_id) <span class="kw">REFERENCES</span> employee(employee_id),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (employer_id) <span class="kw">REFERENCES</span> employer(employer_id)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Inserting Data:</strong></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> employee_employer (employee_id, employer_id) <span class="kw">VALUES</span> (<span class="dv">1</span>, <span class="dv">1</span>), (<span class="dv">1</span>, <span class="dv">2</span>), (<span class="dv">2</span>, <span class="dv">1</span>);</span></code></pre></div>
+<p>Now, let’s find the largest number of employers associated with a
+single employee.</p>
+<p><strong>SQL Query:</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> employee_id, <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> employer_id) <span class="kw">AS</span> employer_count</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> employee_employer</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> employee_id</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> employer_count <span class="kw">DESC</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">1</span>;</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><code>COUNT(DISTINCT employer_id)</code>: Counts the number of
+unique employers for each employee.</li>
+<li><code>GROUP BY employee_id</code>: Groups the results by employee,
+so the count is calculated for each employee.</li>
+<li><code>ORDER BY employer_count DESC</code>: Sorts the results so the
+employee with the most associated employers is first.</li>
+<li><code>LIMIT 1</code>: This restricts the result to the employee with
+the most employers.</li>
+</ul>
+<p><strong>Result:</strong></p>
+<p>This will return the <code>employee_id</code> and the largest number
+of employers associated with that employee.</p>
+<h3 id="final-remarks">4. Final Remarks</h3>
+<p>This set of queries can help answer important questions about the
+relationship between employers and employees. Here’s a quick summary of
+the logic behind each one:</p>
+<ul>
+<li><strong>Employers without employees:</strong> Use a
+<code>LEFT JOIN</code> to find employers that have no associated
+employees.</li>
+<li><strong>Largest number of employees for an employer:</strong> Use
+<code>GROUP BY</code> and <code>COUNT()</code> to find the employer with
+the most employees.</li>
+<li><strong>Employees without an employer:</strong> Look for
+<code>NULL</code> values in the <code>employer_id</code> column.</li>
+<li><strong>Largest number of employers for an employee (if
+many-to-many):</strong> Use a <code>JOIN</code> table and count distinct
+employer associations.</li>
+</ul>
+<p>This approach is useful when analyzing relationships in many-to-one
+or many-to-many relational models, and SQL is a powerful tool for
+extracting these insights.</p>
+    
+</body>
+</html>

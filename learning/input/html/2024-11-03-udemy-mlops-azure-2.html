@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1
+id="learn-mlops-basics-of-continuous-integration-delivery-using-azure-devops-and-azure-ml.-create-mlops-pipeline-in-azure.">Learn
+MLOps basics of Continuous Integration, Delivery using Azure DevOps and
+Azure ML. Create MLOps pipeline in Azure.</h1>
+<h1 id="section-1-introduction">Section 1: Introduction</h1>
+<p>Here’s a comprehensive breakdown of the lecture on
+<strong>MLOps</strong> (Machine Learning Operations) and its role in the
+machine learning (ML) lifecycle, covering the motivations, challenges,
+and roles involved.</p>
+<h3 id="introduction-to-mlops"><strong>1. Introduction to
+MLOps</strong></h3>
+<ul>
+<li><strong>Definition of MLOps</strong>: MLOps combines “Machine
+Learning” (ML model development) and “Operations” (productionizing and
+deploying models). It bridges the gap between these phases,
+standardizing and streamlining ML lifecycle management.</li>
+<li><strong>Comparison with DevOps</strong>: MLOps borrows principles
+from DevOps, focusing on continuous integration, continuous delivery
+(CI/CD), and adding continuous training to accommodate ML’s unique
+needs. The aim is to create faster, automated, and collaborative
+workflows for ML projects.</li>
+<li><strong>Cultural Shift</strong>: MLOps is not a new technology but
+rather a set of principles and guidelines. It encourages collaboration
+between traditionally siloed roles—data scientists, data engineers, and
+operations teams—through shared tools and streamlined processes.</li>
+</ul>
+<h3 id="traditional-machine-learning-lifecycle-phases"><strong>2.
+Traditional Machine Learning Lifecycle Phases</strong></h3>
+<p>The ML project lifecycle traditionally includes several key
+steps:</p>
+<ul>
+<li><p><strong>Business Understanding and Planning</strong>: Establish
+project objectives and KPIs with the help of subject matter experts
+(SMEs). Data scientists and domain experts analyze data to identify
+patterns that meet business goals.</p></li>
+<li><p><strong>Data Acquisition</strong>: Collect data from various
+sources (e.g., databases, web apps) and ensure it’s representative of
+the ML model’s needs. Often, data lakes are created to store large
+datasets, which improve model accuracy.</p></li>
+<li><p><strong>Data Preparation and Wrangling</strong>: Raw data is
+cleaned and transformed to remove missing or irrelevant information,
+making it suitable for modeling. This stage includes data preprocessing,
+feature engineering, and exploratory data analysis (EDA) to better
+understand and prepare data.</p></li>
+<li><p><strong>Exploratory Data Analysis (EDA)</strong>: This iterative
+process involves analyzing datasets visually and statistically to
+identify patterns and relationships. Data visualization tools (e.g.,
+Matplotlib, Seaborn) help discover insights, spot anomalies, and
+summarize key statistics.</p></li>
+<li><p><strong>Modeling</strong>:</p>
+<ul>
+<li><strong>Model Selection</strong>: The choice of algorithms (e.g.,
+classification, regression, clustering) depends on the problem
+type.</li>
+<li><strong>Model Building and Training</strong>: Models are trained on
+a subset (often 70-80%) of data, with the remainder reserved for
+testing.</li>
+<li><strong>Testing and Validation</strong>: The model’s performance is
+evaluated on unseen data to ensure accuracy and reliability.
+Hyperparameter tuning and iterative adjustments are common to improve
+the model’s predictions.</li>
+<li><strong>Automated Model Selection</strong>: AutoML and AutoAI tools
+expedite this stage by testing algorithms and configurations to find the
+optimal model, reducing manual efforts.</li>
+</ul></li>
+<li><p><strong>Model Deployment</strong>:</p>
+<ul>
+<li><strong>Deployment Options</strong>: Models can be deployed as
+services (providing REST APIs for real-time predictions) or embedded
+within applications.</li>
+<li><strong>Operationalization</strong>: Deployment integrates the model
+into a production environment where it can interact with real data and
+other applications, adding business value.</li>
+</ul></li>
+<li><p><strong>Monitoring and Maintenance</strong>: Post-deployment,
+model performance monitoring is essential to detect drifts in data
+patterns (e.g., economic changes, new customer behaviors). This leads to
+periodic model retraining or tuning to ensure accuracy and
+relevance.</p></li>
+</ul>
+<h3 id="challenges-in-the-machine-learning-lifecycle"><strong>3.
+Challenges in the Machine Learning Lifecycle</strong></h3>
+<p>Despite following this lifecycle, up to <strong>80% of ML projects do
+not reach production</strong>. Major challenges arise due to:</p>
+<ul>
+<li><p><strong>Fragmented Roles and Responsibilities</strong>:</p>
+<ul>
+<li><strong>Subject Matter Experts (SMEs)</strong>: Define project goals
+and KPIs, evaluate results, and ensure model alignment with business
+needs.</li>
+<li><strong>Data Scientists</strong>: Conduct experiments to develop
+models that align with business objectives, iterating on data, features,
+and algorithms.</li>
+<li><strong>Data Engineers</strong>: Facilitate data access and
+transformation, creating ETL (Extract, Transform, Load) pipelines and
+managing data lakes.</li>
+<li><strong>ML Engineers and DevOps Teams</strong>: Responsible for
+operationalizing models, making them production-ready, and embedding
+them within applications.</li>
+</ul></li>
+<li><p><strong>Siloed Teams and Communication Gaps</strong>:
+Traditionally, each team (data scientists, data engineers, and
+operations) worked independently, leading to misalignment and delays.
+Data scientists might build models that lack operational feasibility,
+while engineers struggle to integrate models without data science
+knowledge.</p></li>
+<li><p><strong>Complexity of Iterative Processes</strong>: Building,
+training, and refining models involves numerous iterations, which
+consume time and resources. Manually managing combinations of
+algorithms, datasets, and hyperparameters is labor-intensive, with
+errors likely if workflows are not streamlined.</p></li>
+<li><p><strong>Model Drift and Need for Continuous Monitoring</strong>:
+As data evolves, ML models may become outdated, requiring retraining.
+Monitoring mechanisms must be set up to detect performance drops and
+trigger updates to the model.</p></li>
+</ul>
+<h3 id="why-mlops-is-essential"><strong>4. Why MLOps is
+Essential</strong></h3>
+<p>MLOps addresses these challenges by:</p>
+<ul>
+<li><strong>Encouraging Collaboration</strong>: MLOps brings
+cross-functional teams together on a shared platform, fostering a
+collaborative environment where data scientists, data engineers, and
+operations teams work closely.</li>
+<li><strong>Automating Workflows</strong>: MLOps introduces CI/CD
+pipelines tailored for ML, enabling automated testing, deployment, and
+monitoring. This automation reduces manual errors and accelerates the
+transition from model development to production.</li>
+<li><strong>Ensuring Model Reliability in Production</strong>: Through
+continuous monitoring, MLOps enables regular evaluations of model
+performance and retraining, preventing issues like data drift that can
+degrade accuracy over time.</li>
+</ul>
+<h3 id="roles-in-mlops"><strong>5. Roles in MLOps</strong></h3>
+<p>The implementation of MLOps requires a clearly defined set of roles,
+each contributing to different lifecycle stages:</p>
+<ul>
+<li><strong>Subject Matter Experts</strong>: Define business goals and
+evaluate model outcomes.</li>
+<li><strong>Data Scientists</strong>: Conduct the modeling phase,
+experiment with algorithms, and ensure alignment with project
+objectives.</li>
+<li><strong>Data Engineers</strong>: Develop ETL pipelines and manage
+data availability and quality for modeling.</li>
+<li><strong>ML Engineers and DevOps</strong>: Operationalize models, set
+up CI/CD pipelines, and ensure the model’s scalability and
+accessibility.</li>
+</ul>
+<h3 id="conclusion-and-next-steps"><strong>6. Conclusion and Next
+Steps</strong></h3>
+<p>Throughout this course, the instructor will delve deeper into MLOps
+concepts, exploring specific challenges in traditional ML lifecycles and
+how MLOps principles provide solutions. Topics include:</p>
+<ul>
+<li><strong>Differences Between DevOps and MLOps</strong>: MLOps extends
+DevOps to cover the unique demands of ML, including continuous
+training.</li>
+<li><strong>MLOps Maturity Levels</strong>: Frameworks for assessing an
+organization’s MLOps adoption level.</li>
+<li><strong>Practical Demonstrations</strong>: A complete CI/CD MLOps
+pipeline example, using Azure Cloud, will illustrate how MLOps improves
+production workflows for ML applications.</li>
+</ul>
+<p>This structured approach to MLOps is essential for ML projects to
+move beyond experimental stages and deliver continuous business
+value.</p>
+<h1 id="section-2-challenges-in-existing-ml-projects">Section 2:
+Challenges in existing ML projects</h1>
+<p>This detailed lecture outlines the key <strong>challenges in the
+traditional machine learning (ML) lifecycle</strong>, emphasizing why
+<strong>80% of ML models never reach production</strong>. The lecturer
+identifies issues at each stage of model development and deployment,
+explains the inefficiencies, and highlights the technical debt these
+challenges introduce. Here’s an in-depth summary of the core points:</p>
+<h3 id="discrepancy-between-ideal-and-real-world-processes"><strong>1.
+Discrepancy Between Ideal and Real-World Processes</strong></h3>
+<ul>
+<li><strong>Ideal vs. Reality</strong>: Although data scientists are
+intended to focus on model building and training, they spend up to
+30-40% of their time on non-modeling tasks. This inefficiency arises
+from the lack of a standardized, automated ML pipeline.</li>
+<li><strong>Current Workflow Issues</strong>: In practice, data
+scientists often work in isolation, building models locally on Jupyter
+Notebooks with only sample datasets. These models are handed over to
+operations teams without a unified, efficient workflow, resulting in
+substantial delays.</li>
+</ul>
+<h3 id="skill-gap-and-knowledge-transfer-problems"><strong>2. Skill Gap
+and Knowledge Transfer Problems</strong></h3>
+<ul>
+<li><strong>Data Scientists vs. Engineers</strong>: Data scientists,
+primarily skilled in algorithms and statistics, often create models that
+aren’t optimized for production environments. This leads to challenges
+for ML engineers or operational teams, who must interpret and refactor
+these models for scalability and deployment.</li>
+<li><strong>Knowledge Transfer Issues</strong>: Models, scripts, and
+dependencies are frequently shared informally (e.g., email, USB drives),
+creating a <strong>“virtual wall”</strong> between data scientists and
+engineers. This lack of standardization means engineers may be unaware
+of dependencies, model parameters, or data formats, leading to
+significant rework.</li>
+</ul>
+<h3 id="transition-challenges-and-technical-friction"><strong>3.
+Transition Challenges and Technical Friction</strong></h3>
+<ul>
+<li><strong>Incompatibility</strong>: When engineers receive code that’s
+not production-ready or written in different languages, they often need
+to rewrite or adapt it. This adaptation is error-prone, time-consuming,
+and often alters the model’s original structure.</li>
+<li><strong>Bottlenecks and Delays</strong>: Data scientists spend
+considerable time clarifying their code and answering engineers’
+questions, diverting them from core modeling tasks. This back-and-forth
+causes inefficiencies, with data scientists and engineers having to meet
+frequently to troubleshoot issues.</li>
+</ul>
+<h3 id="complexities-beyond-model-building"><strong>4. Complexities
+Beyond Model Building</strong></h3>
+<ul>
+<li><strong>Additional Steps for Productionization</strong>: After model
+building, teams must package the code, resolve dependencies, and scale
+the model for production. These steps include:
+<ul>
+<li><strong>Performance Scaling</strong>: Ensuring models can handle
+large-scale data in real-time is critical, especially for applications
+like fraud detection, where predictions must be immediate.</li>
+<li><strong>Instrumentation</strong>: Teams must implement versioning
+for data, models, parameters, and algorithms, far beyond traditional
+code versioning. A robust version control system is essential for
+reproducibility and auditability.</li>
+<li><strong>Monitoring</strong>: ML projects require both accuracy and
+system health monitoring, tracking not only performance metrics but also
+data quality and drift.</li>
+</ul></li>
+</ul>
+<h3 id="the-technical-debt-of-ml-projects"><strong>5. The Technical Debt
+of ML Projects</strong></h3>
+<ul>
+<li><strong>Versioning Challenges</strong>: Unlike traditional software,
+ML models require versioning at multiple levels (data, parameters,
+training environment, etc.), making it complex to reproduce specific
+model versions. Without proper versioning, reverting to an earlier, more
+accurate model version is difficult, especially if a key team member
+leaves the project.</li>
+<li><strong>Monitoring for Drift</strong>: Model degradation over time
+due to changes in data patterns requires proactive monitoring. However,
+many teams lack automated feedback loops, leading to reliance on
+end-user feedback to catch issues, which can cause substantial business
+impacts before problems are addressed.</li>
+</ul>
+<h3 id="the-need-for-automation-and-streamlining"><strong>6. The Need
+for Automation and Streamlining</strong></h3>
+<ul>
+<li><strong>Manual, Time-Consuming Tasks</strong>: Currently, data
+versioning, training, testing, and deployment are often manual,
+significantly slowing down ML workflows. When a model’s accuracy drops,
+retraining it involves re-executing the entire lifecycle, which can take
+weeks or months, causing further delays and client dissatisfaction.</li>
+<li><strong>Inadequate Retraining Mechanisms</strong>: Retraining is
+inevitable due to data drift, but without streamlined automation, the
+lifecycle re-execution is labor-intensive and introduces unnecessary
+delays, threatening the continuity and success of ML projects.</li>
+</ul>
+<h3 id="the-reality-of-technical-debt-in-ml-projects"><strong>7. The
+Reality of Technical Debt in ML Projects</strong></h3>
+<ul>
+<li><strong>Google’s Technical Debt Diagram</strong>: Google’s research
+highlighted the disproportionate amount of infrastructure and
+maintenance work around ML models. Model code, while crucial, is only a
+small part of the broader system. Data scientists and engineers spend
+substantial time on configurations, resourcing, monitoring, and other
+tasks unrelated to model creation.</li>
+<li><strong>Cross-Disciplinary Complexity</strong>: ML projects involve
+collaboration across departments, including data engineering, data
+science, ML engineering, and DevOps. The lack of a unified, streamlined
+process for handling these multidisciplinary demands often hampers
+project timelines and resource allocation.</li>
+</ul>
+<h3
+id="the-lack-of-standardization-in-traditional-ml-approaches"><strong>8.
+The Lack of Standardization in Traditional ML Approaches</strong></h3>
+<ul>
+<li><strong>Fragmented Solutions</strong>: Without an overarching,
+standardized framework for ML lifecycle management, teams rely on ad-hoc
+processes that may work for small projects but fail to scale.</li>
+<li><strong>Inconsistent Practices</strong>: Since there is no single
+paradigm or managed solution, teams adopt various methods to build and
+deploy models, resulting in inefficiencies, inconsistencies, and missed
+opportunities for automation.</li>
+</ul>
+<h3 id="conclusion-and-next-steps-in-mlops"><strong>Conclusion and Next
+Steps in MLOps</strong></h3>
+<p>This lecture emphasizes the need for <strong>MLOps to address these
+fundamental challenges</strong>. MLOps offers:</p>
+<ul>
+<li><strong>Standardization</strong>: Establishing consistent principles
+and practices for model lifecycle management.</li>
+<li><strong>Automation</strong>: Introducing automated pipelines for
+versioning, monitoring, and retraining, reducing reliance on manual
+processes.</li>
+<li><strong>Efficient Collaboration</strong>: Enabling seamless
+knowledge transfer and alignment between data scientists and
+engineers.</li>
+</ul>
+<p>These improvements will enable ML models to move from development to
+production more smoothly and increase the likelihood of successful,
+sustainable ML project deployments. The next lectures will explore how
+MLOps principles and tools offer a structured approach to overcoming
+these challenges, focusing on flexibility, scalability, and
+automation.</p>
+<h1 id="section-3-mlops---a-solution">Section 3: MLOps - A solution</h1>
+<p>Here’s a detailed summary of the lecture on <strong>MLOps</strong>,
+its foundational principles, benefits, and how it differs from
+DevOps.</p>
+<h3 id="understanding-mlops"><strong>1. Understanding
+MLOps</strong></h3>
+<ul>
+<li><strong>Definition of MLOps</strong>: MLOps is a culture and set of
+principles designed to integrate and automate the machine learning (ML)
+lifecycle, connecting development, experimentation, and operational
+deployment in one seamless ecosystem.</li>
+<li><strong>Emergence</strong>: MLOps developed over time as
+organizations encountered obstacles in traditional ML workflows.
+Solutions for these challenges gradually formed the standards of MLOps
+rather than coming from any single organization or individual.</li>
+</ul>
+<h3 id="mlops-solutions-to-traditional-ml-challenges"><strong>2. MLOps
+Solutions to Traditional ML Challenges</strong></h3>
+<ul>
+<li><strong>Reducing Friction in Handover</strong>:
+<ul>
+<li><strong>Standardized Templates</strong>: Using Jupyter Notebook
+templates with common functionalities, such as database connections,
+helps create code that’s easily understood by both data scientists and
+engineers.</li>
+<li><strong>Documentation and Dependencies</strong>: Data scientists
+provide documentation files listing dependencies, which engineers
+reference to ensure the model environment is consistent.</li>
+</ul></li>
+<li><strong>Version Control</strong>: Implementing version control for
+code, data, and environments enables reproducibility and transparency in
+ML projects, ensuring that any model version can be redeployed as needed
+with complete metadata.</li>
+<li><strong>Performance Enhancement</strong>:
+<ul>
+<li><strong>Containerization</strong>: Technologies like Docker provide
+a consistent environment for deploying ML models, ensuring dependencies
+are handled smoothly and allowing scalable compute resources through
+Kubernetes.</li>
+</ul></li>
+<li><strong>Automating the Pipeline</strong>:
+<ul>
+<li><strong>CI/CD Pipeline for ML</strong>: Instead of manually
+deploying models, MLOps focuses on automating the entire ML lifecycle,
+creating CI/CD pipelines to handle model creation, deployment, and
+continuous training.</li>
+</ul></li>
+<li><strong>Monitoring and Continuous Training</strong>:
+<ul>
+<li><strong>Monitoring</strong>: Tools like Prometheus and Grafana
+monitor data quality, feature distribution, and model accuracy.</li>
+<li><strong>Continuous Training (CT)</strong>: The third pillar of
+MLOps, CT enables models to be retrained automatically based on triggers
+(e.g., data drift) to maintain accuracy over time.</li>
+</ul></li>
+</ul>
+<h3 id="key-components-of-an-mlops-cicd-pipeline"><strong>3. Key
+Components of an MLOps CI/CD Pipeline</strong></h3>
+<ul>
+<li><strong>Orchestrated Experimentation</strong>: Data scientists can
+conduct iterative model development within an orchestrated setup,
+automating processes like data preparation, model training, and
+hyperparameter tuning.</li>
+<li><strong>Source Code Management</strong>: The experiment’s output is
+source code that, instead of being run manually, is integrated into the
+CI/CD pipeline. This allows the entire ML pipeline, not just a single
+model, to be deployed.</li>
+<li><strong>Continuous Integration (CI)</strong>:
+<ul>
+<li><strong>Testing and Validation</strong>: The CI stage includes lint
+tests, unit tests, and code quality checks (e.g., Flake8, Pytest) to
+ensure robust code.</li>
+<li><strong>Build and Package</strong>: Dependencies are specified in
+configuration files (like YAML) to create consistent, deployable
+packages.</li>
+</ul></li>
+<li><strong>Continuous Deployment (CD)</strong>:
+<ul>
+<li><strong>Automated Deployment</strong>: Once tested and packaged, the
+ML pipeline is ready for deployment. Depending on confidence in the
+automation, deployment can occur with or without approval triggers.</li>
+<li><strong>Model Registry</strong>: Successfully deployed models are
+logged in a model registry, capturing metadata (e.g., model and data
+version, accuracy metrics) for easy tracking and reusability.</li>
+</ul></li>
+</ul>
+<h3 id="benefits-of-mlops-for-different-roles"><strong>4. Benefits of
+MLOps for Different Roles</strong></h3>
+<ul>
+<li><strong>Data Scientists</strong>: MLOps reduces their operational
+burden, allowing them to focus on research and experimentation. With
+automated pipelines, tasks like testing, monitoring, and updating data
+are streamlined, giving data scientists more time to work on algorithms
+and analysis.</li>
+<li><strong>ML Engineers</strong>: With standardized templates and
+documentation from data scientists, ML engineers experience less
+friction during model deployment. Versioning and clear documentation
+reduce dependency on constant communication, making model deployment
+faster and more reproducible.</li>
+<li><strong>Application Developers</strong>: Models are deployed as
+independent API endpoints, decoupling them from applications. This
+allows developers to interact with models without concerning themselves
+with ML-specific updates or changes.</li>
+<li><strong>Risk and Compliance Teams</strong>: MLOps provides automated
+lineage tracking, simplifying audits and ensuring regulatory compliance.
+The entire model history, updates, and interactions are documented,
+supporting a transparent, responsible AI framework.</li>
+<li><strong>Clients and Executives</strong>: MLOps enables faster model
+deployment, significantly reducing project timelines and costs. With
+continuous retraining, models adapt to evolving data, ensuring accurate
+and unbiased predictions that align with real-world changes.</li>
+</ul>
+<h3 id="comparison-between-mlops-and-devops"><strong>5. Comparison
+Between MLOps and DevOps</strong></h3>
+<ul>
+<li><p><strong>Team Composition</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Primarily involves DevOps engineers.</li>
+<li><strong>MLOps</strong>: Requires a multidisciplinary team, including
+data scientists, ML engineers, data engineers, and DevOps engineers, due
+to the unique demands of ML projects.</li>
+</ul></li>
+<li><p><strong>Workflow Nature</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Linear workflow, typically without
+iterative rounds.</li>
+<li><strong>MLOps</strong>: Highly iterative, experimental, and requires
+complex feedback loops to improve model accuracy.</li>
+</ul></li>
+<li><p><strong>Versioning Requirements</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Only the application code is
+versioned.</li>
+<li><strong>MLOps</strong>: Code, data, features, and environment
+configurations must all be versioned to ensure reproducibility.</li>
+</ul></li>
+<li><p><strong>Compute Requirements</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Build time is generally short and CPU
+resources are sufficient.</li>
+<li><strong>MLOps</strong>: Training models, particularly deep learning
+models, is compute-intensive and requires GPUs or TPUs, which can take
+hours or weeks to complete training.</li>
+</ul></li>
+<li><p><strong>Automated Training</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Code changes often trigger automated
+builds, given that build times are short.</li>
+<li><strong>MLOps</strong>: Model training can be time-consuming, so
+retraining isn’t triggered with every code change. Instead, it relies on
+techniques like staged builds or selective retraining.</li>
+</ul></li>
+<li><p><strong>Continuous Integration (CI) Scope</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Focuses primarily on testing and validating
+code.</li>
+<li><strong>MLOps</strong>: Requires additional data validation,
+checking for skew, outliers, and distribution issues before
+training.</li>
+</ul></li>
+<li><p><strong>Continuous Deployment (CD) Complexity</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Deploys applications as web services or
+APIs.</li>
+<li><strong>MLOps</strong>: Deploys entire training pipelines that
+include triggers for retraining, adding complexity and automation
+requirements.</li>
+</ul></li>
+<li><p><strong>Monitoring Intensity</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Monitors standard metrics like latency, CPU
+usage, and system health.</li>
+<li><strong>MLOps</strong>: In addition to these metrics, ML models must
+be monitored for accuracy, data drift, and ethical compliance. ML
+projects face heightened scrutiny, especially in sensitive industries
+like finance and healthcare.</li>
+</ul></li>
+<li><p><strong>Continuous Training</strong>:</p>
+<ul>
+<li><strong>DevOps</strong>: Limited to continuous integration and
+deployment.</li>
+<li><strong>MLOps</strong>: Adds continuous training to maintain model
+performance as data changes over time, addressing issues like model
+degradation and data drift.</li>
+</ul></li>
+</ul>
+<h3 id="conclusion"><strong>6. Conclusion</strong></h3>
+<p>MLOps is a transformative approach for managing the ML lifecycle,
+providing automation, standardization, and integration across teams. By
+establishing CI/CD and continuous training pipelines, MLOps addresses
+the complexities of deploying, monitoring, and retraining ML models,
+bringing significant efficiency and reliability to machine learning
+projects. This lecture underscores MLOps as a necessary evolution from
+DevOps, providing companies with scalable, compliant, and adaptable ML
+systems capable of responding to rapid business and data changes.</p>
+<h1 id="section-4-maturity-levels-in-mlops">Section 4: Maturity levels
+in MLOps</h1>
+<p>This lecture discusses the <strong>MLOps maturity levels</strong>,
+which outline progressive stages of automation and standardization in
+machine learning operations, from manual workflows to fully automated,
+robust pipelines. The maturity model is designed to guide organizations
+in implementing MLOps incrementally, making it a roadmap for achieving
+advanced ML capabilities. The instructor explains each maturity level,
+the benefits, and the necessity of progressing through them.</p>
+<h3 id="overview-of-mlops-maturity-levels"><strong>1. Overview of MLOps
+Maturity Levels</strong></h3>
+<ul>
+<li><strong>Purpose</strong>: MLOps maturity levels provide a structured
+approach for organizations to adopt MLOps incrementally, rather than
+attempting full automation from the start. This staged approach allows
+for gradual improvement and avoids overwhelming teams.</li>
+<li><strong>Levels of Automation</strong>: Higher maturity levels
+reflect a higher degree of automation and coordination across teams,
+enhancing the efficiency and reliability of ML operations.</li>
+<li><strong>Key Categories</strong>: Maturity levels consider factors
+like team collaboration, data management, development automation, CI/CD
+integration, deployment, application integration, and monitoring.</li>
+</ul>
+<h3 id="mlops-level-0---manual-workflow-no-mlops"><strong>2. MLOps Level
+0 - Manual Workflow (No MLOps)</strong></h3>
+<ul>
+<li><strong>Characteristics</strong>: This is the most basic level with
+no automation, mirroring a traditional, fully manual ML workflow.</li>
+<li><strong>Team Silos</strong>: Data scientists and engineers work
+separately, with limited communication, leading to handover issues when
+models are passed from data scientists to engineers for deployment.</li>
+<li><strong>Data Management</strong>: Data is often scattered in emails,
+spreadsheets, or various databases, making it hard to maintain a
+comprehensive view of available data.</li>
+<li><strong>Development and Deployment</strong>: Model development,
+validation, and deployment are manual processes, relying on
+script-driven code run locally by data scientists. CI/CD pipelines are
+absent.</li>
+<li><strong>Model Release</strong>: A trained model is deployed as a
+simple prediction service (e.g., REST API), without an automated system
+to manage updates.</li>
+<li><strong>Monitoring</strong>: Lacks active monitoring; feedback on
+model performance is often received from end users, which can be too
+late to prevent significant issues.</li>
+</ul>
+<h3
+id="mlops-level-1---continuous-training-with-semi-automated-pipelines"><strong>3.
+MLOps Level 1 - Continuous Training with Semi-Automated
+Pipelines</strong></h3>
+<ul>
+<li><strong>Goal</strong>: This level introduces automation into the ML
+pipeline, allowing continuous training of models in production. The
+focus is on automating model deployment as a prediction service but not
+the entire ML application.</li>
+<li><strong>Collaborative Teams</strong>: Data scientists, data
+engineers, and software engineers collaborate more directly. This breaks
+down team silos, allowing engineers and data scientists to work together
+on scripts and model integration.</li>
+<li><strong>Automated Data Management</strong>: Data pipelines are
+created to manage data gathering, processing, and preparation. Data is
+stored in corporate databases with shared file storage, improving data
+accessibility.</li>
+<li><strong>Development Activities</strong>: Experimentation steps are
+automated, and the ML code is modularized for reusability and
+composability across different ML pipelines. This modular approach
+allows for building ML pipelines more effectively.</li>
+<li><strong>Model Release</strong>: Continuous delivery of model updates
+begins at this level. Actions previously handled manually by DevOps
+engineers are scripted, allowing semi-automated deployment of new model
+versions.</li>
+<li><strong>Deployment</strong>: Instead of deploying individual models,
+an automated training pipeline is deployed. This pipeline retrains
+models with new data as it becomes available, enabling continuous
+training in production.</li>
+<li><strong>Monitoring and Retraining</strong>: Monitoring tools are
+implemented to track model performance and detect drifts in data or
+accuracy. Triggers are set up to retrain models in production based on
+these monitoring outputs.</li>
+<li><strong>Feature Store and Metadata Repository</strong>: A feature
+store centralizes feature storage, ensuring consistent feature use
+across training and deployment. The metadata repository logs each ML
+pipeline run, including pipeline versions, parameters, and performance
+metrics, aiding reproducibility and traceability.</li>
+</ul>
+<h3
+id="mlops-level-2---full-automation-with-cicd-and-continuous-integration"><strong>4.
+MLOps Level 2 - Full Automation with CI/CD and Continuous
+Integration</strong></h3>
+<ul>
+<li><strong>Goal</strong>: Achieve the highest level of automation,
+where even minor code changes can trigger an entire CI/CD pipeline that
+deploys updated models into production seamlessly.</li>
+<li><strong>Data Management</strong>: Data lakes, data warehouses, and
+automated pipelines for data gathering and processing are used. Data
+governance is enforced with secure APIs and role-based access controls
+to protect data integrity.</li>
+<li><strong>Continuous Integration (CI)</strong>: Automated testing,
+building, and packaging phases are integrated into the CI pipeline,
+which validates code and prepares it for deployment.</li>
+<li><strong>Full Deployment Automation</strong>: The deployment, which
+was semi-automated in Level 1, becomes fully automated in Level 2. A
+deployment platform (e.g., a continuous deployment pipeline) handles the
+deployment process, removing the need for manual intervention.</li>
+<li><strong>Model Deployment</strong>: Every step of the workflow is
+automated, from data ingestion to model deployment. The mature CI/CD
+system allows data scientists to focus on experimentation while
+automatically testing, building, and deploying new model versions when
+changes are committed.</li>
+<li><strong>Monitoring and Continuous Training (CT)</strong>: The system
+continuously monitors model performance, data, and feature
+distributions. If drifts are detected, automated retraining can be
+triggered. The model can be retrained on schedule or in response to
+specific triggers.</li>
+<li><strong>Scalability and Efficiency</strong>: This level offloads
+repetitive tasks from data scientists, freeing them to focus on
+improving model architecture and tuning. A single code change can lead
+to a fully automated update, making the pipeline agile and
+responsive.</li>
+</ul>
+<h3 id="importance-of-mlops-maturity-levels"><strong>5. Importance of
+MLOps Maturity Levels</strong></h3>
+<ul>
+<li><strong>Incremental Roadmap</strong>: The MLOps maturity model
+clarifies the principles and best practices for building ML
+applications, offering a roadmap for gradual capability
+enhancement.</li>
+<li><strong>Practical Guidance</strong>: Maturity levels help
+organizations estimate the scope of work, establish realistic success
+criteria, and identify the deliverables for each engagement, guiding ML
+projects toward higher levels of automation and efficiency.</li>
+<li><strong>Scalability and Reliability</strong>: By progressing through
+maturity levels, companies can handle larger ML workloads and ensure
+models remain reliable, even as data and requirements change.</li>
+<li><strong>Alignment with Business Needs</strong>: Organizations can
+pinpoint their current maturity level and set achievable goals for
+improvement, aligning their ML operations with evolving business
+objectives.</li>
+</ul>
+<h3 id="conclusion-1"><strong>Conclusion</strong></h3>
+<p>The MLOps maturity model, progressing from manual workflows (Level 0)
+to fully automated, scalable ML systems (Level 2), is essential for
+guiding organizations through the complexities of ML deployment and
+maintenance. By following this roadmap, companies can achieve
+streamlined, reliable, and responsive ML workflows that meet the demands
+of modern business applications.</p>
+<h1 id="section-5-mlops-toolsplatforms-stack">Section 5: MLOps
+Tools/Platforms Stack</h1>
+<p>Here’s a detailed summary of the lecture on the <strong>MLOps Tool
+Stack</strong>, covering the types of tools needed for different stages
+in the MLOps lifecycle, platform examples, and factors to consider when
+selecting an MLOps platform.</p>
+<h3 id="overview-of-the-mlops-tool-stack"><strong>1. Overview of the
+MLOps Tool Stack</strong></h3>
+<ul>
+<li><strong>Purpose of MLOps Tools</strong>: MLOps tools provide the
+automation, standardization, and infrastructure needed to manage the
+end-to-end ML lifecycle. Since no single technology can meet all MLOps
+requirements, a combination of tools is required to manage data, models,
+and deployment seamlessly.</li>
+<li><strong>Lifecycle Phases</strong>: The MLOps lifecycle can be
+simplified into three core stages: <strong>Data Gathering</strong>,
+<strong>Modeling</strong>, and <strong>Deployment</strong>. Each stage
+includes multiple tasks, requiring specialized tools and platforms to
+automate and streamline processes.</li>
+</ul>
+<h3 id="key-features-for-mlops-platforms"><strong>2. Key Features for
+MLOps Platforms</strong></h3>
+<p>An ideal MLOps platform should include tools to address the following
+key needs:</p>
+<ul>
+<li><p><strong>Data Gathering and Preparation</strong>:</p>
+<ul>
+<li><strong>Automated Pipelines</strong>: Tools should support automated
+data pipelines to ingest batch and streaming data, handle
+transformations, and store the prepared data for modeling.</li>
+<li><strong>Data Versioning and Source Control</strong>: Versioning is
+essential to ensure reproducibility. Tools should track versions of
+code, data, and ML artifacts.</li>
+<li><strong>Exploratory Data Analysis (EDA)</strong>: Visualization
+tools for initial data analysis help identify patterns, distributions,
+and potential issues in the data.</li>
+</ul></li>
+<li><p><strong>Model Development and Experimentation</strong>:</p>
+<ul>
+<li><strong>Framework Compatibility</strong>: The platform should be
+compatible with popular ML frameworks (e.g., TensorFlow, PyTorch,
+Scikit-Learn) to ensure flexibility for data scientists.</li>
+<li><strong>Notebooks for Experimentation</strong>: Hosted notebooks
+allow rapid experimentation while tracking experiment results.</li>
+<li><strong>Hyperparameter Tuning</strong>: Optimization frameworks help
+data scientists find the best hyperparameter configurations for models,
+enhancing performance.</li>
+<li><strong>Scalable Training with GPU Support</strong>: Since model
+training is resource-intensive, especially for deep learning, the
+platform should provide scalable, distributed training with GPU/TPU
+support.</li>
+<li><strong>AutoML Support</strong>: Automation of model selection and
+feature engineering speeds up experimentation and can save
+resources.</li>
+</ul></li>
+<li><p><strong>Model Deployment</strong>:</p>
+<ul>
+<li><strong>Automated Deployment Pipelines</strong>: Platforms should
+support automated deployment of trained models, often using container
+services like Docker or Kubernetes for scalability.</li>
+<li><strong>Model Servers</strong>: Model servers should enable
+real-time HTTPS endpoints for predictions, and ideally offer features
+like fallback support, canary deployment, A/B testing, and multi-model
+hosting.</li>
+<li><strong>Security</strong>: Security features such as role-based
+access control and secure APIs are necessary to manage access to data
+and models.</li>
+</ul></li>
+<li><p><strong>Monitoring and Observability</strong>:</p>
+<ul>
+<li><strong>Real-Time Monitoring</strong>: Tools should provide
+real-time performance metrics on deployed models, tracking aspects like
+latency, memory usage, and data drift.</li>
+<li><strong>Model Governance</strong>: Governance features are crucial
+for compliance, tracking model lineage, and implementing policies.</li>
+<li><strong>Alerts and Retraining Triggers</strong>: The platform should
+include alerting mechanisms for data drift or performance degradation,
+potentially triggering model retraining.</li>
+<li><strong>Audit and Compliance</strong>: Compliance tools help
+organizations meet regulatory requirements, especially in industries
+like finance and healthcare.</li>
+</ul></li>
+</ul>
+<h3 id="notable-mlops-platforms-and-tools"><strong>3. Notable MLOps
+Platforms and Tools</strong></h3>
+<p>While no platform offers a complete end-to-end MLOps solution,
+several tools and platforms specialize in specific aspects of the MLOps
+lifecycle:</p>
+<ul>
+<li><strong>Pachyderm</strong>: Known for data versioning and
+transformation, Pachyderm focuses on data wrangling and lineage
+tracking, but lacks comprehensive monitoring and training support.</li>
+<li><strong>Algorithmia</strong>: Emphasizes model deployment and
+management, with support for running models in various environments
+(cloud, on-premises). However, it lacks features for data gathering and
+preprocessing.</li>
+<li><strong>MLflow</strong>: An open-source platform that covers
+modeling, deployment, and monitoring, although its maturity level is
+still evolving. MLflow is library-agnostic, supporting various ML
+libraries and languages.</li>
+<li><strong>Kubeflow</strong>: Built on Kubernetes, Kubeflow is a
+toolkit for deploying, scaling, and managing ML workloads. It is
+suitable for Kubernetes users and includes components for training,
+tuning, and serving models.</li>
+<li><strong>Valohai and Allegro</strong>: These platforms focus on
+end-to-end MLOps solutions, offering capabilities across all lifecycle
+stages, from data gathering to deployment and monitoring.</li>
+</ul>
+<p>Other notable players include <strong>Polyaxon, Seldon, TensorFlow
+Extended (TFX)</strong>, and <strong>Tecton</strong>, each focusing on
+different MLOps lifecycle phases.</p>
+<h3 id="choosing-the-right-mlops-platform"><strong>4. Choosing the Right
+MLOps Platform</strong></h3>
+<p>To select the most suitable MLOps platform, organizations should
+consider the following questions:</p>
+<ul>
+<li><strong>Cloud or On-Premises</strong>: Depending on security and
+data privacy requirements, organizations might choose managed cloud
+solutions (e.g., AWS SageMaker, Azure ML) or on-premises solutions
+(e.g., Kubeflow, Seldon).</li>
+<li><strong>Security Requirements</strong>: For highly sensitive data,
+platforms like Algorithmia offer robust security features. On-premises
+solutions may be more suitable for critical data that cannot leave the
+organization’s infrastructure.</li>
+<li><strong>Model Complexity and GPU Needs</strong>: Cloud platforms are
+ideal for scaling complex models that require GPU/TPU resources. For
+organizations needing on-premises GPU support, Algorithmia is a
+versatile choice with options for both cloud and on-premises
+deployments.</li>
+<li><strong>Containerization</strong>: Modern MLOps solutions typically
+rely on containerization (e.g., Docker, Kubernetes) for model
+deployment. Platforms like Kubeflow, SageMaker, and Google AI offer
+robust container support.</li>
+<li><strong>User Interface Preferences</strong>: CLI vs. GUI—Some teams
+prefer command-line tools, while others prefer graphical interfaces. For
+example, Seldon and Optuna are CLI-focused, while Kubeflow and MLflow
+offer GUI-based interfaces.</li>
+<li><strong>Programming Language and Framework Compatibility</strong>:
+Ensure the platform supports the primary languages and frameworks used
+by the team (e.g., Java, Python, TensorFlow, Keras).</li>
+<li><strong>ML Objectives</strong>: Depending on the focus on
+traditional ML vs. deep learning, certain platforms are more suited. For
+traditional ML (structured data), platforms like <strong>MLflow</strong>
+and <strong>Metaflow</strong> are ideal, while <strong>Valohai</strong>
+and <strong>Allegro</strong> cater to deep learning with support for
+large, unstructured datasets.</li>
+<li><strong>End-to-End vs. Specialized Solutions</strong>: Some
+platforms provide end-to-end MLOps support (e.g., Valohai, Allegro),
+while others specialize in certain lifecycle phases (e.g., Pachyderm for
+data, Algorithmia for deployment).</li>
+</ul>
+<h3
+id="additional-considerations-for-mlops-platform-selection"><strong>5.
+Additional Considerations for MLOps Platform Selection</strong></h3>
+<p>Beyond feature comparison, the following questions are essential to
+assess the suitability of an MLOps platform:</p>
+<ul>
+<li><strong>Development Risk Reduction</strong>: Will the platform
+reduce development risks and provide a stable environment for
+experimentation?</li>
+<li><strong>Integration with Existing Workflows</strong>: Can the
+platform integrate with the organization’s existing workflows, or will
+it require a major overhaul?</li>
+<li><strong>Infrastructure Management</strong>: Does the platform reduce
+the team’s time spent on infrastructure setup and management?</li>
+<li><strong>Cost-Effectiveness</strong>: Is the platform affordable,
+considering the organization’s budget and the platform’s
+capabilities?</li>
+<li><strong>Accelerated ML Value Delivery</strong>: Does the platform
+help the organization deliver ML value more quickly, improving
+time-to-market for ML projects?</li>
+</ul>
+<h3 id="pilot-testing-and-evaluation"><strong>6. Pilot Testing and
+Evaluation</strong></h3>
+<p>Selecting the right MLOps platform is challenging due to the
+complexity of ML and MLOps tools. To make an informed decision:</p>
+<ul>
+<li><strong>Pilot Testing</strong>: Conduct a pilot phase with top
+platform choices, testing real-world use cases to understand how well
+the platforms meet organizational needs.</li>
+<li><strong>Establishing Clear Metrics</strong>: Define success criteria
+and performance metrics for the pilot to objectively evaluate each
+platform’s suitability.</li>
+<li><strong>Involving Key Stakeholders</strong>: Include input from data
+scientists, engineers, and business leaders to ensure the selected
+platform aligns with technical and business requirements.</li>
+</ul>
+<h3 id="conclusion-2"><strong>Conclusion</strong></h3>
+<p>The MLOps tool stack is diverse, with multiple platforms and tools
+catering to different stages of the ML lifecycle. Due to the complexity
+and evolving nature of MLOps, no single platform currently meets all
+MLOps needs comprehensively. Selecting the right tool or platform
+depends on the organization’s specific requirements, technical
+environment, and ML goals. Incremental evaluation and pilot testing of
+chosen platforms are recommended to ensure the best fit for the
+organization’s MLOps journey.</p>
+<h1 id="section-7-azure-machine-learning-studio---crash-course">Section
+7: Azure Machine Learning Studio - Crash Course</h1>
+<p>This lecture provides an overview of the <strong>Azure Machine
+Learning (AML) platform</strong> and its robust suite of MLOps tools for
+building, deploying, and managing ML models at an enterprise scale.
+<strong>Azure Machine Learning</strong> is a flexible and open platform
+that supports various ML frameworks and integrates tools for
+reproducibility, security, monitoring, and governance, all aimed at
+accelerating ML workflows.</p>
+<h3 id="key-features-of-azure-machine-learning"><strong>Key Features of
+Azure Machine Learning</strong></h3>
+<ol type="1">
+<li><p><strong>Support for Popular ML Frameworks and Tools</strong>:</p>
+<ul>
+<li>AML is compatible with widely used ML frameworks like
+<strong>PyTorch, TensorFlow, Scikit-Learn, MLflow, and
+Kubeflow</strong>.</li>
+<li>Supports multiple development environments and programming
+languages, including <strong>Python, R, Jupyter Notebooks, Visual Studio
+Code, and CLI</strong>.</li>
+</ul></li>
+<li><p><strong>Automated and No-Code Capabilities</strong>:</p>
+<ul>
+<li><strong>Designer</strong>: A drag-and-drop interface for users with
+limited coding experience. Users can build ML models visually by
+importing datasets, selecting features, and choosing prediction
+targets.</li>
+<li><strong>Automated ML (AutoML)</strong>: Automates model development
+by handling feature engineering, hyperparameter tuning, and algorithm
+selection, speeding up the ML lifecycle.</li>
+</ul></li>
+<li><p><strong>Data Management and Versioning</strong>:</p>
+<ul>
+<li><strong>Dataset Versioning</strong>: Tracks all datasets used in
+training, ensuring a reproducible ML pipeline. Users can view and select
+different dataset versions.</li>
+<li><strong>Data Profiling and Drift Monitoring</strong>: AML provides
+data profiling capabilities to analyze dataset characteristics and
+detect data drift, essential for maintaining model accuracy over
+time.</li>
+</ul></li>
+<li><p><strong>Security and Governance</strong>:</p>
+<ul>
+<li><strong>Role-Based Access Control (RBAC)</strong>, custom ML roles,
+and secure networking options help organizations safeguard data.</li>
+<li><strong>Confidential Computing</strong>: Ensures privacy throughout
+the ML lifecycle with techniques for data protection and differential
+privacy.</li>
+<li><strong>Compliance</strong>: AML adheres to regulatory standards
+with over 60 certifications, including <strong>FedRAMP 5</strong> and
+<strong>DISA IL5</strong>, facilitating secure ML operations in
+regulated industries.</li>
+</ul></li>
+<li><p><strong>Model Deployment Options</strong>:</p>
+<ul>
+<li><strong>Batch and Real-Time Scoring</strong>: Supports both batch
+inference for bulk data and real-time inference for immediate scoring,
+such as fraud detection.</li>
+<li><strong>Flexible Hardware Options</strong>: AML utilizes Azure’s
+infrastructure, including CPUs, GPUs, DPUs, and FPGAs, and can scale
+across on-premises, multi-cloud, and edge environments using
+<strong>Azure Arc</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="aml-workspace-components-overview"><strong>AML Workspace
+Components Overview</strong></h3>
+<p>The AML workspace on <strong>ml.azure.com</strong> offers multiple
+components that support various stages of the ML lifecycle:</p>
+<ol type="1">
+<li><p><strong>Notebooks</strong>: Integrated notebooks where data
+scientists can perform research and experiments. AML also allows users
+to import existing Jupyter notebooks, providing easy access to datasets
+and models within the workspace.</p></li>
+<li><p><strong>Automated ML (AutoML)</strong>: Automates repetitive ML
+tasks, significantly reducing model development time. It is ideal for
+users who need efficient, production-ready models but have limited
+coding expertise.</p></li>
+<li><p><strong>Designer</strong>: A UI-based, no-code tool for building
+models using a visual canvas. It includes pre-built modules for common
+use cases, making it ideal for users unfamiliar with coding.</p></li>
+<li><p><strong>Datasets</strong>:</p>
+<ul>
+<li><strong>Registered Datasets</strong>: Contains all datasets used for
+training, ensuring traceability and version control.</li>
+<li><strong>Version Tracking</strong>: AML supports dataset versioning,
+allowing users to select specific versions and maintain lineage for
+reproducibility.</li>
+<li><strong>Preview and Explore</strong>: Users can preview dataset
+contents and access metadata, helping them understand and manage data
+effectively.</li>
+</ul></li>
+<li><p><strong>Experiments</strong>:</p>
+<ul>
+<li><strong>Experiment Tracking</strong>: Each experiment groups
+multiple pipeline runs for a particular use case, providing an organized
+record of model training and testing.</li>
+<li><strong>Pipeline Runs</strong>: Each run under an experiment logs
+metrics and tags, enabling easy comparisons and performance
+monitoring.</li>
+</ul></li>
+<li><p><strong>Pipelines</strong>:</p>
+<ul>
+<li><strong>Pipeline Management</strong>: AML tracks all individual
+pipeline runs and their associated metrics.</li>
+<li><strong>Pipeline Steps</strong>: Pipeline runs contain stages like
+training, evaluation, and model registration, with logs and metrics
+available for each step.</li>
+</ul></li>
+<li><p><strong>Models</strong>:</p>
+<ul>
+<li><strong>Model Registration</strong>: After training, models are
+registered with a name and version. Each registered model is tagged with
+experiment names, metrics, and additional metadata.</li>
+<li><strong>Model Artifacts</strong>: AML tracks all artifacts generated
+during training (e.g., pickle files) and connects them with
+corresponding datasets and versions.</li>
+<li><strong>Endpoints</strong>: Models are deployed as REST API
+endpoints for real-time scoring. AML also supports deployment options
+like <strong>ACI (Azure Container Instances)</strong> and <strong>AKS
+(Azure Kubernetes Service)</strong> for scalable serving.</li>
+</ul></li>
+<li><p><strong>Compute Resources</strong>:</p>
+<ul>
+<li><strong>Compute Instances</strong>: Virtual machines optimized for
+ML development, often used for notebook-based development.</li>
+<li><strong>Compute Clusters</strong>: Scalable clusters used for model
+training, capable of handling resource-intensive tasks with multi-node
+setups.</li>
+<li><strong>Inference Clusters</strong>: Clusters optimized for model
+inference, enabling deployments in both Kubernetes clusters and
+container instances.</li>
+</ul></li>
+<li><p><strong>Additional Services</strong>:</p>
+<ul>
+<li><strong>Data Labeling</strong>: Centralized service for managing
+labeling projects, which is particularly useful for supervised learning
+tasks.</li>
+<li><strong>Linked Services</strong>: AML’s integration point for other
+Azure services, allowing seamless connections to resources like
+<strong>Azure Synapse</strong> for expanded data access and
+processing.</li>
+</ul></li>
+</ol>
+<h3 id="selecting-the-right-aml-platform-features"><strong>Selecting the
+Right AML Platform Features</strong></h3>
+<p>When navigating the Azure Machine Learning Studio dashboard, each
+feature plays a critical role in ensuring a seamless ML lifecycle:</p>
+<ul>
+<li><strong>Registered Datasets</strong>: Enables traceable dataset
+management, critical for MLOps lineage and version control.</li>
+<li><strong>Experiment Management</strong>: Organizes model training and
+testing runs, linking pipeline runs with specific experiments and tags
+for easy retrieval.</li>
+<li><strong>Pipeline Runs</strong>: Each run records key metrics and
+outputs, such as <strong>alpha</strong> and <strong>MSE</strong> (mean
+squared error), which help users evaluate model performance.</li>
+<li><strong>Model Artifacts</strong>: The artifacts page links datasets
+and models, tracking each model’s source dataset, training pipeline, and
+registered version.</li>
+<li><strong>End-to-End Lineage Tracking</strong>: Models, datasets, and
+experiments are interconnected, facilitating complete visibility of the
+ML pipeline from data ingestion to model deployment.</li>
+<li><strong>Endpoint Management</strong>: AML’s endpoint management
+tracks all model deployments, showing resource allocations (e.g., CPUs,
+memory) and deployment environment (e.g., container instances or
+Kubernetes).</li>
+<li><strong>Compute Clusters and Data Stores</strong>: AML’s
+infrastructure management tools simplify access to compute resources and
+secure storage, allowing users to scale up resources as needed and keep
+sensitive data secure.</li>
+</ul>
+<h3
+id="summary-of-azure-machine-learning-platform-capabilities"><strong>Summary
+of Azure Machine Learning Platform Capabilities</strong></h3>
+<p>Azure Machine Learning offers a comprehensive suite of tools to
+manage the entire MLOps lifecycle, enhancing productivity and
+collaboration across data science and engineering teams. With AML, teams
+can streamline model training, deployment, and monitoring, ensuring
+models are quickly delivered and remain reliable in production.</p>
+<ul>
+<li><strong>Scalability and Flexibility</strong>: AML supports popular
+frameworks, handles various data formats, and provides access to
+high-performance compute resources, enabling large-scale ML
+workflows.</li>
+<li><strong>Automated Model Development</strong>: Tools like
+<strong>AutoML</strong> and <strong>Designer</strong> simplify model
+creation, while dataset versioning and data profiling maintain
+traceability and data quality.</li>
+<li><strong>Security and Compliance</strong>: AML offers robust security
+and compliance features, making it suitable for sensitive applications
+in regulated industries.</li>
+<li><strong>End-to-End Monitoring and Lineage</strong>: Each component
+(datasets, models, experiments) is tracked, ensuring full
+reproducibility and accountability throughout the ML lifecycle.</li>
+</ul>
+<p>In conclusion, Azure Machine Learning provides an efficient and
+user-friendly platform that can support both experienced data scientists
+and newcomers, offering flexibility in model building and deployment
+with minimal coding and fast-to-market capabilities. The instructor
+concludes with a hands-on tour of AML Studio, demonstrating how
+different platform components interconnect and how they can be accessed
+in the UI, setting the stage for code implementation in upcoming
+lectures.</p>
+<h1 id="section-8-demo---data-scientists-experiment">Section 8: Demo -
+Data Scientist’s Experiment</h1>
+<p>This lecture details how a <strong>data scientist</strong> would
+leverage <strong>Azure Machine Learning (AML)</strong> for
+experimentation and model development, specifically focusing on the
+MLOps aspects and how to transition from initial research code to a
+scalable, production-ready ML pipeline.</p>
+<h3 id="data-scientists-workflow-on-azure-machine-learning"><strong>Data
+Scientist’s Workflow on Azure Machine Learning</strong></h3>
+<ol type="1">
+<li><p><strong>Experimentation and Research</strong>:</p>
+<ul>
+<li><strong>Notebooks for Research</strong>: Data scientists primarily
+use <strong>Notebooks</strong> within Azure Machine Learning to perform
+exploratory data analysis (EDA) and initial model training
+experiments.</li>
+<li><strong>Access and Code Development</strong>: They can access
+Notebooks directly on <strong>ml.azure.com</strong> or use Azure’s SDKs
+to interact with AML from their local machines.</li>
+<li><strong>Data Assumptions</strong>: In this demo, data preparation
+(cleaning, scaling, transformation) is assumed to be done, with data
+engineering tasks handled separately.</li>
+</ul></li>
+<li><p><strong>Data Preparation and EDA</strong>:</p>
+<ul>
+<li><strong>Research Notebook</strong>: A notebook from Kaggle is
+referenced, covering typical EDA steps such as loading data, identifying
+null values, and performing data visualizations.</li>
+<li><strong>Handling Nulls and Imputing Values</strong>: Using
+statistical methods, nulls in columns like <em>glucose</em> and
+<em>blood pressure</em> are replaced with appropriate values (e.g., mean
+or median) to avoid data skew.</li>
+<li><strong>Data Distribution Analysis</strong>: Visualizations like
+histograms, pair plots, and heatmaps help detect patterns, biases, and
+skewness in the data, informing how to handle missing values and balance
+datasets.</li>
+<li><strong>Data Scaling</strong>: Standardization is applied to ensure
+all features are within a consistent range, which improves the accuracy
+and stability of ML algorithms.</li>
+</ul></li>
+<li><p><strong>Developing Training and Validation Code</strong>:</p>
+<ul>
+<li>Once EDA is complete, data scientists prepare training and scoring
+scripts, creating basic Python scripts from the research notebook code
+to handle data ingestion, training, testing, and model validation.</li>
+<li><strong>Basic Training Script</strong>: This script includes
+importing necessary libraries, loading data, splitting it into
+train/test sets, training a regression model, calculating metrics (e.g.,
+mean squared error), and saving the model locally.</li>
+<li><strong>Scoring Script</strong>: Loads the trained model, prepares
+new data, and makes predictions.</li>
+</ul></li>
+</ol>
+<h3
+id="transition-to-mlops-pipelines-with-azure-devops"><strong>Transition
+to MLOps Pipelines with Azure DevOps</strong></h3>
+<p>After the initial experimentation, data scientists provide their
+refined training and scoring scripts, which become the foundation for
+building a production-ready MLOps pipeline. The <strong>MLOps
+transition</strong> involves:</p>
+<ol type="1">
+<li><p><strong>Azure DevOps Integration</strong>:</p>
+<ul>
+<li><strong>Centralized Code Management</strong>: Azure DevOps acts as
+the central repository, storing all necessary Python files,
+configuration files, environment setup scripts, and dependency files
+needed for MLOps.</li>
+<li><strong>Microsoft’s GitHub Repository</strong>: The base code for
+the demo is pulled from Microsoft’s official repository, with minor
+modifications to meet the current project’s requirements.</li>
+</ul></li>
+<li><p><strong>Pre-requisites and Connections</strong>:</p>
+<ul>
+<li><strong>AML and Azure DevOps Integration</strong>: To integrate
+Azure DevOps with AML, a <strong>Machine Learning Extension</strong>
+must be added from the Azure Marketplace, enabling native access to AML
+services from DevOps.</li>
+<li><strong>Service Connection</strong>: A service connection links a
+specific AML workspace (e.g., LOP-AML-WS) to Azure DevOps, enabling the
+pipeline to utilize resources within that workspace.</li>
+</ul></li>
+<li><p><strong>Environment Variables in DevOps</strong>:</p>
+<ul>
+<li><strong>Variable Groups</strong>: Environment-specific variables
+(e.g., deployment name, workspace name, location) are stored in
+<strong>DevOps library variable groups</strong>. These variables are
+referenced throughout the pipeline, providing dynamic
+configurations.</li>
+</ul></li>
+</ol>
+<h3 id="building-a-production-ready-mlops-pipeline"><strong>Building a
+Production-Ready MLOps Pipeline</strong></h3>
+<ol type="1">
+<li><p><strong>Refining the Code for Production</strong>:</p>
+<ul>
+<li>The research code from data scientists is used as a blueprint, but
+it is not production-ready due to the lack of scalability, error
+handling, and version control.</li>
+<li><strong>MLOps Code Refinement</strong>: ML engineers take this
+initial code and add necessary configurations, modularize the code,
+incorporate versioning, and ensure scalability and robustness.</li>
+<li><strong>Automation and Modularity</strong>: The goal is to create a
+robust MLOps pipeline, automating each step (training, validation,
+deployment) to minimize manual intervention and ensure
+reproducibility.</li>
+</ul></li>
+<li><p><strong>Experimentation Folder</strong>:</p>
+<ul>
+<li><strong>Experimentation Folder</strong>: This folder contains the
+initial data scientist experiment files (training and scoring scripts),
+serving as the foundational code for model training and validation.</li>
+<li><strong>Pipeline Transformation</strong>: Using these scripts, ML
+engineers transform the code into scalable pipelines that automate
+training, evaluation, and deployment processes.</li>
+</ul></li>
+<li><p><strong>Production-Ready Code Implementation</strong>:</p>
+<ul>
+<li><strong>Training Pipeline</strong>: The training pipeline includes
+steps to load pre-processed data, train the model, evaluate it, and log
+metrics, all within Azure Machine Learning. It saves the trained model
+in a versioned, trackable manner.</li>
+<li><strong>Scoring Pipeline</strong>: The scoring script is enhanced to
+load the trained model, connect to the appropriate data sources, and
+generate predictions. This script is then deployed to Azure, enabling
+real-time predictions via API endpoints.</li>
+</ul></li>
+<li><p><strong>Automation of MLOps Steps</strong>:</p>
+<ul>
+<li><strong>Continuous Integration and Deployment</strong>: Once the
+code is refined, DevOps pipelines are configured to automate the entire
+ML process, from model training to deployment, using AML and Azure
+DevOps.</li>
+<li><strong>Environment Management</strong>: Pipelines leverage AML
+compute resources (e.g., compute clusters and instances) for scalable,
+distributed model training and inference, facilitating robust
+experimentation and real-time deployment.</li>
+</ul></li>
+</ol>
+<h3 id="summary-and-next-steps"><strong>Summary and Next
+Steps</strong></h3>
+<p>In this lecture, the instructor illustrated the transition from a
+data scientist’s research notebook to an MLOps-ready pipeline using
+Azure Machine Learning and Azure DevOps. The following points highlight
+this transition:</p>
+<ul>
+<li><strong>Research Phase</strong>: Initial experimentation and model
+training conducted in Jupyter Notebooks, focusing on EDA, data cleaning,
+and scaling.</li>
+<li><strong>Transition to MLOps Pipelines</strong>: The experimental
+code is refactored and managed in Azure DevOps, where ML engineers build
+a production-ready pipeline.</li>
+<li><strong>Automation with DevOps and AML</strong>: AML and Azure
+DevOps together enable version control, scalable deployment, and
+automated CI/CD pipelines for end-to-end model lifecycle
+management.</li>
+</ul>
+<p>By integrating the initial model training scripts into the Azure
+DevOps pipeline, the AML and DevOps setup ensures a scalable,
+reproducible MLOps framework, ready for continuous training, deployment,
+and monitoring in a production environment. This setup transforms the
+standalone research code into a fully operational ML pipeline, aligning
+with best practices for MLOps.</p>
+<h1 id="section-9-demo---orchestrated-ml-codes-in-azure">Section 9: Demo
+- Orchestrated ML Codes in Azure</h1>
+<p>In this section, the instructor goes over the <strong>Azure MLOps
+pipeline components</strong> necessary for creating, evaluating, and
+deploying machine learning models using Azure Machine Learning (AML) and
+Azure DevOps. The main steps include developing scalable training
+scripts, evaluating model performance, registering the model, and
+deploying the model for inference.</p>
+<h3 id="orchestrated-experiment-and-core-ml-code"><strong>1.
+Orchestrated Experiment and Core ML Code</strong></h3>
+<p>The core of the ML pipeline is the orchestrated experiment, which
+includes scalable, production-ready code for:</p>
+<ul>
+<li><strong>Training</strong> (<code>train_aml.py</code>): This script
+takes user-defined parameters and processes data to train the model.
+<ul>
+<li><strong>Parameters</strong>: Dynamic parameters (e.g., dataset name,
+model name, version) are passed as arguments.
+<code>parameters.json</code> file is used for hyperparameters, allowing
+flexibility without modifying code.</li>
+<li><strong>Data Preparation</strong>: Fetches the dataset from AML’s
+datastore, links it to the current pipeline run, and splits it into
+training and test sets.</li>
+<li><strong>Training and Output</strong>: The model is trained and
+evaluated, and the output is saved to a specified path for further
+steps. Intermediate files are saved, not yet registered as a model.</li>
+</ul></li>
+</ul>
+<h3 id="model-evaluation"><strong>2. Model Evaluation</strong></h3>
+<p>The evaluation script assesses the trained model against existing
+ones, if available:</p>
+<ul>
+<li><strong>Conditions for Evaluation</strong>:
+<ul>
+<li><strong>Initial Model Check</strong>: If the model is the first of
+its kind, it should meet minimum client-agreed metrics before
+registration.</li>
+<li><strong>Comparison with Existing Model</strong>: If a previous model
+exists, the new model’s performance (e.g., MSE) is compared against the
+current production model’s performance.</li>
+<li><strong>Evaluation Logic</strong>: If the new model performs better,
+it proceeds to registration; otherwise, the pipeline is canceled.</li>
+</ul></li>
+</ul>
+<p>This separation of evaluation ensures that only improvements or
+necessary updates get registered, preventing degradation in performance
+from model drift.</p>
+<h3 id="model-registration"><strong>3. Model Registration</strong></h3>
+<p>The <code>register_model.py</code> script handles the formal
+registration of the model and associated metadata:</p>
+<ul>
+<li><strong>Tagging and Metadata</strong>: Key metadata (e.g., MSE,
+dataset ID, experiment name) are associated with the model, enabling
+version control and reproducibility.</li>
+<li><strong>Model Check</strong>: Before registering a model, the script
+checks for any model with the same build ID to avoid redundant
+entries.</li>
+<li><strong>Execution</strong>: Once registered, the model and its
+metadata are accessible within AML’s model registry, making it easy to
+track and reuse the model.</li>
+</ul>
+<h3 id="scoring-and-deployment-configuration"><strong>4. Scoring and
+Deployment Configuration</strong></h3>
+<p>The <strong>scoring phase</strong> involves creating scripts and
+configuration files necessary to deploy the model and make it accessible
+for predictions:</p>
+<ul>
+<li><strong>Score.py</strong>: The primary scoring script, which loads
+the model, processes input data, and outputs predictions.
+<ul>
+<li><strong>Initialization and Run Functions</strong>: <code>init</code>
+loads the model into memory, and <code>run</code> takes input data and
+uses the model to generate predictions.</li>
+</ul></li>
+<li><strong>Deployment Configuration Files</strong>:
+<ul>
+<li><strong>ACI and AKS YAMLs</strong>: Configurations for <strong>Azure
+Container Instance (ACI)</strong> and <strong>Azure Kubernetes Service
+(AKS)</strong> deployments, specifying compute resources (e.g., CPU,
+memory) and scaling options.</li>
+<li><strong>Inference Configuration</strong>: Specifies dependencies
+(e.g., Conda environment requirements, package installations) for the
+model’s container, ensuring all necessary libraries are
+pre-installed.</li>
+</ul></li>
+</ul>
+<h3 id="packaging-and-dependencies"><strong>5. Packaging and
+Dependencies</strong></h3>
+<p>To manage dependencies, YAML files are defined within a
+<code>utils</code> folder. These include:</p>
+<ul>
+<li><strong>Conda Dependencies</strong>: Lists required Python packages
+(e.g., <code>scikit-learn</code>, <code>azureml-sdk</code>) and
+versions, ensuring consistent environments for model training and
+inference.</li>
+<li><strong>Environment Setup</strong>: These dependencies are used to
+create Docker images containing the model and necessary libraries for
+deployment, streamlining the setup for production environments.</li>
+</ul>
+<h3 id="key-points-to-note"><strong>Key Points to Note</strong></h3>
+<ul>
+<li><strong>Automated Testing</strong>: <code>test_train.py</code>
+includes unit tests to verify core functions like training and
+evaluation metrics, ensuring code quality before deployment.</li>
+<li><strong>Version Control and Reproducibility</strong>: All data,
+model, and parameter versions are tracked and stored, allowing for a
+reproducible ML pipeline and adherence to MLOps standards.</li>
+<li><strong>Scalable Deployment</strong>: Depending on the use case,
+deployment to ACI (for lighter workloads) or AKS (for scalable
+workloads) is configured, making the system adaptable to different
+production environments.</li>
+</ul>
+<h3 id="summary"><strong>Summary</strong></h3>
+<p>In this Azure MLOps pipeline:</p>
+<ol type="1">
+<li><strong>Training and Evaluation</strong>: The model is trained and
+evaluated with automated checks to ensure only high-performing models
+are registered.</li>
+<li><strong>Model Registration</strong>: The model, along with all
+relevant metadata, is registered for future reference and
+reproducibility.</li>
+<li><strong>Scoring and Deployment</strong>: The model is packed with
+its dependencies and deployed to a containerized environment, either on
+ACI or AKS, for accessible, scalable inference.</li>
+<li><strong>Testing and Dependency Management</strong>: Automated tests
+and detailed dependency management ensure robust and reproducible
+pipeline runs.</li>
+</ol>
+<p>Through these steps, the MLOps pipeline ensures that models are
+trained, evaluated, and deployed efficiently, reducing manual
+intervention and enabling rapid iteration and deployment cycles. The
+next stages will cover setting up CI/CD pipelines to automate these
+tasks end-to-end in Azure DevOps.</p>
+<h1 id="section-10-demo---cicd-mlops-pipeline-in-azure">Section 10: Demo
+- CI/CD MLOps Pipeline in Azure</h1>
+<p>The instructor walks through the <strong>implementation of a full
+CI/CD pipeline for MLOps</strong> on Azure, highlighting the creation,
+testing, building, training, evaluating, and deploying machine learning
+models. Here’s a summary of the key steps and pipeline structure:</p>
+<h3 id="overall-pipeline-design-and-structure"><strong>1. Overall
+Pipeline Design and Structure</strong></h3>
+<ul>
+<li><strong>Pipeline Purpose</strong>: The pipeline automates testing,
+building, training, evaluating, and deploying machine learning models.
+Once a code change (commit) is made, the pipeline initiates and follows
+a specific sequence.</li>
+<li><strong>Folder Structure</strong>:
+<ul>
+<li><strong>Core ML Code</strong> (<code>diabetes_regression</code>):
+Contains scripts for training, evaluation, model registry, and
+scoring.</li>
+<li><strong>Pipeline Code</strong> (<code>.pipelines</code>): Includes
+YAML files defining CI/CD workflows, including task sequences and
+environment configurations.</li>
+</ul></li>
+</ul>
+<h3
+id="continuous-integration-ci-pipeline-diabetes_regression_ci.yaml"><strong>2.
+Continuous Integration (CI) Pipeline
+(<code>diabetes_regression_CI.yaml</code>)</strong></h3>
+<p>This file orchestrates the CI pipeline, handling:</p>
+<ul>
+<li><strong>Resource Allocation</strong>: Specifies container resources
+and triggers from the master branch.</li>
+<li><strong>Variables</strong>: Retrieves environment variables, like
+experiment names and model parameters, from predefined files.</li>
+<li><strong>Stages</strong>:
+<ul>
+<li><strong>Stage 1 - Model CI</strong>: Performs linting and unit
+tests, builds the ML pipeline, and publishes it.
+<ul>
+<li><strong>Tasks</strong>: Includes lint tests using
+<code>Flake8</code>, unit tests using <code>pytest</code>, and publishes
+coverage reports. It also runs <code>build_train_pipeline.py</code> to
+create and publish a new ML pipeline in Azure.</li>
+</ul></li>
+<li><strong>Stage 2 - Trigger AML Pipeline</strong>: Fetches the
+published pipeline from Stage 1 and runs it to train, evaluate, and
+register a new model.
+<ul>
+<li><strong>Pipeline Execution</strong>: Uses
+<code>run_train_pipeline.py</code> to identify and trigger the specific
+pipeline from Stage 1.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3
+id="build-and-train-pipeline-code-build_train_pipeline.py-and-run_train_pipeline.py"><strong>3.
+Build and Train Pipeline Code (<code>build_train_pipeline.py</code> and
+<code>run_train_pipeline.py</code>)</strong></h3>
+<ul>
+<li><strong>Purpose</strong>: Automates model training, evaluation, and
+registration in a single pipeline run.</li>
+<li><strong>Dataset Handling</strong>: Fetches sample data, transforms
+it, and registers it in Azure for reproducibility.</li>
+<li><strong>Step Creation and Ordering</strong>:
+<ul>
+<li><strong>Pipeline Steps</strong>: Defines the training, evaluation,
+and registration steps as <code>PythonScriptStep</code>, allowing
+step-by-step execution in Azure.</li>
+<li><strong>Pipeline Publication</strong>: Publishes this ordered
+pipeline for subsequent runs by Stage 2 of the CI pipeline.</li>
+</ul></li>
+</ul>
+<h3
+id="model-deployment-pipeline-diabetes_regression_cd.yaml"><strong>4.
+Model Deployment Pipeline
+(<code>diabetes_regression_CD.yaml</code>)</strong></h3>
+<p>This pipeline manages the model deployment process, following the CI
+pipeline’s completion:</p>
+<ul>
+<li><strong>Deployment Configuration</strong>: Triggers after successful
+completion of the CI pipeline and uses ACI (Azure Container Instances)
+for deployment.</li>
+<li><strong>Artifact Handling</strong>: Retrieves the latest model JSON
+artifact, containing the model name and version, to be deployed.</li>
+<li><strong>Deployment Tasks</strong>:
+<ul>
+<li><strong>Model Deployment</strong>: Uses
+<code>az ml model deploy</code> to deploy the model with its
+dependencies specified in configuration files.</li>
+<li><strong>Container Setup</strong>: Configures compute resources and
+network requirements.</li>
+</ul></li>
+</ul>
+<h3 id="execution-and-monitoring"><strong>5. Execution and
+Monitoring</strong></h3>
+<ul>
+<li><strong>Pipeline Execution</strong>: After a code commit, the CI
+pipeline triggers, followed by the CD pipeline if CI completes
+successfully.</li>
+<li><strong>Results Verification</strong>: Checks Azure Machine Learning
+Studio for:
+<ul>
+<li><strong>Experiment Records</strong>: Verifies new experiment entries
+and registered models.</li>
+<li><strong>Endpoints</strong>: Confirms successful deployment and
+operational status.</li>
+</ul></li>
+</ul>
+<h3 id="summary-of-automation-achieved"><strong>6. Summary of Automation
+Achieved</strong></h3>
+<p>This end-to-end CI/CD pipeline allows seamless integration of:</p>
+<ul>
+<li><strong>Automated Testing and Validation</strong>: Ensures code
+quality and functionality through linting and unit tests.</li>
+<li><strong>Model Training, Evaluation, and Registration</strong>:
+Automatically trains new models and updates model versions only if the
+new model outperforms the previous.</li>
+<li><strong>Model Deployment</strong>: Deploys the latest model version
+to a scalable endpoint on ACI.</li>
+</ul>
+<p>The completed CI/CD pipeline in Azure enables continuous testing,
+building, and deploying ML models with minimal manual intervention. This
+setup is crucial for production MLOps environments, allowing data
+scientists and engineers to iterate, deploy, and monitor models
+efficiently.</p>
+    
+</body>
+</html>

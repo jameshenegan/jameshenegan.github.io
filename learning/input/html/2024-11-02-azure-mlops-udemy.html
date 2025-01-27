@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="section-1-azure-mlops">Section 1: Azure MLOps</h1>
+<h2 id="complete-intro-to-azure-machine-learning-service">1. Complete
+Intro to Azure Machine Learning Service</h2>
+<p>The audio content provides an overview of MLOps (Machine Learning
+Operations) using Microsoft Azure and focuses on its integration with
+DevOps practices. MLOps is presented as a method to automate and
+streamline the machine learning lifecycle, from development to
+deployment, monitoring, and updating models efficiently. Azure Machine
+Learning (Azure ML) serves as a collaborative environment that enables
+data scientists to work together on model training, tracking, and
+deployment while ensuring reproducibility and governance.</p>
+<p>Key points covered:</p>
+<ol type="1">
+<li><p><strong>DevOps and MLOps Overview</strong>: DevOps practices in
+software development are adapted for MLOps to manage the lifecycle of
+machine learning projects, emphasizing automation, monitoring, and
+version control for continuous model improvement.</p></li>
+<li><p><strong>Introduction to Azure Machine Learning</strong>: Azure ML
+provides a collaborative workspace where multiple data scientists can
+work together, track experiments, and manage model training. It includes
+features like notebooks (similar to Jupyter), scalable cloud compute
+resources, and terminal access for flexible coding.</p></li>
+<li><p><strong>Automated Machine Learning (AutoML)</strong>: AutoML on
+Azure ML automates model selection and hyperparameter tuning, saving
+time for data scientists. It logs all experiments for traceability,
+making it easy to select the best-performing model based on pre-defined
+metrics.</p></li>
+<li><p><strong>Azure ML Designer</strong>: For a no-code experience,
+Azure ML Designer allows users to build machine learning pipelines
+through drag-and-drop functionality, simplifying processes like data
+preparation and model deployment.</p></li>
+<li><p><strong>Compute and Environment Management</strong>: Azure ML
+supports scalable compute resources, allowing for CPU and GPU-based
+training that can be scaled up or down as needed. Environments are
+configured to maintain consistency between training and production,
+reducing deployment issues.</p></li>
+<li><p><strong>Model Registration and Deployment</strong>: Models can be
+registered and deployed directly within Azure ML, supporting versioning
+and traceability. Endpoint URLs are provided for accessing deployed
+models, enabling seamless integration into applications through API
+calls.</p></li>
+<li><p><strong>Other Tools and Capabilities</strong>: Azure ML also
+includes tools for dataset storage, labeling for tasks like image
+classification, and links to other Azure services like Azure Synapse for
+big data processing.</p></li>
+</ol>
+<p>The content is part of a video series introducing viewers to MLOps on
+Azure, covering the basics to help users understand how to utilize
+Azure’s capabilities for MLOps. The next video promises a similar
+high-level overview of Azure DevOps as it relates to orchestrating the
+MLOps process.</p>
+<p>This section of the MLOps video series provides an in-depth overview
+of model registration, deployment, and environment management within
+Azure Machine Learning (Azure ML) to maintain efficient and reproducible
+machine learning workflows. The main focus is on managing the end-to-end
+process of taking trained models and preparing them for production with
+traceability, scalability, and version control.</p>
+<h3 id="key-points-and-concepts">Key Points and Concepts</h3>
+<ol type="1">
+<li><p><strong>Model Registration</strong>:</p>
+<ul>
+<li>Once a model is trained, it should be registered in Azure ML, which
+stores metadata such as the registration date, framework, code origin,
+and dataset used. This practice ensures traceability and governance,
+allowing stakeholders to see who created or modified the model and to
+retrieve specific artifacts like the model’s pickle file or data
+files.</li>
+<li>This process enables reproducibility and accountability, critical
+for regulated environments.</li>
+</ul></li>
+<li><p><strong>Deployment</strong>:</p>
+<ul>
+<li>After registering the best-performing model, users can deploy it to
+either a web service for real-time predictions or batch inference. This
+deployment can be achieved with minimal code or via a simple click
+interface.</li>
+<li>Azure ML allows users to choose the compute resources for
+deployment, adjusting performance and cost based on service
+requirements.</li>
+<li>Deployed models receive unique URLs for API access, enabling
+straightforward integration into applications via endpoint calls. These
+APIs allow for input data to be sent and prediction results to be
+received, facilitating seamless model utilization in production.</li>
+</ul></li>
+<li><p><strong>Compute Resources</strong>:</p>
+<ul>
+<li>Azure ML supports scalable compute options. Users can adjust the
+computational power (e.g., CPU, GPU) based on needs, with options to
+scale resources up or down for cost efficiency.</li>
+<li>Clusters can also be used for larger workloads, allowing multiple
+machines to work together. These clusters can auto-scale, where idle
+nodes are shut down automatically, helping to reduce costs.</li>
+</ul></li>
+<li><p><strong>Environment Management</strong>:</p>
+<ul>
+<li>A critical aspect of MLOps is ensuring consistency between the
+development and production environments. Models trained on local
+machines often fail in production due to differing operating systems,
+libraries, or configurations.</li>
+<li>Azure ML allows users to create and manage “environments,” which are
+standardized configurations of operating systems, libraries, and
+dependencies required by the model. This consistency ensures that models
+can function in production exactly as they did during development.</li>
+</ul></li>
+<li><p><strong>Data Stores and Credential Management</strong>:</p>
+<ul>
+<li>Azure ML provides secure data stores that hold connection
+credentials for various data sources, such as Azure Blob Storage or
+Azure Data Lake. These credentials can be referenced in code without
+embedding sensitive information directly, enhancing security.</li>
+</ul></li>
+<li><p><strong>Data Labeling and Synapse Integration</strong>:</p>
+<ul>
+<li>Azure ML includes labeling tools for tasks such as image
+classification or object detection, enabling users to visually annotate
+data. The platform also integrates with Azure Synapse Analytics for
+large-scale data processing, where Synapse’s Spark clusters can serve as
+compute sources for ML tasks.</li>
+</ul></li>
+<li><p><strong>Automated Model Scoring and Logging</strong>:</p>
+<ul>
+<li>During the deployment stage, users need to write scoring scripts to
+define how the model will make predictions based on incoming data. Azure
+ML supports this by storing logs and metadata of each deployment,
+enabling users to access scoring information and debug issues if they
+arise.</li>
+</ul></li>
+<li><p><strong>AutoML and No-Code Designer</strong>:</p>
+<ul>
+<li>For users preferring minimal coding, Azure ML offers AutoML, which
+automatically selects and tunes algorithms based on the dataset and the
+desired metric, and a no-code Designer interface that supports
+drag-and-drop functionality for creating machine learning
+pipelines.</li>
+</ul></li>
+</ol>
+<h3 id="purpose-of-this-overview">Purpose of This Overview</h3>
+<p>The video emphasizes understanding the tools and processes in Azure
+ML at a high level. This foundational knowledge prepares users for the
+next part of the MLOps series, which will cover Azure DevOps. The goal
+is to integrate DevOps practices to enhance the orchestration of the
+MLOps pipeline, ensuring smooth transitions from development to
+deployment and monitoring.</p>
+<p>In the next video, the focus shifts to using Azure DevOps for
+managing the MLOps workflow, which builds upon the knowledge of Azure ML
+capabilities covered in this session.</p>
+<h2 id="intro-to-azure-devops">2. Intro to Azure DevOps</h2>
+<p>MG begins by recapping the first part of the series, which gave an
+overview of Azure Machine Learning. Now, the focus shifts to Azure
+DevOps, an orchestration tool for the MLOps lifecycle. Azure DevOps
+enables effective project management, version control, automated
+deployments, and monitoring, all vital to building and maintaining
+machine learning models in production.</p>
+<h2 id="setting-up-azure-devops-configurations">3. Setting Up Azure
+DevOps Configurations</h2>
+<ol type="1">
+<li><p><strong>Organization and Project Creation</strong>:</p>
+<ul>
+<li>Users must first create an organization in Azure DevOps and then
+create individual projects. MG sets up an organization and a sample
+project called “MG Testing Project.”</li>
+<li>The project workspace in Azure DevOps will host code, facilitate
+version control, and allow for seamless team collaboration.</li>
+</ul></li>
+<li><p><strong>Azure Repos and Version Control</strong>:</p>
+<ul>
+<li>Azure Repos is introduced as a Git-based repository within Azure
+DevOps, enabling users to manage code versions, collaborate on branches,
+and handle pull requests.</li>
+<li>This structure allows teams to maintain code quality through
+approvals and automated testing (unit tests) before merging changes into
+production.</li>
+</ul></li>
+<li><p><strong>Boards for Project Management</strong>:</p>
+<ul>
+<li>Azure Boards helps manage tasks, assign work items, and organize
+work according to methodologies like Scrum or Agile. For example, tasks
+like model training or debugging can be assigned to team members.</li>
+</ul></li>
+<li><p><strong>Pipelines for Automated Workflows</strong>:</p>
+<ul>
+<li>Pipelines in Azure DevOps automate various stages of the MLOps
+lifecycle, including building, training, testing, and deploying models.
+MG explains how Azure DevOps pipelines support both continuous
+integration (CI) and continuous deployment (CD).</li>
+<li>Users can define pipelines to automate tasks, such as training
+models in staging environments and moving them to production once they
+pass predefined tests.</li>
+</ul></li>
+<li><p><strong>Artifacts and Test Plans</strong>:</p>
+<ul>
+<li>Azure DevOps supports managing artifacts—like trained models,
+datasets, and other resources—as part of a pipeline.</li>
+<li>Test Plans allow users to create unit tests or model tests to verify
+functionality before deploying models to production.</li>
+</ul></li>
+</ol>
+<h3 id="service-connections-and-azure-subscription-integration">Service
+Connections and Azure Subscription Integration</h3>
+<ol type="1">
+<li><p><strong>Establishing Service Connections</strong>:</p>
+<ul>
+<li>MG emphasizes the importance of connecting Azure DevOps with Azure
+subscriptions. This connection allows DevOps pipelines to communicate
+with Azure resources (e.g., Azure Machine Learning).</li>
+<li>Service connections can be set up manually or through an automated
+process using Azure credentials. The connection allows Azure DevOps to
+orchestrate tasks such as model training, testing, and deployment on
+Azure Machine Learning.</li>
+</ul></li>
+<li><p><strong>Authentication and Access Control</strong>:</p>
+<ul>
+<li>Azure DevOps authenticates using the user’s credentials to access
+the Azure subscription. Users must configure service connections in
+project settings, enabling Azure DevOps to access resources
+securely.</li>
+</ul></li>
+</ol>
+<h3
+id="infrastructure-as-code-iac-with-azure-devops-pipelines">Infrastructure
+as Code (IaC) with Azure DevOps Pipelines</h3>
+<ol type="1">
+<li><p><strong>Purpose of IaC</strong>:</p>
+<ul>
+<li>Infrastructure as Code (IaC) automates the creation and management
+of cloud infrastructure. Instead of manually setting up Azure Machine
+Learning workspaces, IaC scripts define resources programmatically,
+ensuring consistent environments across development, testing, and
+production.</li>
+<li>IaC scripts aid in disaster recovery and scalability, providing a
+reusable, code-based setup for ML environments.</li>
+</ul></li>
+<li><p><strong>Setting up IaC Variables in Azure DevOps</strong>:</p>
+<ul>
+<li>MG configures variables for the IaC pipeline to control resources’
+settings dynamically. Variables include the Azure region, resource group
+name, and the base name for services like Azure Machine Learning.</li>
+<li>These variables allow flexibility and reuse across multiple projects
+and environments (e.g., development, staging, production).</li>
+</ul></li>
+<li><p><strong>Pipeline Configuration and Variable Groups</strong>:</p>
+<ul>
+<li>Variable groups in Azure DevOps organize configuration details like
+service names, resource group names, and regions. Sensitive data, like
+passwords, can be securely stored in Azure Key Vault and accessed as
+needed, protecting credentials during the IaC process.</li>
+</ul></li>
+<li><p><strong>Creating a Pipeline for IaC</strong>:</p>
+<ul>
+<li>MG outlines creating a pipeline that uses IaC scripts to build Azure
+Machine Learning environments. This pipeline ensures reproducibility and
+accelerates setup by automating the deployment of necessary cloud
+resources.</li>
+<li>The pipeline automates provisioning resources such as compute
+environments, storage, and networking for Azure Machine Learning.</li>
+</ul></li>
+</ol>
+<h3 id="hands-on-pipeline-creation-for-mlops">Hands-On Pipeline Creation
+for MLOps</h3>
+<ol type="1">
+<li><p><strong>Project and Data Overview</strong>:</p>
+<ul>
+<li>MG introduces a sample insurance project using a dataset to predict
+policy claims, highlighting MLOps applications like classification
+tasks. This project will be managed through Azure DevOps, with code and
+datasets stored in Azure Repos.</li>
+</ul></li>
+<li><p><strong>Defining the First Pipeline</strong>:</p>
+<ul>
+<li>The first pipeline MG creates is for IaC, automating the setup of
+Azure Machine Learning workspaces and other resources. Configurations
+include connecting Azure DevOps to the Azure environment, ensuring Azure
+Machine Learning has all necessary infrastructure.</li>
+<li>This foundational IaC pipeline prepares the environment, setting the
+stage for later pipelines that will handle model training, testing, and
+deployment.</li>
+</ul></li>
+</ol>
+<h3 id="moving-forward">Moving Forward</h3>
+<p>MG wraps up by explaining that the next part of the series will
+demonstrate using Azure DevOps to create an automated pipeline for
+MLOps. This third video introduces the concept of pipeline variables and
+the first steps of setting up infrastructure. The following video will
+expand on these configurations to build out the pipeline for creating
+Azure resources, effectively starting the full ML lifecycle automation
+in DevOps.</p>
+<p>In summary, these videos provide foundational knowledge of Azure
+DevOps in MLOps, emphasizing project setup, service connection
+configuration, and infrastructure as code. The focus remains on
+practical applications, with subsequent videos building towards fully
+automated machine learning operations.</p>
+<h2 id="create-and-deploy-infrastructure-as-code">4. Create and Deploy
+Infrastructure as Code</h2>
+<p>In the fourth video of the MLOps series, MG demonstrates how to set
+up the first pipeline in Azure DevOps for creating the foundational
+infrastructure required for an MLOps environment. This
+infrastructure-as-code (IaC) pipeline provisions essential services on
+Azure, including Azure Machine Learning, Application Insights, Key
+Vault, Container Registry, and a Storage Account. Here’s a detailed
+summary of the steps and concepts covered in the video:</p>
+<h3 id="overview-of-progress-so-far">Overview of Progress So Far</h3>
+<ul>
+<li>MG recaps previous setup steps: creating an Azure DevOps project,
+connecting it to an Azure subscription, and defining necessary variables
+in the pipeline’s library.</li>
+<li>The current video focuses on creating an infrastructure pipeline
+using YAML, which automates the setup of Azure resources needed for the
+MLOps lifecycle.</li>
+</ul>
+<h3 id="setting-up-the-infrastructure-as-code-pipeline">Setting Up the
+Infrastructure-as-Code Pipeline</h3>
+<ol type="1">
+<li><p><strong>YAML vs. Classic Editor</strong>:</p>
+<ul>
+<li>MG explains that pipelines in Azure DevOps can be created in two
+ways: using the YAML file (code-based) or the Classic Editor (graphical
+interface). The IaC pipeline uses YAML, while subsequent machine
+learning pipelines (e.g., training and deployment) will be built using
+the Classic Editor.</li>
+</ul></li>
+<li><p><strong>Code Management in Azure DevOps</strong>:</p>
+<ul>
+<li>MG demonstrates using Visual Studio Code (VS Code) to push files
+from a local machine to Azure Repos. This allows developers to maintain
+and version control their code directly in Azure DevOps.</li>
+<li>In this example, a sample insurance dataset and YAML files for the
+infrastructure pipeline are uploaded to Azure Repos. The dataset,
+sourced from Kaggle, will later be used to train a model.</li>
+</ul></li>
+<li><p><strong>Setting Up and Running the IaC Pipeline</strong>:</p>
+<ul>
+<li>The IaC pipeline YAML file is structured to define Azure Machine
+Learning resources and related services, referencing variable groups
+(defined earlier) for resource names, locations, and subscription
+details.</li>
+<li>MG configures the pipeline to use Azure Repos as the source, selects
+the YAML file, and initiates the pipeline run. The pipeline connects to
+Azure via a service connection, allowing it to deploy the resources as
+defined.</li>
+</ul></li>
+<li><p><strong>Pipeline Execution and Resource Creation</strong>:</p>
+<ul>
+<li>The pipeline runs, executing each step to create the necessary Azure
+resources. Azure DevOps uses an “agent” to run the pipeline code, which
+authenticates via the service connection created earlier.</li>
+<li>MG verifies successful completion in the Azure portal, finding that
+the pipeline has created a resource group containing Azure Machine
+Learning, Application Insights, Key Vault, Container Registry, and a
+Storage Account.</li>
+</ul></li>
+</ol>
+<h3 id="components-created-by-the-iac-pipeline">Components Created by
+the IaC Pipeline</h3>
+<ol type="1">
+<li><p><strong>Azure Machine Learning</strong>:</p>
+<ul>
+<li>The central workspace for managing machine learning projects, where
+models are trained, tested, and deployed.</li>
+</ul></li>
+<li><p><strong>Application Insights</strong>:</p>
+<ul>
+<li>Collects telemetry data, allowing users to monitor the performance
+and operational health of machine learning models, providing logging and
+analytics.</li>
+</ul></li>
+<li><p><strong>Azure Key Vault</strong>:</p>
+<ul>
+<li>Manages sensitive information, such as credentials and secrets. This
+ensures that passwords and other secure details are not hardcoded in
+scripts, promoting security.</li>
+</ul></li>
+<li><p><strong>Azure Container Registry</strong>:</p>
+<ul>
+<li>Stores Docker images that encapsulate the model and environment
+dependencies, ensuring consistent environments for model training and
+deployment.</li>
+</ul></li>
+<li><p><strong>Azure Storage Account</strong>:</p>
+<ul>
+<li>Used to store data, model snapshots, and logs. This is also the
+default storage for Azure Machine Learning.</li>
+</ul></li>
+</ol>
+<h3 id="working-with-data-in-azure-machine-learning">Working with Data
+in Azure Machine Learning</h3>
+<ol type="1">
+<li><p><strong>Data Stores and Data Sets</strong>:</p>
+<ul>
+<li><strong>Data Store</strong>: Functions as a pointer to a storage
+location (e.g., the default Azure Blob Storage) where datasets can be
+stored or accessed.</li>
+<li><strong>Data Set</strong>: A specific collection of data within a
+data store, allowing users to organize and manage datasets more
+granularly.</li>
+</ul></li>
+<li><p><strong>Uploading and Profiling Data</strong>:</p>
+<ul>
+<li>MG demonstrates uploading the insurance dataset to Azure Machine
+Learning and creating a “data profile” to gather statistical insights
+(e.g., mean, median, missing values) about each feature. This profiling
+process provides a quick overview of the data’s structure, which helps
+with data preparation.</li>
+</ul></li>
+<li><p><strong>Using a Compute Resource for Profiling</strong>:</p>
+<ul>
+<li>The data profiling task requires a compute instance. MG configures a
+compute instance (e.g., a CPU) in Azure Machine Learning, which is used
+for data profiling tasks.</li>
+</ul></li>
+</ol>
+<h3 id="conclusion-and-next-steps">Conclusion and Next Steps</h3>
+<p>MG concludes the video by outlining the next steps: creating a CI
+(Continuous Integration) pipeline that will automatically trigger when
+new code is pushed. This pipeline will automate tasks like training,
+testing, and validating models. The CI pipeline will facilitate a
+streamlined MLOps workflow, where models are continuously improved and
+validated for deployment.</p>
+<p>In summary, this video covers setting up the infrastructure-as-code
+pipeline in Azure DevOps, enabling automated provisioning of Azure
+Machine Learning and related resources. This setup lays the groundwork
+for further MLOps processes, including data handling, profiling, and
+automated model training and deployment, which will be covered in the
+next video.</p>
+<h2 id="ci-pipeline-pt.-1">5. CI Pipeline, pt. 1</h2>
+<p>The video focuses on building a <strong>Continuous Integration (CI)
+pipeline</strong> within Azure DevOps, aimed at automating the workflow
+for <strong>model training, testing, and deployment</strong> in Azure
+Machine Learning (ML) environments. The speaker, MG, reviews previous
+setup steps, which include configuring the Azure DevOps project,
+repository, and an initial pipeline to deploy resources using
+<strong>Infrastructure as Code (IaC)</strong>. The repo setup allows
+developers to collaborate by making pull requests and merging code, and
+the IaC pipeline has already successfully created a resource group with
+necessary Azure services, such as Azure Machine Learning and Key
+Vault.</p>
+<h3 id="key-steps-outlined-in-the-video">Key Steps Outlined in the
+Video:</h3>
+<ol type="1">
+<li><p><strong>Repository Integration and Development
+Process</strong>:</p>
+<ul>
+<li>Developers can pull code from the repository, make updates, and push
+changes back, leveraging VS Code as their IDE.</li>
+<li>VS Code can be connected to <strong>Azure Machine Learning
+Compute</strong>, enabling code to be written locally but executed on
+cloud resources.</li>
+<li>The Azure extension for VS Code is required for this integration,
+allowing the code from local VS Code to run on the cloud environment,
+demonstrating flexibility in development environments.</li>
+</ul></li>
+<li><p><strong>Building the CI Pipeline</strong>:</p>
+<ul>
+<li>The CI pipeline’s primary goal is to automate the training and
+testing process whenever a new model or code update is pushed to the
+master branch.</li>
+<li><strong>Triggers and Branch Management</strong>:
+<ul>
+<li>MG sets up a trigger so that any code merged into the master branch
+automatically initiates the CI pipeline. The pipeline is configured to
+take updates from the repo’s master branch, which developers commit to
+after code review and approval processes.</li>
+</ul></li>
+<li><strong>Environment Setup in the Pipeline</strong>:
+<ul>
+<li>The pipeline uses a <strong>Linux-based agent (Ubuntu
+16.04)</strong> to run tasks. This environment specification is part of
+the pipeline’s setup.</li>
+</ul></li>
+<li><strong>Python Environment Setup</strong>:
+<ul>
+<li>The pipeline installs a specified Python version (Python 3.6 in this
+case) on the agent.</li>
+<li>Necessary Python packages are also installed from a
+<code>requirements.txt</code> file within the repository. This ensures
+that the agent environment aligns with the development environment,
+creating consistency across stages.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Automated Unit Testing</strong>:</p>
+<ul>
+<li>MG emphasizes the importance of <strong>unit testing</strong> in the
+CI process, especially for machine learning projects.</li>
+<li>Unit tests are executed using <code>pytest</code>, focusing on data
+verification, training accuracy, and function behaviors (e.g., checking
+data shape and presence of specific columns).</li>
+<li>The results of these tests are published within Azure DevOps, and
+the pipeline is configured to fail if any unit tests fail, ensuring code
+quality before deployment.</li>
+</ul></li>
+<li><p><strong>Publishing and Viewing Test Results</strong>:</p>
+<ul>
+<li>After the unit tests run, the results are visualized in Azure
+DevOps, which provides a summary of test pass/fail status.</li>
+<li>MG highlights that this visualized test report offers a quick
+overview of testing outcomes, making it easier to track and verify
+successful execution before moving to further stages.</li>
+</ul></li>
+<li><p><strong>Next Steps and Continuation of the Pipeline</strong>:</p>
+<ul>
+<li>The next stage (not covered in the current video) will involve
+connecting to Azure Machine Learning to further automate <strong>model
+training, registration, and deployment</strong>.</li>
+<li>This next phase represents the <strong>Continuous Deployment
+(CD)</strong> part of the pipeline, where successfully tested models can
+be registered and deployed into staging or production environments.</li>
+</ul></li>
+</ol>
+<h3 id="takeaways-and-key-concepts">Takeaways and Key Concepts:</h3>
+<ul>
+<li><strong>CI Pipeline Structure in Azure DevOps</strong>: The pipeline
+is designed to streamline the model development lifecycle, including
+code testing, environment configuration, and automated triggers based on
+repository updates.</li>
+<li><strong>Integration with Azure Machine Learning</strong>: By
+combining Azure DevOps with Azure Machine Learning, the pipeline enables
+a seamless flow from local development to cloud-based training and
+deployment.</li>
+<li><strong>Modular Task Management</strong>: MG demonstrates a
+task-by-task approach, configuring each pipeline component to achieve a
+fully automated workflow.</li>
+<li><strong>Importance of Testing and Validation</strong>: Emphasis is
+placed on the role of automated testing, especially in machine learning,
+where small code changes can impact model performance
+significantly.</li>
+</ul>
+<p>In summary, this video is part of a series that provides a hands-on
+approach to building a CI/CD pipeline for machine learning operations
+(MLOps) using Azure DevOps and Azure Machine Learning, progressing from
+code integration and testing to deployment. The approach combines
+infrastructure provisioning, code management, testing, and automated
+deployment in a structured, controlled pipeline setup.</p>
+<h2 id="ci-pipelinem-pt.-2">6. CI Pipelinem pt. 2</h2>
+<p>In this video from the ML Ops series, MG continues building a
+<strong>CI pipeline</strong> in Azure DevOps to interact with
+<strong>Azure Machine Learning (ML)</strong> resources for model
+training, testing, and data handling. This session focuses on enabling
+Azure DevOps agents to authenticate and operate within Azure Machine
+Learning services and preparing the environment for automated model
+training.</p>
+<h3 id="key-steps-and-concepts-covered">Key Steps and Concepts
+Covered</h3>
+<ol type="1">
+<li><p><strong>Authentication Setup in Azure DevOps</strong>:</p>
+<ul>
+<li>To interact with Azure Machine Learning, MG configures an
+<strong>Azure DevOps service connection</strong> to his Azure
+subscription. This allows the DevOps pipeline, running on an agent, to
+authenticate securely with Azure Machine Learning resources.</li>
+<li>The connection is established within the Azure DevOps
+<strong>Project Settings &gt; Service Connections</strong>. This
+connection ensures the pipeline has appropriate access to the resources
+required for ML operations, such as creating compute clusters or
+managing data sets.</li>
+</ul></li>
+<li><p><strong>Using Azure CLI and Azure ML CLI Extensions</strong>:</p>
+<ul>
+<li>MG introduces the <strong>Azure ML CLI</strong> extension as a
+command-line tool that enables automation of Azure ML actions (e.g.,
+creating compute clusters) directly within the pipeline.</li>
+<li>He demonstrates setting up the <strong>Azure CLI</strong> in the
+Cloud Shell within the Azure portal, showing how it can execute commands
+to manage Azure resources programmatically.</li>
+<li>The Azure CLI is extended with the <strong>ML CLI
+extension</strong>, enabling commands specific to Azure Machine
+Learning, such as creating workspaces, clusters, and managing
+datasets.</li>
+</ul></li>
+<li><p><strong>Pipeline Configuration in Azure DevOps</strong>:</p>
+<ul>
+<li>Using the <strong>Azure DevOps classic editor</strong>, MG
+configures several tasks in the CI pipeline to automate key steps. These
+tasks are coded using Azure CLI commands, making the setup reproducible
+and consistent.</li>
+<li><strong>Key tasks configured</strong> include:
+<ul>
+<li><strong>Installing the Azure ML CLI extension</strong>: Ensures the
+pipeline’s agent has access to Azure ML-specific commands.</li>
+<li><strong>Creating the Azure ML Workspace</strong>: This is a
+redundancy check to confirm the workspace exists or to create it if
+necessary.</li>
+<li><strong>Defining and creating a compute cluster</strong>: The
+pipeline automatically provisions a compute cluster to run ML tasks,
+with parameters like node count and VM size defined for the cluster
+configuration.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Setting and Using Variables</strong>:</p>
+<ul>
+<li>Variables for resources like the <strong>resource group
+name</strong>, <strong>workspace name</strong>, <strong>cluster
+name</strong>, and <strong>VM size</strong> are set within the pipeline
+for reuse across tasks.</li>
+<li>These variables, defined under the <strong>Pipeline Library &gt;
+Variable Groups</strong>, simplify referencing resource names and
+configurations throughout the pipeline setup, enhancing clarity and
+maintainability.</li>
+</ul></li>
+<li><p><strong>Data Handling and Dataset Versioning</strong>:</p>
+<ul>
+<li>MG configures a task to upload data from the repository to the Azure
+ML workspace’s <strong>default data store</strong>.</li>
+<li>A designated <strong>Insurance</strong> folder in the data store
+serves as the location for the dataset, with the pipeline set to
+overwrite existing data if updates are detected.</li>
+<li>This versioning capability in Azure ML helps track data changes,
+supporting <strong>reproducibility</strong> and easy rollback if
+needed.</li>
+</ul></li>
+<li><p><strong>Verification of Pipeline Execution</strong>:</p>
+<ul>
+<li>After configuring the pipeline tasks, MG runs the pipeline to verify
+each step’s success. Key confirmations include:
+<ul>
+<li><strong>Successful installation</strong> of Azure ML CLI.</li>
+<li><strong>Workspace and compute cluster creation</strong> (or
+validation if they already exist).</li>
+<li><strong>Data upload</strong> and verification of the correct file
+path in the data store.</li>
+</ul></li>
+<li>He checks the output in both the Azure ML workspace and data store
+to ensure the pipeline executed the tasks correctly, without any manual
+intervention.</li>
+</ul></li>
+</ol>
+<h3 id="key-takeaways-and-purpose">Key Takeaways and Purpose</h3>
+<ul>
+<li><strong>Automation of Environment Setup</strong>: The CI pipeline
+fully automates the ML environment setup in Azure ML, reducing the need
+for manual setup in the Azure portal.</li>
+<li><strong>Azure ML CLI for Reproducibility</strong>: By coding
+configurations (e.g., compute clusters and data uploads), MG ensures
+that environments can be recreated consistently, supporting reproducible
+ML workflows.</li>
+<li><strong>Data Versioning</strong>: The pipeline is structured to
+handle dataset versioning, so data updates in the repo are automatically
+reflected in Azure ML with version control.</li>
+</ul>
+<h3 id="next-steps-moving-to-model-training">Next Steps: Moving to Model
+Training</h3>
+<p>In the next video, MG plans to use this pipeline setup to start
+<strong>training the model</strong> directly through the CI pipeline in
+Azure DevOps. The pipeline will initiate the training process, save the
+trained model as an artifact, and potentially prepare it for deployment
+to staging or production. This will complete the CI/CD cycle, where the
+code is pushed, tested, trained, and versioned in an automated workflow,
+enabling efficient ML operations.</p>
+<p>This video illustrates the depth and flexibility of integrating Azure
+DevOps with Azure ML, creating a robust and automated ML Ops
+workflow.</p>
+<h2 id="auotmated-training-with-ci-pipeline">7. Auotmated Training with
+CI Pipeline</h2>
+<p>In this seventh video of the MLOps series, MG extends the previously
+established <strong>Continuous Integration (CI) pipeline</strong> to
+include <strong>model training, testing, and registration</strong> in
+Azure Machine Learning (ML). The video focuses on automating these tasks
+within Azure DevOps, preparing artifacts for deployment, and setting up
+the groundwork for continuous deployment (CD).</p>
+<h3 id="key-steps-and-detailed-workflow">Key Steps and Detailed
+Workflow:</h3>
+<ol type="1">
+<li><p><strong>Setting Up the Training Environment</strong>:</p>
+<ul>
+<li>MG starts by creating a temporary directory on the DevOps agent to
+store the trained model and metadata. This directory serves as a dumping
+area for artifacts required for subsequent stages in the CI/CD
+pipeline.</li>
+<li>This setup is done through a <strong>Bash command</strong> in the
+pipeline, making it automated and repeatable.</li>
+</ul></li>
+<li><p><strong>Model Training with Azure CLI</strong>:</p>
+<ul>
+<li>Using <strong>Azure CLI with the ML extension</strong>, MG submits a
+training script from Azure DevOps to Azure ML, selecting a compute
+cluster and the dataset.</li>
+<li>The training script, stored in the repo, handles data preprocessing,
+model training, and metric logging. MG emphasizes that each model
+training task is tracked under an <strong>experiment</strong> in Azure
+ML, with separate experiments allowing teams to work on multiple
+projects independently.</li>
+<li>Dependencies required for the training (e.g., Python packages) are
+specified in a <code>conda.yaml</code> file, ensuring consistent
+environments across runs.</li>
+</ul></li>
+<li><p><strong>Defining Variables and Experiment
+Parameters</strong>:</p>
+<ul>
+<li>MG sets variables such as <strong>experiment name</strong>,
+<strong>cluster name</strong>, and <strong>model name</strong> in the
+pipeline for reusability and clarity. The experiment is labeled
+“insurance” to track all related activities for this specific
+model.</li>
+</ul></li>
+<li><p><strong>Model Registration</strong>:</p>
+<ul>
+<li>After training, the model is registered in Azure ML, which tracks
+different versions and allows for organized storage and deployment of
+models.</li>
+<li>Metadata such as model type (classification), framework
+(scikit-learn), and tags are included during registration, facilitating
+organized and traceable model management.</li>
+</ul></li>
+<li><p><strong>Downloading and Preparing Artifacts</strong>:</p>
+<ul>
+<li>Once registered, the model and its metadata are downloaded to the
+agent for later deployment.</li>
+<li>The files are saved to a <strong>temporary staging
+directory</strong>, along with configuration files, requirements, and
+other dependencies, all of which are packaged as artifacts.</li>
+</ul></li>
+<li><p><strong>Publishing Artifacts</strong>:</p>
+<ul>
+<li>MG publishes the collected artifacts, including the trained model,
+configuration files, and test scripts, into Azure DevOps. These
+artifacts are essential for the upcoming CD pipeline, which will handle
+deployment to staging and production environments.</li>
+</ul></li>
+<li><p><strong>Testing the Pipeline Execution</strong>:</p>
+<ul>
+<li>MG tests the CI pipeline to confirm all steps are executed
+successfully, from installing dependencies to registering and
+downloading the model.</li>
+<li>The pipeline completes successfully, showing that the CI process is
+fully automated and produces necessary outputs for deployment.</li>
+</ul></li>
+<li><p><strong>Verification in Azure ML Studio</strong>:</p>
+<ul>
+<li>After the pipeline finishes, MG verifies the results in Azure ML
+Studio:
+<ul>
+<li>The <strong>trained model</strong> is visible in the Models section,
+with the experiment and metadata associated with it.</li>
+<li>This confirmation in Azure ML Studio shows that the model was
+successfully trained, registered, and is ready for deployment.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Previewing the Next Steps: Preparing for Continuous
+Deployment (CD)</strong>:</p>
+<ul>
+<li>MG hints at the upcoming creation of a <strong>Continuous Deployment
+(CD) pipeline</strong> for deploying the model to staging and production
+environments.</li>
+<li>In staging, the model will be deployed in <strong>Azure Container
+Instances (ACI)</strong> to validate its performance. Once tested, it
+will be moved to <strong>Azure Kubernetes Service (AKS)</strong> for
+production deployment.</li>
+<li>MG previews the use of a <strong>container registry</strong> to
+store environment images needed for deployment but notes that Kubernetes
+and container setup will occur in the next video.</li>
+</ul></li>
+</ol>
+<h3 id="key-takeaways-and-best-practices">Key Takeaways and Best
+Practices:</h3>
+<ul>
+<li><strong>Automated Training and Registration</strong>: The pipeline
+automates the entire training and registration process, enabling
+seamless, repeatable, and traceable model training.</li>
+<li><strong>Environment Consistency</strong>: Defining dependencies in
+YAML files and storing all necessary files in a temporary staging area
+ensures the model’s runtime environment is consistent across
+development, staging, and production.</li>
+<li><strong>Efficient Use of Variables and CLI for
+Configuration</strong>: By storing values like resource names and model
+metadata as variables, the pipeline is reusable and adaptable for future
+projects or models.</li>
+<li><strong>Preparing Artifacts for Deployment</strong>: By publishing
+all artifacts, MG sets up a robust CI pipeline ready to support CD,
+allowing quick deployment of any model version with all required
+dependencies and configurations.</li>
+</ul>
+<p>In summary, this video builds a robust CI pipeline that automates
+training, testing, and registering a machine learning model in Azure ML,
+setting up a strong foundation for continuous deployment. The next video
+will cover deploying the model to a staging environment (ACI) for
+testing, with plans for production deployment in AKS.</p>
+<h2 id="cd-pipeline-for-staging">8. CD Pipeline for Staging</h2>
+<p>In Part 8 of the Azure MLOps series, MG introduces the
+<strong>Continuous Deployment (CD) pipeline</strong>, which builds on
+the previously developed CI pipeline that automates data uploading,
+model training, and artifact preparation. The CD pipeline deploys the
+trained model to a <strong>staging environment</strong> (Azure Container
+Instances) for testing, ensuring the model’s readiness for
+production.</p>
+<h3 id="key-steps-and-detailed-workflow-1">Key Steps and Detailed
+Workflow:</h3>
+<ol type="1">
+<li><p><strong>Setting Up the CD Pipeline for Deployment to
+Staging</strong>:</p>
+<ul>
+<li>MG begins by creating a <strong>release pipeline</strong> in Azure
+DevOps to handle the deployment of the model first to staging, then
+potentially to production.</li>
+<li>Artifacts, including the trained model and configuration files from
+the CI pipeline, are defined as inputs for the CD pipeline.</li>
+</ul></li>
+<li><p><strong>Pipeline Tasks Configuration</strong>:</p>
+<ul>
+<li><strong>Python and ML Extension Installation</strong>: Specifies the
+Python version (3.6) for compatibility and installs the Azure Machine
+Learning (ML) CLI extension, allowing interaction with Azure ML
+resources.</li>
+<li><strong>Container Deployment for Staging</strong>:
+<ul>
+<li>MG deploys the model to <strong>Azure Container Instances
+(ACI)</strong>, a simple staging environment, enabling testing before
+full production deployment.</li>
+<li>The deployment script uses a YAML configuration file to define
+memory and CPU resources for ACI and points to a scoring file that
+handles prediction logic.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Scoring and Inference Code</strong>:</p>
+<ul>
+<li>The scoring code (<code>score.py</code>) is configured to load the
+model and handle API requests, returning prediction results in JSON
+format. This code is essential for inference when the model is
+deployed.</li>
+</ul></li>
+<li><p><strong>Setting Pipeline Variables</strong>:</p>
+<ul>
+<li>Key variables like <strong>service name, resource group, and
+workspace name</strong> are defined to enable reusability and
+consistency across deployments.</li>
+</ul></li>
+<li><p><strong>Working Directory Configuration</strong>:</p>
+<ul>
+<li>MG specifies a <strong>landing folder</strong> as the working
+directory, which contains the deployment files needed to deploy the
+model on ACI.</li>
+</ul></li>
+<li><p><strong>Executing the Deployment</strong>:</p>
+<ul>
+<li>After configuring tasks, MG triggers the release pipeline, deploying
+the model to ACI. Upon completion, the pipeline provides an endpoint
+URL, allowing the team to make API calls for predictions.</li>
+<li>MG demonstrates how to access the endpoint and observe an empty
+response, which awaits data input for predictions.</li>
+</ul></li>
+<li><p><strong>Verification in Azure ML Studio</strong>:</p>
+<ul>
+<li>The deployment creates an endpoint in Azure ML Studio, which MG
+verifies. Azure ML also generates sample code for testing predictions in
+various languages, aiding integration with client applications.</li>
+</ul></li>
+<li><p><strong>Automating Pipeline Triggers</strong>:</p>
+<ul>
+<li>The CD pipeline is set to trigger automatically when new model
+artifacts are pushed to the main branch, ensuring seamless integration
+from model updates to staging deployment.</li>
+</ul></li>
+<li><p><strong>Testing the Staging Deployment</strong>:</p>
+<ul>
+<li>Before moving to production, MG runs tests on the deployed model in
+ACI. The test script uses the endpoint URL to send sample data and
+verifies prediction responses, ensuring model readiness.</li>
+<li>A <strong>test results dashboard</strong> is generated in Azure
+DevOps, showing the success of all tests.</li>
+</ul></li>
+<li><p><strong>Manual Testing of Model Predictions</strong>:</p></li>
+</ol>
+<ul>
+<li>MG manually tests the model in staging using sample input data to
+verify predictions directly. This further ensures the model performs as
+expected before the final production release.</li>
+</ul>
+<h3 id="outcome-and-next-steps">Outcome and Next Steps:</h3>
+<ul>
+<li>MG successfully deploys and tests the model in a staging
+environment, confirming its functionality. The pipeline automates each
+step, from deployment to testing, and produces a dashboard for
+visibility.</li>
+<li>In the upcoming video, MG will adapt the pipeline for
+<strong>production deployment</strong> on <strong>Azure Kubernetes
+Service (AKS)</strong>, providing a more robust environment for
+production workloads.</li>
+</ul>
+<h3 id="key-takeaways">Key Takeaways:</h3>
+<ul>
+<li><strong>Automated Testing in Staging</strong>: The deployment
+pipeline includes automated testing, which is crucial to validate model
+behavior in a controlled staging environment before production.</li>
+<li><strong>Pipeline Variables and Configurations</strong>: Defining
+variables and configurations enhances pipeline flexibility and maintains
+consistency across environments.</li>
+<li><strong>End-to-End Automation</strong>: With triggers and test
+verification, the pipeline is set up to automatically transition from CI
+to CD, streamlining the MLOps workflow.</li>
+</ul>
+<p>This setup achieves a fully automated CI/CD pipeline, facilitating
+efficient, reliable deployments and rigorous testing before production
+rollout.</p>
+<h2 id="cd-pipeline-for-production">9. CD Pipeline for Production</h2>
+<p>In the ninth video of the Azure MLOps series, MG demonstrates
+deploying a machine learning model from staging to a <strong>production
+environment</strong> using <strong>Azure Kubernetes Service
+(AKS)</strong>. This video emphasizes MLOps best practices for ensuring
+a scalable, reliable, and automated workflow suitable for
+production-level performance.</p>
+<h3 id="key-steps-in-deploying-to-production-with-aks">Key Steps in
+Deploying to Production with AKS</h3>
+<ol type="1">
+<li><p><strong>Recap of Staging Deployment</strong>:</p>
+<ul>
+<li>MG recaps deploying the model in a staging environment using
+<strong>Azure Container Instances (ACI)</strong>. This setup
+automatically creates an ACI instance to host the model, allowing for
+initial testing and validation before moving to production.</li>
+</ul></li>
+<li><p><strong>Setting Up the Production Pipeline with AKS</strong>:</p>
+<ul>
+<li>A new stage, “Deploy to Production,” is added in the release
+pipeline to transition the model from staging to production.</li>
+<li>As a best practice, <strong>AKS (Azure Kubernetes Service)</strong>
+is used for production instead of ACI. AKS offers high availability,
+backup redundancy, and scalable performance, which are essential for
+uninterrupted service delivery in a production setting.</li>
+</ul></li>
+<li><p><strong>Creating the AKS Cluster</strong>:</p>
+<ul>
+<li>Using <strong>Azure CLI</strong>, MG automates AKS creation. The
+configuration includes defining parameters like cluster name, virtual
+machine size, and agent count to suit production requirements.</li>
+<li>MG adds the necessary variables for cluster setup within the
+pipeline, such as the service name for production, which distinguishes
+the production endpoint from the staging one.</li>
+</ul></li>
+<li><p><strong>Deploying the Model to AKS</strong>:</p>
+<ul>
+<li>After setting up AKS, the model is deployed using AKS-specific
+configurations. Deployment files define the number of replicas, CPU, and
+memory allocation to optimize performance.</li>
+<li>An inference configuration file (<code>score.py</code>) specifies
+the model’s prediction logic and required packages, ensuring the
+environment is correctly set up for production inference.</li>
+</ul></li>
+<li><p><strong>Testing the Production Deployment</strong>:</p>
+<ul>
+<li>Once the model is deployed to AKS, MG uses a <strong>test
+script</strong> to verify it works correctly in production. This script
+calls the production endpoint, providing sample data to validate
+predictions.</li>
+<li>Test results are published in a dashboard, allowing easy
+visualization of model performance in production.</li>
+</ul></li>
+<li><p><strong>Manual Approval Process</strong>:</p>
+<ul>
+<li>MG sets up a <strong>manual approval step</strong> before moving
+from staging to production, adding a safeguard to verify the staging
+test results.</li>
+<li>Once the staging deployment is verified, the pipeline sends an email
+notification to the approver, who can review and approve the release.
+Only after approval does the pipeline proceed to production
+deployment.</li>
+</ul></li>
+<li><p><strong>Final Execution and Logs Review</strong>:</p>
+<ul>
+<li>After approval, the model is deployed to AKS, and logs confirm
+successful deployment and testing. This provides transparency and
+traceability, showing each step of the workflow.</li>
+<li>MG highlights how this approach follows MLOps best practices,
+creating a <strong>repeatable, traceable machine learning
+workflow</strong> with automated testing, deployment, and approval.</li>
+</ul></li>
+</ol>
+<h3 id="outcome-and-summary">Outcome and Summary:</h3>
+<ul>
+<li>By deploying to AKS in production, MG achieves a scalable, resilient
+environment that supports production-ready performance.</li>
+<li>The pipeline’s automation and manual approval provide balance
+between efficiency and control, reinforcing a structured, reliable
+approach to machine learning in production.</li>
+<li>MG demonstrates a robust MLOps workflow that uses <strong>Azure
+DevOps</strong> and <strong>Azure Machine Learning</strong> to support
+real-world machine learning deployments, ensuring collaboration,
+scalability, and repeatability across teams and deployments.</li>
+</ul>
+<p>This video exemplifies the application of DevOps principles in
+machine learning, enabling smooth transitions from model development to
+full-scale deployment in production.</p>
+<h2 id="testing-end-to-end">10. Testing End to End</h2>
+<p>In the final videos of the Azure MLOps series, MG completes the
+deployment of a machine learning model from staging to production and
+demonstrates a fully automated <strong>MLOps pipeline</strong> on Azure.
+This deployment, from development to production, leverages Azure DevOps,
+Azure Machine Learning, and Azure Kubernetes Service (AKS) to create a
+robust and automated machine learning workflow. Here’s a detailed
+summary:</p>
+<h3 id="key-steps-and-highlights">Key Steps and Highlights</h3>
+<ol type="1">
+<li><p><strong>Testing the Production Endpoint in AKS</strong>:</p>
+<ul>
+<li>After deploying the model to <strong>Azure Kubernetes Service
+(AKS)</strong> in production, MG retrieves the endpoint URI for
+testing.</li>
+<li>Using sample data, he runs a prediction test to confirm that the
+model is functioning correctly in production. The test returns
+probabilities, verifying the deployment.</li>
+</ul></li>
+<li><p><strong>Review of CI/CD Pipelines</strong>:</p>
+<ul>
+<li>MG revisits the complete <strong>CI/CD pipeline</strong> setup:
+<ul>
+<li><strong>CI Pipeline</strong>: Trains the model, downloads artifacts,
+and prepares the model for deployment.</li>
+<li><strong>Release Pipeline</strong>: Deploys the model first to a
+<strong>staging environment</strong> (using Azure Container Instance)
+for initial testing. If approved, it then moves the model to production
+on AKS.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Automation from Development to Production</strong>:</p>
+<ul>
+<li>To simulate a real-world scenario, MG makes a small change in the
+code (adding a test file to the repository).</li>
+<li>The CI pipeline automatically detects the update, retrains the
+model, and generates new artifacts.</li>
+<li>The <strong>release pipeline</strong> then automatically deploys the
+updated model to the staging environment, runs tests, and, upon
+approval, promotes it to production.</li>
+</ul></li>
+<li><p><strong>Approval Process</strong>:</p>
+<ul>
+<li>MG includes a manual approval step between staging and production.
+This ensures that a responsible individual verifies the staging results
+before deploying the model to production, adding a layer of
+oversight.</li>
+</ul></li>
+<li><p><strong>End-to-End Testing of MLOps Workflow</strong>:</p>
+<ul>
+<li>The complete MLOps workflow—from development to staging and
+production—is triggered automatically upon any change in the code
+repository.</li>
+<li>MG demonstrates how minimal code changes in the development
+environment can trigger a full cycle of model training, testing, and
+deployment, making the workflow efficient and scalable.</li>
+</ul></li>
+<li><p><strong>Reflection on MLOps Benefits</strong>:</p>
+<ul>
+<li>MG emphasizes the importance of MLOps in automating machine learning
+workflows, enabling continuous integration and deployment.</li>
+<li>This pipeline ensures reproducibility, scalability, and quick model
+updates, significantly improving the efficiency of machine learning
+deployment processes.</li>
+</ul></li>
+</ol>
+<h3 id="final-thoughts-and-takeaways">Final Thoughts and Takeaways</h3>
+<p>MG concludes the series by reflecting on the impact of MLOps in
+transforming machine learning workflows. Through MLOps on Azure, the
+pipeline enhances <strong>collaboration, automation, and
+scalability</strong> in ML deployments, making it easier for data
+scientists and engineers to implement updates seamlessly from
+development to production.</p>
+<p>MG encourages viewers to explore further customization of the
+pipeline for complex scenarios and to continue learning about Azure’s
+ecosystem for data science and machine learning. The series serves as a
+comprehensive introduction to MLOps on Azure, equipping viewers with the
+knowledge to apply DevOps principles to machine learning projects
+effectively.</p>
+    
+</body>
+</html>

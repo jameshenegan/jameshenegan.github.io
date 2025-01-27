@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="handling-imbalanced-data-in-logistic-regression">Handling
+Imbalanced Data in Logistic Regression</h1>
+<h2 id="a-guide-to-using-class-weights-for-improved-predictions">A Guide
+to Using Class Weights for Improved Predictions</h2>
+<p>In logistic regression, particularly when dealing with imbalanced
+classes, assigning different weights to different classes is a powerful
+technique to adjust the penalty for misclassifications, making the model
+more sensitive to the underrepresented class. This approach is typically
+referred to as <strong>class weighting</strong>, and it helps address
+the bias that often results from imbalanced datasets.</p>
+<p>In this tutorial, we will walk through how to apply class weighting
+in logistic regression, including the underlying logic, when and why
+it’s beneficial, and how to implement it in Python using
+<code>scikit-learn</code>.</p>
+<h3 id="what-is-class-weighting">What is Class Weighting?</h3>
+<p>In logistic regression, the goal is to minimize a loss function,
+specifically the <strong>log loss</strong> (cross-entropy loss). In the
+case of an imbalanced dataset, where one class (e.g., the minority
+class) appears much less frequently than the other (e.g., the majority
+class), the model might become biased towards the majority class. This
+happens because the standard loss function weighs all misclassifications
+equally, leading to predictions that heavily favor the majority
+class.</p>
+<p><strong>Class weighting</strong> changes the contribution of each
+class to the loss function by assigning different weights to different
+classes. Misclassifying a minority class instance would result in a
+larger penalty, forcing the model to pay more attention to the minority
+class during training.</p>
+<h3 id="when-to-use-class-weighting">When to Use Class Weighting?</h3>
+<p>Class weighting should be considered when:</p>
+<ul>
+<li><strong>Class imbalance</strong> is present: One class significantly
+outnumbers the other(s).</li>
+<li><strong>Performance metrics</strong> like precision, recall, and
+F1-score are poor for the minority class, and you want to improve the
+model’s performance for that class.</li>
+<li><strong>You want to reduce bias</strong> towards the majority class
+and improve prediction accuracy for the minority class.</li>
+</ul>
+<h3
+id="logistic-regression-with-class-weighting-in-scikit-learn">Logistic
+Regression with Class Weighting in <code>scikit-learn</code></h3>
+<h4 id="step-1-install-required-libraries">Step 1: Install Required
+Libraries</h4>
+<p>First, ensure you have <code>scikit-learn</code> and
+<code>pandas</code> installed.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install scikit-learn pandas</span></code></pre></div>
+<h4 id="step-2-import-libraries">Step 2: Import Libraries</h4>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report, confusion_matrix</span></code></pre></div>
+<h4 id="step-3-load-and-explore-your-data">Step 3: Load and Explore Your
+Data</h4>
+<p>For this tutorial, let’s create a synthetic imbalanced dataset. You
+can also load your own dataset in place of this one.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_classification</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a synthetic imbalanced dataset</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_classification(n_samples<span class="op">=</span><span class="dv">1000</span>, n_features<span class="op">=</span><span class="dv">20</span>, n_informative<span class="op">=</span><span class="dv">2</span>, n_redundant<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                           n_clusters_per_class<span class="op">=</span><span class="dv">1</span>, weights<span class="op">=</span>[<span class="fl">0.9</span>, <span class="fl">0.1</span>], flip_y<span class="op">=</span><span class="dv">0</span>, random_state<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the balance of the classes</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pd.Series(y).value_counts())</span></code></pre></div>
+<p>This code generates a dataset where 90% of the samples belong to
+class 0 (majority class) and 10% to class 1 (minority class).</p>
+<h4 id="step-4-split-the-data-into-train-and-test-sets">Step 4: Split
+the Data into Train and Test Sets</h4>
+<p>We’ll split the dataset into training and testing sets.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y)</span></code></pre></div>
+<h4 id="step-5-train-logistic-regression-without-class-weights">Step 5:
+Train Logistic Regression Without Class Weights</h4>
+<p>First, we’ll train a logistic regression model without any class
+weighting to observe the difference in performance.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train logistic regression without class weights</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>log_reg <span class="op">=</span> LogisticRegression()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>log_reg.fit(X_train, y_train)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> log_reg.predict(X_test)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print performance metrics</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix without class weights:</span><span class="ch">\n</span><span class="st">&quot;</span>, confusion_matrix(y_test, y_pred))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Classification Report without class weights:</span><span class="ch">\n</span><span class="st">&quot;</span>, classification_report(y_test, y_pred))</span></code></pre></div>
+<p>Here, we’ll observe that the model is likely biased towards the
+majority class, leading to poor recall for the minority class.</p>
+<h4 id="step-6-apply-class-weights">Step 6: Apply Class Weights</h4>
+<p>Now, we apply class weights. <code>scikit-learn</code>’s
+<code>LogisticRegression</code> has a parameter
+<code>class_weight</code>, which allows us to specify a weight for each
+class. You can either manually set the weights or use the
+<code>'balanced'</code> option, which automatically adjusts the weights
+inversely proportional to the class frequencies.</p>
+<h5 id="using-balanced">Using <code>'balanced'</code>:</h5>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train logistic regression with class weights</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>log_reg_balanced <span class="op">=</span> LogisticRegression(class_weight<span class="op">=</span><span class="st">&#39;balanced&#39;</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>log_reg_balanced.fit(X_train, y_train)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>y_pred_balanced <span class="op">=</span> log_reg_balanced.predict(X_test)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print performance metrics</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix with class weights:</span><span class="ch">\n</span><span class="st">&quot;</span>, confusion_matrix(y_test, y_pred_balanced))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Classification Report with class weights:</span><span class="ch">\n</span><span class="st">&quot;</span>, classification_report(y_test, y_pred_balanced))</span></code></pre></div>
+<p>With this approach, the model automatically assigns higher weight to
+the minority class. The confusion matrix and classification report will
+likely show improved recall and F1-score for the minority class,
+balancing the model’s performance.</p>
+<h5 id="manually-setting-class-weights">Manually Setting Class
+Weights:</h5>
+<p>If you want to specify weights manually, you can pass a dictionary
+where keys are the class labels, and values are the corresponding
+weights.</p>
+<p>For example, to assign a higher weight to the minority class (class
+1):</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manually setting weights</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> {<span class="dv">0</span>: <span class="dv">1</span>, <span class="dv">1</span>: <span class="dv">10</span>}  <span class="co"># You can experiment with different weight ratios</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>log_reg_manual <span class="op">=</span> LogisticRegression(class_weight<span class="op">=</span>weights)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>log_reg_manual.fit(X_train, y_train)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>y_pred_manual <span class="op">=</span> log_reg_manual.predict(X_test)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print performance metrics</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix with manual class weights:</span><span class="ch">\n</span><span class="st">&quot;</span>, confusion_matrix(y_test, y_pred_manual))</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Classification Report with manual class weights:</span><span class="ch">\n</span><span class="st">&quot;</span>, classification_report(y_test, y_pred_manual))</span></code></pre></div>
+<p>Here, we’ve assigned a weight of 10 to the minority class and 1 to
+the majority class. This heavily penalizes misclassifications of the
+minority class, potentially improving the model’s recall and precision
+for that class.</p>
+<h4 id="step-7-evaluate-performance">Step 7: Evaluate Performance</h4>
+<p>Now you can compare the performance of the models (with and without
+class weights) by examining metrics like:</p>
+<ul>
+<li><strong>Precision</strong>: The proportion of positive
+identifications that were actually correct.</li>
+<li><strong>Recall</strong>: The proportion of actual positives that
+were identified correctly.</li>
+<li><strong>F1-Score</strong>: The harmonic mean of precision and
+recall.</li>
+</ul>
+<p>If your goal is to improve the recall and F1-score for the minority
+class, applying class weighting (especially with the
+<code>'balanced'</code> option) can significantly improve these
+metrics.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>Class weighting is a simple yet effective method to handle imbalanced
+datasets in logistic regression. By penalizing misclassifications of the
+minority class more heavily, the model becomes more sensitive to the
+underrepresented class. This approach is crucial when the minority class
+is of particular interest, such as in fraud detection or medical
+diagnosis.</p>
+<h4 id="key-takeaways">Key Takeaways:</h4>
+<ul>
+<li>Use <code>class_weight='balanced'</code> for automatic class
+weighting based on class frequencies.</li>
+<li>Alternatively, manually specify class weights using a dictionary to
+control the penalty applied to each class.</li>
+<li>Evaluate the performance using metrics like precision, recall, and
+F1-score to ensure the model is well-balanced.</li>
+</ul>
+<p>This method can significantly enhance the performance of your
+logistic regression models when dealing with imbalanced datasets.</p>
+    
+</body>
+</html>

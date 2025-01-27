@@ -1,0 +1,964 @@
+[
+    {
+        "fileName": "2024-10-20-model-explainability.html",
+        "dateCreated": "2024-10-20",
+        "tags": [
+            "Python",
+            "Explainability"
+        ],
+        "blogTitle": "Understanding Model Explainability in Machine Learning",
+        "blogDescription": "A tutorial that explains the importance of explainability in ML models and introduces common techniques."
+    },
+    {
+        "fileName": "",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "",
+        "blogDescription": "A tutorial on "
+    },
+    {
+        "fileName": "2024-10-20-forecasting-metrics.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Forecasting Metrics",
+        "blogDescription": "A tutorial on 2024 10 20 forecasting metrics"
+    },
+    {
+        "fileName": "2024-10-20-shapley-values.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Shapley Values",
+        "blogDescription": "A tutorial on 2024 10 20 shapley values"
+    },
+    {
+        "fileName": "2024-10-20-shapley-values.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Shapley Values",
+        "blogDescription": "A tutorial on 2024 10 20 shapley values"
+    },
+    {
+        "fileName": "2024-10-20-easter-eggs.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Easter Eggs",
+        "blogDescription": "A tutorial on 2024 10 20 easter eggs"
+    },
+    {
+        "fileName": "2024-10-20-continue-to-grow.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Continue To Grow",
+        "blogDescription": "A tutorial on 2024 10 20 continue to grow"
+    },
+    {
+        "fileName": "2024-10-20-fads-and-stability.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Fads And Stability",
+        "blogDescription": "A tutorial on 2024 10 20 fads and stability"
+    },
+    {
+        "fileName": "2024-10-20-fads-and-stability.html",
+        "dateCreated": "2024-10-20",
+        "tags": [],
+        "blogTitle": "2024 10 20 Fads And Stability",
+        "blogDescription": "A tutorial on 2024 10 20 fads and stability"
+    },
+    {
+        "fileName": "2024-10-21-gams-in-python.md.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 21 Gams In Python.Md",
+        "blogDescription": "A tutorial on 2024 10 21 gams in python.md"
+    },
+    {
+        "fileName": "2024-10-19-mlflow-local.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 19 Mlflow Local",
+        "blogDescription": "A tutorial on 2024 10 19 mlflow local"
+    },
+    {
+        "fileName": "2024-10-21-gams-in-python.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 21 Gams In Python",
+        "blogDescription": "A tutorial on 2024 10 21 gams in python"
+    },
+    {
+        "fileName": "2024-10-19-mlflow-01-gitignore.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 19 Mlflow 01 Gitignore",
+        "blogDescription": "A tutorial on 2024 10 19 mlflow 01 gitignore"
+    },
+    {
+        "fileName": "2024-10-18-sql-practice.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 18 Sql Practice",
+        "blogDescription": "A tutorial on 2024 10 18 sql practice"
+    },
+    {
+        "fileName": "2024-10-18-matplotlib.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 18 Matplotlib",
+        "blogDescription": "A tutorial on 2024 10 18 matplotlib"
+    },
+    {
+        "fileName": "2024-10-18-employer-employee-relationships.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 18 Employer Employee Relationships",
+        "blogDescription": "A tutorial on 2024 10 18 employer employee relationships"
+    },
+    {
+        "fileName": "2024-10-21-surv-analysis-python.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 21 Surv Analysis Python",
+        "blogDescription": "A tutorial on 2024 10 21 surv analysis python"
+    },
+    {
+        "fileName": "2024-10-21-surv-analysis-python.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 21 Surv Analysis Python",
+        "blogDescription": "A tutorial on 2024 10 21 surv analysis python"
+    },
+    {
+        "fileName": "2024-10-21-surv-analysis-python.html",
+        "dateCreated": "2024-10-21",
+        "tags": [],
+        "blogTitle": "2024 10 21 Surv Analysis Python",
+        "blogDescription": "A tutorial on 2024 10 21 surv analysis python"
+    },
+    {
+        "fileName": "2024-10-22-customer-retention.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Customer Retention",
+        "blogDescription": "A tutorial on 2024 10 22 customer retention"
+    },
+    {
+        "fileName": "2024-10-22-sql-where.md.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Sql Where.Md",
+        "blogDescription": "A tutorial on 2024 10 22 sql where.md"
+    },
+    {
+        "fileName": "2024-10-22-sql-where.md.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Sql Where.Md",
+        "blogDescription": "A tutorial on 2024 10 22 sql where.md"
+    },
+    {
+        "fileName": "2024-10-22-sql-where.md.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Sql Where.Md",
+        "blogDescription": "A tutorial on 2024 10 22 sql where.md"
+    },
+    {
+        "fileName": "2024-10-22-sql-where.md.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Sql Where.Md",
+        "blogDescription": "A tutorial on 2024 10 22 sql where.md"
+    },
+    {
+        "fileName": "2024-10-22-sql-where.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Sql Where",
+        "blogDescription": "A tutorial on 2024 10 22 sql where"
+    },
+    {
+        "fileName": "2024-10-22-pymc-simple-linear-regression.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Pymc Simple Linear Regression",
+        "blogDescription": "A tutorial on 2024 10 22 pymc simple linear regression"
+    },
+    {
+        "fileName": "2024-10-22-statsmodels-simple-linear-regression.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Statsmodels Simple Linear Regression",
+        "blogDescription": "A tutorial on 2024 10 22 statsmodels simple linear regression"
+    },
+    {
+        "fileName": "2024-10-22-database-views.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Database Views",
+        "blogDescription": "A tutorial on 2024 10 22 database views"
+    },
+    {
+        "fileName": "2024-10-22-database-views.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Database Views",
+        "blogDescription": "A tutorial on 2024 10 22 database views"
+    },
+    {
+        "fileName": "2024-10-22-sql-window-functions-and-partition.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Sql Window Functions And Partition",
+        "blogDescription": "A tutorial on 2024 10 22 sql window functions and partition"
+    },
+    {
+        "fileName": "2024-10-22-matplotlib-fig-ax.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Matplotlib Fig Ax",
+        "blogDescription": "A tutorial on 2024 10 22 matplotlib fig ax"
+    },
+    {
+        "fileName": "2024-10-22-life-insurance-terms.html",
+        "dateCreated": "2024-10-22",
+        "tags": [],
+        "blogTitle": "2024 10 22 Life Insurance Terms",
+        "blogDescription": "A tutorial on 2024 10 22 life insurance terms"
+    },
+    {
+        "fileName": "2024-10-23-matplotlib-counts-by-time-over-group.html",
+        "dateCreated": "2024-10-23",
+        "tags": [],
+        "blogTitle": "2024 10 23 Matplotlib Counts By Time Over Group",
+        "blogDescription": "A tutorial on 2024 10 23 matplotlib counts by time over group"
+    },
+    {
+        "fileName": "2024-10-23-python-pandas-month-to-quarter.html",
+        "dateCreated": "2024-10-23",
+        "tags": [],
+        "blogTitle": "2024 10 23 Python Pandas Month To Quarter",
+        "blogDescription": "A tutorial on 2024 10 23 python pandas month to quarter"
+    },
+    {
+        "fileName": "2024-10-23-python-matplotlib-legend.html",
+        "dateCreated": "2024-10-23",
+        "tags": [],
+        "blogTitle": "2024 10 23 Python Matplotlib Legend",
+        "blogDescription": "A tutorial on 2024 10 23 python matplotlib legend"
+    },
+    {
+        "fileName": "2024-10-23-python-matplotlib-legend.html",
+        "dateCreated": "2024-10-23",
+        "tags": [],
+        "blogTitle": "2024 10 23 Python Matplotlib Legend",
+        "blogDescription": "A tutorial on 2024 10 23 python matplotlib legend"
+    },
+    {
+        "fileName": "2024-10-23-python-decorators.html",
+        "dateCreated": "2024-10-23",
+        "tags": [],
+        "blogTitle": "2024 10 23 Python Decorators",
+        "blogDescription": "A tutorial on 2024 10 23 python decorators"
+    },
+    {
+        "fileName": "2024-10-23-pyarrow-paraquet.html",
+        "dateCreated": "2024-10-23",
+        "tags": [],
+        "blogTitle": "2024 10 23 Pyarrow Paraquet",
+        "blogDescription": "A tutorial on 2024 10 23 pyarrow paraquet"
+    },
+    {
+        "fileName": "2024-10-24-sql-counting-patients-per-doctor.html",
+        "dateCreated": "2024-10-24",
+        "tags": [],
+        "blogTitle": "2024 10 24 Sql Counting Patients Per Doctor",
+        "blogDescription": "A tutorial on 2024 10 24 sql counting patients per doctor"
+    },
+    {
+        "fileName": "2024-10-24-trees-errors.html",
+        "dateCreated": "2024-10-24",
+        "tags": [],
+        "blogTitle": "2024 10 24 Trees Errors",
+        "blogDescription": "A tutorial on 2024 10 24 trees errors"
+    },
+    {
+        "fileName": "2024-10-24-home-runs-per-season.html",
+        "dateCreated": "2024-10-24",
+        "tags": [],
+        "blogTitle": "2024 10 24 Home Runs Per Season",
+        "blogDescription": "A tutorial on 2024 10 24 home runs per season"
+    },
+    {
+        "fileName": "2024-10-24-sql-in-to-filter.html",
+        "dateCreated": "2024-10-24",
+        "tags": [],
+        "blogTitle": "2024 10 24 Sql In To Filter",
+        "blogDescription": "A tutorial on 2024 10 24 sql in to filter"
+    },
+    {
+        "fileName": "2024-10-26-kaggle-01-intro-to-machine-learning.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "2024 10 26 Kaggle 01 Intro To Machine Learning",
+        "blogDescription": "A tutorial on 2024 10 26 kaggle 01 intro to machine learning"
+    },
+    {
+        "fileName": "2024-10-26-kaggle-01-intro-to-machine-learning.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "2024 10 26 Kaggle 01 Intro To Machine Learning",
+        "blogDescription": "A tutorial on 2024 10 26 kaggle 01 intro to machine learning"
+    },
+    {
+        "fileName": "2024-10-26-kaggle-01-intro-to-machine-learning.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "2024 10 26 Kaggle 01 Intro To Machine Learning",
+        "blogDescription": "A tutorial on 2024 10 26 kaggle 01 intro to machine learning"
+    },
+    {
+        "fileName": "2024-10-26-mutual-information.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "2024 10 26 Mutual Information",
+        "blogDescription": "A tutorial on 2024 10 26 mutual information"
+    },
+    {
+        "fileName": "class-imbalance.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "Class Imbalance",
+        "blogDescription": "A tutorial on class imbalance"
+    },
+    {
+        "fileName": "2024-10-26-class-imabalance.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "2024 10 26 Class Imabalance",
+        "blogDescription": "A tutorial on 2024 10 26 class imabalance"
+    },
+    {
+        "fileName": "2024-10-26-undersampling.html",
+        "dateCreated": "2024-10-26",
+        "tags": [],
+        "blogTitle": "2024 10 26 Undersampling",
+        "blogDescription": "A tutorial on 2024 10 26 undersampling"
+    },
+    {
+        "fileName": "2024-10-27-subject-matter-expertise.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Subject Matter Expertise",
+        "blogDescription": "A tutorial on 2024 10 27 subject matter expertise"
+    },
+    {
+        "fileName": "2024-10-27-pipelines.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Pipelines",
+        "blogDescription": "A tutorial on 2024 10 27 pipelines"
+    },
+    {
+        "fileName": "2024-10-27-pipelines.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Pipelines",
+        "blogDescription": "A tutorial on 2024 10 27 pipelines"
+    },
+    {
+        "fileName": "2024-10-27-azure-ml-scikit-learn-mlflow.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Azure Ml Scikit Learn Mlflow",
+        "blogDescription": "A tutorial on 2024 10 27 azure ml scikit learn mlflow"
+    },
+    {
+        "fileName": "2024-10-27-azure-ml-scikit-learn-mlflow.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Azure Ml Scikit Learn Mlflow",
+        "blogDescription": "A tutorial on 2024 10 27 azure ml scikit learn mlflow"
+    },
+    {
+        "fileName": "2024-10-27-azure-ml-scikit-learn-mlflow.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Azure Ml Scikit Learn Mlflow",
+        "blogDescription": "A tutorial on 2024 10 27 azure ml scikit learn mlflow"
+    },
+    {
+        "fileName": "2024-10-27-dummy-variables.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Dummy Variables",
+        "blogDescription": "A tutorial on 2024 10 27 dummy variables"
+    },
+    {
+        "fileName": "2024-10-27-confusion-matrix.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Confusion Matrix",
+        "blogDescription": "A tutorial on 2024 10 27 confusion matrix"
+    },
+    {
+        "fileName": "2024-10-27-harmonic-mean.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Harmonic Mean",
+        "blogDescription": "A tutorial on 2024 10 27 harmonic mean"
+    },
+    {
+        "fileName": "2024-10-27-logisitc-regression-weights.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Logisitc Regression Weights",
+        "blogDescription": "A tutorial on 2024 10 27 logisitc regression weights"
+    },
+    {
+        "fileName": "2024-10-27-bootstrap-binning.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Bootstrap Binning",
+        "blogDescription": "A tutorial on 2024 10 27 bootstrap binning"
+    },
+    {
+        "fileName": "2024-10-27-bootstrap-binning.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Bootstrap Binning",
+        "blogDescription": "A tutorial on 2024 10 27 bootstrap binning"
+    },
+    {
+        "fileName": "2024-10-27-payment-regularity.html",
+        "dateCreated": "2024-10-27",
+        "tags": [],
+        "blogTitle": "2024 10 27 Payment Regularity",
+        "blogDescription": "A tutorial on 2024 10 27 payment regularity"
+    },
+    {
+        "fileName": "2024-10-28-ml-design-patterns-02.html",
+        "dateCreated": "2024-10-28",
+        "tags": [],
+        "blogTitle": "2024 10 28 Ml Design Patterns 02",
+        "blogDescription": "A tutorial on 2024 10 28 ml design patterns 02"
+    },
+    {
+        "fileName": "2024-10-28-ml-design-patterns-02.html",
+        "dateCreated": "2024-10-28",
+        "tags": [],
+        "blogTitle": "2024 10 28 Ml Design Patterns 02",
+        "blogDescription": "A tutorial on 2024 10 28 ml design patterns 02"
+    },
+    {
+        "fileName": "2024-10-28-illustrations-and-free-looks.html",
+        "dateCreated": "2024-10-28",
+        "tags": [],
+        "blogTitle": "2024 10 28 Illustrations And Free Looks",
+        "blogDescription": "A tutorial on 2024 10 28 illustrations and free looks"
+    },
+    {
+        "fileName": "2024-10-28-responsible-ai.html",
+        "dateCreated": "2024-10-28",
+        "tags": [],
+        "blogTitle": "2024 10 28 Responsible Ai",
+        "blogDescription": "A tutorial on 2024 10 28 responsible ai"
+    },
+    {
+        "fileName": "2024-10-29-beginning-azure-devops.html",
+        "dateCreated": "2024-10-29",
+        "tags": [],
+        "blogTitle": "2024 10 29 Beginning Azure Devops",
+        "blogDescription": "A tutorial on 2024 10 29 beginning azure devops"
+    },
+    {
+        "fileName": "2024-10-29-azure-devops-ml-studio.html",
+        "dateCreated": "2024-10-29",
+        "tags": [],
+        "blogTitle": "2024 10 29 Azure Devops Ml Studio",
+        "blogDescription": "A tutorial on 2024 10 29 azure devops ml studio"
+    },
+    {
+        "fileName": "2024-10-29-ml-life-cycle.html",
+        "dateCreated": "2024-10-29",
+        "tags": [],
+        "blogTitle": "2024 10 29 Ml Life Cycle",
+        "blogDescription": "A tutorial on 2024 10 29 ml life cycle"
+    },
+    {
+        "fileName": "2024-10-29-ml-design-patterns-07.html",
+        "dateCreated": "2024-10-29",
+        "tags": [],
+        "blogTitle": "2024 10 29 Ml Design Patterns 07",
+        "blogDescription": "A tutorial on 2024 10 29 ml design patterns 07"
+    },
+    {
+        "fileName": "2024-10-31-ms-learn-mlops.md.html",
+        "dateCreated": "2024-10-31",
+        "tags": [],
+        "blogTitle": "2024 10 31 Ms Learn Mlops.Md",
+        "blogDescription": "A tutorial on 2024 10 31 ms learn mlops.md"
+    },
+    {
+        "fileName": "2024-10-31-ms-learn-mlops.html",
+        "dateCreated": "2024-10-31",
+        "tags": [],
+        "blogTitle": "2024 10 31 Ms Learn Mlops",
+        "blogDescription": "A tutorial on 2024 10 31 ms learn mlops"
+    },
+    {
+        "fileName": "2024-10-31-ms-learn-mlops.html",
+        "dateCreated": "2024-10-31",
+        "tags": [],
+        "blogTitle": "2024 10 31 Ms Learn Mlops",
+        "blogDescription": "A tutorial on 2024 10 31 ms learn mlops"
+    },
+    {
+        "fileName": "2024-10-31-ms-learn-mlops.html",
+        "dateCreated": "2024-10-31",
+        "tags": [],
+        "blogTitle": "2024 10 31 Ms Learn Mlops",
+        "blogDescription": "A tutorial on 2024 10 31 ms learn mlops"
+    },
+    {
+        "fileName": "2024-11-01-storing-data-in-aml.html",
+        "dateCreated": "2024-11-01",
+        "tags": [],
+        "blogTitle": "2024 11 01 Storing Data In Aml",
+        "blogDescription": "A tutorial on 2024 11 01 storing data in aml"
+    },
+    {
+        "fileName": "2024-11-01-three-questions.html",
+        "dateCreated": "2024-11-01",
+        "tags": [],
+        "blogTitle": "2024 11 01 Three Questions",
+        "blogDescription": "A tutorial on 2024 11 01 three questions"
+    },
+    {
+        "fileName": "2024-11-01-azure-devops-and-machine-learning.html",
+        "dateCreated": "2024-11-01",
+        "tags": [],
+        "blogTitle": "2024 11 01 Azure Devops And Machine Learning",
+        "blogDescription": "A tutorial on 2024 11 01 azure devops and machine learning"
+    },
+    {
+        "fileName": "2024-11-02-azure-devops-and-ml-studio.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Azure Devops And Ml Studio",
+        "blogDescription": "A tutorial on 2024 11 02 azure devops and ml studio"
+    },
+    {
+        "fileName": "2024-11-02-azure-devops-and-ml-studio.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Azure Devops And Ml Studio",
+        "blogDescription": "A tutorial on 2024 11 02 azure devops and ml studio"
+    },
+    {
+        "fileName": "2024-11-02-azure-devops-and-ml-studio.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Azure Devops And Ml Studio",
+        "blogDescription": "A tutorial on 2024 11 02 azure devops and ml studio"
+    },
+    {
+        "fileName": "2024-11-02-azure-devops-and-ml-studio.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Azure Devops And Ml Studio",
+        "blogDescription": "A tutorial on 2024 11 02 azure devops and ml studio"
+    },
+    {
+        "fileName": "2024-11-02-summary.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Summary",
+        "blogDescription": "A tutorial on 2024 11 02 summary"
+    },
+    {
+        "fileName": "2024-11-02-summary.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Summary",
+        "blogDescription": "A tutorial on 2024 11 02 summary"
+    },
+    {
+        "fileName": "2024-11-02-summary.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Summary",
+        "blogDescription": "A tutorial on 2024 11 02 summary"
+    },
+    {
+        "fileName": "2024-11-02-summary.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Summary",
+        "blogDescription": "A tutorial on 2024 11 02 summary"
+    },
+    {
+        "fileName": "2024-11-02-summary.html",
+        "dateCreated": "2024-11-02",
+        "tags": [],
+        "blogTitle": "2024 11 02 Summary",
+        "blogDescription": "A tutorial on 2024 11 02 summary"
+    },
+    {
+        "fileName": "2024-11-02-azure-mlops-udemy.html",
+        "dateCreated": "2024-11-03",
+        "tags": [],
+        "blogTitle": "2024 11 02 Azure Mlops Udemy",
+        "blogDescription": "A tutorial on 2024 11 02 azure mlops udemy"
+    },
+    {
+        "fileName": "2024-11-03-random-questions.html",
+        "dateCreated": "2024-11-03",
+        "tags": [],
+        "blogTitle": "2024 11 03 Random Questions",
+        "blogDescription": "A tutorial on 2024 11 03 random questions"
+    },
+    {
+        "fileName": "2024-11-03-udemy-mlops-azure-2.html",
+        "dateCreated": "2024-11-03",
+        "tags": [],
+        "blogTitle": "2024 11 03 Udemy Mlops Azure 2",
+        "blogDescription": "A tutorial on 2024 11 03 udemy mlops azure 2"
+    },
+    {
+        "fileName": "2024-11-03-random-questions.html",
+        "dateCreated": "2024-11-03",
+        "tags": [],
+        "blogTitle": "2024 11 03 Random Questions",
+        "blogDescription": "A tutorial on 2024 11 03 random questions"
+    },
+    {
+        "fileName": "2024-11-02-azure-mlops-udemy.html",
+        "dateCreated": "2024-11-03",
+        "tags": [],
+        "blogTitle": "2024 11 02 Azure Mlops Udemy",
+        "blogDescription": "A tutorial on 2024 11 02 azure mlops udemy"
+    },
+    {
+        "fileName": "2024-11-03-summaries-of-summaries.html",
+        "dateCreated": "2024-11-03",
+        "tags": [],
+        "blogTitle": "2024 11 03 Summaries Of Summaries",
+        "blogDescription": "A tutorial on 2024 11 03 summaries of summaries"
+    },
+    {
+        "fileName": "2024-11-04-approval-gates.html",
+        "dateCreated": "2024-11-04",
+        "tags": [],
+        "blogTitle": "2024 11 04 Approval Gates",
+        "blogDescription": "A tutorial on 2024 11 04 approval gates"
+    },
+    {
+        "fileName": "2024-11-05-more-questions.html",
+        "dateCreated": "2024-11-05",
+        "tags": [],
+        "blogTitle": "2024 11 05 More Questions",
+        "blogDescription": "A tutorial on 2024 11 05 more questions"
+    },
+    {
+        "fileName": "2024-11-05-ml-ops-maturity-levels.html",
+        "dateCreated": "2024-11-05",
+        "tags": [],
+        "blogTitle": "2024 11 05 Ml Ops Maturity Levels",
+        "blogDescription": "A tutorial on 2024 11 05 ml ops maturity levels"
+    },
+    {
+        "fileName": "2024-11-06-experimentation-and-production.html",
+        "dateCreated": "2024-11-06",
+        "tags": [],
+        "blogTitle": "2024 11 06 Experimentation And Production",
+        "blogDescription": "A tutorial on 2024 11 06 experimentation and production"
+    },
+    {
+        "fileName": "2024-11-06-inferencing.html",
+        "dateCreated": "2024-11-06",
+        "tags": [],
+        "blogTitle": "2024 11 06 Inferencing",
+        "blogDescription": "A tutorial on 2024 11 06 inferencing"
+    },
+    {
+        "fileName": "2024-11-12-mlops-road-map.html",
+        "dateCreated": "2024-11-12",
+        "tags": [],
+        "blogTitle": "2024 11 12 Mlops Road Map",
+        "blogDescription": "A tutorial on 2024 11 12 mlops road map"
+    },
+    {
+        "fileName": "2024-11-13-azure-mlops-links.html",
+        "dateCreated": "2024-11-13",
+        "tags": [],
+        "blogTitle": "2024 11 13 Azure Mlops Links",
+        "blogDescription": "A tutorial on 2024 11 13 azure mlops links"
+    },
+    {
+        "fileName": "2024-11-13-responsible-ai.html",
+        "dateCreated": "2024-11-13",
+        "tags": [],
+        "blogTitle": "2024 11 13 Responsible Ai",
+        "blogDescription": "A tutorial on 2024 11 13 responsible ai"
+    },
+    {
+        "fileName": "2024-11-13-geo.html",
+        "dateCreated": "2024-11-13",
+        "tags": [],
+        "blogTitle": "2024 11 13 Geo",
+        "blogDescription": "A tutorial on 2024 11 13 geo"
+    },
+    {
+        "fileName": "2024-11-18-bias-in-ml.html",
+        "dateCreated": "2024-11-18",
+        "tags": [],
+        "blogTitle": "2024 11 18 Bias In Ml",
+        "blogDescription": "A tutorial on 2024 11 18 bias in ml"
+    },
+    {
+        "fileName": "2024-11-18-bias-in-ml.html",
+        "dateCreated": "2024-11-18",
+        "tags": [],
+        "blogTitle": "2024 11 18 Bias In Ml",
+        "blogDescription": "A tutorial on 2024 11 18 bias in ml"
+    },
+    {
+        "fileName": "2024-11-18-bias-in-ml.html",
+        "dateCreated": "2024-11-18",
+        "tags": [],
+        "blogTitle": "2024 11 18 Bias In Ml",
+        "blogDescription": "A tutorial on 2024 11 18 bias in ml"
+    },
+    {
+        "fileName": "2024-12-05-llm-firewalls.html",
+        "dateCreated": "2024-12-05",
+        "tags": [],
+        "blogTitle": "2024 12 05 Llm Firewalls",
+        "blogDescription": "A tutorial on 2024 12 05 llm firewalls"
+    },
+    {
+        "fileName": "2024-12-06-uw.html",
+        "dateCreated": "2024-12-06",
+        "tags": [],
+        "blogTitle": "2024 12 06 Uw",
+        "blogDescription": "A tutorial on 2024 12 06 uw"
+    },
+    {
+        "fileName": "2024-12-06-forecasting.html",
+        "dateCreated": "2024-12-06",
+        "tags": [],
+        "blogTitle": "2024 12 06 Forecasting",
+        "blogDescription": "A tutorial on 2024 12 06 forecasting"
+    },
+    {
+        "fileName": "2024-12-12-azure-devops-and-aml.html",
+        "dateCreated": "2024-12-12",
+        "tags": [],
+        "blogTitle": "2024 12 12 Azure Devops And Aml",
+        "blogDescription": "A tutorial on 2024 12 12 azure devops and aml"
+    },
+    {
+        "fileName": "2024-12-13-azure.html",
+        "dateCreated": "2024-12-13",
+        "tags": [],
+        "blogTitle": "2024 12 13 Azure",
+        "blogDescription": "A tutorial on 2024 12 13 azure"
+    },
+    {
+        "fileName": "2024-12-26-stats.html",
+        "dateCreated": "2024-12-26",
+        "tags": [],
+        "blogTitle": "2024 12 26 Stats",
+        "blogDescription": "A tutorial on 2024 12 26 stats"
+    },
+    {
+        "fileName": "2024-12-29-chromebook-power-wash.html",
+        "dateCreated": "2024-12-29",
+        "tags": [],
+        "blogTitle": "2024 12 29 Chromebook Power Wash",
+        "blogDescription": "A tutorial on 2024 12 29 chromebook power wash"
+    },
+    {
+        "fileName": "2024-12-30-stats.html",
+        "dateCreated": "2024-12-30",
+        "tags": [],
+        "blogTitle": "2024 12 30 Stats",
+        "blogDescription": "A tutorial on 2024 12 30 stats"
+    },
+    {
+        "fileName": "2025-01-08-innovate.html",
+        "dateCreated": "2025-01-08",
+        "tags": [],
+        "blogTitle": "2025 01 08 Innovate",
+        "blogDescription": "A tutorial on 2025 01 08 innovate"
+    },
+    {
+        "fileName": "2025-01-08-innovate.html",
+        "dateCreated": "2025-01-08",
+        "tags": [],
+        "blogTitle": "2025 01 08 Innovate",
+        "blogDescription": "A tutorial on 2025 01 08 innovate"
+    },
+    {
+        "fileName": "2025-01-08-innovate.html",
+        "dateCreated": "2025-01-08",
+        "tags": [],
+        "blogTitle": "2025 01 08 Innovate",
+        "blogDescription": "A tutorial on 2025 01 08 innovate"
+    },
+    {
+        "fileName": "2025-01-09-inn.html",
+        "dateCreated": "2025-01-09",
+        "tags": [],
+        "blogTitle": "2025 01 09 Inn",
+        "blogDescription": "A tutorial on 2025 01 09 inn"
+    },
+    {
+        "fileName": "2025-01-12-thoughts.html",
+        "dateCreated": "2025-01-12",
+        "tags": [],
+        "blogTitle": "2025 01 12 Thoughts",
+        "blogDescription": "A tutorial on 2025 01 12 thoughts"
+    },
+    {
+        "fileName": "2025-01-14-tech-stack.html",
+        "dateCreated": "2025-01-14",
+        "tags": [],
+        "blogTitle": "2025 01 14 Tech Stack",
+        "blogDescription": "A tutorial on 2025 01 14 tech stack"
+    },
+    {
+        "fileName": "2025-01-15-next-steps.html",
+        "dateCreated": "2025-01-15",
+        "tags": [],
+        "blogTitle": "2025 01 15 Next Steps",
+        "blogDescription": "A tutorial on 2025 01 15 next steps"
+    },
+    {
+        "fileName": "2025-01-15-script.html",
+        "dateCreated": "2025-01-15",
+        "tags": [],
+        "blogTitle": "2025 01 15 Script",
+        "blogDescription": "A tutorial on 2025 01 15 script"
+    },
+    {
+        "fileName": "2025-01-15-02.html",
+        "dateCreated": "2025-01-15",
+        "tags": [],
+        "blogTitle": "2025 01 15 02",
+        "blogDescription": "A tutorial on 2025 01 15 02"
+    },
+    {
+        "fileName": "2025-01-17-synth-data.html",
+        "dateCreated": "2025-01-17",
+        "tags": [],
+        "blogTitle": "2025 01 17 Synth Data",
+        "blogDescription": "A tutorial on 2025 01 17 synth data"
+    },
+    {
+        "fileName": "2025-01-22-ydata.html",
+        "dateCreated": "2025-01-22",
+        "tags": [],
+        "blogTitle": "2025 01 22 Ydata",
+        "blogDescription": "A tutorial on 2025 01 22 ydata"
+    },
+    {
+        "fileName": "2025-01-22-ydata.html",
+        "dateCreated": "2025-01-22",
+        "tags": [],
+        "blogTitle": "2025 01 22 Ydata",
+        "blogDescription": "A tutorial on 2025 01 22 ydata"
+    },
+    {
+        "fileName": "2025-01-22-syntheticus.html",
+        "dateCreated": "2025-01-22",
+        "tags": [],
+        "blogTitle": "2025 01 22 Syntheticus",
+        "blogDescription": "A tutorial on 2025 01 22 syntheticus"
+    },
+    {
+        "fileName": "2025-01-22-dedomena.html",
+        "dateCreated": "2025-01-22",
+        "tags": [],
+        "blogTitle": "2025 01 22 Dedomena",
+        "blogDescription": "A tutorial on 2025 01 22 dedomena"
+    },
+    {
+        "fileName": "2025-01-22-k2view.html",
+        "dateCreated": "2025-01-22",
+        "tags": [],
+        "blogTitle": "2025 01 22 K2View",
+        "blogDescription": "A tutorial on 2025 01 22 k2view"
+    },
+    {
+        "fileName": "2025-01-24-hazy.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Hazy",
+        "blogDescription": "A tutorial on 2025 01 24 hazy"
+    },
+    {
+        "fileName": "2025-01-24-gretel.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Gretel",
+        "blogDescription": "A tutorial on 2025 01 24 gretel"
+    },
+    {
+        "fileName": "2025-01-24-mostly-ai.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Mostly Ai",
+        "blogDescription": "A tutorial on 2025 01 24 mostly ai"
+    },
+    {
+        "fileName": "2025-01-24-next-steps.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Next Steps",
+        "blogDescription": "A tutorial on 2025 01 24 next steps"
+    },
+    {
+        "fileName": "2025-01-24-syntho.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Syntho",
+        "blogDescription": "A tutorial on 2025 01 24 syntho"
+    },
+    {
+        "fileName": "2025-01-24-tonic.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Tonic",
+        "blogDescription": "A tutorial on 2025 01 24 tonic"
+    },
+    {
+        "fileName": "2025-01-24-ydata.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Ydata",
+        "blogDescription": "A tutorial on 2025 01 24 ydata"
+    },
+    {
+        "fileName": "2025-01-24-summaries.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Summaries",
+        "blogDescription": "A tutorial on 2025 01 24 summaries"
+    },
+    {
+        "fileName": "2025-01-24-comparisons.html",
+        "dateCreated": "2025-01-24",
+        "tags": [],
+        "blogTitle": "2025 01 24 Comparisons",
+        "blogDescription": "A tutorial on 2025 01 24 comparisons"
+    },
+    {
+        "fileName": "2025-01-26-outline.html",
+        "dateCreated": "2025-01-26",
+        "tags": [],
+        "blogTitle": "2025 01 26 Outline",
+        "blogDescription": "A tutorial on 2025 01 26 outline"
+    }
+]
