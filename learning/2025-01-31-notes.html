@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="second-meeting-notes"><strong>Second Meeting Notes</strong></h2>
+<h3 id="what-to-document"><strong>1. What to Document</strong></h3>
+<ul>
+<li><p><strong>Procedures, Workflows, and Processes</strong></p>
+<ul>
+<li>There was some confusion around these terms, prompting the question:
+Are they essentially the same, or do we differentiate them?</li>
+<li><strong>Concrete Example</strong>: In Data Governance, a “Data
+Quality Report” is a process worth documenting.</li>
+</ul></li>
+<li><p><strong>Regular Processes vs. One-Off Projects</strong></p>
+<ul>
+<li>Not all one-off projects need to be fully documented.</li>
+<li>However, if a unique or complex issue arises in a one-off project,
+that learning should be documented to avoid “re-inventing the wheel” in
+the future.</li>
+</ul></li>
+</ul>
+<h3 id="tools-and-platforms"><strong>2. Tools and
+Platforms</strong></h3>
+<ul>
+<li><p><strong>Obsidian</strong></p>
+<ul>
+<li>A personal knowledge base using Markdown files (exportable to
+PDF).</li>
+<li><strong>Question</strong>: Is Obsidian user-friendly enough for
+other departments with fewer technical skills?</li>
+<li><strong>Timeline Considerations</strong>: The priority this year is
+for the Corporate Data and Analytics teams to establish internal best
+practices. Introducing these tools to other departments may happen
+later.</li>
+</ul></li>
+<li><p><strong>SharePoint</strong></p>
+<ul>
+<li>Likely the primary hosting site for finalized documentation.</li>
+<li><strong>Potential Integration</strong>: Can Obsidian integrate
+seamlessly with SharePoint?</li>
+</ul></li>
+<li><p><strong>Other Departments’ Practices</strong></p>
+<ul>
+<li><strong>Policy Services</strong> often uses Word, converting
+documents to PDF with screenshots.</li>
+<li>Documentation formats can differ by team/department, but there
+should be a consistent “brand” or style.</li>
+</ul></li>
+</ul>
+<h3 id="format-and-consistency"><strong>3. Format and
+Consistency</strong></h3>
+<ul>
+<li><p><strong>Consistency vs. Flexibility</strong></p>
+<ul>
+<li>Every team’s documentation does not need an identical format, but
+branding should be consistent.</li>
+<li>Each document should contain standard elements (“ingredients”) like
+Introduction, Summary, Purpose, Access Requirements, Code Snippets,
+etc.</li>
+</ul></li>
+<li><p><strong>Naming Conventions and Storage</strong></p>
+<ul>
+<li>Decide where documents are saved, how they are saved, and establish
+a clear naming convention to avoid confusion.</li>
+</ul></li>
+</ul>
+<h3 id="past-documentation-experiences"><strong>4. Past Documentation
+Experiences</strong></h3>
+<ul>
+<li><p><strong>Google Docs (Company A)</strong></p>
+<ul>
+<li>A main folder for documentation with sub-folders for big
+projects.</li>
+<li>Files linked to each other, but it was challenging to maintain
+updated links and locate an “entry point” for each project.</li>
+</ul></li>
+<li><p><strong>Minimal or No Documentation (Company B)</strong></p>
+<ul>
+<li>Training was done in person.</li>
+<li>Privacy issues prevented extensive written documentation.</li>
+</ul></li>
+</ul>
+<h3 id="addressing-resistance-and-job-security"><strong>5. Addressing
+Resistance and Job Security</strong></h3>
+<ul>
+<li><strong>Employee Concerns</strong>
+<ul>
+<li>Some individuals may worry that thorough documentation could
+threaten their job security.</li>
+<li>Emphasize that documentation is about knowledge sharing, not
+replacing roles.</li>
+</ul></li>
+</ul>
+<h3 id="enhancing-documentation-with-media"><strong>6. Enhancing
+Documentation with Media</strong></h3>
+<ul>
+<li><p><strong>Videos</strong></p>
+<ul>
+<li>Useful for tasks that are easier to demonstrate visually (e.g.,
+complex clicks or steps).</li>
+<li>Could also serve as quick intros to a project or process.</li>
+</ul></li>
+<li><p><strong>Screen Recordings and Transcripts</strong></p>
+<ul>
+<li>Tools like SundaySky might provide transcripts for screen
+recordings, making them searchable.</li>
+<li>Ensure any text or video elements remain easy to locate and
+update.</li>
+</ul></li>
+</ul>
+<h3 id="version-control-and-updates"><strong>7. Version Control and
+Updates</strong></h3>
+<ul>
+<li><p><strong>Need for Versioning</strong></p>
+<ul>
+<li>Processes evolve, and documentation can quickly become
+outdated.</li>
+<li>At a minimum, indicate the last updated date on each document.</li>
+</ul></li>
+<li><p><strong>Regular Reviews</strong></p>
+<ul>
+<li>A quarterly check of documented processes could help keep them
+accurate and relevant.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="key-takeaways-and-next-steps"><strong>Key Takeaways and Next
+Steps</strong></h3>
+<ol type="1">
+<li><strong>Clarify Terminology</strong>
+<ul>
+<li>Decide how to differentiate (or unify) the terms “procedure,”
+“workflow,” and “process.”</li>
+</ul></li>
+<li><strong>Finalize Tool Choice</strong>
+<ul>
+<li>Continue exploring whether Obsidian, SharePoint, or a combination
+best meets current and future needs.</li>
+</ul></li>
+<li><strong>Establish Branding and Structure</strong>
+<ul>
+<li>Define a basic template or set of “ingredients” each documentation
+piece should have.</li>
+</ul></li>
+<li><strong>Address Resistance</strong>
+<ul>
+<li>Communicate the value of documentation for collective knowledge
+rather than a threat to job security.</li>
+</ul></li>
+<li><strong>Plan for Ongoing Maintenance</strong>
+<ul>
+<li>Implement version tracking and set a schedule (e.g., quarterly) for
+reviewing and updating documentation.</li>
+</ul></li>
+</ol>
+<p>These notes provide a foundation to guide the next phases of the Data
+Docs Project, ensuring that all relevant topics—from tool selection to
+addressing team concerns—are captured and actionable.</p>
+    
+</body>
+</html>
