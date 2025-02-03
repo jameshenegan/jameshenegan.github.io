@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is an example of process documentation for a <strong>Monthly
+Machine Learning Model Retraining and Inferencing Process</strong> used
+by a data science team. This documentation outlines the steps involved
+from data ingestion to model retraining, inferencing, and integration
+with downstream business decisions.</p>
+<hr />
+<h1
+id="monthly-machine-learning-model-retraining-and-inferencing-process">Monthly
+Machine Learning Model Retraining and Inferencing Process</h1>
+<p><strong>Document Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> February 1, 2025<br />
+<strong>Process Owner:</strong> Data Science Team Lead<br />
+<strong>Contributors:</strong> Data Engineers, Data Scientists, IT
+Operations, Business Stakeholders</p>
+<hr />
+<h2 id="purpose">1. <strong>Purpose</strong></h2>
+<p>This document describes the process for monthly retraining of a
+classification machine learning (ML) model and executing batch
+inferencing when new data is received. The aim is to ensure that the
+model remains up-to-date with the latest data, provides accurate
+predictions, and supports informed business decisions.</p>
+<hr />
+<h2 id="scope">2. <strong>Scope</strong></h2>
+<p>This process applies to all data related to the classification model.
+It covers:</p>
+<ul>
+<li>Monthly data ingestion and merging (appending new data to historical
+records)</li>
+<li>Retraining of the classification model</li>
+<li>Batch inferencing on the updated dataset</li>
+<li>Communication of predictions to downstream business processes</li>
+</ul>
+<hr />
+<h2 id="definitions">3. <strong>Definitions</strong></h2>
+<ul>
+<li><strong>Data Ingestion:</strong> The process of collecting and
+importing new data into the existing dataset.</li>
+<li><strong>Retraining:</strong> Updating the ML model using the
+combined dataset (historical + new data).</li>
+<li><strong>Batch Inferencing:</strong> Running the updated model on the
+dataset to generate predictions.</li>
+<li><strong>Classification Model:</strong> A machine learning model that
+predicts categorical outcomes.</li>
+<li><strong>Downstream Business Decision:</strong> Any business process
+or decision that uses the model’s predictions as input.</li>
+</ul>
+<hr />
+<h2 id="process-flow-overview">4. <strong>Process Flow
+Overview</strong></h2>
+<ol type="1">
+<li><p><strong>Data Ingestion &amp; Preparation</strong><br />
+1.1. Receive New Data<br />
+1.2. Validate and Clean Data<br />
+1.3. Append New Data to Historical Dataset</p></li>
+<li><p><strong>Model Retraining</strong><br />
+2.1. Data Splitting (Training/Validation)<br />
+2.2. Model Retraining<br />
+2.3. Model Evaluation and Validation</p></li>
+<li><p><strong>Batch Inferencing</strong><br />
+3.1. Run Predictions on the Updated Dataset<br />
+3.2. Store and Format Prediction Results</p></li>
+<li><p><strong>Integration with Business Decisions</strong><br />
+4.1. Deliver Predictions to Business Systems<br />
+4.2. Notify Stakeholders<br />
+4.3. Monitor Outcomes and Feedback</p></li>
+</ol>
+<hr />
+<h2 id="detailed-process-steps">5. <strong>Detailed Process
+Steps</strong></h2>
+<h3 id="data-ingestion-preparation">5.1. <strong>Data Ingestion &amp;
+Preparation</strong></h3>
+<ul>
+<li><p><strong>Step 1: Receive New Data</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Engineering Team</li>
+<li><strong>Action:</strong> Retrieve new data files from designated
+sources (e.g., API endpoint, database extract, or file drop) on a
+monthly basis.</li>
+<li><strong>Timeline:</strong> Upon availability of new data
+(approximately once a month).</li>
+</ul></li>
+<li><p><strong>Step 2: Validate and Clean Data</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Engineering Team</li>
+<li><strong>Action:</strong> Validate the new data for completeness,
+consistency, and quality. Perform necessary cleaning steps (e.g.,
+removing duplicates, handling missing values).</li>
+<li><strong>Timeline:</strong> Within 1–2 days after new data
+receipt.</li>
+</ul></li>
+<li><p><strong>Step 3: Append New Data to Historical
+Dataset</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Engineering Team</li>
+<li><strong>Action:</strong> Append validated new data to the historical
+dataset stored in the data warehouse. Ensure data versioning and backup
+procedures are followed.</li>
+<li><strong>Timeline:</strong> Immediately after validation.</li>
+</ul></li>
+</ul>
+<h3 id="model-retraining">5.2. <strong>Model Retraining</strong></h3>
+<ul>
+<li><p><strong>Step 1: Data Splitting (Training/Validation)</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Scientists</li>
+<li><strong>Action:</strong> Split the combined dataset into training
+and validation sets using a pre-defined strategy (e.g., 80/20
+split).</li>
+<li><strong>Timeline:</strong> Before model retraining begins.</li>
+</ul></li>
+<li><p><strong>Step 2: Model Retraining</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Scientists</li>
+<li><strong>Action:</strong> Retrain the classification model using the
+training set. Implement any necessary feature engineering or parameter
+tuning during retraining.</li>
+<li><strong>Timeline:</strong> Within 1–2 days after data
+ingestion.</li>
+</ul></li>
+<li><p><strong>Step 3: Model Evaluation and Validation</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Scientists</li>
+<li><strong>Action:</strong> Evaluate the retrained model using the
+validation set. Metrics such as accuracy, precision, recall, F1 score,
+or AUC should be compared with previous model performance.</li>
+<li><strong>Timeline:</strong> Immediately after retraining.</li>
+<li><strong>Outcome:</strong> Approve the model for deployment if
+performance meets or exceeds the baseline threshold; otherwise, iterate
+on model adjustments.</li>
+</ul></li>
+</ul>
+<h3 id="batch-inferencing">5.3. <strong>Batch Inferencing</strong></h3>
+<ul>
+<li><strong>Step 1: Run Predictions on the Updated Dataset</strong>
+<ul>
+<li><strong>Responsible:</strong> Data Science/Engineering Teams</li>
+<li><strong>Action:</strong> Deploy the retrained model in batch mode to
+run inferencing on the new appended dataset.</li>
+<li><strong>Timeline:</strong> Immediately after model validation.</li>
+</ul></li>
+<li><strong>Step 2: Store and Format Prediction Results</strong>
+<ul>
+<li><strong>Responsible:</strong> Data Engineering Team</li>
+<li><strong>Action:</strong> Store the prediction results in a dedicated
+database or data warehouse table. Format the output to align with the
+requirements of downstream systems.</li>
+<li><strong>Timeline:</strong> Within a few hours post inferencing.</li>
+</ul></li>
+</ul>
+<h3 id="integration-with-business-decisions">5.4. <strong>Integration
+with Business Decisions</strong></h3>
+<ul>
+<li><p><strong>Step 1: Deliver Predictions to Business
+Systems</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Engineering Team</li>
+<li><strong>Action:</strong> Export prediction results to the systems
+used by business stakeholders (e.g., dashboards, reporting tools, or
+decision-support applications).</li>
+<li><strong>Timeline:</strong> Immediately after storing
+predictions.</li>
+</ul></li>
+<li><p><strong>Step 2: Notify Stakeholders</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Science Team Lead</li>
+<li><strong>Action:</strong> Communicate the completion of the
+inferencing process and share key performance metrics and results with
+business stakeholders.</li>
+<li><strong>Timeline:</strong> On the same day as the inferencing
+process.</li>
+</ul></li>
+<li><p><strong>Step 3: Monitor Outcomes and Feedback</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Data Science Team</li>
+<li><strong>Action:</strong> Collect feedback from the business teams on
+the utility and impact of the predictions. Monitor business outcomes to
+assess the real-world performance of the model.</li>
+<li><strong>Timeline:</strong> Continuously post deployment; schedule
+review meetings monthly or quarterly.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="roles-and-responsibilities">6. <strong>Roles and
+Responsibilities</strong></h2>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Role</strong></th>
+<th><strong>Responsibility</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Data Engineering Team</strong></td>
+<td>Manage data ingestion, validation, cleaning, and storage.</td>
+</tr>
+<tr>
+<td><strong>Data Scientists</strong></td>
+<td>Retrain the ML model, perform model evaluation, and generate
+predictions.</td>
+</tr>
+<tr>
+<td><strong>Data Science Team Lead</strong></td>
+<td>Oversee the retraining process, ensure quality, and coordinate with
+business units.</td>
+</tr>
+<tr>
+<td><strong>IT Operations</strong></td>
+<td>Provide and maintain the infrastructure required for data processing
+and model deployment.</td>
+</tr>
+<tr>
+<td><strong>Business Stakeholders</strong></td>
+<td>Use the model predictions in decision-making and provide feedback
+for process improvement.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="process-metrics-and-kpis">7. <strong>Process Metrics and
+KPIs</strong></h2>
+<ul>
+<li><strong>Data Ingestion Timeliness:</strong> Time taken from new data
+availability to complete ingestion and validation.</li>
+<li><strong>Model Retraining Duration:</strong> Time from initiation of
+retraining to model validation.</li>
+<li><strong>Model Performance Metrics:</strong> Changes in accuracy,
+precision, recall, etc., compared to previous versions.</li>
+<li><strong>Inference Completion Time:</strong> Time from model
+deployment to the availability of prediction results.</li>
+<li><strong>Business Impact:</strong> Feedback and measurable outcomes
+from decisions based on the model’s predictions (e.g., improved
+conversion rates, cost savings).</li>
+</ul>
+<hr />
+<h2 id="notes-and-considerations">8. <strong>Notes and
+Considerations</strong></h2>
+<ul>
+<li><strong>Version Control:</strong><br />
+Maintain versioning of datasets and models to enable rollback if
+needed.</li>
+<li><strong>Automation:</strong><br />
+Wherever possible, automate steps such as data validation, model
+retraining, and inferencing to reduce manual intervention and
+errors.</li>
+<li><strong>Compliance:</strong><br />
+Ensure data handling complies with relevant regulations (e.g., GDPR,
+HIPAA) and company policies.</li>
+<li><strong>Feedback Loop:</strong><br />
+Schedule regular review sessions with business stakeholders to
+continuously improve the process and model performance.</li>
+</ul>
+<hr />
+<h2 id="revision-history">9. <strong>Revision History</strong></h2>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 20%" />
+<col style="width: 37%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Version</strong></th>
+<th><strong>Date</strong></th>
+<th><strong>Description of Change</strong></th>
+<th><strong>Author</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>February 1, 2025</td>
+<td>Initial documentation release.</td>
+<td>Data Science Team Lead</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>This document serves as a living guide for managing the monthly
+retraining and inferencing process for the classification model. Regular
+updates and stakeholder reviews will ensure it remains aligned with
+evolving data, technology, and business needs.</p>
+    
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a summary that highlights the concepts of
+<strong>epic</strong>, <strong>feature</strong>, <strong>user
+story</strong>, and <strong>work item</strong>, along with an
+explanation of how these concepts fit into Azure DevOps project
+management:</p>
+<hr />
+<h3
+id="overview-of-azure-devops-projects-and-processes"><strong>Overview of
+Azure DevOps Projects and Processes</strong></h3>
+<ul>
+<li><p><strong>Azure DevOps Projects</strong>:<br />
+A project in Azure DevOps is a container for all the data and tools
+needed to plan, develop, test, and deliver software. It includes boards
+for task tracking, repositories for source control, pipelines for CI/CD,
+test plans, and more. Projects can be organized as a single project
+(with shared resources and visibility) or as multiple projects (for
+greater security and autonomy).</p></li>
+<li><p><strong>Project Processes</strong>:<br />
+When creating a project, you choose a process (Basic, Agile, Scrum, or
+CMMI) that defines the types of work items you’ll use.</p>
+<ul>
+<li>In the <strong>Basic process</strong>, you can create
+<strong>epics</strong>, <strong>issues</strong>, and
+<strong>tasks</strong>.</li>
+<li>In the <strong>Agile process</strong>, you work with
+<strong>epics</strong>, <strong>features</strong>, <strong>user
+stories</strong>, and <strong>tasks</strong>.</li>
+<li>In <strong>Scrum</strong> and <strong>CMMI</strong>, work item types
+differ to match those methodologies.</li>
+</ul></li>
+</ul>
+<hr />
+<h3
+id="hierarchy-and-sizing-in-agile-epic-feature-user-story-task"><strong>Hierarchy
+and Sizing in Agile (Epic &gt; Feature &gt; User Story &gt;
+Task)</strong></h3>
+<ul>
+<li><p><strong>Epic</strong>:<br />
+An epic represents a large initiative or a high-level objective that
+spans multiple sprints. For instance, an “MLOps project” (with goals
+like implementing Git version control, managing code in an Azure DevOps
+Repository, and separating development from production environments) is
+best viewed as an epic because it encompasses several significant
+changes.</p></li>
+<li><p><strong>Feature</strong>:<br />
+Within an epic, features break down the larger initiative into more
+manageable segments or capabilities. Each feature corresponds to a
+specific goal that contributes to the overall epic. In the MLOps
+example, the different goals (using Git, structuring repositories, and
+splitting workspaces) can be viewed as individual features.</p></li>
+<li><p><strong>User Story</strong>:<br />
+A user story describes a specific requirement or functionality from the
+perspective of an end user. It is more granular than a feature and is
+meant to be completed within a sprint. There’s a common guideline that a
+user story should represent roughly a week of work, although this is
+flexible and depends on team velocity and project context. This
+contrasts with your observation that some projects seem too large for a
+single user story.</p></li>
+<li><p><strong>Task (Work Item)</strong>:<br />
+Tasks are the smallest actionable items. They break down user stories
+into specific work actions. Teams often use the guideline that tasks
+should take between 8 to 12 hours of work. In Azure DevOps, tasks (like
+other work items) are used to track progress and ensure that each piece
+of work is clearly defined and assigned.</p></li>
+</ul>
+<hr />
+<h3 id="additional-azure-boards-concepts"><strong>Additional Azure
+Boards Concepts</strong></h3>
+<ul>
+<li><p><strong>Work Items</strong>:<br />
+These are the building blocks used to track all kinds of work—from
+high-level initiatives (epics) to detailed tasks. In Azure Boards, work
+items move through states such as <strong>To Do</strong>,
+<strong>Doing</strong>, and <strong>Done</strong>.</p></li>
+<li><p><strong>Backlogs and Boards</strong>:</p>
+<ul>
+<li><strong>Backlogs</strong>: Serve as the roadmap for what your team
+plans to deliver. They let you prioritize and manage epics, features,
+user stories, and tasks.</li>
+<li><strong>Boards</strong>: Provide a visual management tool where you
+can see the current status of all work items and move them between
+columns corresponding to their state.</li>
+</ul></li>
+<li><p><strong>Sprints and Delivery Plans</strong>:<br />
+Sprints (or iterations) divide the work into time-boxed periods
+(typically two to three weeks). Delivery plans offer a high-level
+overview that aligns the work across multiple teams and
+sprints.</p></li>
+<li><p><strong>Queries</strong>:<br />
+You can use queries to filter and find work items based on criteria like
+type, state, or tags, making it easier to manage and review the
+progress.</p></li>
+</ul>
+<hr />
+<h3
+id="practical-application-and-estimation-guidelines"><strong>Practical
+Application and Estimation Guidelines</strong></h3>
+<ul>
+<li><p><strong>Organizing Large Initiatives</strong>:<br />
+Your MLOps project, which is larger than what should fit in a single
+user story, is a perfect candidate to be structured as an
+<strong>epic</strong>. The goals within it can be considered
+<strong>features</strong>, and then you can write specific <strong>user
+stories</strong> (with an estimated effort of about a week each) and
+further break these down into <strong>tasks</strong> (each estimated to
+take roughly 8–12 hours).</p></li>
+<li><p><strong>Estimation Guidelines</strong>:<br />
+While the 8–12 hours per task and about one week per user story are
+common guidelines in Agile practices, these are not hard rules. They
+serve as starting points that should be adjusted based on your team’s
+historical data and velocity. For more on Agile estimation techniques,
+you might review resources such as the <a
+href="https://www.agilealliance.org/">Agile Alliance website</a> or <a
+href="https://docs.microsoft.com/en-us/azure/devops/boards/">Microsoft’s
+Azure DevOps documentation</a>.</p></li>
+</ul>
+<hr />
+<h3 id="conclusion"><strong>Conclusion</strong></h3>
+<p>By aligning your project work items with the hierarchy of epic &gt;
+feature &gt; user story &gt; task, you can better manage and track both
+large initiatives and the smaller, actionable items needed to complete
+them. This structure not only clarifies the scope of each part of the
+project but also helps in planning, assigning, and estimating work in a
+way that supports Agile best practices within Azure DevOps.</p>
+<p>For further details, refer to the <a
+href="https://docs.microsoft.com/en-us/azure/devops/boards/">Azure
+Boards documentation</a>.</p>
+<hr />
+<p>This summary should help you explain to your manager how to break
+down larger projects into appropriately sized work items within Azure
+DevOps and align with Agile practices.</p>
+    
+</body>
+</html>

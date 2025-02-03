@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is an example of process documentation for an <strong>IT
+Incident Management Process</strong>. This sample outlines the steps for
+handling IT incidents—from identification to resolution—and includes
+roles, responsibilities, and key performance indicators (KPIs). You can
+adapt this template to suit your organization’s needs.</p>
+<hr />
+<h1 id="it-incident-management-process-documentation">IT Incident
+Management Process Documentation</h1>
+<p><strong>Document Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> February 1, 2025<br />
+<strong>Process Owner:</strong> IT Service Manager<br />
+<strong>Contributors:</strong> IT Support Team, Network Operations,
+Security Team</p>
+<hr />
+<h2 id="purpose">1. <strong>Purpose</strong></h2>
+<p>The purpose of this document is to provide a structured framework for
+identifying, reporting, and resolving IT incidents. The goal is to
+minimize downtime, restore services as quickly as possible, and ensure
+consistent communication throughout the process.</p>
+<hr />
+<h2 id="scope">2. <strong>Scope</strong></h2>
+<p>This process applies to all IT-related incidents affecting internal
+systems, network services, hardware, and software applications. It
+covers incidents ranging from minor technical glitches to major system
+outages.</p>
+<hr />
+<h2 id="definitions">3. <strong>Definitions</strong></h2>
+<ul>
+<li><strong>Incident:</strong> An unplanned interruption or reduction in
+quality of an IT service.</li>
+<li><strong>Incident Management:</strong> The process of restoring
+normal service operation as quickly as possible while minimizing the
+impact on business operations.</li>
+<li><strong>Severity Levels:</strong> Categories assigned based on the
+impact and urgency of an incident (e.g., Critical, High, Medium,
+Low).</li>
+<li><strong>Escalation:</strong> The process of involving higher-level
+support or management when an incident cannot be resolved promptly.</li>
+</ul>
+<hr />
+<h2 id="process-flow-overview">4. <strong>Process Flow
+Overview</strong></h2>
+<ol type="1">
+<li><p><strong>Incident Identification &amp; Reporting</strong><br />
+1.1. Incident Detection<br />
+1.2. Incident Logging<br />
+1.3. Incident Categorization and Prioritization</p></li>
+<li><p><strong>Incident Diagnosis &amp; Investigation</strong><br />
+2.1. Initial Diagnosis<br />
+2.2. Escalation (if needed)<br />
+2.3. Root Cause Analysis</p></li>
+<li><p><strong>Incident Resolution &amp; Recovery</strong><br />
+3.1. Resolution Implementation<br />
+3.2. Service Recovery<br />
+3.3. Communication with Stakeholders</p></li>
+<li><p><strong>Incident Closure &amp; Review</strong><br />
+4.1. Incident Closure<br />
+4.2. Post-Incident Review<br />
+4.3. Documentation &amp; Process Improvement</p></li>
+</ol>
+<hr />
+<h2 id="detailed-process-steps">5. <strong>Detailed Process
+Steps</strong></h2>
+<h3 id="incident-identification-reporting">5.1. <strong>Incident
+Identification &amp; Reporting</strong></h3>
+<ul>
+<li><p><strong>Step 1: Incident Detection</strong></p>
+<ul>
+<li><strong>Responsible:</strong> All Employees / Monitoring
+Systems</li>
+<li><strong>Action:</strong> Report any unusual behavior or system
+downtime immediately via the IT service portal or hotline.</li>
+<li><strong>Timeline:</strong> As soon as the incident is detected.</li>
+</ul></li>
+<li><p><strong>Step 2: Incident Logging</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support Desk</li>
+<li><strong>Action:</strong> Log the incident in the incident management
+system, including details such as time, affected systems, and reporter
+information.</li>
+<li><strong>Timeline:</strong> Within 15 minutes of detection.</li>
+</ul></li>
+<li><p><strong>Step 3: Incident Categorization and
+Prioritization</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support Desk</li>
+<li><strong>Action:</strong> Categorize the incident (e.g., network,
+hardware, software) and assign a severity level based on impact and
+urgency.</li>
+<li><strong>Timeline:</strong> Immediately after logging the
+incident.</li>
+</ul></li>
+</ul>
+<h3 id="incident-diagnosis-investigation">5.2. <strong>Incident
+Diagnosis &amp; Investigation</strong></h3>
+<ul>
+<li><p><strong>Step 1: Initial Diagnosis</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support Technician</li>
+<li><strong>Action:</strong> Conduct an initial assessment to determine
+the scope and potential cause of the incident.</li>
+<li><strong>Timeline:</strong> Within 30 minutes of logging.</li>
+</ul></li>
+<li><p><strong>Step 2: Escalation (if needed)</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support Technician / IT Service
+Manager</li>
+<li><strong>Action:</strong> If the incident exceeds the technician’s
+scope, escalate to a specialized team (e.g., network operations or
+security).</li>
+<li><strong>Timeline:</strong> Within 1 hour of initial diagnosis.</li>
+</ul></li>
+<li><p><strong>Step 3: Root Cause Analysis</strong></p>
+<ul>
+<li><strong>Responsible:</strong> Escalated Team</li>
+<li><strong>Action:</strong> Perform a detailed investigation to
+identify the underlying cause of the incident.</li>
+<li><strong>Timeline:</strong> Depending on incident severity (Critical
+incidents should have preliminary analysis within 2 hours).</li>
+</ul></li>
+</ul>
+<h3 id="incident-resolution-recovery">5.3. <strong>Incident Resolution
+&amp; Recovery</strong></h3>
+<ul>
+<li><p><strong>Step 1: Resolution Implementation</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support or Specialized Team</li>
+<li><strong>Action:</strong> Apply the necessary fixes or workarounds to
+resolve the incident.</li>
+<li><strong>Timeline:</strong> As soon as the root cause is
+identified.</li>
+</ul></li>
+<li><p><strong>Step 2: Service Recovery</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support Desk</li>
+<li><strong>Action:</strong> Verify that the service has been restored
+to normal operating conditions.</li>
+<li><strong>Timeline:</strong> Immediately following resolution
+implementation.</li>
+</ul></li>
+<li><p><strong>Step 3: Communication with Stakeholders</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Service Manager</li>
+<li><strong>Action:</strong> Inform relevant stakeholders (affected
+departments, management) about the incident resolution and any follow-up
+actions required.</li>
+<li><strong>Timeline:</strong> Within 30 minutes of service
+recovery.</li>
+</ul></li>
+</ul>
+<h3 id="incident-closure-review">5.4. <strong>Incident Closure &amp;
+Review</strong></h3>
+<ul>
+<li><p><strong>Step 1: Incident Closure</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Support Desk</li>
+<li><strong>Action:</strong> Close the incident in the management system
+once verification is complete, ensuring all details are updated.</li>
+<li><strong>Timeline:</strong> Within 1 hour of service recovery.</li>
+</ul></li>
+<li><p><strong>Step 2: Post-Incident Review</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Service Manager</li>
+<li><strong>Action:</strong> Conduct a review meeting with the involved
+teams to discuss what happened, how it was handled, and what
+improvements can be made.</li>
+<li><strong>Timeline:</strong> Within 5 business days of incident
+closure.</li>
+</ul></li>
+<li><p><strong>Step 3: Documentation &amp; Process
+Improvement</strong></p>
+<ul>
+<li><strong>Responsible:</strong> IT Service Manager</li>
+<li><strong>Action:</strong> Update the incident documentation with
+lessons learned and adjust processes as needed for future
+improvements.</li>
+<li><strong>Timeline:</strong> Following the post-incident review.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="roles-and-responsibilities">6. <strong>Roles and
+Responsibilities</strong></h2>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Role</strong></th>
+<th><strong>Responsibility</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>All Employees</strong></td>
+<td>Detect and report potential incidents immediately.</td>
+</tr>
+<tr>
+<td><strong>IT Support Desk</strong></td>
+<td>Log, categorize, and initiate first-level diagnosis of reported
+incidents.</td>
+</tr>
+<tr>
+<td><strong>IT Support Technician</strong></td>
+<td>Perform initial diagnosis and escalate incidents as required.</td>
+</tr>
+<tr>
+<td><strong>Specialized Teams</strong></td>
+<td>Conduct in-depth root cause analysis and implement resolution
+actions.</td>
+</tr>
+<tr>
+<td><strong>IT Service Manager</strong></td>
+<td>Oversee the entire incident management process, facilitate
+communication, and lead post-incident reviews.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="process-metrics-and-kpis">7. <strong>Process Metrics and
+KPIs</strong></h2>
+<ul>
+<li><strong>Incident Response Time:</strong> Time from incident
+detection to logging.</li>
+<li><strong>Resolution Time:</strong> Time from incident logging to
+service recovery.</li>
+<li><strong>Escalation Rate:</strong> Percentage of incidents that
+require escalation to a specialized team.</li>
+<li><strong>Post-Incident Review Completion:</strong> Percentage of
+incidents followed by a review meeting within 5 business days.</li>
+<li><strong>User Satisfaction:</strong> Feedback from affected users
+post-resolution.</li>
+</ul>
+<hr />
+<h2 id="notes-and-considerations">8. <strong>Notes and
+Considerations</strong></h2>
+<ul>
+<li><strong>Communication:</strong><br />
+Regular updates should be provided to affected users throughout the
+incident lifecycle to maintain transparency.</li>
+<li><strong>Training:</strong><br />
+Ensure IT support staff and specialized teams receive regular training
+on the incident management process.</li>
+<li><strong>Continuous Improvement:</strong><br />
+Use feedback and post-incident reviews to refine and improve the process
+over time.</li>
+<li><strong>Compliance:</strong><br />
+Verify that incident handling adheres to any relevant industry
+regulations and internal policies.</li>
+</ul>
+<hr />
+<h2 id="revision-history">9. <strong>Revision History</strong></h2>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 21%" />
+<col style="width: 40%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Version</strong></th>
+<th><strong>Date</strong></th>
+<th><strong>Description of Change</strong></th>
+<th><strong>Author</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>February 1, 2025</td>
+<td>Initial documentation release.</td>
+<td>IT Service Manager</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>This IT Incident Management Process document is designed to be a
+living document. Regular updates and stakeholder reviews will ensure it
+remains accurate, effective, and aligned with both business needs and
+technical best practices. Use this as a foundation to develop, refine,
+and improve your organization’s incident management capabilities.</p>
+    
+</body>
+</html>
