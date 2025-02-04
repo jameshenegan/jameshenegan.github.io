@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="epic-end-to-end-mlops-project">Epic: End-to-End MLOps
+Project</h1>
+<p><strong>Objective:</strong><br />
+Transition from a single Azure ML workspace to a more robust,
+multi-workspace, version-controlled, and automated environment. This
+will improve collaboration, maintain model quality, and streamline the
+journey from development to production.</p>
+<hr />
+<h2 id="feature-1-versioned-code-in-an-azure-devops-repository">Feature
+1: Versioned Code in an Azure DevOps Repository</h2>
+<p><strong>Goal:</strong><br />
+Establish a source-controlled codebase that integrates with Azure
+Machine Learning and supports best practices (e.g., branching
+strategies, code reviews, and a clear repository structure).</p>
+<h3 id="user-stories">User Stories</h3>
+<ol type="1">
+<li><p><strong>Create or Identify a Test Repository</strong><br />
+<em>As a data scientist, I want to know which Azure DevOps repository to
+use so that I know where to store my code.</em></p></li>
+<li><p><strong>Establish a Well-Structured Repository</strong><br />
+<em>As a data scientist, I want the repository to have a clear and
+organized structure so that team members can quickly locate resources
+and code.</em></p></li>
+<li><p><strong>Clone the Repository into the AML Development
+Workspace</strong><br />
+<em>As a data scientist, I want to be able to clone the Azure DevOps
+repository into the notebooks section of the AML development workspace
+to facilitate development.</em></p></li>
+<li><p><strong>Push Changes from the AML Environment to the
+Repository</strong><br />
+<em>As a data scientist, I want to be able to push changes from my Azure
+ML development workspace back to the Azure DevOps repository so that all
+work is versioned.</em></p></li>
+<li><p><strong>Ensure Git Is Installed Locally</strong><br />
+<em>As a data scientist, I want Git installed on my local computer so I
+can develop code locally when needed.</em></p></li>
+<li><p><strong>Implement Branching Strategies and Approval
+Gates</strong><br />
+<em>As a data scientist, I want to use trunk-based development with
+proper approval gates so that only reviewed and accepted changes are
+merged into production.</em></p></li>
+<li><p><strong>Store Production Code as Scripts</strong><br />
+<em>As a data scientist, I want production code to be stored in scripts
+rather than notebooks for improved maintainability and
+automation.</em></p></li>
+</ol>
+<h3 id="example-work-items">Example Work Items</h3>
+<ul>
+<li><strong>Task:</strong> Set up an Azure DevOps project and create a
+test repository.</li>
+<li><strong>Task:</strong> Define and document the repository’s folder
+structure and naming conventions.</li>
+<li><strong>Task:</strong> Configure AML workspace to clone the
+repository and integrate with Git.</li>
+<li><strong>Task:</strong> Develop guidelines for code reviews,
+branching, and merging strategies.</li>
+<li><strong>Task:</strong> Create documentation for local Git
+installation and usage.</li>
+</ul>
+<hr />
+<h2 id="feature-2-ml-model-trained-on-simulated-data">Feature 2: ML
+Model Trained on Simulated Data</h2>
+<p><strong>Goal:</strong><br />
+Develop an ML pipeline that uses simulated data to train and evaluate
+machine learning models.</p>
+<h3 id="user-stories-1">User Stories</h3>
+<ol type="1">
+<li><strong>Incorporate Simulated Data into the ML
+Pipeline</strong><br />
+<em>As a data scientist, I want to integrate simulated data into my ML
+pipeline so that I can train and test models even in the absence of
+real-world data.</em></li>
+</ol>
+<h3 id="example-work-items-1">Example Work Items</h3>
+<ul>
+<li><strong>Task:</strong> Develop scripts or notebooks to simulate data
+based on project requirements.</li>
+<li><strong>Task:</strong> Integrate the simulated data generator into
+the model training pipeline.</li>
+<li><strong>Task:</strong> Validate the quality and consistency of the
+simulated data.</li>
+</ul>
+<hr />
+<h2 id="feature-3-separate-aml-environments">Feature 3: Separate AML
+Environments</h2>
+<p><strong>Goal:</strong><br />
+Separate development and production environments to ensure secure,
+isolated workflows and adhere to best practices.</p>
+<h3 id="user-stories-2">User Stories</h3>
+<ol type="1">
+<li><p><strong>Create a Production AML Workspace</strong><br />
+<em>As a data scientist, I want the production AML workspace to be
+separate from the development workspace so that production remains free
+of experimental work and maintains security best
+practices.</em></p></li>
+<li><p><strong>Move Trained Models to Production</strong><br />
+<em>As a data scientist, I want to be able to move trained models from
+the development AML workspace to the production workspace so that
+inferencing occurs in a stable, secure environment.</em></p></li>
+<li><p><strong>Perform Inferencing in Production</strong><br />
+<em>As a data scientist, I want inferencing to be executed in the
+production workspace so that results can be reliably delivered to
+downstream business processes.</em></p></li>
+</ol>
+<h3 id="example-work-items-2">Example Work Items</h3>
+<ul>
+<li><strong>Task:</strong> Provision and configure separate AML
+workspaces for development and production.</li>
+<li><strong>Task:</strong> Automate the transfer of trained models from
+development to production.</li>
+<li><strong>Task:</strong> Set up inferencing services in the production
+workspace.</li>
+</ul>
+<hr />
+<h2
+id="feature-4-continuous-integration-and-continuous-deployment-cicd">Feature
+4: Continuous Integration and Continuous Deployment (CI/CD)</h2>
+<p><strong>Goal:</strong><br />
+Implement automated pipelines to ensure that code changes, model
+training, testing, and deployment occur in a reliable, repeatable, and
+traceable manner.</p>
+<h3 id="user-stories-3">User Stories</h3>
+<ol type="1">
+<li><p><strong>Establish a Code Review Process</strong><br />
+<em>As a data scientist, I want all code changes to be reviewed before
+merging into the main branch to maintain high-quality code
+standards.</em></p></li>
+<li><p><strong>Implement Automated Testing</strong><br />
+<em>As a data scientist, I want automated tests (unit, integration, and
+performance tests) to run on new code so that issues are caught early
+and the system remains stable.</em></p></li>
+<li><p><strong>Automate Model Retraining</strong><br />
+<em>As a data scientist, I want the ML model to be retrained
+automatically whenever new code is merged so that it stays updated with
+the latest changes.</em></p></li>
+<li><p><strong>Perform Automated Model Checks</strong><br />
+<em>As a data scientist, I want the newly trained model to undergo
+automated performance and quality checks so that I can be confident in
+its effectiveness before deployment.</em></p></li>
+<li><p><strong>Set Up Approval Gates for Deployment</strong><br />
+<em>As a manager, I want an approval gate in place to ensure that a new
+model is only deployed to production after necessary reviews and
+validations.</em></p></li>
+<li><p><strong>Implement Automated Deployment</strong><br />
+<em>As a data scientist, I want the validated model to be automatically
+deployed to the production AML workspace once all tests pass and
+approvals are met, ensuring a seamless release process.</em></p></li>
+</ol>
+<h3 id="example-work-items-3">Example Work Items</h3>
+<ul>
+<li><strong>Task:</strong> Configure Azure DevOps pipelines for
+automated testing and code review integration.</li>
+<li><strong>Task:</strong> Develop and integrate automated tests into
+the CI/CD pipeline.</li>
+<li><strong>Task:</strong> Set up automated retraining and model
+performance evaluation steps in the pipeline.</li>
+<li><strong>Task:</strong> Create approval workflows within the
+deployment pipeline.</li>
+<li><strong>Task:</strong> Automate the deployment process to the
+production AML workspace.</li>
+</ul>
+<hr />
+<h2 id="feature-5-centralized-knowledge-base-for-mlops-research">Feature
+5: Centralized Knowledge Base for MLOps Research</h2>
+<p><strong>Goal:</strong><br />
+Establish a single, accessible repository for documentation, insights,
+and best practices related to MLOps to support ongoing learning and
+collaboration.</p>
+<h3 id="user-stories-4">User Stories</h3>
+<ol type="1">
+<li><strong>Create a Centralized Knowledge Base</strong><br />
+<em>As a data scientist, I want to create a centralized knowledge base
+so that I can easily store and share MLOps research, documentation, and
+insights.</em></li>
+</ol>
+<h3 id="example-work-items-4">Example Work Items</h3>
+<ul>
+<li><strong>Task:</strong> Evaluate and select a platform (e.g., Azure
+DevOps Wiki, Confluence, or SharePoint) for the knowledge base.</li>
+<li><strong>Task:</strong> Design the structure and taxonomy for
+organizing MLOps content.</li>
+<li><strong>Task:</strong> Migrate existing documentation and establish
+guidelines for future contributions.</li>
+</ul>
+<hr />
+<h2 id="additional-recommendations-new-features-user-stories">Additional
+Recommendations: New Features &amp; User Stories</h2>
+<h3 id="feature-data-versioning-and-lineage">Feature: Data Versioning
+and Lineage</h3>
+<ul>
+<li><strong>User Story:</strong><br />
+<em>As a data scientist, I want to version my datasets so that I can
+track changes over time and reproduce experiments reliably.</em></li>
+<li><strong>User Story:</strong><br />
+<em>As a data scientist, I want to track data lineage so I can
+understand how data transformations impact model performance.</em></li>
+</ul>
+<h3 id="feature-model-monitoring-and-performance-alerts">Feature: Model
+Monitoring and Performance Alerts</h3>
+<ul>
+<li><strong>User Story:</strong><br />
+<em>As a data scientist, I want to monitor the performance of deployed
+models so that I can quickly detect and respond to any degradation or
+anomalies.</em></li>
+<li><strong>User Story:</strong><br />
+<em>As a manager, I want to receive automated alerts when model
+performance falls below acceptable thresholds to ensure timely
+intervention.</em></li>
+</ul>
+<h3 id="feature-security-and-compliance">Feature: Security and
+Compliance</h3>
+<ul>
+<li><strong>User Story:</strong><br />
+<em>As a compliance officer, I want to ensure that data and model access
+is secure and logged so that we meet regulatory requirements.</em></li>
+<li><strong>User Story:</strong><br />
+<em>As a data scientist, I want to perform regular security scans on our
+code and models to identify vulnerabilities before deployment.</em></li>
+</ul>
+<h3 id="feature-experiment-tracking-and-management">Feature: Experiment
+Tracking and Management</h3>
+<ul>
+<li><strong>User Story:</strong><br />
+<em>As a data scientist, I want to track experiments and their outcomes
+so that I can compare results and select the best performing model for
+production.</em></li>
+<li><strong>User Story:</strong><br />
+<em>As a data scientist, I want to integrate experiment tracking into
+the CI/CD pipeline so that performance metrics are automatically
+recorded.</em></li>
+</ul>
+<h3 id="feature-rollback-mechanism">Feature: Rollback Mechanism</h3>
+<ul>
+<li><strong>User Story:</strong><br />
+<em>As a manager, I want a rollback mechanism so that if a newly
+deployed model underperforms, we can quickly revert to a previous,
+stable version.</em></li>
+</ul>
+<h3 id="feature-documentation-and-training-materials">Feature:
+Documentation and Training Materials</h3>
+<ul>
+<li><strong>User Story:</strong><br />
+<em>As a team member, I want comprehensive documentation and training
+materials for the MLOps processes so that new members can be onboarded
+quickly and effectively.</em></li>
+</ul>
+<hr />
+<h2 id="final-thoughts">Final Thoughts</h2>
+<p>This roadmap lays a solid foundation for building a mature MLOps
+process. By adopting version control, establishing separate
+environments, implementing CI/CD, and creating a centralized knowledge
+base, your team will be better equipped to maintain high model quality,
+improve collaboration, and ensure a smooth transition from development
+to production. The additional features further enhance the robustness of
+the overall system, addressing data management, security, monitoring,
+and maintainability concerns.</p>
+    
+</body>
+</html>
