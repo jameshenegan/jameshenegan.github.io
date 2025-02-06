@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is an overview of how to accomplish three main tasks in Azure
+Machine Learning (AML):</p>
+<ol type="1">
+<li><strong>Manually register a model</strong> in the Dev workspace</li>
+<li><strong>Register a model via code</strong> (either script or
+pipeline)</li>
+<li><strong>Create a “mature” AML pipeline</strong> that:
+<ul>
+<li>Generates simulated data</li>
+<li>Trains a model on simulated data</li>
+<li>Registers the model</li>
+</ul></li>
+</ol>
+<hr />
+<h1 id="register-a-model-manually-in-the-dev-workspace">1. Register a
+Model Manually in the Dev Workspace</h1>
+<p>If you already have a trained model artifact (e.g., a
+<code>.pkl</code> file) in your Dev AML workspace, you can manually
+register it via the AML Studio UI (sometimes called “Azure Machine
+Learning studio”):</p>
+<ol type="1">
+<li><strong>Go to the Dev AML workspace</strong> in the Azure portal or
+via <a href="https://ml.azure.com/">ml.azure.com</a>.</li>
+<li><strong>Navigate to <code>Models</code></strong> in the left-hand
+menu.</li>
+<li><strong>Click <code>Register model</code></strong>.</li>
+<li><strong>Provide model details</strong>:
+<ul>
+<li><strong>Name</strong>: A descriptive model name (e.g.,
+<code>my_simulated_model</code>).</li>
+<li><strong>Description</strong>: Short text about what it does.</li>
+<li><strong>Asset type</strong>: Choose <code>Custom model</code> (often
+the default).</li>
+<li><strong>Storage location</strong>: You can either upload the model
+file or provide a path from your default datastore (e.g.,
+<code>azureml://datastores/workspaceblobstore/paths/...</code>).</li>
+</ul></li>
+<li><strong>Optionally add tags and properties</strong> for easier
+tracking.</li>
+<li><strong>Click <code>Register</code></strong> to finish.</li>
+</ol>
+<p>Now your model is visible in the Dev workspace under
+<code>Models</code> with a version number (e.g., version 1, version 2,
+etc.).</p>
+<hr />
+<h1 id="register-a-model-via-code">2. Register a Model via Code</h1>
+<p>You can register a model programmatically using:</p>
+<ul>
+<li><strong>Python SDK v2</strong> (<code>azure-ai-ml</code>)</li>
+<li><strong>Python SDK v1</strong> (<code>azureml.core</code>)
+(older)</li>
+<li><strong>Azure ML CLI</strong></li>
+</ul>
+<p>Below are <strong>two</strong> examples: one with the
+<strong>v2</strong> SDK (recommended going forward) and one with the
+<strong>v1</strong> SDK.</p>
+<hr />
+<h2 id="using-the-v2-sdk-azure-ai-ml">2.1 Using the v2 SDK
+(azure-ai-ml)</h2>
+<h3 id="a-simple-python-script-example">(A) Simple Python Script
+Example</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages if needed:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install azure-ai-ml</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> Model</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming you have an azureml folder with .azureml/config.json</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># that points to your dev workspace&#39;s subscription, resource group, and workspace name</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>ml_client <span class="op">=</span> MLClient.from_config(credential<span class="op">=</span>DefaultAzureCredential())</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Path to your trained model artifact (local or in your AML default datastore)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> <span class="st">&quot;outputs/my_model.pkl&quot;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>my_model <span class="op">=</span> Model(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;my_simulated_model&quot;</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span>model_path,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Model trained on simulated data&quot;</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create or update the model in your workspace&#39;s model registry</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>registered_model <span class="op">=</span> ml_client.models.create_or_update(my_model)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Registered model: </span><span class="sc">{</span>registered_model<span class="sc">.</span>name<span class="sc">}</span><span class="ss"> v</span><span class="sc">{</span>registered_model<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<ol type="1">
+<li>This script connects to your AML workspace using
+<code>MLClient</code> (which relies on your local config or environment
+vars).</li>
+<li>It creates a <code>Model</code> object, providing a
+<code>name</code>, <code>path</code>, and <code>description</code>.</li>
+<li>Calls <code>create_or_update()</code> to register the model. You’ll
+see the model in the AML Studio under “Models” afterward.</li>
+</ol>
+<h3 id="b-registering-a-model-as-part-of-a-pipeline-job">(B) Registering
+a Model as Part of a Pipeline Job</h3>
+<p>In the v2 YAML-based pipelines, you can have a step that outputs a
+model artifact. Then, the pipeline can automatically register it. Below
+is a minimal snippet (YAML approach) for a pipeline job:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># file: pipeline_job.yml</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">train_job</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">component</span><span class="kw">:</span><span class="at"> train_component.yaml</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_output</span><span class="kw">:</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> mlflow_model</span><span class="co"> # or custom; naming depends on your pipeline definition</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> upload</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">register_job</span><span class="kw">:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> model</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_input</span><span class="kw">:</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">job_output</span><span class="kw">:</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">job_name</span><span class="kw">:</span><span class="at"> train_job</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">output_name</span><span class="kw">:</span><span class="at"> model_output</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> my_simulated_model</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Model trained on simulated data&quot;</span></span></code></pre></div>
+<ul>
+<li>In the pipeline, the <code>train_job</code> step produces an output
+named <code>model_output</code>.</li>
+<li>The <code>register_job</code> step is a special job type
+<code>model</code>, which instructs AML to register that output as a
+model in the workspace.</li>
+</ul>
+<p>You then submit this pipeline:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml job create <span class="at">--file</span> pipeline_job.yml</span></code></pre></div>
+<p>And AML will run <code>train_job</code>, then register the resulting
+artifact as <code>my_simulated_model</code>.</p>
+<hr />
+<h2 id="using-the-v1-sdk-azureml.core">2.2 Using the v1 SDK
+(azureml.core)</h2>
+<p>If you’re still on v1:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install azureml-sdk</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azureml.core <span class="im">import</span> Workspace, Model</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ws <span class="op">=</span> Workspace.from_config()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Model.register(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    workspace<span class="op">=</span>ws,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    model_name<span class="op">=</span><span class="st">&quot;my_simulated_model&quot;</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    model_path<span class="op">=</span><span class="st">&quot;outputs/my_model.pkl&quot;</span>,  <span class="co"># local path or remote path</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Model trained on simulated data&quot;</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    tags<span class="op">=</span>{<span class="st">&quot;framework&quot;</span>: <span class="st">&quot;sklearn&quot;</span>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Registered model </span><span class="sc">{</span>model<span class="sc">.</span>name<span class="sc">}</span><span class="ss">, version: </span><span class="sc">{</span>model<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h2 id="using-the-azure-ml-cli">2.3 Using the Azure ML CLI</h2>
+<p>You can also use the Azure ML CLI commands:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="at">--name</span> my_simulated_model <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--type</span> custom <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--path</span> <span class="st">&quot;outputs/my_model.pkl&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--description</span> <span class="st">&quot;Model trained on simulated data&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--resource-group</span> <span class="op">&lt;</span>your-rg<span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">--workspace-name</span> <span class="op">&lt;</span>your-ws<span class="op">&gt;</span></span></code></pre></div>
+<hr />
+<h1 id="create-a-mature-aml-pipeline">3. Create a “Mature” AML
+Pipeline</h1>
+<p>A “mature” AML pipeline typically has multiple steps:</p>
+<ol type="1">
+<li><strong>Generate Simulated Data</strong></li>
+<li><strong>Train a Model</strong> on that data</li>
+<li><strong>Register the Model</strong></li>
+</ol>
+<p>Below is a conceptual outline using <strong>Python SDK v2</strong>.
+It focuses on a single pipeline job that orchestrates multiple steps.
+We’ll illustrate the <strong>script-based approach</strong> for steps,
+but you could also do this in pure YAML.</p>
+<h3 id="folder-structure-example">3.1 Folder Structure (Example)</h3>
+<pre><code>my_pipeline/
+  ├── .azureml/
+  │    └── config.json  (dev workspace configs)
+  ├── pipeline_job.py
+  ├── data_generation.py
+  ├── train_model.py
+  └── environment/
+       └── conda_env.yml</code></pre>
+<h3 id="step-1-data-generation-script">3.2 Step 1: Data Generation
+Script</h3>
+<p><code>data_generation.py</code> might look like:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate fake data</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;feature1&#39;</span>: np.random.randn(<span class="dv">100</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;feature2&#39;</span>: np.random.randn(<span class="dv">100</span>),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;label&#39;</span>: np.random.randint(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">100</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    os.makedirs(<span class="st">&quot;outputs&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    df.to_csv(<span class="st">&quot;outputs/simulated_data.csv&quot;</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    main()</span></code></pre></div>
+<h3 id="step-2-training-script">3.3 Step 2: Training Script</h3>
+<p><code>train_model.py</code> might look like:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Read data</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(<span class="st">&quot;data/simulated_data.csv&quot;</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df[[<span class="st">&#39;feature1&#39;</span>, <span class="st">&#39;feature2&#39;</span>]]</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[<span class="st">&#39;label&#39;</span>]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Train</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> RandomForestClassifier()</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    model.fit(X, y)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save model</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    os.makedirs(<span class="st">&quot;outputs&quot;</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    joblib.dump(model, <span class="st">&quot;outputs/model.pkl&quot;</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    main()</span></code></pre></div>
+<p>Note that we’ll pass <code>simulated_data.csv</code> into
+<code>train_model.py</code> as input.</p>
+<h3 id="step-3-register-model-programmatically-in-the-pipeline">3.4 Step
+3: Register Model (Programmatically in the Pipeline)</h3>
+<p>You can either (a) do this as a separate script or (b) have the
+pipeline handle it automatically. Below is an example of a separate
+script <code>register_model.py</code> (though you might prefer to do it
+via a pipeline job definition directly).</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> Model</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main(model_path):</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    ml_client <span class="op">=</span> MLClient.from_config(credential<span class="op">=</span>DefaultAzureCredential())</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    registered_model <span class="op">=</span> ml_client.models.create_or_update(</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        Model(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="st">&quot;my_simulated_model&quot;</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            path<span class="op">=</span>model_path,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            description<span class="op">=</span><span class="st">&quot;Model from pipeline&quot;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Registered model </span><span class="sc">{</span>registered_model<span class="sc">.</span>name<span class="sc">}</span><span class="ss">, version </span><span class="sc">{</span>registered_model<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--model_path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    main(args.model_path)</span></code></pre></div>
+<h3 id="define-the-pipeline-job-python-sdk-v2">3.5 Define the Pipeline
+Job (Python SDK v2)</h3>
+<p>Finally, a pipeline definition that wires these steps together. We’ll
+create a Python file <code>pipeline_job.py</code>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> dsl, Input, Output</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> Environment, CommandComponent</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.constants <span class="im">import</span> AssetTypes</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>credential <span class="op">=</span> DefaultAzureCredential()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>ml_client <span class="op">=</span> MLClient.from_config(credential<span class="op">=</span>credential)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create or reference an existing environment (conda, Docker, etc.)</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> Environment(</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;my-env&quot;</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    conda_file<span class="op">=</span><span class="st">&quot;./environment/conda_env.yml&quot;</span>,  <span class="co"># path to your conda file</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    image<span class="op">=</span><span class="st">&quot;mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest&quot;</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define Command Component: data generation</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>data_gen_component <span class="op">=</span> CommandComponent(</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;data_generation&quot;</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&quot;Generate Simulated Data&quot;</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Generates fake CSV data&quot;</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span><span class="st">&quot;python data_generation.py&quot;</span>,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{},</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>{</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;output_data&quot;</span>: Output(<span class="bu">type</span><span class="op">=</span>AssetTypes.URI_FILE)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>env,</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    code<span class="op">=</span><span class="st">&quot;./&quot;</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Define Command Component: train model</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>train_component <span class="op">=</span> CommandComponent(</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;train_model&quot;</span>,</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&quot;Train Model&quot;</span>,</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span><span class="st">&quot;python train_model.py --some-arg 123&quot;</span>,</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;input_data&quot;</span>: Input(<span class="bu">type</span><span class="op">=</span>AssetTypes.URI_FILE)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>{</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;model_output&quot;</span>: Output(<span class="bu">type</span><span class="op">=</span>AssetTypes.URI_FOLDER)</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>env,</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    code<span class="op">=</span><span class="st">&quot;./&quot;</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Define Command Component: register model</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>register_component <span class="op">=</span> CommandComponent(</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;register_model&quot;</span>,</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&quot;Register Model&quot;</span>,</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span><span class="st">&quot;python register_model.py --model_path $</span><span class="sc">{{</span><span class="st">outputs.model_file</span><span class="sc">}}</span><span class="st">&quot;</span>,</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;model_file&quot;</span>: Input(<span class="bu">type</span><span class="op">=</span>AssetTypes.URI_FILE)</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>{},</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>env,</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>    code<span class="op">=</span><span class="st">&quot;./&quot;</span></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="at">@dsl.pipeline</span>(</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>    compute<span class="op">=</span><span class="st">&quot;cpu-cluster&quot;</span>,  <span class="co"># name of an existing compute cluster</span></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;End-to-end pipeline to generate data, train model, and register it.&quot;</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> e2e_pipeline():</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 1: Data generation</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>    data_step <span class="op">=</span> data_gen_component()</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 2: Train step</span></span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>    train_step <span class="op">=</span> train_component(input_data<span class="op">=</span>data_step.outputs.output_data)</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 3: Register step</span></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>    reg_step <span class="op">=</span> register_component(</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>        model_file<span class="op">=</span>train_step.outputs.model_output</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;final_model&quot;</span>: reg_step.outputs</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the pipeline</span></span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>pipeline_job <span class="op">=</span> e2e_pipeline()</span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Submit the pipeline job</span></span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>returned_job <span class="op">=</span> ml_client.jobs.create_or_update(pipeline_job)</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Pipeline job submitted: </span><span class="sc">{</span>returned_job<span class="sc">.</span>name<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="summary-of-the-pipeline-flow">3.6 Summary of the Pipeline
+Flow</h3>
+<ol type="1">
+<li><strong>Data Generation Step</strong>: Writes
+<code>simulated_data.csv</code> to its output.</li>
+<li><strong>Train Step</strong>: Reads that CSV, trains a model, saves
+<code>model.pkl</code> to <code>model_output</code>.</li>
+<li><strong>Register Step</strong>: Takes the <code>model.pkl</code>
+from the train step and registers it in AML.</li>
+</ol>
+<p>You will see these pipeline steps run in the Azure ML Studio under
+<code>Jobs</code> → <code>Pipeline jobs</code>.</p>
+<hr />
+<h1 id="key-takeaways">Key Takeaways</h1>
+<ol type="1">
+<li><strong>Manual Registration</strong>: Straightforward via the AML
+Studio UI, just ensure you have a model file accessible.</li>
+<li><strong>Code-Based Registration</strong>: Offers automation and
+version control. You can do this via the <strong>Python SDK</strong>,
+<strong>Azure ML CLI</strong>, or from a pipeline job.</li>
+<li><strong>Mature Pipeline</strong>: Typically orchestrates multiple
+steps: data prep, model training, and model registration. By codifying
+these steps in the AML pipeline (Python or YAML), you ensure
+reproducibility, traceability, and a foundation for advanced MLOps
+features (CI/CD).</li>
+</ol>
+<hr />
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><p><strong>Azure Machine Learning Documentation</strong>:<br />
+<a
+href="https://learn.microsoft.com/azure/machine-learning/">https://learn.microsoft.com/azure/machine-learning/</a></p></li>
+<li><p><strong>v2 SDK Examples (Python)</strong>:<br />
+<a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-create-machine-learning-pipelines?tabs=python">https://learn.microsoft.com/azure/machine-learning/how-to-create-machine-learning-pipelines?tabs=python</a></p></li>
+<li><p><strong>Azure ML CLI Reference</strong>:<br />
+<a
+href="https://learn.microsoft.com/azure/machine-learning/reference-azure-machine-learning-cli">https://learn.microsoft.com/azure/machine-learning/reference-azure-machine-learning-cli</a></p></li>
+</ul>
+<p>Using these approaches, you can progress from one-off experiments to
+a robust, version-controlled end-to-end MLOps workflow for your Dev and
+(eventually) Prod environments.</p>
+<h1 id="using-mlflow-instead">Using MLFlow instead</h1>
+<p>Absolutely—it makes perfect sense to save your model using MLflow
+instead of serializing it directly via <code>joblib</code>. MLflow
+integrates well with Azure Machine Learning (AML) and provides
+additional features like experiment tracking, logging parameters and
+metrics, and seamless model packaging. Below is an outline on how to
+modify the training approach to use MLflow.</p>
+<hr />
+<h2 id="why-use-mlflow">1. Why Use MLflow?</h2>
+<ul>
+<li><strong>Centralized Tracking</strong>: MLflow can track parameters,
+metrics, and artifacts in a single location.</li>
+<li><strong>Model Packaging</strong>: MLflow offers a standardized
+format for models (MLmodel format), enabling easier deployment to
+various environments.</li>
+<li><strong>Integration with Azure ML</strong>: AML can natively detect
+MLflow runs and artifacts, and you can even register MLflow models
+directly in the AML Model Registry.</li>
+</ul>
+<hr />
+<h2 id="basic-steps-to-use-mlflow">2. Basic Steps to Use MLflow</h2>
+<ol type="1">
+<li><strong>Set up MLflow tracking</strong>:
+<ul>
+<li>By default, when you run your script in Azure ML, MLflow is
+configured to log to your workspace’s MLflow tracking URI (assuming you
+are using the latest Azure ML Python SDK and have the environment
+configured properly).</li>
+</ul></li>
+<li><strong>Start an MLflow run</strong>:
+<ul>
+<li>In your training script, call <code>mlflow.start_run()</code> (or
+rely on auto-start if using <code>mlflow.autolog()</code> in an AML
+context).</li>
+</ul></li>
+<li><strong>Train your model</strong>:
+<ul>
+<li>Just as before.</li>
+</ul></li>
+<li><strong>Log the model with MLflow</strong>:
+<ul>
+<li>For example, use <code>mlflow.sklearn.log_model()</code> if you’re
+training a scikit-learn model, or a different flavor if you’re using
+PyTorch or TensorFlow.</li>
+</ul></li>
+<li><strong>(Optional) Log metrics and parameters</strong>:
+<ul>
+<li><code>mlflow.log_metric()</code> and <code>mlflow.log_param()</code>
+can help track the performance of your training run.</li>
+</ul></li>
+<li><strong>End the MLflow run</strong>:
+<ul>
+<li>This finalizes the logging of artifacts and metrics.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="example-training-script-with-mlflow">3. Example: Training Script
+with MLflow</h2>
+<p>Here’s a simplified training script (<code>train_model.py</code>)
+using <strong>scikit-learn</strong> and MLflow. We’ll assume you’re in
+an AML context (i.e., running this as part of an AML job or pipeline
+step) so that MLflow is automatically configured to track to your AML
+workspace.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train_model.py</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Import MLflow</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow.sklearn</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Start MLflow run (in AML, you can let AML start the run automatically,</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    but we&#39;ll be explicit here).</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    mlflow.start_run()</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Read or generate the data</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    (In a pipeline, you&#39;d typically use input data references; shown here as local CSV)</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    data_path <span class="op">=</span> <span class="st">&quot;data/simulated_data.csv&quot;</span>  <span class="co"># or an AML input reference</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(data_path)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df.drop(<span class="st">&quot;label&quot;</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[<span class="st">&quot;label&quot;</span>]</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. Train a simple model</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    model.fit(X, y)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4. Evaluate the model (log metrics to MLflow)</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    preds <span class="op">=</span> model.predict(X)</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> accuracy_score(y, preds)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    mlflow.log_metric(<span class="st">&quot;train_accuracy&quot;</span>, acc)</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 5. Log parameters (optional)</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>    mlflow.log_param(<span class="st">&quot;n_estimators&quot;</span>, <span class="dv">10</span>)</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    mlflow.log_param(<span class="st">&quot;random_state&quot;</span>, <span class="dv">42</span>)</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 6. Log the model artifact to MLflow</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    This stores the model in AML’s default artifact location, in MLflow’s format</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>    mlflow.sklearn.log_model(</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>        sk_model<span class="op">=</span>model,</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>        artifact_path<span class="op">=</span><span class="st">&quot;model&quot;</span>,              <span class="co"># artifact folder name within the run</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        registered_model_name<span class="op">=</span><span class="va">None</span>          <span class="co"># optional: provide a name to auto-register in MLflow</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If you specify `registered_model_name=&quot;MyModelName&quot;`, MLflow can attempt to register it</span></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># in an MLflow Model Registry. However, in Azure ML, you&#39;ll typically promote the model</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># to the AML Model Registry via either:</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   (a) &quot;Register model&quot; button in AML Studio</span></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   (b) Azure ML Python SDK or CLI</span></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 7. End the MLflow run</span></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>    mlflow.end_run()</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>    main()</span></code></pre></div>
+<h3 id="notes">Notes:</h3>
+<ul>
+<li>If running inside an AML job, you don’t necessarily need
+<code>mlflow.start_run()</code>/<code>mlflow.end_run()</code> manually.
+Azure ML can auto-manage the MLflow run. But being explicit can help you
+control exactly when the run starts/ends.</li>
+<li>When the script finishes, AML will have an MLflow run in the
+“Experiments” section of your workspace. You’ll see the model artifact
+under that run in AML Studio.</li>
+</ul>
+<hr />
+<h2 id="accessing-the-logged-model">4. Accessing the Logged Model</h2>
+<p>Once the training job completes:</p>
+<ol type="1">
+<li><strong>Find the Run</strong>: In the AML Studio
+(<code>ml.azure.com</code>), go to your workspace →
+<code>Experiments</code> → pick your run.</li>
+<li><strong>Click “Artifacts”</strong> or “Outputs + logs” to see the
+MLflow artifacts. You should see a folder named <code>model/</code>
+containing the MLflow model files (<code>MLmodel</code>,
+<code>conda.yaml</code>, and <code>model.pkl</code>).</li>
+</ol>
+<p>You can <strong>manually register</strong> it in AML by clicking
+<strong><code>Register model</code></strong> on the run’s page.
+Alternatively, you can programmatically register it in the AML Model
+Registry with the Python SDK if you want a fully automated approach (see
+the next section).</p>
+<hr />
+<h2 id="programmatically-registering-the-mlflow-model-in-aml">5.
+Programmatically Registering the MLflow Model in AML</h2>
+<p>Even though MLflow saved the model artifact, it’s still not
+“registered” in the AML Model Registry. You have two main options:</p>
+<ol type="1">
+<li><strong>Register directly from the Run artifact</strong></li>
+<li><strong>Download the MLflow model to a local path, then
+register</strong></li>
+</ol>
+<h3 id="register-using-run-artifacts-sdk-v2">5.1 Register Using Run
+Artifacts (SDK v2)</h3>
+<p>For a pipeline or script run, you can retrieve the <code>Run</code>
+object and register the MLflow model artifact:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> Model</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.constants <span class="im">import</span> AssetTypes</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Connect to your workspace</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>ml_client <span class="op">=</span> MLClient.from_config(credential<span class="op">=</span>DefaultAzureCredential())</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Suppose you know the job name or have the job object</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>job_name <span class="op">=</span> <span class="st">&quot;&lt;your-job-id&gt;&quot;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Construct the path to the MLflow model artifact</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># The path is typically: &quot;azureml://jobs/&lt;job-id&gt;/outputs/artifacts/.../model&quot;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co"># or you can list artifacts from the run to confirm.</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>model_artifact_path <span class="op">=</span> <span class="ss">f&quot;azureml://jobs/</span><span class="sc">{</span>job_name<span class="sc">}</span><span class="ss">/outputs/artifacts/paths/model/&quot;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Create a Model entity pointing to that artifact path</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>my_model <span class="op">=</span> Model(</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;my_mlflow_model&quot;</span>,</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span>model_artifact_path,</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span>AssetTypes.MLFLOW_MODEL,  <span class="co"># Important to specify it&#39;s an MLflow model</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;An MLflow model trained on simulated data&quot;</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Register the model in AML</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>registered_model <span class="op">=</span> ml_client.models.create_or_update(my_model)</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Registered model: </span><span class="sc">{</span>registered_model<span class="sc">.</span>name<span class="sc">}</span><span class="ss">, version: </span><span class="sc">{</span>registered_model<span class="sc">.</span>version<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="register-by-downloading-locally">5.2 Register by Downloading
+Locally</h3>
+<p>If you prefer to script the process by first
+<strong>downloading</strong> the MLflow model artifact locally from the
+run, you can then do:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Download the MLflow artifact from the run (using AML or MLflow APIs)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Point the `Model(path=...)` to the local folder</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. create_or_update() same as above</span></span></code></pre></div>
+<hr />
+<h2 id="integrating-this-with-an-aml-pipeline">6. Integrating This With
+an AML Pipeline</h2>
+<p>If you’re orchestrating everything via <strong>AML pipeline
+steps</strong>, just replace the <code>joblib.dump()</code> in your
+training component with the MLflow approach. For example:</p>
+<ol type="1">
+<li><strong>Generate Data Step</strong>: same as before (writes
+<code>simulated_data.csv</code>).</li>
+<li><strong>Train Model Step</strong>: uses
+<code>mlflow.sklearn.log_model()</code> to store the model in
+MLflow.</li>
+<li><strong>(Optional) Register Model Step</strong>: either:
+<ul>
+<li>A separate Python script that calls the AML SDK to register the
+MLflow model artifact from the training step’s run,
+<strong>OR</strong></li>
+<li>Some advanced configurations that instruct AML to auto-register an
+MLflow model (though this is less common, and you usually do it
+explicitly).</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="key-points-to-remember">7. Key Points to Remember</h2>
+<ol type="1">
+<li><strong>MLflow tracking</strong>: Make sure the environment where
+the script runs has <code>mlflow</code> installed and is configured to
+use <code>azureml</code> as the backend. Typically, in AML pipelines,
+this happens automatically if you use a supported Azure ML environment
+or <code>mlflow</code> in your conda dependencies.</li>
+<li><strong>Artifact Path</strong>:
+<code>mlflow.sklearn.log_model(sk_model, artifact_path="model")</code>
+creates a folder named <code>model/</code> inside your run artifacts.
+You could rename it, but “model/” is standard.</li>
+<li><strong>Registering</strong>: Logging a model to MLflow does
+<strong>not</strong> automatically register it in the AML Model
+Registry. Registration is a separate step—manual (in the UI) or via
+code.</li>
+</ol>
+<hr />
+<h2 id="putting-it-all-together">Putting It All Together</h2>
+<p>Here’s a <strong>condensed</strong> version of how your pipeline flow
+might look, focusing on changes for MLflow:</p>
+<ol type="1">
+<li><p><strong>data_generation.py</strong> (unchanged; outputs
+<code>simulated_data.csv</code>).</p></li>
+<li><p><strong>train_model.py</strong>:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow.sklearn</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ... generate or load data ...</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>mlflow.start_run()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> RandomForestClassifier(...)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>model.fit(X, y)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>mlflow.log_metric(<span class="st">&quot;accuracy&quot;</span>, ...)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>mlflow.sklearn.log_model(model, artifact_path<span class="op">=</span><span class="st">&quot;model&quot;</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>mlflow.end_run()</span></code></pre></div></li>
+<li><p><strong>register_model.py</strong> (example):</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use AML SDK to locate the run&#39;s MLflow artifact and register it as a Model</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># e.g., ml_client.models.create_or_update(...)</span></span></code></pre></div></li>
+</ol>
+<p>In your pipeline definition:</p>
+<ul>
+<li><strong>Step 1</strong>: runs <code>data_generation.py</code></li>
+<li><strong>Step 2</strong>: runs <code>train_model.py</code> (with
+MLflow)</li>
+<li><strong>Step 3</strong>: runs <code>register_model.py</code>
+(optional if you want an automated registration; otherwise, do it
+manually from the AML Studio).</li>
+</ul>
+<hr />
+<h3 id="additional-references">Additional References</h3>
+<ul>
+<li><strong>Azure ML + MLflow</strong>:<br />
+<a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-use-mlflow">https://learn.microsoft.com/azure/machine-learning/how-to-use-mlflow</a></li>
+<li><strong>Registering MLflow models in AML</strong>:<br />
+<a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-register-model-mlflow">https://learn.microsoft.com/azure/machine-learning/how-to-register-model-mlflow</a></li>
+<li><strong>MLflow docs</strong>:<br />
+<a
+href="https://mlflow.org/docs/latest/">https://mlflow.org/docs/latest/</a></li>
+</ul>
+<hr />
+<h3 id="conclusion">Conclusion</h3>
+<p>Switching from <code>joblib</code> to MLflow for model saving is
+straightforward:</p>
+<ol type="1">
+<li>Replace <code>joblib.dump(model, path)</code> with
+<code>mlflow.&lt;flavor&gt;.log_model(model, artifact_path="...")</code>.</li>
+<li>(Optionally) log metrics and parameters with
+<code>mlflow.log_metric()</code> and
+<code>mlflow.log_param()</code>.</li>
+<li>Register your MLflow artifact in AML either manually (UI) or
+automatically (SDK).</li>
+</ol>
+<p>This approach provides a more robust, trackable pipeline for your
+experiments and model artifacts.</p>
+    
+</body>
+</html>
