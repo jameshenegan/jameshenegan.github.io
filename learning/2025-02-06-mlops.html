@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="response-1">Response 1</h1>
+<p>Below is a simple example of what your Python scripts
+(e.g. <strong>transform.py</strong> and <strong>train.py</strong>) might
+look like in order to work with the pipeline you described. These
+examples use <a
+href="https://docs.python.org/3/library/argparse.html">argparse</a> to
+parse the command-line arguments passed in by Azure Machine Learning,
+and they illustrate how you might read and write data to the specified
+input/output locations.</p>
+<hr />
+<h2 id="transform.py">transform.py</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main(raw_data_path, transformed_data_path):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Load the raw data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    This example assumes there is a CSV file called &#39;raw.csv&#39;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    inside the raw_data_path directory. Adjust as needed.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    raw_csv_path <span class="op">=</span> os.path.join(raw_data_path, <span class="st">&quot;raw.csv&quot;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(raw_csv_path)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Perform some transformation(s)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    For demonstration, we&#39;ll just rename a column (if it exists).</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    In a real scenario, you might do data cleaning, feature engineering, etc.</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">&#39;old_column_name&#39;</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        df.rename(columns<span class="op">=</span>{<span class="st">&#39;old_column_name&#39;</span>: <span class="st">&#39;new_column_name&#39;</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. Save the transformed data</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    We must ensure we write into the transformed_data_path directory.</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    transformed_csv_path <span class="op">=</span> os.path.join(transformed_data_path, <span class="st">&quot;transformed.csv&quot;</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    df.to_csv(transformed_csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Transformed data saved to: </span><span class="sc">{</span>transformed_csv_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--raw_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder containing the raw data&quot;</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--transformed_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder where the transformed data should be written&quot;</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    main(args.raw_data, args.transformed_data)</span></code></pre></div>
+<h3 id="key-points">Key points</h3>
+<ul>
+<li><strong>Inputs</strong>: <code>--raw_data</code> is passed in by
+Azure ML (<code>${{inputs.raw_data}}</code>).</li>
+<li><strong>Outputs</strong>: We write the file
+<code>transformed.csv</code> to the directory given by
+<code>--transformed_data</code>
+(<code>${{outputs.transformed_data}}</code>).</li>
+</ul>
+<hr />
+<h2 id="train.py">train.py</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main(training_data_path, test_data_path, model_output_path):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Load the transformed data</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    transformed_csv_path <span class="op">=</span> os.path.join(training_data_path, <span class="st">&quot;transformed.csv&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(transformed_csv_path)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Split the data into training and test sets</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#    (Optionally, you could just use the data as-is, or do your own splits.)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df.drop(<span class="st">&quot;target_column&quot;</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[<span class="st">&quot;target_column&quot;</span>]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. Train a model (example: RandomForestRegressor)</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    model.fit(X_train, y_train)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4. Save the test data (if your pipeline needs it for further steps, or for evaluation)</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    test_csv_path <span class="op">=</span> os.path.join(test_data_path, <span class="st">&quot;test_data.csv&quot;</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    X_test[<span class="st">&quot;target_column&quot;</span>] <span class="op">=</span> y_test</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    X_test.to_csv(test_csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Test data saved to: </span><span class="sc">{</span>test_csv_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 5. Save the trained model</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    model_path <span class="op">=</span> os.path.join(model_output_path, <span class="st">&quot;model.pkl&quot;</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    joblib.dump(model, model_path)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Model saved to: </span><span class="sc">{</span>model_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--training_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder containing the training data (transformed data)&quot;</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--test_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder where the test data should be written&quot;</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--model_output&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder where the model should be saved&quot;</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    main(args.training_data, args.test_data, args.model_output)</span></code></pre></div>
+<h3 id="key-points-1">Key points</h3>
+<ul>
+<li><strong>Inputs</strong>: <code>--training_data</code> is provided
+via <code>train-job.inputs.training_data</code>, which comes from
+<code>transform-job.outputs.transformed_data</code>.</li>
+<li><strong>Outputs</strong>:
+<ul>
+<li><strong>Test data</strong> is saved into the
+<code>--test_data</code> directory
+(<code>${{outputs.test_data}}</code>).</li>
+<li><strong>Model file</strong> is saved into the
+<code>--model_output</code> directory
+(<code>${{outputs.model_output}}</code>).</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="yaml-pipeline-recap">YAML Pipeline Recap</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">type</span><span class="kw">:</span><span class="at"> pipeline</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">display_name</span><span class="kw">:</span><span class="at"> nyc-taxi-pipeline-example</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">experiment_name</span><span class="kw">:</span><span class="at"> nyc-taxi-pipeline-example</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">transform-job</span><span class="kw">:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">raw_data</span><span class="kw">:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./data</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">transformed_data</span><span class="kw">:</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">code</span><span class="kw">:</span><span class="at"> src/transform</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:cpu-cluster</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">    command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      python transform.py </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      --raw_data ${{inputs.raw_data}} </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      --transformed_data ${{outputs.transformed_data}}</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">train-job</span><span class="kw">:</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">training_data</span><span class="kw">:</span><span class="at"> ${{parent.jobs.transform-job.outputs.transformed_data}}</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_output</span><span class="kw">:</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">test_data</span><span class="kw">:</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">code</span><span class="kw">:</span><span class="at"> src/train</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:cpu-cluster</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="fu">    command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>      python train.py </span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>      --training_data ${{inputs.training_data}} </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>      --test_data ${{outputs.test_data}} </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>      --model_output ${{outputs.model_output}}</span></code></pre></div>
+<ul>
+<li>The <code>transform-job</code> runs <code>transform.py</code>,
+taking <strong>raw_data</strong> and producing
+<strong>transformed_data</strong>.</li>
+<li>The <code>train-job</code> takes the
+<strong>transformed_data</strong> from the <code>transform-job</code>
+(as <code>training_data</code>) and outputs both
+<strong>test_data</strong> and <strong>model_output</strong>.</li>
+</ul>
+<p>In your Azure ML workspace, you’d place:</p>
+<ul>
+<li><strong>transform.py</strong> in <code>src/transform/</code></li>
+<li><strong>train.py</strong> in <code>src/train/</code></li>
+<li>The raw CSV data in <code>./data/raw.csv</code> (or whatever data
+files you have)</li>
+</ul>
+<p>…and then run this pipeline job (e.g. via
+<code>az ml job create --file pipeline.yaml</code> or via the Azure ML
+Studio UI).</p>
+<hr />
+<h3 id="notes-and-best-practices">Notes and Best Practices</h3>
+<ol type="1">
+<li><p><strong>Path Handling</strong>:</p>
+<ul>
+<li>Use <code>os.path.join</code> to construct file paths.</li>
+<li>Avoid writing outside of the output directories provided by Azure
+ML.</li>
+</ul></li>
+<li><p><strong>Folder Inputs vs File Inputs</strong>:</p>
+<ul>
+<li>If your input is a folder (<code>type: uri_folder</code>), it may
+contain multiple files. Adjust your script to handle whichever files you
+expect.</li>
+</ul></li>
+<li><p><strong>Saving/Loading Models</strong>:</p>
+<ul>
+<li>The example uses <code>joblib</code> to save scikit-learn models.
+You can also use <code>pickle</code> or other serialization
+methods.</li>
+</ul></li>
+<li><p><strong>Performance Considerations</strong>:</p>
+<ul>
+<li>Large data might require distributed processing or more robust
+transforms (e.g., Spark). This minimal example is just for basic
+demonstration.</li>
+</ul></li>
+</ol>
+<p>With these two scripts—and your YAML pipeline definition—you have a
+simple end-to-end example of reading data, transforming it, training a
+model, and saving both test data and the trained model in Azure Machine
+Learning.</p>
+<p>When you see something like:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">transformed_data</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span></code></pre></div>
+<p>in an Azure Machine Learning <strong>Command job</strong> definition,
+it tells Azure ML:</p>
+<ol type="1">
+<li><strong>This job will produce an output named
+<code>transformed_data</code>.</strong></li>
+<li><strong>“mode: rw_mount”</strong> means that during the job’s
+execution, this output location is mounted as a filesystem so the script
+can write to it directly (read–write mount).</li>
+</ol>
+<h3 id="but-where-does-that-data-go">But <em>where</em> does that data
+go?</h3>
+<ul>
+<li><p><strong>Within the pipeline:</strong> The output
+(<code>transformed_data</code>) is made available to subsequent steps.
+Notice that in your pipeline YAML, <code>train-job</code> reads the
+value:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">training_data</span><span class="kw">:</span><span class="at"> ${{parent.jobs.transform-job.outputs.transformed_data}}</span></span></code></pre></div>
+<p>So, <code>train-job</code> receives exactly what
+<code>transform-job</code> wrote to
+<code>transformed_data</code>.</p></li>
+<li><p><strong>In your workspace storage:</strong> Under the hood, Azure
+ML writes all job inputs/outputs to your workspace’s default data
+storage (usually a Blob store). By default, these files are placed into
+an automatically generated location for that pipeline run. If you browse
+the run artifacts (for example, in Azure ML Studio under
+<strong>Jobs</strong> → <strong>Pipeline runs</strong> →
+“transform-job”), you’ll see a folder corresponding to
+<code>transformed_data</code>.</p></li>
+<li><p><strong>Ephemeral vs. permanent:</strong> Once the pipeline
+completes, Azure ML <em>does</em> keep the output in the run’s artifact
+store, so you can download it from the run’s artifacts. If you want to
+register it as a <em>permanent</em> dataset or store it in a more
+predictable path, you can:</p>
+<ol type="1">
+<li>Add a <code>path</code> parameter under
+<code>outputs.transformed_data</code> to define exactly where in your
+storage the data should go.</li>
+<li>Manually register the output as a <em>dataset</em> in your workspace
+afterward.</li>
+</ol></li>
+</ul>
+<h3 id="why-rw_mount">Why “rw_mount”?</h3>
+<p>Azure ML can handle your input/output data in different “modes”:</p>
+<ul>
+<li><strong><code>download</code></strong>: Download the data to local
+disk in the compute target.</li>
+<li><strong><code>upload</code></strong>: Automatically upload the job’s
+output back to the workspace at the end of the job.</li>
+<li><strong><code>rw_mount</code></strong> (read–write mount): Mount
+your workspace storage as a filesystem so you can both read and write
+directly without copying everything to local disk.</li>
+</ul>
+<p>Using <code>rw_mount</code> is good for:</p>
+<ul>
+<li>Large data that you don’t want to copy in full (it’s streamed
+on-demand).</li>
+<li>When you want to write output directly to the mounted storage.</li>
+</ul>
+<h3 id="putting-it-all-together">Putting it all together</h3>
+<ol type="1">
+<li><strong>Yes</strong>, the output from the transform-job
+<em>does</em> get saved—first in the mount location during the run, and
+then it is uploaded or persisted in the Azure ML “artifact store” (the
+run’s outputs) so that subsequent steps (like <code>train-job</code>)
+can use it.</li>
+<li>That “mode: rw_mount” setting simply tells Azure ML how to handle
+that output data during and after the job.</li>
+</ol>
+<h1 id="response-2">Response 2</h1>
+<p>Below is an example of how you might write your Python scripts to
+work with the YAML pipeline you provided. In this example, the pipeline
+has two steps:</p>
+<ol type="1">
+<li><p><strong>Transform Step (<code>transform.py</code>)</strong><br />
+This script reads raw data from an input folder (specified by the
+command‐line argument <code>--raw_data</code>), applies some
+transformation (for example, cleaning or feature engineering), and
+writes the transformed data to an output folder (specified by
+<code>--transformed_data</code>).</p></li>
+<li><p><strong>Train Step (<code>train.py</code>)</strong><br />
+This script reads the transformed data (passed via
+<code>--training_data</code>), splits it into training and test sets,
+trains a machine learning model (here, a simple Random Forest model),
+saves the trained model to a folder (specified by
+<code>--model_output</code>), and writes out test data for evaluation
+(specified by <code>--test_data</code>).</p></li>
+</ol>
+<p>Below are sample implementations for each:</p>
+<hr />
+<h3 id="example-srctransformtransform.py">Example:
+<code>src/transform/transform.py</code></h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">&quot;Transform raw taxi data.&quot;</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--raw_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder containing raw input data.&quot;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--transformed_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path where transformed data should be saved.&quot;</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For this example, assume the raw data is in a CSV file named &#39;data.csv&#39;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    raw_file <span class="op">=</span> os.path.join(args.raw_data, <span class="st">&quot;data.csv&quot;</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.exists(raw_file):</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="ss">f&quot;Expected file </span><span class="sc">{</span>raw_file<span class="sc">}</span><span class="ss"> not found.&quot;</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Read the raw data into a DataFrame</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(raw_file)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Example transformation: drop rows with missing values</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    transformed_df <span class="op">=</span> df.dropna()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ensure the output directory exists</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    os.makedirs(args.transformed_data, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save the transformed data as a CSV file</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    output_file <span class="op">=</span> os.path.join(args.transformed_data, <span class="st">&quot;transformed_data.csv&quot;</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    transformed_df.to_csv(output_file, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Transformed data saved to </span><span class="sc">{</span>output_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    main()</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><strong>Arguments Parsing:</strong><br />
+The script uses the <code>argparse</code> module to accept two
+command-line arguments: <code>--raw_data</code> (input folder) and
+<code>--transformed_data</code> (output folder).</p></li>
+<li><p><strong>Data Reading and Transformation:</strong><br />
+It reads a CSV file named <code>data.csv</code> from the raw data
+folder, performs a simple transformation (dropping missing values), and
+writes the result as <code>transformed_data.csv</code> to the output
+folder.</p></li>
+</ul>
+<hr />
+<h3 id="example-srctraintrain.py">Example:
+<code>src/train/train.py</code></h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">&quot;Train a taxi fare prediction model.&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--training_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the folder containing the transformed training data.&quot;</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--test_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path where test data should be saved.&quot;</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--model_output&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path where the trained model should be saved.&quot;</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Read the transformed data; assuming the file is named &#39;transformed_data.csv&#39;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    training_file <span class="op">=</span> os.path.join(args.training_data, <span class="st">&quot;transformed_data.csv&quot;</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.exists(training_file):</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">FileNotFoundError</span>(<span class="ss">f&quot;Expected file </span><span class="sc">{</span>training_file<span class="sc">}</span><span class="ss"> not found.&quot;</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(training_file)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For demonstration, assume &#39;fare&#39; is the target variable and all other columns are features.</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">&#39;fare&#39;</span> <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">&quot;The dataset must contain a &#39;fare&#39; column as the target.&quot;</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df.drop(<span class="st">&quot;fare&quot;</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[<span class="st">&quot;fare&quot;</span>]</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split data into training and testing sets</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Train a simple Random Forest model</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> RandomForestRegressor(random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    model.fit(X_train, y_train)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ensure the model output directory exists and save the trained model</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    os.makedirs(args.model_output, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    model_file <span class="op">=</span> os.path.join(args.model_output, <span class="st">&quot;model.pkl&quot;</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    joblib.dump(model, model_file)</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Trained model saved to </span><span class="sc">{</span>model_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save the test data for later evaluation</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    os.makedirs(args.test_data, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Combine features and target for the test set for convenience</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    test_df <span class="op">=</span> X_test.copy()</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    test_df[<span class="st">&quot;fare&quot;</span>] <span class="op">=</span> y_test</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    test_file <span class="op">=</span> os.path.join(args.test_data, <span class="st">&quot;test_data.csv&quot;</span>)</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    test_df.to_csv(test_file, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Test data saved to </span><span class="sc">{</span>test_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    main()</span></code></pre></div>
+<p><strong>Explanation:</strong></p>
+<ul>
+<li><p><strong>Arguments Parsing:</strong><br />
+The script accepts three command-line arguments:</p>
+<ul>
+<li><code>--training_data</code>: Folder containing the transformed data
+from the previous step.</li>
+<li><code>--test_data</code>: Folder where the test data (resulting from
+a train-test split) will be saved.</li>
+<li><code>--model_output</code>: Folder where the trained model will be
+stored.</li>
+</ul></li>
+<li><p><strong>Model Training and Saving:</strong><br />
+The script reads the transformed CSV, splits the data into training and
+test sets, trains a <code>RandomForestRegressor</code>, and saves the
+model using <code>joblib</code>.</p></li>
+<li><p><strong>Output:</strong><br />
+It also writes the test dataset (features and target) to the specified
+output folder.</p></li>
+</ul>
+<hr />
+<h3 id="how-this-integrates-with-your-yaml-pipeline">How This Integrates
+with Your YAML Pipeline</h3>
+<ul>
+<li><p><strong>Transform Job YAML Section:</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">transform-job</span><span class="kw">:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">raw_data</span><span class="kw">:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./data</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">transformed_data</span><span class="kw">:</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">code</span><span class="kw">:</span><span class="at"> src/transform</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:cpu-cluster</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">  command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    python transform.py </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    --raw_data ${{inputs.raw_data}} </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    --transformed_data ${{outputs.transformed_data}}</span></code></pre></div>
+<ul>
+<li>This job will mount the local <code>./data</code> folder into the
+job’s environment. The script <code>transform.py</code> will process
+<code>data/data.csv</code> (or whichever files are in that folder) and
+write <code>transformed_data/transformed_data.csv</code> into the output
+mount.</li>
+</ul></li>
+<li><p><strong>Train Job YAML Section:</strong></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">train-job</span><span class="kw">:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">training_data</span><span class="kw">:</span><span class="at"> ${{parent.jobs.transform-job.outputs.transformed_data}}</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">model_output</span><span class="kw">:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">test_data</span><span class="kw">:</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">code</span><span class="kw">:</span><span class="at"> src/train</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:cpu-cluster</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">  command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    python train.py </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    --training_data ${{inputs.training_data}} </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    --test_data ${{outputs.test_data}} </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    --model_output ${{outputs.model_output}}</span></code></pre></div>
+<ul>
+<li>This job will receive the output from the transform step as its
+input. The <code>train.py</code> script will then perform model training
+using the transformed data, save the trained model, and output test
+data.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="final-notes">Final Notes</h3>
+<ul>
+<li><p><strong>Customization:</strong><br />
+The provided scripts are simple examples. In a real scenario, you might
+need to handle multiple files, add more complex transformation logic,
+manage logging, handle errors, or pass additional hyperparameters to
+your training job.</p></li>
+<li><p><strong>Environment Considerations:</strong><br />
+Make sure that your Docker container or compute environment includes the
+necessary libraries (like <code>pandas</code>,
+<code>scikit-learn</code>, and <code>joblib</code>). In the YAML, the
+environment
+<code>azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest</code>
+should have these packages installed or you can customize your
+environment as needed.</p></li>
+</ul>
+<p>By following these examples, you should be able to construct Python
+scripts that integrate seamlessly with your Azure Machine Learning YAML
+pipeline.</p>
+<p>In Azure Machine Learning pipelines, the outputs section lets you
+specify artifacts that your job produces and that can be used by
+subsequent steps. Here’s a breakdown of what this snippet means:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">transformed_data</span><span class="kw">:</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">mode</span><span class="kw">:</span><span class="at"> rw_mount</span></span></code></pre></div>
+<h3 id="what-it-means">What It Means</h3>
+<ul>
+<li><p><strong>Output Name:</strong><br />
+<code>transformed_data</code> is the name of the output artifact
+produced by the <code>transform-job</code>. Think of it as a label or a
+handle that you can later reference in other pipeline steps.</p></li>
+<li><p><strong>Mode (<code>rw_mount</code>):</strong><br />
+The <code>rw_mount</code> mode indicates that this output will be made
+available as a mounted directory:</p>
+<ul>
+<li><strong>rw (read-write):</strong> Your job can both read from and
+write to this directory.</li>
+<li><strong>Mount:</strong> Instead of copying data back and forth, the
+system mounts a storage location (typically backed by your Azure ML
+datastore) into the compute environment. This makes file access fast and
+efficient during the job execution.</li>
+</ul></li>
+</ul>
+<h3 id="where-does-the-data-go">Where Does the Data Go?</h3>
+<ul>
+<li><p><strong>During Execution:</strong><br />
+When the job runs, the <code>transformed_data</code> directory is
+mounted into the container (or compute node). Your script (e.g.,
+<code>transform.py</code>) writes its output to that directory.</p></li>
+<li><p><strong>After Execution:</strong><br />
+Once the job completes, Azure ML automatically captures the contents of
+the <code>transformed_data</code> mount point and saves them as an
+output artifact of the run. This saved output is:</p>
+<ul>
+<li><strong>Persisted in the associated datastore:</strong> Azure ML
+stores the output artifacts in your configured storage (like Blob
+storage) behind the scenes.</li>
+<li><strong>Accessible in Subsequent Pipeline Steps:</strong> Later
+steps (like the <code>train-job</code> in your YAML) can reference this
+output using the syntax
+<code>${{parent.jobs.transform-job.outputs.transformed_data}}</code>,
+and the system will ensure the data is available to them.</li>
+</ul></li>
+</ul>
+<h3 id="summary">Summary</h3>
+<p>So, to answer your question directly: <strong>Yes, the output from
+the <code>transform-job</code> does get saved.</strong> It’s saved as an
+output artifact managed by Azure Machine Learning, and the
+<code>rw_mount</code> mode ensures that the data is written to a mounted
+storage location during the job, which is then persisted and available
+for future steps in your pipeline.</p>
+<p>This mechanism helps manage data flow between pipeline steps without
+you having to manually handle file transfers.</p>
+<h1 id="garbage">Garbage</h1>
+<ol type="1">
+<li>transform.py Purpose:</li>
+</ol>
+<p>Read raw data from the input folder (–raw_data). Perform any
+necessary cleaning or feature engineering. Write out the transformed
+data to the output folder (–transformed_data). Example structure python
+Copy Edit</p>
+<h1 id="transform.py-1">transform.py</h1>
+<p>import argparse import os import pandas as pd</p>
+<p>def parse_args(): parser = argparse.ArgumentParser()
+parser.add_argument(“–raw_data”, type=str, required=True, help=“Path to
+raw data folder”) parser.add_argument(“–transformed_data”, type=str,
+required=True, help=“Path to output folder for transformed data”) return
+parser.parse_args()</p>
+<p>def main(): args = parse_args()</p>
+<pre><code># ---------------------------------------------------
+# 1. Read input data
+#    The raw_data could be a folder or a file. If you
+#    have a single file, you can do something like:
+# ---------------------------------------------------
+raw_data_folder = args.raw_data
+raw_file_path = os.path.join(raw_data_folder, &quot;raw_data.csv&quot;)  # or however your file is named
+
+df = pd.read_csv(raw_file_path)
+
+# ---------------------------------------------------
+# 2. Transform data
+#    Place your transformation logic here.
+#    For example, renaming columns, filtering, feature engineering, etc.
+# ---------------------------------------------------
+df[&quot;new_feature&quot;] = df[&quot;some_numeric_column&quot;] * 2.5  # example transformation
+
+# ---------------------------------------------------
+# 3. Save transformed data
+#    The output location is typically a folder. We can
+#    create a new CSV or Parquet file inside it.
+# ---------------------------------------------------
+transformed_folder = args.transformed_data
+os.makedirs(transformed_folder, exist_ok=True)
+transformed_file_path = os.path.join(transformed_folder, &quot;transformed_data.csv&quot;)
+
+df.to_csv(transformed_file_path, index=False)
+print(f&quot;Transformed data saved to: {transformed_file_path}&quot;)</code></pre>
+<p>if <strong>name</strong> == “<strong>main</strong>”: main() Key
+points We parse the command-line arguments that Azure Machine Learning
+passes in. We read from args.raw_data, which will be mounted or
+downloaded (depending on your YAML config). We write to
+args.transformed_data, which Azure will treat as the “output” directory
+for this step. 2. train.py Purpose:</p>
+<p>Read the transformed data (from the previous step). Split data into
+train/test (or if already done, load it). Train a model (using any
+framework: scikit-learn, PyTorch, etc.). Save the trained model into the
+output folder (–model_output). Optionally save any test data or metrics
+to the –test_data folder. Example structure python Copy Edit</p>
+<h1 id="train.py-1">train.py</h1>
+<p>import argparse import os import pandas as pd from sklearn.ensemble
+import RandomForestRegressor from sklearn.model_selection import
+train_test_split import joblib # for saving model</p>
+<p>def parse_args(): parser = argparse.ArgumentParser()
+parser.add_argument(“–training_data”, type=str, required=True,
+help=“Path to training data folder”) parser.add_argument(“–test_data”,
+type=str, required=True, help=“Path to output folder for test data”)
+parser.add_argument(“–model_output”, type=str, required=True, help=“Path
+to output folder for the model”) return parser.parse_args()</p>
+<p>def main(): args = parse_args()</p>
+<pre><code># ---------------------------------------------------
+# 1. Read the transformed data
+#    The training_data might be a folder. If you wrote
+#    out a single CSV, open that file.
+# ---------------------------------------------------
+transformed_folder = args.training_data
+transformed_file_path = os.path.join(transformed_folder, &quot;transformed_data.csv&quot;)
+
+df = pd.read_csv(transformed_file_path)
+
+# ---------------------------------------------------
+# 2. Split data into train/test sets
+#    (Or you might already have a separate test set
+#     from the transform step.)
+# ---------------------------------------------------
+X = df.drop(&quot;target_column&quot;, axis=1)
+y = df[&quot;target_column&quot;]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# ---------------------------------------------------
+# 3. Train a model (e.g., Random Forest)
+# ---------------------------------------------------
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+print(&quot;Model training complete.&quot;)
+
+# ---------------------------------------------------
+# 4. Save the test data for other steps or evaluation
+# ---------------------------------------------------
+test_data_folder = args.test_data
+os.makedirs(test_data_folder, exist_ok=True)
+X_test_path = os.path.join(test_data_folder, &quot;X_test.csv&quot;)
+y_test_path = os.path.join(test_data_folder, &quot;y_test.csv&quot;)
+
+pd.DataFrame(X_test).to_csv(X_test_path, index=False)
+pd.DataFrame(y_test).to_csv(y_test_path, index=False)
+
+print(f&quot;Test data saved to: {X_test_path} and {y_test_path}&quot;)
+
+# ---------------------------------------------------
+# 5. Save the trained model
+# ---------------------------------------------------
+model_output_folder = args.model_output
+os.makedirs(model_output_folder, exist_ok=True)
+model_path = os.path.join(model_output_folder, &quot;model.joblib&quot;)
+joblib.dump(model, model_path)
+
+print(f&quot;Model saved to: {model_path}&quot;)</code></pre>
+<p>if <strong>name</strong> == “<strong>main</strong>”: main() Key
+points Again, we parse input arguments from Azure Machine Learning. We
+read from args.training_data (the output from the transform step). We
+optionally split into train/test or use your own approach. We save the
+model to args.model_output. We also save any test data or other
+artifacts to args.test_data. 3. Integrating with the YAML pipeline Given
+your YAML (simplified here):</p>
+<p>yaml Copy Edit $schema:
+https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline display_name: nyc-taxi-pipeline-example experiment_name:
+nyc-taxi-pipeline-example jobs:</p>
+<p>transform-job: type: command inputs: raw_data: type: uri_folder path:
+./data outputs: transformed_data: mode: rw_mount code: src/transform
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+compute: azureml:cpu-cluster command: &gt;- python transform.py
+–raw_data ${{inputs.raw_data}} –transformed_data
+${{outputs.transformed_data}}</p>
+<p>train-job: type: command inputs: training_data:
+${{parent.jobs.transform-job.outputs.transformed_data}} outputs:
+model_output: mode: rw_mount test_data: mode: rw_mount code: src/train
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+compute: azureml:cpu-cluster command: &gt;- python train.py
+–training_data ${{inputs.training_data}} –test_data
+${{outputs.test_data}} –model_output ${{outputs.model_output}}
+transform-job will execute transform.py with two arguments (raw_data and
+transformed_data). train-job will wait for the transform-job to finish,
+then run train.py with the transformed_data from the transform step as
+its training_data input, and produce model_output and test_data. 4.
+Directory Structure Suggestions A common directory structure might look
+like this:</p>
+<p>css Copy Edit my-azureml-project/ │ ├── data/ │ └── raw_data.csv │
+├── src/ │ ├── transform/ │ │ └── transform.py │ └── train/ │ └──
+train.py │ ├── pipeline.yaml ├── environment.yml (Optional if you have
+custom conda environment specs) └── README.md Ensure that:</p>
+<p>Your pipeline.yaml references the correct code paths (src/transform
+and src/train) relative to where the YAML file is located. You have the
+raw data in the data/ folder (or pointed to a remote location via path:
+azureml://datastores/… if needed). 5. Testing Locally Before running on
+Azure, it’s often helpful to test locally to ensure your Python scripts
+accept the arguments and run as expected:</p>
+<p>transform.py: bash Copy Edit python transform.py<br />
+–raw_data ./data<br />
+–transformed_data ./outputs/transformed train.py: bash Copy Edit python
+train.py<br />
+–training_data ./outputs/transformed<br />
+–test_data ./outputs/test<br />
+–model_output ./outputs/model If these run successfully and you see the
+expected outputs, you are in good shape to run the pipeline on
+Azure.</p>
+<p>Final Thoughts These example scripts provide a bare-bones approach
+(using Python’s argparse and scikit-learn). In practice, you might have
+more complex logic for feature engineering, hyperparameter tuning, or
+distributed training. The key takeaway is that the inputs and outputs in
+your YAML pipeline map directly to the command-line arguments of each
+Python script. Azure ML mounts (or downloads) those inputs into the
+container at runtime, and similarly, it captures anything you write to
+the designated output folders. That should give you a good starting
+point to build out your pipeline scripts!</p>
+    
+</body>
+</html>
