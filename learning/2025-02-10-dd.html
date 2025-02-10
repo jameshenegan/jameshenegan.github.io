@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="saturday-morning">Saturday Morning</h1>
+<h2 id="refine-the-problem-statement-and-scope">1. Refine the Problem
+Statement and Scope</h2>
+<ul>
+<li><strong>Meet with your manager(s) this week</strong> to confirm what
+“success” looks like at the end of the 10-week project.</li>
+<li>Identify the <strong>key questions</strong> you need answered before
+moving forward (e.g., “Do we need specific tool recommendations, or just
+a prototype?” “What’s the exact definition of ‘standardization’ for our
+department?”).</li>
+<li>Based on that conversation, <strong>finalize the MVP</strong>
+deliverables: for example, a clearly defined list of required
+documentation items and a handful of completed examples in a consistent,
+standardized format.</li>
+</ul>
+<h2 id="solidify-a-documentation-framework">2. Solidify a Documentation
+Framework</h2>
+<ul>
+<li><strong>Categorize documentation</strong> into a few main types
+(e.g., process vs. technical vs. standards). You’ve already started
+this, but try to finalize your list of categories so each team can see
+where their work fits.</li>
+<li><strong>Draft a simple template</strong> for each type of
+documentation. At minimum, include headings like Purpose, Scope, Steps
+(for processes), Technical Details, and any relevant references.</li>
+</ul>
+<h3 id="example-template-layout">Example Template Layout</h3>
+<ol type="1">
+<li><strong>Title</strong>: Clear name/identifier</li>
+<li><strong>Purpose</strong>: Why this document is needed</li>
+<li><strong>Scope</strong>: Which teams/systems/processes it covers</li>
+<li><strong>Details</strong>: Step-by-step instructions for processes,
+or architectural overviews for technical docs</li>
+<li><strong>Ownership</strong>: Who is responsible for updates?</li>
+<li><strong>Revision History</strong>: Who changed what, and when</li>
+</ol>
+<p>Even a one-page template helps make documentation consistent and
+easier to scan.</p>
+<h2 id="pilot-a-few-tools">3. Pilot a Few Tools</h2>
+<ul>
+<li><strong>Shortlist the tools</strong> your team might realistically
+use. For instance, if the organization is heavily into Microsoft
+products, SharePoint and Word templates might be simplest. If there is
+flexibility, you could consider Confluence, Notion, or GitBook.</li>
+<li><strong>Test out each tool</strong> (if possible) by creating a
+small sample document in each. Look at ease of use, searchability,
+version control, and how it handles multimedia (screenshots, screen
+recordings, etc.).</li>
+<li><strong>Present tool pros/cons</strong> to your manager or the team.
+This helps leadership see what might be involved in adoption and
+licensing.</li>
+</ul>
+<h2 id="gather-content-from-each-team">4. Gather Content From Each
+Team</h2>
+<ul>
+<li>Have each of the four teams (Data Analytics, Data Engineering,
+Business Intelligence, and Data Governance) <strong>list their top 3–5
+processes or systems</strong> that they consider high priority for
+documentation.</li>
+<li>Encourage each team to <strong>pick one example</strong> and fill
+out the new documentation template. This will serve as your MVP
+“showcase.”</li>
+<li>Focus on quality over quantity—if people see a solid format, they’ll
+be more likely to follow it.</li>
+</ul>
+<h2 id="implement-naming-conventions-and-version-control">5. Implement
+Naming Conventions and Version Control</h2>
+<ul>
+<li><strong>Propose naming conventions</strong> for files and folders,
+including consistent prefixes, dates, or version tags, to make them easy
+to locate.</li>
+<li>Decide on a basic version control approach—maybe just a “v1.0, v1.1”
+system or something more sophisticated if you use a platform like Git or
+a built-in Confluence feature.</li>
+<li>Make sure each team knows the naming rules and where the “master
+copy” of each document resides.</li>
+</ul>
+<h2 id="provide-guidance-training">6. Provide Guidance &amp;
+Training</h2>
+<ul>
+<li><strong>Offer short walkthroughs</strong> or training sessions for
+each team on how to use the chosen tool(s) and follow the documentation
+template.</li>
+<li>If you want to incorporate <strong>screen recordings and AI-based
+transcripts</strong>, demonstrate how it might help them capture
+knowledge quickly and then edit for clarity.</li>
+</ul>
+<h2 id="review-iterate">7. Review &amp; Iterate</h2>
+<ul>
+<li><strong>Set up a feedback loop</strong>—after teams produce their
+sample documentation, gather feedback on the template, the process, and
+the tools.</li>
+<li><strong>Refine the standards</strong> as needed, and make sure you
+capture everyone’s suggestions.</li>
+<li>As you head into the final weeks, compile all your results and
+learnings into a project summary or short final presentation for
+leadership.</li>
+</ul>
+<h2 id="plan-beyond-the-mvp">8. Plan Beyond the MVP</h2>
+<ul>
+<li>After the 10-week period, you’ll still have until year-end to
+actually “clean up” all documentation. Draft a <strong>post-MVP
+roadmap</strong> that outlines next steps, including:
+<ul>
+<li>Rolling the template out to other teams or departments.</li>
+<li>Establishing ongoing maintenance/updates.</li>
+<li>Possibly integrating more advanced automation or AI-based solutions
+(like automated transcription or generative content drafting) once you
+have a stable framework in place.</li>
+</ul></li>
+</ul>
+<hr />
+<p><strong>Key Takeaway</strong>:</p>
+<ul>
+<li><strong>Keep it simple</strong> at first. A short, workable template
+plus a clear, centralized location is often enough to demonstrate
+value.</li>
+<li><strong>Involve each team</strong> to make sure you capture their
+most critical processes or systems.</li>
+<li><strong>Document everything you learn</strong> so you can hand off a
+sustainable approach to the rest of the department and future
+collaborators.</li>
+</ul>
+<p>By taking these steps, your team will not only meet the short-term
+MVP goal but also lay the foundation for a long-term, efficient
+documentation culture within your department.</p>
+<h1 id="sunday-morning">Sunday Morning</h1>
+<h2 id="the-data-docs-project-introduction"><strong>The Data Docs
+Project: Introduction</strong></h2>
+<p>The Data Docs Project is a department-wide initiative involving
+members from each team in Corporate Data and Analytics—Business
+Intelligence, Data Governance, Data Engineering, and Data Analytics. The
+project focuses on how we create, store, and access documentation for
+the various processes we manage as a department.</p>
+<h3 id="main-objectives"><strong>Main Objectives</strong></h3>
+<ol type="1">
+<li><p><strong>Centralization of Documentation</strong><br />
+Currently, our knowledge is scattered across multiple platforms: Azure
+DevOps boards, Word documents, Excel files on SharePoint, emails, chat
+messages, or even in people’s heads. Our first objective is to identify
+and consolidate the most critical information into a single, easily
+accessible location.</p></li>
+<li><p><strong>Standardization of Documentation</strong><br />
+While each team’s processes differ, many share common elements. We aim
+to develop a consistent, readable structure that highlights these
+similarities—without forcing every process into an ill-fitting template.
+We should not alter established business practices just to fit a
+“one-size-fits-all” format. Instead, we need a flexible but uniform
+approach that promotes clarity and usability while accommodating each
+process’s unique aspects.</p></li>
+<li><p><strong>Ease of Use</strong><br />
+Both writing and finding documentation should be simple and
+straightforward. A user-friendly documentation solution increases the
+likelihood that team members will:</p>
+<ul>
+<li>Keep the documentation up to date.</li>
+<li>Find relevant information quickly.</li>
+<li>Understand the broader context of projects and initiatives.</li>
+<li>Drill down into additional details when needed.</li>
+</ul>
+<p>Our solution should be searchable, easy to digest, and designed to
+encourage collaboration and continuous improvement.</p></li>
+</ol>
+<hr />
+<h2 id="why-documentation-matters"><strong>Why Documentation
+Matters</strong></h2>
+<ol type="1">
+<li><p><strong>Clarity and Alignment</strong><br />
+Good documentation ensures that teams share the same understanding of
+goals, requirements, and processes. It reduces confusion, repetitive
+questions, and reliance on unspoken “tribal” knowledge.</p></li>
+<li><p><strong>Efficiency and Scalability</strong><br />
+Well-documented procedures streamline onboarding and troubleshooting. We
+often pose the scenario, “If a team member suddenly leaves—maybe they
+win the lottery—could someone else step in and carry out their
+processes?” Proper documentation helps make that possible.</p></li>
+<li><p><strong>Professionalism and Consistency</strong><br />
+A standardized style and structure demonstrate a cohesive brand
+identity. Clear formatting also reduces the cognitive burden for people
+who read or skim multiple documents.</p></li>
+</ol>
+<hr />
+<h2 id="foundations-of-good-documentation"><strong>Foundations of Good
+Documentation</strong></h2>
+<ol type="1">
+<li><p><strong>Well-Defined Audience and Scope</strong><br />
+Tailor content to the readers’ roles and technical backgrounds. Clearly
+define what is included and what is out of scope.</p></li>
+<li><p><strong>Clarity and Conciseness</strong><br />
+Favor plain language, avoid unnecessary jargon, and define
+acronyms.</p></li>
+<li><p><strong>Structure and Formatting</strong><br />
+Use consistent headings, page layouts, numbering, and version control.
+Incorporate visuals (figures, tables, diagrams) to illustrate complex
+ideas. Maintain a style guide that details fonts, spacing, labeling
+conventions, and corporate branding guidelines.</p></li>
+<li><p><strong>Maintenance and Revision</strong><br />
+Documentation must evolve with each product or process. Assign owners,
+automate reminders, and schedule regular reviews to keep content
+fresh.</p></li>
+</ol>
+<hr />
+<h2 id="types-of-documentation"><strong>Types of
+Documentation</strong></h2>
+<p>We’ve recognized that not all documentation is the same. Some common
+categories include:</p>
+<ol type="1">
+<li><p><strong>Business Process Documentation</strong><br />
+Outlines all the actions a person must perform to complete a task or
+carry out a process. For example, a step-by-step guide that walks a user
+through a recurring workflow.</p></li>
+<li><p><strong>Technical Documentation</strong><br />
+Explains how automated systems or software operate, enabling others to
+debug or modify them as needed. This is especially important for data
+pipelines, machine learning processes, and other automated
+tasks.</p></li>
+<li><p><strong>Project Management Documentation</strong><br />
+Includes meeting agendas and minutes, scope statements, and decision
+logs—essential for tracking project progress and decisions.</p></li>
+<li><p><strong>Standards or Naming Conventions</strong><br />
+Details how to name databases, views, tables, and other objects
+consistently. This might include guidelines like camelCase, snake_case,
+or prefix conventions for different types of data assets.</p></li>
+<li><p><strong>High-Level Goals or Mission Statements</strong><br />
+Broad statements that ensure everyone understands the overall objectives
+and direction of the department or project.</p></li>
+</ol>
+<hr />
+<h2 id="deciding-what-to-document"><strong>Deciding What to
+Document</strong></h2>
+<p>In one discussion, we focused on identifying <strong>which processes
+and items actually need documentation</strong>. We agreed on the
+importance of documenting any <strong>regular, repeatable
+processes</strong>. We also debated whether to document every one-off
+project. The consensus was that we don’t need to document trivial or
+purely unique events. However, if a one-off project involves a unique or
+complex issue, <strong>what was learned should be documented</strong> to
+prevent “reinventing the wheel” later.</p>
+<p>We also acknowledged some confusion around terms like “processes,”
+“procedures,” or “workflows,” but agreed they all refer to how we
+consistently get things done. For clarity, we may just pick one term
+(e.g., “process”) and use it consistently.</p>
+<hr />
+<h2 id="tools-and-platforms"><strong>Tools and Platforms</strong></h2>
+<p>A large part of our conversation covered potential tools and
+platforms for creating and organizing documentation. Examples
+include:</p>
+<ul>
+<li><strong>Obsidian</strong></li>
+<li><strong>Confluence</strong></li>
+<li><strong>Notion</strong></li>
+<li><strong>SharePoint</strong> (potentially with Word documents stored
+in a central library)</li>
+</ul>
+<p>We discussed the possibility of using <strong>screen
+recordings</strong> and then transcribing them into text for searching
+and summarizing. This would make it easy to add quick how-to videos
+alongside written explanations.</p>
+<p>However, we also recognized that <strong>the real challenge is
+writing good documentation</strong>, not just picking a tool. Tools can
+help, but the effort to document procedures accurately still requires
+human input and maintenance.</p>
+<hr />
+<h2 id="format-and-consistency"><strong>Format and
+Consistency</strong></h2>
+<p>We want a balance between <strong>consistency</strong> and
+<strong>flexibility</strong>. Different document types—process docs,
+project logs, technical references—may not look identical, but they
+should share certain <strong>standard elements</strong> where relevant,
+such as:</p>
+<ul>
+<li>Introduction or Summary</li>
+<li>Purpose</li>
+<li>Stakeholders</li>
+<li>Inputs and Outputs</li>
+<li>Permissions or Security Requirements</li>
+<li>Version/Revision History</li>
+</ul>
+<p>When these elements do appear, they should be presented in a
+recognizable way across teams.</p>
+<hr />
+<h2 id="naming-conventions-and-storage"><strong>Naming Conventions and
+Storage</strong></h2>
+<p>We need to decide <strong>where</strong> documents are stored and
+<strong>how</strong> they are named to avoid confusion. This involves
+setting up:</p>
+<ul>
+<li>A clear folder or space structure (e.g., SharePoint site, Confluence
+space).</li>
+<li>A consistent naming scheme for files (potentially including version
+numbers and dates).</li>
+</ul>
+<p>We also talked about examples where a data architect provided strict
+naming conventions for databases and views, such as guidelines for base
+views, selection views, derived views, interface views, and
+associations. That kind of documentation is essential for consistency in
+data engineering work.</p>
+<hr />
+<h2 id="resistance-and-job-security-concerns"><strong>Resistance and Job
+Security Concerns</strong></h2>
+<p>We acknowledged that some individuals might worry that sharing
+detailed documentation threatens their job security. It’s important to
+emphasize that thorough documentation is about <strong>knowledge
+sharing</strong> and <strong>team continuity</strong>, not replacing
+roles.</p>
+<hr />
+<h2 id="enhancing-documentation-with-video"><strong>Enhancing
+Documentation with Video</strong></h2>
+<p>Videos can be helpful for tasks that are easier to demonstrate
+visually. Screen recordings, especially when paired with transcripts,
+allow for more engaging and accessible guides. The text from these
+transcripts can be <strong>searched</strong> or
+<strong>summarized</strong> by various tools, making the overall process
+more efficient.</p>
+<hr />
+<h2 id="version-control-and-updates"><strong>Version Control and
+Updates</strong></h2>
+<p>Documentation becomes outdated quickly if it’s not actively
+maintained. We need a clear version control process, which might be as
+simple as:</p>
+<ul>
+<li>Keeping a version table in Word documents (last updated date, who
+updated, summary of changes).</li>
+<li>Using a platform that supports version control (like Git or built-in
+Confluence features).</li>
+</ul>
+<p>Regular reviews or scheduled reminders ensure content stays
+relevant.</p>
+<hr />
+<h2 id="examples-from-data-engineering"><strong>Examples from Data
+Engineering</strong></h2>
+<p>In Data Engineering, a typical example might be documenting a
+<strong>data flow</strong> from source systems into the enterprise data
+warehouse. This would include:</p>
+<ul>
+<li>Where the source tables live.</li>
+<li>What transformations are performed.</li>
+<li>How the data flows through staging, integration, and presentation
+layers.</li>
+</ul>
+<p>Such technical details are crucial for troubleshooting and onboarding
+new team members.</p>
+<hr />
+<p><strong>In summary</strong>, the Data Docs Project aims to establish
+a cohesive, department-wide approach to documentation that is
+centralized, standardized, and user-friendly. By defining different
+types of documentation, clarifying which processes to document,
+exploring tools, and creating consistent formats and naming conventions,
+we hope to improve knowledge sharing, efficiency, and alignment across
+all teams in Corporate Data and Analytics.</p>
+<h1 id="consolidated-plan">Consolidated Plan</h1>
+<h1 id="data-docs-project-overview-and-next-steps"><strong>Data Docs
+Project: Overview and Next Steps</strong></h1>
+<h2 id="introduction-and-context"><strong>1. Introduction and
+Context</strong></h2>
+<ul>
+<li><strong>Department &amp; Company</strong><br />
+We work in Corporate Data and Analytics at a life insurance company with
+a long history and multiple traditional departments (e.g., Actuarial,
+Underwriting, Claims, etc.). Our data-focused department is relatively
+new, and we’ve been tasked with improving documentation across all our
+teams.</li>
+<li><strong>Goal &amp; Timeline</strong><br />
+Our department aims to clean up and centralize documentation by the end
+of the year. We have a 10-week project (currently 3 weeks in) to propose
+and pilot solutions.</li>
+<li><strong>Vague Initial Challenge</strong><br />
+Managers asked: “What should our department’s documentation look like by
+year-end?” They highlighted:
+<ol type="1">
+<li><strong>Centralization</strong> – A single place for all key
+documents.</li>
+<li><strong>Standardization</strong> – Consistent
+formatting/structure.</li>
+<li><strong>Ease of Use</strong> – Straightforward for both writers and
+readers.</li>
+</ol></li>
+</ul>
+<h2 id="what-weve-accomplished-so-far"><strong>2. What We’ve
+Accomplished So Far</strong></h2>
+<ol type="1">
+<li><p><strong>Clarified Why Documentation Matters</strong></p>
+<ul>
+<li><strong>Clarity &amp; Alignment</strong>: Ensures everyone shares
+the same goals and processes.</li>
+<li><strong>Efficiency &amp; Scalability</strong>: Makes
+onboarding/troubleshooting faster; helps if someone leaves or
+transitions.</li>
+<li><strong>Professionalism &amp; Consistency</strong>: A standardized
+approach reduces confusion and presents a unified brand.</li>
+</ul></li>
+<li><p><strong>Explored Different Documentation Types</strong></p>
+<ul>
+<li><strong>Process Documentation</strong>: Step-by-step guides for
+recurring human-performed tasks.</li>
+<li><strong>Technical Documentation</strong>: Explains how automated
+systems (e.g., data pipelines) function, facilitating debugging and
+updates.</li>
+<li><strong>Project Management Artifacts</strong>: Meeting notes,
+decision logs, scope statements.</li>
+<li><strong>Standards &amp; Naming Conventions</strong>: Database naming
+rules, file naming consistency, etc.</li>
+<li><strong>High-Level Goals or Mission Statements</strong>: Gives teams
+a unifying direction.</li>
+</ul></li>
+<li><p><strong>Identified Key Needs</strong></p>
+<ul>
+<li><strong>A Central Repository</strong> (e.g., SharePoint, Confluence,
+Notion, etc.).</li>
+<li><strong>Consistent But Flexible Templates</strong>: Common headings
+(Purpose, Scope, Steps, Ownership, Revision History), adapted to
+specific document types.</li>
+<li><strong>Naming Conventions &amp; Version Control</strong>: Ensure
+documents remain organized and updated.</li>
+<li><strong>Tools &amp; Methods</strong>: Possibility of screen
+recordings with transcripts, AI-assisted summaries, or just standard
+Word documents—depending on each team’s comfort and needs.</li>
+</ul></li>
+<li><p><strong>Outlined a Proposed MVP (Minimum Viable
+Product)</strong></p>
+<ul>
+<li><strong>A List of What Needs Documenting</strong> across our four
+teams: Data Analytics, Data Engineering, Business Intelligence, and Data
+Governance.</li>
+<li><strong>Sample Documentation</strong> for each team, showcasing a
+consistent format (like 4–5 pages total, one per team).</li>
+</ul></li>
+</ol>
+<h2 id="observations-and-challenges"><strong>3. Observations and
+Challenges</strong></h2>
+<ul>
+<li><strong>Differences Among Teams</strong>: Data Engineering might
+focus on pipeline details, while Business Intelligence might emphasize
+dashboards or reporting processes. Not all documentation can look
+identical, but it should feel cohesive.</li>
+<li><strong>Resistance &amp; Job Security</strong>: Some team members
+may worry that documenting “their” processes makes them replaceable.
+Emphasize that documentation is a shared resource, not a threat.</li>
+<li><strong>Tools vs. Content</strong>: Tools alone don’t solve the
+problem; the real effort is generating high-quality, accurate
+documentation.</li>
+</ul>
+<h2 id="next-steps-proposed-action-plan"><strong>4. Next Steps (Proposed
+Action Plan)</strong></h2>
+<p>Below is a concise roadmap to guide our team over the remaining
+weeks:</p>
+<ol type="1">
+<li><p><strong>Refine the Project Scope</strong></p>
+<ul>
+<li>Meet with managers (Thursday) to confirm what success looks like:
+<ul>
+<li>Do they expect full tool recommendations or just a working
+prototype?</li>
+<li>What exact level of standardization do they want?</li>
+</ul></li>
+<li>Finalize which deliverables we can realistically provide in the next
+7 weeks.</li>
+</ul></li>
+<li><p><strong>Create a Documentation Framework</strong></p>
+<ul>
+<li>Finalize <strong>categories</strong> (Process Docs, Technical Docs,
+Standards, etc.).</li>
+<li>Draft simple <strong>templates</strong> for each category with
+common headings (Title, Purpose, Scope, Details, Ownership, Revision
+History).</li>
+</ul></li>
+<li><p><strong>Tool Evaluation &amp; Pilot</strong></p>
+<ul>
+<li>Pick the top 2–3 potential tools (e.g., SharePoint/Word, Confluence,
+Notion).</li>
+<li>Create a <strong>sample document</strong> in each tool to test ease
+of use, version control, and searchability.</li>
+<li>Gather initial feedback from your team on Monday, and present a
+short pros/cons list to managers on Thursday.</li>
+</ul></li>
+<li><p><strong>Gather Content From Each Team</strong></p>
+<ul>
+<li>Ask each of the four teams to identify their <strong>top 3–5
+processes</strong> or systems needing documentation.</li>
+<li>Have them <strong>pick one</strong> to document using the newly
+created template. This forms the “MVP Showcase.”</li>
+</ul></li>
+<li><p><strong>Naming Conventions &amp; Version Control</strong></p>
+<ul>
+<li>Decide on a naming scheme (e.g., “ProcessName_v1.0.docx” or
+“BI_Pipeline_2025-02_v1.md”).</li>
+<li>Propose a simple version control approach—could be an in-document
+table for changes or a platform with built-in version history.</li>
+</ul></li>
+<li><p><strong>Training &amp; Guidance</strong></p>
+<ul>
+<li>Provide <strong>brief walkthroughs</strong> for each team on how to
+use the chosen tool(s) and follow the template.</li>
+<li>Demonstrate optional enhancements (screen recordings, AI summaries)
+if resources allow.</li>
+</ul></li>
+<li><p><strong>Review &amp; Iterate</strong></p>
+<ul>
+<li>After the teams produce their sample docs, collect feedback.</li>
+<li>Refine templates, naming conventions, or tool choices based on
+real-world usage.</li>
+<li>Keep a <strong>shared feedback log</strong> so we can track
+improvements.</li>
+</ul></li>
+<li><p><strong>Post-MVP Roadmap</strong></p>
+<ul>
+<li>Once the 10-week pilot ends, plan how to <strong>scale</strong> the
+framework department-wide.</li>
+<li>Schedule <strong>ongoing maintenance</strong>: monthly or quarterly
+reviews, ownership assignments, etc.</li>
+<li>Consider more advanced automation or AI-based solutions once the
+basics are in place.</li>
+</ul></li>
+</ol>
+<h2 id="what-we-will-present-on-thursday"><strong>5. What We Will
+Present on Thursday</strong></h2>
+<p>By Thursday’s manager check-in, we aim to have:</p>
+<ol type="1">
+<li><p><strong>A Clearly Defined Scope</strong></p>
+<ul>
+<li>What exactly we’re delivering in the MVP (e.g., a small, tested
+documentation framework + some example docs).</li>
+</ul></li>
+<li><p><strong>A Draft Template &amp; Tool Shortlist</strong></p>
+<ul>
+<li>Demonstrate one or two short, completed documents to illustrate the
+template.</li>
+<li>Show a brief comparison of tool options (pros, cons, licensing
+needs).</li>
+</ul></li>
+<li><p><strong>A Team-Agreed Plan</strong></p>
+<ul>
+<li>Confirmation that each of the four teams understands what they’re
+documenting and that we’ve addressed any concerns about security or
+“busy work.”</li>
+</ul></li>
+</ol>
+<h2 id="summary-and-conclusion"><strong>6. Summary and
+Conclusion</strong></h2>
+<p><strong>The Data Docs Project</strong> is about establishing a
+cohesive, department-wide approach to documentation that is
+<strong>centralized</strong>, <strong>standardized</strong>, and
+<strong>user-friendly</strong>. We’ve clarified why this is important,
+laid out the various documentation types, and identified some tools and
+best practices. The next step is to <strong>finalize a practical
+MVP</strong> and get manager buy-in on our approach.</p>
+<p>By focusing on a clear template, a modest pilot of tools, and
+gathering concrete examples from each team, we’ll demonstrate real
+progress in the coming weeks—while still leaving room for further
+development throughout the year.</p>
+<hr />
+<h3 id="monday-meeting-what-to-do"><strong>Monday Meeting: What to
+Do</strong></h3>
+<ol type="1">
+<li><strong>Share this document</strong> with your teammates for review
+and alignment.</li>
+<li><strong>Confirm</strong> which processes or systems each team will
+document first.</li>
+<li><strong>Adjust</strong> anything that needs clarifying before the
+Thursday check-in.</li>
+</ol>
+<h3 id="thursday-check-in-key-points"><strong>Thursday Check-In: Key
+Points</strong></h3>
+<ul>
+<li><strong>Show the plan</strong> and any sample documentation.</li>
+<li><strong>Ask managers</strong> for final input on scope, success
+criteria, and tool preferences.</li>
+<li><strong>Gain approval</strong> to move forward with piloting the
+framework and collecting examples from each team.</li>
+</ul>
+<h1 id="notion-confluence-obsidian-etc.">Notion, Confluence, Obsidian,
+etc.</h1>
+<p>Notion, Confluence, and Obsidian are all potential platforms you
+could use for creating, organizing, and sharing data documentation. Each
+one has different strengths and trade-offs, so your choice may depend on
+your department’s collaboration style, technical requirements, and
+existing company infrastructure. Here’s a quick overview of how each
+tool might fit into your <strong>Data Docs Project</strong>:</p>
+<hr />
+<h2 id="notion"><strong>1. Notion</strong></h2>
+<ul>
+<li><strong>All-in-One Workspace</strong><br />
+Notion provides an intuitive blend of document creation, wikis,
+databases, and project management features. This flexibility can help
+you unify process docs, technical references, meeting notes, and
+more—all in one platform.</li>
+<li><strong>Ease of Collaboration</strong><br />
+Teams can edit pages in real time, leave comments, and track changes.
+Notion’s built-in templates and AI features (for writing, summarizing,
+and searching) can speed up documentation tasks.</li>
+<li><strong>Customizable Yet Simple</strong><br />
+While Notion is highly customizable, it remains relatively
+user-friendly, which can reduce onboarding friction. The downside is
+that with so many features, some teams might need guidance to avoid
+confusion or “over-engineering” their workspace.</li>
+<li><strong>Potential Fit for the Data Docs Project</strong><br />
+If you need a collaborative, visually appealing way to store a variety
+of documentation types (processes, technical specs, etc.) and quickly
+adapt as the project evolves, Notion is a strong contender.</li>
+</ul>
+<hr />
+<h2 id="confluence"><strong>2. Confluence</strong></h2>
+<ul>
+<li><strong>Enterprise Wiki Structure</strong><br />
+Confluence is well-known for organizing corporate knowledge. Its
+“Spaces” and “Pages” model fosters a clear hierarchy, making it easy to
+structure department-wide documentation.</li>
+<li><strong>Atlassian Ecosystem</strong><br />
+It integrates seamlessly with Jira and other Atlassian products—great if
+your teams already use Jira for project tracking. Confluence supports
+collaborative editing, comments, and version history for your
+pages.</li>
+<li><strong>Governance and Scalability</strong><br />
+Confluence has robust permission settings and can handle large user
+bases, which is beneficial if your life insurance company’s
+documentation initiative spans multiple departments.</li>
+<li><strong>Potential Fit for the Data Docs Project</strong><br />
+If your organization values a more traditional wiki approach, is already
+invested in the Atlassian ecosystem, or needs enterprise-level
+governance, Confluence is a safe and scalable choice.</li>
+</ul>
+<hr />
+<h2 id="obsidian"><strong>3. Obsidian</strong></h2>
+<ul>
+<li><strong>Local-First, Markdown-Based</strong><br />
+Obsidian stores all notes locally as plain Markdown files. This can be
+advantageous if your team needs to retain control over data, avoid
+proprietary lock-in, or work offline.</li>
+<li><strong>Backlinks and Graph View</strong><br />
+It excels at creating “knowledge maps” through internal linking and a
+graph view, which can be great for visually exploring how different
+processes or technical components connect.</li>
+<li><strong>Highly Customizable &amp; Lightweight</strong><br />
+Obsidian’s plugin ecosystem and theming options offer plenty of
+flexibility. However, it is more of a note-taking/personal knowledge
+management tool than a traditional collaborative wiki, so team
+collaboration might require additional setup (e.g., using a shared drive
+or Obsidian Sync).</li>
+<li><strong>Potential Fit for the Data Docs Project</strong><br />
+If you’re dealing with a smaller, tech-savvy team that values offline
+access, deep linking between concepts, and custom workflows—or if your
+documentation approach is more developer-oriented—Obsidian might be
+ideal. For broad, department-wide adoption, you’d need to ensure you
+have a solid syncing/collaboration strategy in place.</li>
+</ul>
+<hr />
+<h3 id="which-tool-is-best-for-data-documentation"><strong>Which Tool Is
+Best for Data Documentation?</strong></h3>
+<p>It ultimately depends on your department’s <strong>collaboration
+style</strong>, <strong>technical requirements</strong>, <strong>IT
+constraints</strong>, and <strong>future maintenance plans</strong>. If
+you want an <strong>enterprise-grade wiki</strong> closely tied to
+project management, Confluence might fit. If you need a <strong>highly
+flexible, visually appealing</strong> workspace that can handle
+everything from process docs to databases in a single place, Notion is
+appealing. If your priority is <strong>local data ownership</strong>,
+advanced linking, and a developer-friendly environment, Obsidian stands
+out.</p>
+<p>In many organizations, <strong>SharePoint</strong> (already part of
+Microsoft 365) or a <strong>combination</strong> of these tools might
+also make sense—especially if the company wants to minimize new
+licenses. The key is to <strong>test a small sample of
+documents</strong> in each tool, gather feedback from team members, and
+see how well each platform meets your documentation goals of being
+<strong>centralized</strong>, <strong>standardized</strong>, and
+<strong>easy to use</strong>.</p>
+    
+</body>
+</html>
