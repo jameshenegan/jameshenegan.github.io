@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="github">GitHub</h1>
+<p>Yes, it’s absolutely possible to use GitHub for documentation. In
+fact, there are two main ways to store documentation on GitHub:</p>
+<ol type="1">
+<li><p><strong>GitHub Wikis</strong></p>
+<ul>
+<li>Each GitHub repository can have its own wiki, which is essentially a
+mini documentation site.</li>
+<li>The wiki is backed by a separate Git repository, so you can clone
+it, edit pages locally, and push changes.</li>
+<li>You can write pages in Markdown, create links between pages, and
+even restrict access in private repositories (if you’re using GitHub
+Enterprise or a paid plan).</li>
+<li><strong>Pros</strong>: Easy to set up, integrates naturally with the
+project’s main repo, and supports version history.</li>
+<li><strong>Cons</strong>: Format and styling options are limited
+compared to dedicated documentation platforms, and navigation can feel
+less robust for very large documentation sets.</li>
+</ul></li>
+<li><p><strong>GitHub Pages (Static Site Hosting)</strong></p>
+<ul>
+<li>You can use GitHub Pages to host a static site generated from your
+repo (for instance, using a static site generator like Jekyll,
+Docusaurus, or MkDocs).</li>
+<li>This allows you to create a more polished, user-friendly
+documentation website, often with theming, a sidebar navigation, search,
+and other features.</li>
+<li><strong>Pros</strong>: Highly customizable, good for open-source or
+public-facing documentation, integrates well with Git-based
+workflows.</li>
+<li><strong>Cons</strong>: Requires some setup—learning or configuring a
+static site generator. Also, private repositories require a paid plan to
+use GitHub Pages privately (unless you’re on GitHub Enterprise).</li>
+</ul></li>
+</ol>
+<h3 id="why-use-github-for-documentation"><strong>Why Use GitHub for
+Documentation?</strong></h3>
+<ul>
+<li><strong>Version Control</strong>: Git-based workflows make it easy
+to track changes, revert to older versions, and enforce pull request
+reviews for edits.</li>
+<li><strong>Developer Familiarity</strong>: Many technical teams already
+use GitHub for code; documentation stored alongside code can streamline
+contributions.</li>
+<li><strong>Cost-Effectiveness</strong>: For public/open-source
+projects, GitHub Wikis and GitHub Pages are generally free to use.</li>
+</ul>
+<h3 id="potential-drawbacks"><strong>Potential Drawbacks</strong></h3>
+<ul>
+<li><strong>Collaboration Model</strong>: Non-developers might find
+Git-based workflows less intuitive than a point-and-click wiki editor
+like Confluence or Notion.</li>
+<li><strong>Limited Rich Media / Structure</strong>: GitHub Wikis don’t
+always have the same advanced features (e.g., drag-and-drop formatting,
+inline commenting, dynamic page hierarchies) that dedicated
+documentation tools provide.</li>
+<li><strong>Access Control &amp; Permissions</strong>: GitHub’s
+permission model might be more granular in Enterprise-level plans, but
+for smaller setups, you typically have to grant read/write to the whole
+repo.</li>
+</ul>
+<hr />
+<p><strong>In short</strong>: GitHub definitely supports documentation,
+either through its <strong>Wiki</strong> feature (simple, built-in wiki
+pages) or <strong>GitHub Pages</strong> (static site hosting for more
+polished docs). If your team is already comfortable with Git and
+primarily writes technical content, it can be a solid, cost-effective
+solution for version-controlled documentation. If you need a more
+user-friendly, non-developer-focused interface or robust wiki features,
+you might prefer specialized documentation platforms.</p>
+<h1 id="azure-devops">Azure DevOps</h1>
+<p><strong>Yes, you can absolutely store Markdown files in an Azure
+DevOps repo and then render them into a documentation site.</strong>
+This approach is similar to using Git-based wikis (like GitHub Wikis or
+GitBook) but runs in the Azure DevOps ecosystem, which you might already
+be using for source control, CI/CD pipelines, and project management.
+Below are some things to consider:</p>
+<hr />
+<h2 id="using-azure-devops-wiki-vs.-markdown-in-a-repo"><strong>1. Using
+Azure DevOps Wiki vs. Markdown in a Repo</strong></h2>
+<ol type="1">
+<li><p><strong>Azure DevOps Wiki</strong></p>
+<ul>
+<li>Azure DevOps provides a built-in wiki feature where each page is
+written in Markdown.</li>
+<li>It’s easy to set up, and the wiki is automatically linked with your
+project.</li>
+<li>You don’t have to manage a separate repository for the
+documentation—though it can be cloned and edited offline if needed.</li>
+</ul></li>
+<li><p><strong>Markdown in a Repo</strong></p>
+<ul>
+<li>You can place your <code>.md</code> files directly in a repo (e.g.,
+a dedicated “documentation” repo or your existing code repo).</li>
+<li>This can be combined with pipelines to <strong>generate a static
+site</strong> (HTML) using a tool such as <strong>MkDocs</strong>,
+<strong>Docusaurus</strong>, or any other static site generator.</li>
+<li>Once rendered, you can host the generated HTML pages in various
+ways:
+<ul>
+<li><strong>Azure DevOps Artifacts</strong> (less common for hosting
+documentation)</li>
+<li><strong>Azure Storage + Static Website</strong> feature</li>
+<li><strong>Azure Web App</strong> (for more complex setups)</li>
+</ul></li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="setting-up-a-static-site-generator"><strong>2. Setting Up a
+Static Site Generator</strong></h2>
+<p>If you want to do the repo + pipeline + generated site approach:</p>
+<ol type="1">
+<li><p><strong>Pick a Static Site Generator (SSG)</strong></p>
+<ul>
+<li><strong>MkDocs</strong> (simple Markdown-based docs, optional MkDocs
+Material theme for a professional look)</li>
+<li><strong>Docusaurus</strong> (popular for open-source or API docs,
+React-based)</li>
+<li><strong>Hugo</strong>, <strong>Jekyll</strong>, etc. (many options
+exist)</li>
+</ul></li>
+<li><p><strong>Configure a Pipeline</strong></p>
+<ul>
+<li>In your <strong>Azure DevOps pipeline</strong>, install the SSG
+(e.g., <code>pip install mkdocs</code> or
+<code>npm install docusaurus</code>).</li>
+<li>Run the build script to <strong>convert Markdown →
+HTML</strong>.</li>
+<li>Output the generated site into a folder (usually <code>site/</code>
+or <code>build/</code>).</li>
+</ul></li>
+<li><p><strong>Deploy the HTML</strong></p>
+<ul>
+<li><strong>Azure Static Web Apps</strong>: A straightforward option if
+you want a free-tier static site with automated deployment from Azure
+DevOps.</li>
+<li><strong>Azure Web App</strong>: You can zip up the site folder and
+deploy it as a web app.</li>
+<li><strong>Azure Storage</strong>: Enable static website hosting on a
+storage account, then upload the files.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="pros-of-markdown-azure-devops-repo"><strong>3. Pros of Markdown
++ Azure DevOps Repo</strong></h2>
+<ul>
+<li><strong>Version Control &amp; Familiar Workflow</strong>: All the
+benefits of Git-based versioning—pull requests, code reviews, branching,
+tagging releases—apply to docs.</li>
+<li><strong>Developer-Friendly</strong>: Markdown is lightweight and
+easy to use, especially for those accustomed to writing in plain
+text.</li>
+<li><strong>Full Customization</strong>: A static site generator allows
+you to tailor the look, navigation, and structure exactly how you
+want.</li>
+<li><strong>One-Stop Shop</strong>: Your code, issues, pipelines, and
+documentation can all live in Azure DevOps, simplifying access control
+and discoverability.</li>
+</ul>
+<hr />
+<h2 id="cons-considerations"><strong>4. Cons /
+Considerations</strong></h2>
+<ol type="1">
+<li><p><strong>Learning Curve for Non-Tech Staff</strong></p>
+<ul>
+<li>Non-developers might find “clone repo → edit Markdown → push changes
+→ pipeline build” more daunting than a point-and-click wiki editor.</li>
+<li>You can mitigate this by using the <strong>Azure DevOps web
+interface</strong> to edit Markdown files, but the process may still be
+less intuitive than a dedicated documentation tool.</li>
+</ul></li>
+<li><p><strong>Setup &amp; Maintenance</strong></p>
+<ul>
+<li>You’ll have to configure a pipeline and maintain the static site
+generator. Small overhead, but it’s extra work.</li>
+<li>If your documentation is large or you want advanced features
+(search, versioning, translations), you’ll need to customize your SSG
+accordingly.</li>
+</ul></li>
+<li><p><strong>Lack of Real-Time Collaboration</strong></p>
+<ul>
+<li>Markdown in a repo doesn’t inherently provide real-time
+collaborative editing, unlike some wikis (Confluence, Notion). You can
+only see changes after they’re committed/pushed.</li>
+</ul></li>
+<li><p><strong>Permission Granularity</strong></p>
+<ul>
+<li>Access to the repo is controlled at the project or branch level. If
+you have specialized permissions requirements (e.g., certain pages
+visible only to certain roles), you may need complex branching or
+multiple repos.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="putting-it-all-together"><strong>5. Putting It All
+Together</strong></h2>
+<p>If your team is:</p>
+<ul>
+<li>Comfortable with Git workflows (or at least can handle pull requests
+for doc changes).</li>
+<li>Already using Azure DevOps for CI/CD and code management.</li>
+<li>Interested in controlling the presentation and structure of your
+docs in a <strong>highly customizable</strong> way.</li>
+</ul>
+<p>Then <strong>storing Markdown in an Azure DevOps repo, generating
+HTML via a pipeline, and hosting a static site</strong> is a very
+powerful method. You’ll get version control, a professional-looking
+site, and minimal licensing costs (since you’re leveraging your existing
+Azure DevOps subscription).</p>
+<p>If, however, your organization has a large number of
+<strong>non-technical contributors</strong> or requires <strong>robust,
+user-friendly wiki editing</strong>, you might consider:</p>
+<ul>
+<li><strong>Azure DevOps Wiki</strong> for simpler, browser-based
+editing.</li>
+<li><strong>SharePoint</strong> with Word docs if your company is
+strictly Microsoft-based and prefers a more familiar interface.</li>
+<li>A specialized tool like <strong>Confluence, Notion, or
+GitBook</strong> if you need advanced features (e.g., dynamic search,
+custom permission levels, or real-time collaboration).</li>
+</ul>
+<hr />
+<h3 id="summary"><strong>Summary</strong></h3>
+<p><strong>Using Markdown in an Azure DevOps repo</strong> is a solid
+approach for a developer-centric documentation workflow, especially if
+you want to <strong>automate</strong> publishing a <strong>clean, static
+website</strong>. It provides robust version control and integrates
+seamlessly with your existing pipelines. The main trade-offs involve a
+slightly higher setup cost, less real-time collaboration, and a steeper
+learning curve for non-technical users.</p>
+<h1 id="motivation">Motivation</h1>
+<p>Below is a comprehensive summary of the key characteristics and
+behaviors of the standout software development team described:</p>
+<ol type="1">
+<li><p><strong>Exceptional Technical Prowess</strong></p>
+<ul>
+<li>Authored white-papers, presented at conferences like MSBuild, gave
+lectures, and published advanced architectural frameworks.</li>
+<li>Invented their own patterns to address complex problems with
+elegant, lightweight solutions.</li>
+</ul></li>
+<li><p><strong>Methodological Approach</strong></p>
+<ul>
+<li>Fully embraced the principles of Agile but rejected the rigidity and
+prescriptiveness of Scrum.</li>
+<li>Treated code as a flexible tool rather than aligning with any single
+platform or language, maintaining minimal technological bias.</li>
+<li>Possessed a relentless curiosity, always hungry for newer and better
+tooling, practices, or paradigms.</li>
+</ul></li>
+<li><p><strong>Work and Collaboration Style</strong></p>
+<ul>
+<li>Highly autonomous, able to work independently for prolonged
+stretches without losing momentum.</li>
+<li>Required minimal management oversight, as they understood core
+business needs and customer requirements on their own.</li>
+<li>Collaborated effectively when necessary but thrived on focused,
+uninterrupted work sessions.</li>
+</ul></li>
+<li><p><strong>Close-Knit Personal and Professional Bonds</strong></p>
+<ul>
+<li>Strong, supportive family lives and tight friendships that extended
+beyond office hours, including their families spending time
+together.</li>
+<li>Regularly assisted each other with side projects purely for
+enjoyment and learning.</li>
+</ul></li>
+<li><p><strong>Mobility and Impact</strong></p>
+<ul>
+<li>Attracted significant interest from startups and large tech
+companies due to their collective capabilities.</li>
+<li>Their employer recognized that they could depart as a group and
+potentially secure funding to form a new venture, posing a high risk of
+losing irreplaceable talent.</li>
+<li>Occasionally left to explore new ventures or external opportunities,
+yet often returned with enhanced skills and experiences, benefiting the
+entire team.</li>
+</ul></li>
+<li><p><strong>Constant Pursuit of Improvement</strong></p>
+<ul>
+<li>Maintained a healthy level of doubt and uncertainty about their
+work, continuously questioning methods and remaining open to new or
+improved approaches.</li>
+</ul></li>
+</ol>
+<p>Overall, these developers exemplified a rare blend of top-tier
+expertise, humility, and camaraderie. They operated with minimal
+oversight, fostered a culture of continuous learning, and balanced
+professional drive with personal well-being and strong community ties.
+Their impact on product development, organizational culture, and
+industry thought leadership made them indispensable—and also fully aware
+of the unique leverage their collective talent afforded them.</p>
+<h1 id="goals-1">Goals 1</h1>
+<p>Below is a version with each goal presented as a single bullet point.
+Feel free to modify any details to best suit your needs.</p>
+<hr />
+<h3 id="professional-goals"><strong>Professional Goals</strong></h3>
+<ol type="1">
+<li><p><strong>Enhance MLOps Maturity</strong>: By Q1, complete an
+end-to-end ML project using simulated data that integrates Azure DevOps
+with Azure Machine Learning to manage version control, model
+registration, and inference pipelines, then transition selected
+production projects to this improved framework throughout the
+year.</p></li>
+<li><p><strong>Overhaul Department Documentation</strong>: Collaborate
+with the documentation team to consolidate and standardize content
+across platforms, culminating in a new framework that simplifies both
+content creation and access, ensuring consistency
+department-wide.</p></li>
+<li><p><strong>Generative Engine Optimization</strong>:</p></li>
+<li><p><strong>Synthetic Data Exploration</strong>: Investigate
+synthetic data solutions (e.g., Hazy, Gretel), support proof-of-concept
+evaluations, and, if viable, help establish a synthetic data platform
+within the company.</p></li>
+<li><p><strong>Adopt Denodo for Data Science</strong>: Work with Data
+Governance and Engineering teams to learn and integrate Denodo into data
+science workflows, improving data accessibility and integration for
+advanced analytics.</p></li>
+<li><p><strong>Develop a Python Snippet Library</strong>: Create and
+maintain a repository of Python code snippets for common data science
+tasks—such as data profiling, descriptive statistics, visualizations,
+and model development—to accelerate project delivery.</p></li>
+</ol>
+<hr />
+<h3 id="personal-goals"><strong>Personal Goals</strong></h3>
+<ol type="1">
+<li><p><strong>Complete Five LOMA Courses</strong>: Strengthen industry
+knowledge by finishing five Life Office Management Association courses
+relevant to life insurance.</p></li>
+<li><p><strong>Prepare for and Run the Watermelon Classic</strong>:
+Train for and participate in the annual 5K race in July.</p></li>
+<li><p><strong>Read Four O’Reilly Books</strong>: Select and complete
+four books on the O’Reilly platform to enhance professional development
+and broaden technical expertise.</p></li>
+</ol>
+<hr />
+<h1 id="goals-2">Goals 2</h1>
+<p>Below is a more concise, professional-sounding version of your goals.
+Feel free to adjust any details to better reflect your intentions or
+workplace requirements.</p>
+<hr />
+<p><strong>Professional Goals</strong></p>
+<ol type="1">
+<li><p><strong>Enhance MLOps Maturity</strong></p>
+<ul>
+<li><strong>Q1 Objective</strong>: Complete an end-to-end ML project
+using simulated data, integrating Azure DevOps with Azure Machine
+Learning to manage version control, model registration, and inference
+pipelines.</li>
+<li><strong>Year-Round Objective</strong>: Transition selected
+production projects to this improved MLOps framework, increasing overall
+efficiency and auditability.</li>
+</ul></li>
+<li><p><strong>Overhaul Department Documentation</strong></p>
+<ul>
+<li><strong>Primary Goal</strong>: Collaborate with the departmental
+documentation team to consolidate, standardize, and improve
+documentation across multiple platforms.</li>
+<li><strong>End-of-Year Outcome</strong>: Implement a new documentation
+framework that simplifies content creation and usage, ensuring
+consistency and ease of access department-wide.</li>
+</ul></li>
+<li><p><strong>Generative Engine Optimization</strong></p></li>
+<li><p><strong>Synthetic Data Exploration</strong></p>
+<ul>
+<li><strong>Focus</strong>: Continue researching synthetic data
+solutions, including vendor evaluations (e.g., Hazy, Gretel).</li>
+<li><strong>Action</strong>: Assist in proof-of-concept discussions and,
+if viable, support the establishment of a synthetic data platform within
+the company.</li>
+</ul></li>
+<li><p><strong>Adopt Denodo for Data Science</strong></p>
+<ul>
+<li><strong>Plan</strong>: Learn and adapt to Denodo in collaboration
+with the Data Governance and Data Engineering teams.</li>
+<li><strong>Purpose</strong>: Streamline data access and integration for
+more robust data science projects.</li>
+</ul></li>
+<li><p><strong>Develop a Python Snippet Library</strong></p>
+<ul>
+<li><strong>Objective</strong>: Establish a repository of Python code
+snippets to accelerate common data science tasks (e.g., data profiling,
+descriptive statistics, visualizations, machine learning models).</li>
+</ul></li>
+</ol>
+<hr />
+<p><strong>Personal Goals</strong></p>
+<ol type="1">
+<li><p><strong>Complete Five LOMA Courses</strong></p>
+<ul>
+<li>Enhance knowledge of the life insurance industry by completing five
+Life Office Management Association courses.</li>
+</ul></li>
+<li><p><strong>Prepare for and Run the Watermelon Classic</strong></p>
+<ul>
+<li>Train for and participate in the annual 5K race held in July.</li>
+</ul></li>
+<li><p><strong>Read Four O’Reilly Books</strong></p>
+<ul>
+<li>Select and complete four books on the O’Reilly platform to support
+professional development and broaden technical expertise.</li>
+</ul></li>
+</ol>
+<hr />
+<p>This version presents clear objectives, timelines (where applicable),
+and rationale for each goal in a professional format. Adjust specific
+details, add milestones, or include success metrics as needed to fulfill
+your company’s requirements.</p>
+    
+</body>
+</html>
