@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="comparison">Comparison</h1>
+<p>Below is a <strong>comprehensive comparison</strong> of
+<strong>traditional</strong> versus <strong>accelerated</strong> life
+insurance underwriting, highlighting <strong>key steps</strong>,
+<strong>requirements</strong>, <strong>applicant experience</strong>,
+and <strong>outcomes</strong>. The overarching goal is to show
+<strong>how</strong> these two underwriting pathways differ in
+practice—and <strong>why</strong> an insurer might choose one over the
+other for specific segments of applicants.</p>
+<hr />
+<h2 id="definitions">1. Definitions</h2>
+<ul>
+<li><p><strong>Traditional Underwriting (TU)</strong><br />
+A <strong>fully underwritten</strong> process where the insurer gathers
+detailed health information, typically including blood/urine labs,
+physical measurements (paramedical exam), medical records (APS), and
+possibly more detailed financial or lifestyle data.</p></li>
+<li><p><strong>Accelerated Underwriting (AU)</strong><br />
+A streamlined process that often <strong>waives</strong> some or all
+invasive requirements (no fluid tests, no paramed), instead relying on
+<strong>predictive models</strong>, <strong>third-party data
+sources</strong>, and <strong>data analytics</strong> to assess risk
+more quickly.</p></li>
+</ul>
+<hr />
+<h2 id="typical-requirements">2. Typical Requirements</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 33%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Traditional Underwriting (TU)</th>
+<th>Accelerated Underwriting (AU)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Medical Exam</strong></td>
+<td>Commonly required (paramed exam)</td>
+<td>Typically <strong>waived</strong> or optional in AU programs</td>
+</tr>
+<tr>
+<td><strong>Blood/Urine Tests</strong></td>
+<td>Standard for mid-to-high face amounts</td>
+<td>Often <strong>waived</strong>; reliant on data modeling &amp;
+external checks</td>
+</tr>
+<tr>
+<td><strong>Attending Physician Statement (APS)</strong></td>
+<td>Frequently ordered for health conditions or higher face amounts</td>
+<td>Sought less frequently; triggered only if “red flags” appear</td>
+</tr>
+<tr>
+<td><strong>Prescription History</strong></td>
+<td>Usually checked (e.g., Milliman IntelliScript)</td>
+<td>Integral to AU; used for real-time risk assessment</td>
+</tr>
+<tr>
+<td><strong>MIB Check</strong></td>
+<td>Standard practice</td>
+<td>Also standard practice (regardless of underwriting track)</td>
+</tr>
+<tr>
+<td><strong>Credit/Behavior Data</strong></td>
+<td>Not always used in TU; some carriers do use credit-based models</td>
+<td>Often <strong>central</strong> to AU (e.g., TRL from TransUnion,
+credit attributes)</td>
+</tr>
+<tr>
+<td><strong>Additional Questionnaires</strong> (e.g., lifestyle,
+driving)</td>
+<td>Common if red flags or large face amounts</td>
+<td>Might be used selectively, triggered by data models</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="underwriting-timeline">3. Underwriting Timeline</h2>
+<ul>
+<li><p><strong>Traditional Underwriting</strong></p>
+<ul>
+<li>Can take <strong>weeks</strong> or sometimes
+<strong>months</strong>, especially if APS retrieval is slow or if there
+are scheduling issues for paramed exams.</li>
+<li>The insurer waits for lab results, exam reports, and possibly
+additional underwriting queries.</li>
+</ul></li>
+<li><p><strong>Accelerated Underwriting</strong></p>
+<ul>
+<li>Often completed in <strong>days</strong>—in some cases, within
+<strong>24-48 hours</strong>—because data checks (MIB, prescription,
+credit) are run instantly or near-instantly.</li>
+<li>Fewer (or no) requirements mean less waiting on external
+vendors.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="applicant-experience">4. Applicant Experience</h2>
+<ul>
+<li><p><strong>Traditional Underwriting</strong></p>
+<ul>
+<li><strong>More invasive</strong>: Blood draw, urine sample, scheduling
+a paramed nurse visit.</li>
+<li><strong>More time-consuming</strong>: Applicant must accommodate
+medical appointments, fill out longer questionnaires, and wait for
+results.</li>
+</ul></li>
+<li><p><strong>Accelerated Underwriting</strong></p>
+<ul>
+<li><strong>More convenient</strong>: Generally no paramed, no
+labs.</li>
+<li><strong>Faster</strong>: Many applicants receive immediate or
+near-immediate offers if data checks support a favorable risk
+class.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="coverage-amounts-eligibility">5. Coverage Amounts &amp;
+Eligibility</h2>
+<ul>
+<li><p><strong>Traditional Underwriting</strong></p>
+<ul>
+<li>Historically used for <strong>higher face amounts</strong> (e.g.,
+$1M+) or applicants with <strong>complex health histories</strong>.</li>
+<li>Some carriers use it for <strong>all</strong> face amounts unless
+the individual qualifies for a special AU program.</li>
+</ul></li>
+<li><p><strong>Accelerated Underwriting</strong></p>
+<ul>
+<li>Often limited to <strong>lower-to-mid</strong> face amounts (e.g.,
+up to $500K or $1M), though this limit is rising with better
+models.</li>
+<li>Generally targeted at <strong>younger</strong> or
+<strong>healthier</strong> applicants, or those who pass initial
+prescreening criteria (credit, RX, MIB).</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="risk-classification-accuracy-slippage">6. Risk Classification
+Accuracy &amp; Slippage</h2>
+<ul>
+<li><p><strong>Traditional Underwriting</strong></p>
+<ul>
+<li>Considered the <strong>gold standard</strong> in risk detection
+because labs, exams, and APS can uncover hidden health issues.</li>
+<li><strong>Less slippage</strong> because the process is
+thorough—though it’s not 100% perfect.</li>
+</ul></li>
+<li><p><strong>Accelerated Underwriting</strong></p>
+<ul>
+<li>Relies heavily on <strong>predictive modeling</strong>. If models
+are well-calibrated, the majority of healthy or low-risk individuals are
+<strong>correctly</strong> classified.</li>
+<li><strong>Potential for slippage</strong> if hidden health conditions
+or risky behaviors are not captured by data checks (credit, RX,
+etc.).</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="cost-to-insurer">7. Cost to Insurer</h2>
+<ul>
+<li><p><strong>Traditional Underwriting</strong></p>
+<ul>
+<li><strong>Higher direct costs</strong>: medical exams, lab processing,
+APS retrieval.</li>
+<li><strong>Indirect costs</strong>: more underwriting hours, potential
+for lost applicants during a long process.</li>
+</ul></li>
+<li><p><strong>Accelerated Underwriting</strong></p>
+<ul>
+<li><strong>Lower direct costs</strong>: fewer medical requirements,
+minimal lab work.</li>
+<li><strong>Investment in data platforms</strong>: subscription fees for
+prescription checks, credit data, and predictive modeling services.</li>
+<li><strong>Lower friction</strong>: reduces drop-off due to simpler
+processes, potentially improving placement ratios (unless
+misclassifications become an issue).</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="pros-and-cons">8. Pros and Cons</h2>
+<p><strong>Traditional Underwriting</strong></p>
+<ul>
+<li><strong>Pros</strong>
+<ul>
+<li>Thorough, reduces risk of adverse selection.</li>
+<li>Greater confidence in final classification.</li>
+</ul></li>
+<li><strong>Cons</strong>
+<ul>
+<li>Slower, more invasive, can discourage some applicants.</li>
+<li>Higher underwriting costs and overhead.</li>
+</ul></li>
+</ul>
+<p><strong>Accelerated Underwriting</strong></p>
+<ul>
+<li><strong>Pros</strong>
+<ul>
+<li>Faster decisions, enhanced customer experience.</li>
+<li>Lower underwriting costs and potentially higher placement.</li>
+</ul></li>
+<li><strong>Cons</strong>
+<ul>
+<li>Risks missing health issues not flagged by credit or RX data
+(slippage).</li>
+<li>May be limited to specific face amounts or certain “low-risk”
+segments.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="use-cases-when-to-use-which-approach">9. Use Cases / When to Use
+Which Approach</h2>
+<ol type="1">
+<li><p><strong>Traditional Underwriting</strong> is preferable when:</p>
+<ul>
+<li>The applicant seeks <strong>high coverage</strong> amounts.</li>
+<li>The applicant has <strong>complex health issues</strong> that
+require deeper investigation.</li>
+<li>The insurer’s risk appetite demands a <strong>very detailed</strong>
+assessment.</li>
+</ul></li>
+<li><p><strong>Accelerated Underwriting</strong> fits well when:</p>
+<ul>
+<li>The applicant is relatively <strong>young, healthy</strong>, or
+meets certain “ideal” profiles.</li>
+<li>Coverage amounts are within <strong>mid-level</strong> thresholds
+(though many carriers are raising them).</li>
+<li>The carrier wants to <strong>reduce friction</strong> and meet
+consumer demands for <strong>quick, digital</strong> processes.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="hybrid-models-and-future-trends">10. Hybrid Models and Future
+Trends</h2>
+<ul>
+<li><p>Some insurers use <strong>“hybrid”</strong> approaches:</p>
+<ul>
+<li>Start everyone in an <strong>accelerated</strong> pipeline, then
+<strong>“triage”</strong> high-risk or suspicious cases into
+<strong>traditional</strong> underwriting.</li>
+<li>This optimizes cost efficiency while preserving robust risk
+management.</li>
+</ul></li>
+<li><p><strong>Emerging Trends</strong> include:</p>
+<ul>
+<li>More <strong>predictive analytics</strong>, advanced data sources
+(e.g., EHR integrations, real-time data from wearables).</li>
+<li>Ongoing <strong>hold-out studies</strong> to measure any slippage
+and refine accelerated underwriting rules.</li>
+</ul></li>
+</ul>
+<hr />
+<h1 id="final-thoughts">Final Thoughts</h1>
+<ul>
+<li><strong>Traditional underwriting</strong> is meticulous and accurate
+but can be slow and costly.</li>
+<li><strong>Accelerated underwriting</strong> is rapid and
+customer-friendly but must be well-managed to avoid
+<strong>misclassification</strong> risks.</li>
+<li>The <strong>ideal approach</strong> often depends on a carrier’s
+<strong>risk appetite</strong>, <strong>target market</strong>, and
+<strong>technological infrastructure</strong>.</li>
+<li>Many carriers are <strong>expanding</strong> accelerated programs as
+models improve, aiming for a <strong>balanced</strong> solution that
+satisfies customers while managing mortality risks effectively.</li>
+</ul>
+<h1 id="placement">Placement</h1>
+<p>In a life insurance context, “placement” refers to the point at which
+a policy is officially put in force (or “placed”) after the underwriting
+process has been completed and the applicant has accepted the final
+offer. Here’s a breakdown of how it typically works:</p>
+<ol type="1">
+<li><p><strong>Application and Preliminary Quote</strong></p>
+<ul>
+<li>The prospective insured fills out an application with the
+agent.</li>
+<li>Often, the agent provides an initial premium estimate or
+“illustration,” but this is not binding because underwriting has yet to
+review the individual’s health and risk factors.</li>
+</ul></li>
+<li><p><strong>Underwriting Review</strong></p>
+<ul>
+<li>The life insurance company’s underwriters assess the applicant’s
+medical records, possibly order exams, blood tests, and gather any other
+needed information (e.g., motor vehicle reports).</li>
+<li>Based on these findings, the underwriter decides on the final
+underwriting class (e.g., Preferred, Standard, Substandard) and the
+corresponding premium.</li>
+</ul></li>
+<li><p><strong>Policy Offer and Acceptance</strong></p>
+<ul>
+<li>Once underwriting is complete, the insurance company will issue the
+policy (with the final rates).</li>
+<li>The applicant (through the agent) reviews the offer. If it differs
+from the initial quote, the applicant can choose to accept or decline
+it.</li>
+</ul></li>
+<li><p><strong>Placement (“Policy Placed In Force”)</strong></p>
+<ul>
+<li>If the applicant accepts the final offer, the policy is “placed” in
+force. This typically requires the first premium payment and (in many
+cases) signing a delivery receipt or statement of good health, depending
+on the insurer’s rules and the time elapsed since the application.</li>
+</ul></li>
+</ol>
+<p>Essentially, <strong>“placement”</strong> is the last step in the
+underwriting journey, where the policy transitions from merely
+“approved” to “active.” At that point, the customer has a valid,
+enforceable insurance contract, and the life insurance coverage is
+officially in effect.</p>
+<h1 id="slippage">Slippage</h1>
+<p>There’s actually <strong>more than one way</strong> the term
+“slippage” is used in the life insurance business, and you’re touching
+on a different (but equally important) usage tied to underwriting
+<strong>accuracy</strong>.</p>
+<hr />
+<h3 id="slippage-as-lost-placements">1. Slippage as Lost Placements</h3>
+<p>In many sales or distribution contexts, “slippage” refers to the gap
+between policies approved/offered and those that actually get placed in
+force (i.e., the business that “slips away” because the client doesn’t
+accept, finds a better offer, or otherwise declines).</p>
+<h3 id="slippage-as-underwriting-error-or-misclassification">2. Slippage
+as Underwriting Error or Misclassification</h3>
+<p>However, <strong>within the underwriting and actuarial
+arena</strong>, “slippage” can also mean:</p>
+<blockquote>
+<p>The discrepancy between the risk classification <strong>an applicant
+really qualifies for</strong> and the <strong>more favorable
+classification</strong> they end up receiving due to underwriting
+oversights.</p>
+</blockquote>
+<p>In other words, an applicant who should have been classified as
+Substandard (a higher-risk category with higher premiums) might be
+mistakenly classified as Preferred (a lower-risk category with lower
+premiums). This is sometimes called <strong>“favorable
+slippage”</strong> for the insured, but it’s unfavorable for the
+insurer’s profitability since the insurer is not collecting adequate
+premiums to match the true level of risk.</p>
+<hr />
+<h4 id="why-this-misclassification-slippage-matters">Why This
+“Misclassification Slippage” Matters</h4>
+<ol type="1">
+<li><p><strong>Financial Risk</strong></p>
+<ul>
+<li>If a company underestimates risk (by putting someone in Preferred
+instead of Substandard), it can collect much lower premiums than
+necessary to offset potential claims.</li>
+</ul></li>
+<li><p><strong>Underwriting Integrity</strong></p>
+<ul>
+<li>Consistent classification ensures fairness and stability. When
+guidelines aren’t followed or mistakes creep in, it undermines the
+quality of the underwriting process.</li>
+</ul></li>
+<li><p><strong>Impact on Pricing</strong></p>
+<ul>
+<li>If enough policies slip through at lower rates than warranted, it
+can affect the insurer’s overall pricing assumptions and profitability
+in a product line.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="putting-it-all-together">Putting It All Together</h3>
+<p>So, depending on <strong>who in the organization</strong> is using
+the term “slippage,” it might mean:</p>
+<ul>
+<li><strong>From a Sales Perspective</strong>: The percentage of
+policies that fall through after approval and never get placed (lost
+business).</li>
+<li><strong>From an Underwriting/Actuarial Perspective</strong>:
+Incorrect (usually too-lenient) risk classifications that lead to
+underpricing for the actual level of risk.</li>
+</ul>
+<p>Both usages are valid in life insurance, but the second scenario you
+mentioned—“someone was classified Preferred when they really should be
+Substandard”—fits squarely into the <strong>underwriting error</strong>
+definition of slippage.</p>
+<h1 id="common-background-check-data-sources-in-insurance">Common
+Background-Check Data Sources in Insurance</h1>
+<ul>
+<li><strong>MVR (Motor Vehicle Record) Checks</strong> for driving
+history</li>
+<li><strong>Criminal Record Reports</strong> from public or private
+databases</li>
+<li><strong>Credit Bureau / Public Records</strong> services (e.g.,
+LexisNexis, TransUnion, Experian)</li>
+<li><strong>Other Specialized Tools</strong> (e.g., TLOxp, Accurint)
+that aggregate court records, address histories, etc.</li>
+</ul>
+<h1 id="mib">MIB</h1>
+<p><strong>MIB</strong> (formerly known as the Medical Information
+Bureau) is a member-owned corporation composed of hundreds of life and
+health insurance companies in the United States and Canada. It’s
+designed to help insurers <strong>exchange information about individual
+applicants</strong> in an effort to prevent fraud and ensure more
+accurate underwriting decisions.</p>
+<hr />
+<h2 id="how-mib-works">How MIB Works</h2>
+<ol type="1">
+<li><p><strong>Data Collection (Coding System)</strong></p>
+<ul>
+<li>When you apply for life or health insurance, the insurance carrier’s
+underwriter may request your authorization to check your MIB file (if
+one exists).</li>
+<li>If, during underwriting, the insurer discovers health conditions or
+other pertinent data (through your application, medical exams, or
+third-party reports), they may transmit a coded summary of that
+information to MIB.</li>
+<li>These <strong>MIB “codes”</strong> are broad indicators of health
+conditions or lifestyle risks (e.g., high blood pressure, diabetes,
+smoking habits). They do <em>not</em> include the full medical record,
+just the summarized risk codes.</li>
+</ul></li>
+<li><p><strong>Applicant Authorization</strong></p>
+<ul>
+<li>To comply with privacy regulations, insurers can’t access or report
+to MIB without your consent (usually given via the insurance
+application’s consent forms).</li>
+</ul></li>
+<li><p><strong>Data Use by Other Insurers</strong></p>
+<ul>
+<li>When a different insurer underwrites a new policy for you, they can
+check MIB’s database. If your MIB file has codes, it prompts
+underwriters to investigate those potential health issues or red flags
+more closely.</li>
+<li><em>Important</em>: Each insurer still must conduct its own
+underwriting process. MIB codes simply serve as
+clues—<strong>not</strong> definitive medical evidence.</li>
+</ul></li>
+<li><p><strong>Consumer Rights</strong></p>
+<ul>
+<li>You can request your own MIB report once a year, free of charge. If
+there are inaccuracies, you can dispute them and have corrections
+made.</li>
+<li>To request your file, go to the MIB’s website or call their
+toll-free number.</li>
+</ul></li>
+<li><p><strong>Data Retention</strong></p>
+<ul>
+<li>MIB typically retains data for a limited period—usually about
+<strong>7 years</strong> from the date it’s reported, although that can
+vary.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="why-mib-matters">Why MIB Matters</h2>
+<ol type="1">
+<li><p><strong>Fraud Prevention</strong></p>
+<ul>
+<li>MIB helps uncover situations where an applicant might
+<strong>omit</strong> or <strong>misrepresent</strong> critical
+information (e.g., denying a past diagnosis). If there’s an MIB code
+noting a particular condition, the new insurer knows to investigate
+further.</li>
+</ul></li>
+<li><p><strong>Underwriting Efficiency</strong></p>
+<ul>
+<li>It streamlines the underwriting process by giving insurers a quick
+reference to possible conditions or lifestyle risks.</li>
+</ul></li>
+<li><p><strong>Fairer Premiums</strong></p>
+<ul>
+<li>By reducing the likelihood of undetected high-risk applicants being
+classified as low-risk, premiums stay more equitable across the pool of
+insureds.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ul>
+<li><strong>MIB</strong> is not a giant database of detailed medical
+records; it’s a system of <strong>codes</strong> that signal certain
+conditions or concerns.</li>
+<li>It’s <strong>only</strong> accessible by member insurers and only
+with the applicant’s explicit authorization.</li>
+<li>Consumers have the right to view and correct any information about
+themselves in the MIB database.</li>
+</ul>
+<p>In short, MIB is a central resource helping insurance companies
+verify application information and maintain underwriting integrity,
+while also giving consumers the ability to check and dispute their own
+records.</p>
+<h1 id="measuring-slippage">Measuring Slippage</h1>
+<p>Measuring <strong>underwriting slippage</strong>—particularly the
+kind where some applicants are given a more favorable risk class than
+they truly deserve—can indeed be approached by creating a
+<strong>controlled or “hold-out” sample</strong> for deeper scrutiny.
+Below is a framework showing how insurers often do this when comparing
+<strong>traditional</strong> underwriting to
+<strong>accelerated</strong> underwriting (AU):</p>
+<hr />
+<h2 id="outline-of-a-random-hold-out-method">1. Outline of a “Random
+Hold-Out” Method</h2>
+<ol type="1">
+<li><p><strong>Random Assignment</strong></p>
+<ul>
+<li>You take a <strong>random subset</strong> of applicants (e.g., 1/5
+or 10%—whatever size is statistically viable) who qualify for the
+accelerated underwriting process.</li>
+<li>These applicants are then <strong>also</strong> subjected to
+<strong>full/traditional underwriting</strong> (paramed exams, labs, APS
+[Attending Physician Statement], etc.).</li>
+</ul></li>
+<li><p><strong>Dual Underwriting for the Hold-Out Group</strong></p>
+<ul>
+<li><strong>Accelerated Underwriting</strong> Approach: The applicant
+goes through your automated or streamlined approach, possibly based on
+predictive models, MIB, RX checks, credit data, etc.</li>
+<li><strong>Traditional Underwriting</strong> Approach: The same
+applicant’s file is fully underwritten in parallel (or shortly after),
+allowing you to see how a full medical exam and deeper manual review
+might classify them.</li>
+</ul></li>
+<li><p><strong>Compare Classifications</strong></p>
+<ul>
+<li>For the hold-out group, <strong>compare</strong> the risk class
+assigned by AU (e.g., Preferred, Standard) versus the risk class from
+full underwriting.</li>
+<li><em>Example</em>: Out of 100 hold-out applicants, maybe 10 were
+classed as “Preferred” by AU but end up as “Standard” or “Substandard”
+under traditional underwriting. This difference is your “slippage”—i.e.,
+how often you’re undercharging premium.</li>
+</ul></li>
+<li><p><strong>Analyze and Quantify the Gap</strong></p>
+<ul>
+<li><strong>Incidence of Misclassification</strong>: The percentage of
+applicants for whom the AU class is more favorable (or less favorable)
+than the traditional class.</li>
+<li><strong>Severity of Misclassification</strong>: How big is the jump?
+Preferred → Standard is less severe than Preferred → Substandard with a
+significant premium differential.</li>
+<li><strong>Financial Impact</strong>: Actuaries can then model how that
+misclassification rate translates into potential <strong>mortality or
+morbidity losses</strong> over the life of the policy.</li>
+</ul></li>
+<li><p><strong>Refine AU Criteria</strong></p>
+<ul>
+<li>Use the insights from the hold-out analysis to recalibrate your
+accelerated underwriting rules or thresholds.</li>
+<li>If too many high-risk applicants are sliding into Preferred rates,
+you might tighten credit score cutoffs, tweak prescription scoring
+rules, or require more frequent verification for certain health
+conditions.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="practical-considerations">2. Practical Considerations</h2>
+<ol type="1">
+<li><p><strong>Sample Size &amp; Statistical Power</strong></p>
+<ul>
+<li>You want a big enough hold-out sample to be <strong>statistically
+representative</strong>. The goal is to detect differences in
+classification rates and gather meaningful data on mortality/morbidity
+experience (over time).</li>
+</ul></li>
+<li><p><strong>Timing &amp; Costs</strong></p>
+<ul>
+<li>Full underwriting is costlier (lab tests, medical exams, APS
+retrieval, etc.). Insurers must weigh this against the value of
+identifying slippage.</li>
+<li>The additional time for full underwriting can also slow the
+applicant’s process, so you’ll want to manage expectations and possibly
+incentivize participants if it’s part of a pilot program.</li>
+</ul></li>
+<li><p><strong>Long-Term Validation</strong></p>
+<ul>
+<li>Initial classification differences give an <strong>immediate
+measure</strong> of potential slippage.</li>
+<li><strong>Ultimate “proof”</strong> comes from longer-term claims or
+mortality studies. Over several policy years, you see if the accelerated
+group’s <strong>actual loss ratio</strong> or <strong>mortality</strong>
+is higher than priced for.</li>
+</ul></li>
+<li><p><strong>Regulatory and Disclosure Requirements</strong></p>
+<ul>
+<li>In some jurisdictions, you need explicit disclosure if you’re
+subjecting applicants to additional underwriting steps for a “study”
+versus the standard approach.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="summary">3. Summary</h2>
+<p>Yes—running a <strong>random hold-out study</strong> is a standard,
+defensible way to <strong>measure and validate slippage</strong> in an
+accelerated underwriting program:</p>
+<ul>
+<li>You <strong>randomly select</strong> a subset of applicants who are
+eligible for AU.</li>
+<li><strong>Dual underwrite</strong> them (both AU and full/traditional)
+to see if the results diverge.</li>
+<li><strong>Measure how often</strong> (and by how much) the AU program
+issues too-favorable classifications.</li>
+<li><strong>Calibrate</strong> or tweak your accelerated model
+accordingly.</li>
+</ul>
+<p>This empirical method gives you the best real-world evidence of
+whether your accelerated approach is systematically missing key risks or
+not. By repeating this analysis periodically (or continuously, on a
+small sample), you maintain ongoing quality control and keep
+slippage—and the associated financial risk—at acceptable levels.</p>
+<h1 id="milliman">Milliman</h1>
+<p><strong>Milliman</strong> is a global consulting and actuarial firm
+that works extensively with insurance companies (among other
+industries). They’re particularly well-known in life and health
+insurance for providing:</p>
+<ol type="1">
+<li><p><strong>Underwriting Guidelines and Manuals</strong></p>
+<ul>
+<li>Milliman develops comprehensive <strong>reference guides</strong> to
+help insurers classify risks accurately based on medical conditions,
+lifestyle factors, and other underwriting data.</li>
+</ul></li>
+<li><p><strong>Risk Assessment Tools</strong></p>
+<ul>
+<li>A notable product is <strong>IntelliScript</strong>, which gives
+insurers real-time prescription history checks. This lets underwriters
+see what medications applicants have been prescribed, helping them spot
+risks more reliably without always resorting to full medical exams.</li>
+</ul></li>
+<li><p><strong>Actuarial Consulting</strong></p>
+<ul>
+<li>Beyond underwriting, Milliman’s actuaries advise on
+<strong>pricing</strong>, <strong>reserving</strong>, <strong>product
+design</strong>, and <strong>risk management</strong>. They use
+statistical models and data analysis to help insurers ensure
+profitability and compliance with regulatory standards.</li>
+</ul></li>
+<li><p><strong>Broader Insurance Industry Services</strong></p>
+<ul>
+<li>Milliman also provides consulting for employee benefits, healthcare
+systems, and financial services sectors.</li>
+</ul></li>
+</ol>
+<p>In the context of <strong>life insurance underwriting</strong>,
+you’ll most often hear about Milliman in connection with
+<strong>underwriting guidelines</strong> (sometimes called “Milliman
+Manuals”) or <strong>IntelliScript</strong> (for checking an applicant’s
+prescription drug history). These resources assist underwriters in
+making more informed decisions, reducing misclassification, and
+streamlining the overall underwriting process.</p>
+<h1 id="protective-value">Protective Value</h1>
+<p>You might be referring to what the industry more commonly calls
+<strong>“protective value”</strong> (occasionally people say “protected
+value”) of an underwriting requirement. This concept involves measuring
+the <em>net benefit</em> of a particular underwriting test or piece of
+evidence—such as a lab test, paramed exam, credit check, or APS
+(Attending Physician Statement)—relative to its cost and impact on the
+underwriting process.</p>
+<hr />
+<h2 id="what-is-protective-value">What Is “Protective Value”?</h2>
+<ul>
+<li><strong>Definition</strong>: The amount of mortality or morbidity
+savings an underwriting requirement provides, <em>net</em> of the cost
+and any friction (e.g., time, consumer drop-off) it adds to the new
+business process.</li>
+<li><strong>Goal</strong>: Determine whether the additional insight into
+an applicant’s true risk justifies the cost and complexity of collecting
+that requirement.</li>
+</ul>
+<hr />
+<h2 id="example-of-protective-value-analysis">Example of Protective
+Value Analysis</h2>
+<ol type="1">
+<li><strong>Requirement</strong>: Let’s say you’re evaluating the
+<strong>protective value of a paramedical exam</strong> (which includes
+blood pressure measurement, fluid samples, etc.).</li>
+<li><strong>Cost</strong>:
+<ul>
+<li>The direct expense of the paramed exam (nurses, kits, lab
+fees).</li>
+<li>Indirect costs, such as increased cycle time for policy issuance and
+potential applicant drop-off because of inconvenience.</li>
+</ul></li>
+<li><strong>Mortality Reduction</strong>:
+<ul>
+<li>By having paramed results (e.g., elevated blood pressure, abnormal
+labs), the insurer might reclassify an applicant from “Preferred” down
+to “Standard” or “Substandard,” thereby collecting higher premiums to
+offset the higher risk.</li>
+<li>Over many policies, this reclassification <em>reduces</em> the
+insurer’s overall mortality losses (because they aren’t inadvertently
+underpricing risk).</li>
+</ul></li>
+<li><strong>Net Benefit</strong>:
+<ul>
+<li>If the <strong>expected future mortality savings</strong> from more
+accurate classification exceeds the <strong>total cost</strong>
+(financial + process impact), the requirement is said to have a
+<em>positive</em> protective value.</li>
+<li>If the cost outweighs the mortality savings, the requirement may
+<em>not</em> be worthwhile—or might only be worthwhile above certain
+face amounts or in specific segments of the population.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="why-protective-value-matters">Why Protective Value Matters</h2>
+<ol type="1">
+<li><strong>Underwriting Efficiency</strong>:
+<ul>
+<li>Carriers don’t want to load the underwriting process with
+unnecessary requirements. Each added step can turn off potential
+customers, drive up expenses, and slow down issuance.</li>
+</ul></li>
+<li><strong>Profitability and Pricing</strong>:
+<ul>
+<li>If a requirement has strong protective value, it helps keep
+misclassification (“slippage”) down and ensures the company’s pricing
+assumptions hold true.</li>
+</ul></li>
+<li><strong>Customer Experience</strong>:
+<ul>
+<li>Especially with <strong>accelerated underwriting</strong> programs,
+companies strive to minimize invasive requirements (like fluids). A
+protective value analysis ensures they only keep the steps that
+meaningfully contribute to risk assessment.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="tying-it-to-accelerated-underwriting-au">Tying It to Accelerated
+Underwriting (AU)</h2>
+<ul>
+<li><strong>Traditional vs. Accelerated</strong>:
+<ul>
+<li>In an <strong>accelerated</strong> model, insurers rely on
+data-driven tools (MIB, prescription history, credit, etc.) and may
+waive labs/exams for healthy, lower-risk applicants—if they’re confident
+in their predictive models.</li>
+</ul></li>
+<li><strong>Measuring Slippage</strong>:
+<ul>
+<li>To confirm there’s no <em>hidden</em> or <em>excessive</em>
+slippage, insurers often run a <strong>controlled “hold-out”</strong>
+sample. A portion of applicants who “pass” AU are also fully
+underwritten to see if they’d end up in a worse risk class.</li>
+<li>This helps quantify how much the accelerated approach might
+misclassify people as “healthier” than they really are—<em>and</em> it
+reveals the protective value of the additional tests and exams.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="in-summary">In Summary</h3>
+<ul>
+<li>The <strong>“protective value”</strong> (or “protected value”) of an
+underwriting requirement gauges <em>how much</em> it reduces mortality
+risk (through better classification) <em>minus</em> its associated cost
+and friction.</li>
+<li>It’s a <strong>key concept</strong> when deciding whether to include
+or waive certain traditional underwriting steps—particularly in
+<strong>accelerated underwriting</strong> programs aiming to balance a
+seamless customer experience with accurate risk assessment.</li>
+</ul>
+<h1 id="trl">TRL</h1>
+<h2 id="key-points-about-truerisk-life-trl">Key Points About TrueRisk®
+Life (TRL)</h2>
+<ol type="1">
+<li><p><strong>Credit-Based Mortality Score</strong></p>
+<ul>
+<li>TRL analyzes a consumer’s <strong>credit history and
+behaviors</strong> (e.g., payment patterns, types of credit, length of
+credit history).</li>
+<li>The logic behind this is that credit behavior often correlates with
+various lifestyle factors and, in aggregate, can be predictive of
+<strong>long-term mortality</strong>.</li>
+</ul></li>
+<li><p><strong>Scoring Output</strong></p>
+<ul>
+<li>The model generates a <strong>score</strong> that insurers use—on
+its own or combined with traditional underwriting elements (MIB,
+prescription checks, medical exams)—to help classify applicants into a
+particular risk category.</li>
+</ul></li>
+<li><p><strong>Integration with Other Data</strong></p>
+<ul>
+<li>While TRL itself focuses on <strong>credit attributes</strong>,
+insurers sometimes <strong>supplement</strong> it with other data sets:
+<ul>
+<li><strong>ZIP code</strong> (to glean socioeconomic or health
+environment indicators)</li>
+<li><strong>Educational attainment</strong> or other consumer marketing
+variables (if permissible and relevant in a given jurisdiction)</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Use in Accelerated Underwriting</strong></p>
+<ul>
+<li>TRL is popular in <strong>accelerated or fluidless</strong>
+underwriting programs, where companies want to reduce or eliminate lab
+tests for low-risk applicants.</li>
+<li>A favorable TRL score can help “fast-track” an applicant, especially
+if it aligns well with their other underwriting indicators.</li>
+</ul></li>
+<li><p><strong>Regulatory and Compliance Considerations</strong></p>
+<ul>
+<li>Because credit-based scores can be regulated differently depending
+on jurisdiction, insurers must ensure that <strong>adverse action
+notices</strong> and other compliance requirements are in place.</li>
+<li>In the U.S., the Fair Credit Reporting Act (FCRA) typically applies
+if a life insurer is using a credit-based model for underwriting
+decisions.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="does-trl-use-zip-codes-or-education-directly">Does TRL Use ZIP
+Codes or Education Directly?</h3>
+<ul>
+<li>By default, <strong>TransUnion’s TRL</strong> is described as a
+<strong>credit-based</strong> risk model rather than one that explicitly
+integrates demographic details such as ZIP code or education.</li>
+<li><strong>However</strong>, many insurers build their own
+<strong>composite models</strong> or underwriting workflows that pair
+TRL with other data sources—some of which might incorporate demographics
+or “lifestyle” data (like known income proxies, educational levels, or
+ZIP code–based risk scores).</li>
+<li>The exact implementation varies by insurance carrier and their data
+vendors.</li>
+</ul>
+<hr />
+<h2 id="bottom-line">Bottom Line</h2>
+<ul>
+<li>The predictive model known as <strong>“TRL”</strong> in the life
+insurance industry is <strong>TransUnion’s TrueRisk® Life</strong>.</li>
+<li>It’s primarily derived from <strong>credit data</strong>, but may be
+combined with <strong>ZIP code, education, or other socio-demographic
+factors</strong>—depending on the insurer’s overall underwriting
+strategy.</li>
+<li>Its core purpose is to <strong>predict mortality risk</strong> and
+help insurers expedite underwriting for certain applicants.</li>
+</ul>
+<h1 id="oft">OFT</h1>
+<p>While there isn’t a single, universally recognized meaning of “OFT”
+across all insurers, one <strong>common usage</strong> in the life
+insurance underwriting context is:</p>
+<h3 id="oft-oral-fluid-testing"><strong>OFT = Oral Fluid
+Testing</strong></h3>
+<p>This refers to saliva-based testing used by some carriers as an
+alternative or supplement to traditional blood and urine exams. Here’s
+more detail:</p>
+<ol type="1">
+<li><p><strong>What Is Oral Fluid Testing?</strong></p>
+<ul>
+<li>It involves collecting a saliva sample (often via a swab inside the
+cheek) instead of drawing blood or requiring a urine sample.</li>
+<li>These samples can be tested for various markers—e.g.,
+nicotine/cotinine (for tobacco use), certain drugs, and sometimes HIV
+antibodies.</li>
+</ul></li>
+<li><p><strong>Why Do Insurers Use OFT?</strong></p>
+<ul>
+<li><strong>Less Invasive</strong>: Some applicants are more willing to
+do a quick cheek swab than undergo a blood draw or provide a urine
+sample.</li>
+<li><strong>Faster and More Convenient</strong>: Saliva collection can
+be done at home or in an office setting with minimal equipment and fewer
+logistical challenges (e.g., no phlebotomist needed).</li>
+<li><strong>Accelerated Underwriting</strong>: Oral Fluid Testing can be
+part of a streamlined underwriting process for lower face amounts or
+younger, healthier applicants, reducing the need for a full paramed
+exam.</li>
+</ul></li>
+<li><p><strong>Limitations / Considerations</strong></p>
+<ul>
+<li><strong>Scope of Testing</strong>: Saliva tests can’t always measure
+the same range of biomarkers or provide the same depth of information as
+blood/urine tests.</li>
+<li><strong>Accuracy/Detection Window</strong>: The detection window for
+certain substances might be shorter, and environmental factors (e.g.,
+recent eating or drinking) can affect results.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="could-oft-mean-something-else">Could OFT Mean Something
+Else?</h3>
+<ul>
+<li><strong>OFT</strong> could also be an internal shorthand at a
+specific insurer (or vendor) for a particular process or tool (e.g.,
+<em>“Online Fulfillment Tool,”</em> <em>“Optimal Field Triage,”</em>
+etc.).</li>
+<li>In <strong>most</strong> references to “OFT” in underwriting
+materials, however, it’s typically “<strong>Oral Fluid
+Testing</strong>.”</li>
+</ul>
+<p>If you’ve encountered “OFT” in documents, training, or discussions
+about minimizing invasive requirements or comparing fluid tests, it
+almost certainly refers to <strong>Oral Fluid Testing</strong>. If in
+doubt, check your carrier’s underwriting guidelines or ask your
+underwriting support team—they can confirm the exact usage in your
+organization.</p>
+    
+</body>
+</html>
