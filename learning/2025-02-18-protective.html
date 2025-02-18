@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>This passage discusses the fundamental concept behind a
+<strong>protective value study</strong>, which is an evaluation used in
+underwriting (typically in insurance) to determine whether a particular
+underwriting procedure is economically justified. The core idea is
+straightforward: a procedure is considered valuable if the cost of
+implementing it is <strong>less than the savings</strong> it generates
+by reducing mortality (for life insurance) or morbidity (for health
+insurance).</p>
+<h3 id="key-points">Key Points:</h3>
+<ol type="1">
+<li><strong>Economic Justification</strong>: The underwriting procedure
+must save more money (via reduced mortality/morbidity) than it costs to
+implement.</li>
+<li><strong>Core Question</strong>: “Will I save more than I spend?”
+This is the essence of protective value analysis.</li>
+<li><strong>Challenges</strong>: While the question is simple,
+determining the answer is often complex due to the methods
+involved.</li>
+<li><strong>Purpose of the Paper</strong>: To introduce a <strong>simple
+and general model</strong> that can be used to conduct protective value
+studies.</li>
+<li><strong>Use of Hypothetical Data</strong>: The paper does not
+validate any particular underwriting process but rather demonstrates the
+principles using reasonable but hypothetical data.</li>
+</ol>
+<h3 id="summary">Summary:</h3>
+<p>The passage sets the stage for a study on evaluating the economic
+benefits of underwriting procedures. It emphasizes that while the
+principle of comparing costs and savings is straightforward, the
+methodology can be complicated. The paper aims to simplify this process
+by providing a general model and using hypothetical data to illustrate
+its application.</p>
+<h3 id="summary-explanation"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains how <strong>insurance pricing</strong> and
+<strong>underwriting procedures</strong> are connected to risk
+assessment.</p>
+<ol type="1">
+<li><p><strong>Standard vs. Substandard Risk</strong>:</p>
+<ul>
+<li>Insurance prices are set based on an assumed “standard” level of
+<strong>mortality (for life insurance) or morbidity (for health
+insurance)</strong>.</li>
+<li>If an applicant has a higher risk than the standard level, they
+should ideally be charged more or denied coverage.</li>
+</ul></li>
+<li><p><strong>Purpose of Underwriting Procedures</strong>:</p>
+<ul>
+<li>An underwriting procedure is valuable if it can identify applicants
+with <strong>higher-than-standard risk</strong> (substandard risk).</li>
+<li>Without such a procedure, insurers would mistakenly charge
+<strong>standard rates</strong> to <strong>higher-risk
+individuals</strong>, leading to financial losses.</li>
+</ul></li>
+<li><p><strong>Key to Protective Value</strong>:</p>
+<ul>
+<li>The <strong>effectiveness of an underwriting procedure</strong>
+depends on how well it detects excess mortality/morbidity.</li>
+<li>The better the procedure is at identifying high-risk individuals,
+the <strong>greater the financial savings</strong> for the insurer.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway"><strong>Takeaway</strong>:</h3>
+<p>The protective value of an underwriting procedure is determined by
+its ability to <strong>prevent insurers from underpricing high-risk
+individuals</strong>. If a procedure can accurately detect those with
+above-average mortality/morbidity, it helps insurers charge
+appropriately, leading to financial savings.</p>
+<h3 id="summary-explanation-1"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains how <strong>excess mortality/morbidity
+(M/M)</strong> is measured in underwriting and how different
+underwriting decisions impact this measurement.</p>
+<h3 id="key-points-1"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Measuring Excess Mortality/Morbidity</strong>:</p>
+<ul>
+<li>The <strong>most common method</strong> is to express
+<strong>substandard M/M</strong> as a percentage of <strong>standard
+M/M</strong> (e.g., 150% means 50% higher risk than standard).</li>
+<li>This method aligns with <strong>reinsurance manuals</strong>, which
+insurers refer to when assessing medical impairments.</li>
+</ul></li>
+<li><p><strong>Handling Special Cases</strong>:</p>
+<ul>
+<li><strong>Declined Applications</strong>: When an applicant is
+declined, their M/M may be estimated as <strong>the maximum rating an
+insurer would issue + 50% extra</strong>.</li>
+<li><strong>Not Taken Applications (Not Takens)</strong>:
+<ul>
+<li>If the applicant was <strong>offered standard coverage but
+declined</strong>, they are assumed to have <strong>standard
+M/M</strong>.</li>
+<li>If the applicant was <strong>offered substandard coverage but
+declined</strong>, they are assumed to have <strong>substandard
+M/M</strong>.</li>
+</ul></li>
+<li><strong>Exclusions &amp; Plan Modifications</strong>:
+<ul>
+<li>When an insurer modifies the coverage (e.g., excluding a condition),
+it’s trickier to assess M/M.</li>
+<li>If no substandard rating is given alongside the exclusion, it might
+be reasonable to assume <strong>the exclusion equals the highest
+acceptable substandard rating</strong>.</li>
+</ul></li>
+</ul></li>
+</ol>
+<h3 id="takeaway-1"><strong>Takeaway</strong>:</h3>
+<p>Excess M/M is usually measured as a percentage above the standard
+level. Special cases like declined policies, not-taken offers, and
+exclusions require adjustments to accurately estimate excess risk. The
+goal is to ensure fair pricing and accurate risk assessment in
+underwriting.</p>
+<h3 id="summary-explanation-2"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage discusses how to handle cases where <strong>direct
+excess mortality/morbidity (M/M) data is unavailable</strong> for
+certain medical impairments.</p>
+<h3 id="key-points-2"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Lack of Direct Data</strong>:</p>
+<ul>
+<li>Some impairments may not have readily available excess M/M
+information.</li>
+<li>In such cases, insurers need to find alternative data sources and
+compare them to a “standard” M/M level.</li>
+</ul></li>
+<li><p><strong>Using Standard Mortality/Morbidity Tables</strong>:</p>
+<ul>
+<li>The <strong>Society of Actuaries (SOA) 1975-80 Basic Mortality
+Table</strong> is an example of a commonly used reference.</li>
+<li>By making <strong>simple adjustments</strong> to such standard
+tables, insurers can approximate the actual risk based on available
+clinical data.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-2"><strong>Takeaway</strong>:</h3>
+<p>When specific excess M/M data isn’t available, insurers rely on
+<strong>recognized mortality/morbidity tables</strong> and modify them
+to estimate risk. This approach helps maintain consistency and accuracy
+in underwriting decisions.</p>
+<h3 id="summary-explanation-3"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage highlights the role of <strong>persistency</strong> (the
+percentage of policyholders who keep their insurance policies over time)
+in evaluating the <strong>savings impact</strong> of an underwriting
+procedure.</p>
+<h3 id="key-points-3"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Definition of Persistency</strong>:</p>
+<ul>
+<li><strong>High persistency</strong> means <strong>low lapse
+rates</strong> (fewer policyholders canceling their policies).</li>
+<li><strong>Low persistency</strong> means <strong>high lapse
+rates</strong> (more policyholders dropping their coverage).</li>
+</ul></li>
+<li><p><strong>Impact on Excess Mortality/Morbidity (M/M)</strong>:</p>
+<ul>
+<li>When <strong>persistency is high</strong>, more policyholders
+<strong>continue coverage</strong> for a longer time.</li>
+<li>This increases the number of insured individuals, leading to a
+<strong>higher total excess M/M</strong> (because more people remain
+covered, including higher-risk individuals).</li>
+</ul></li>
+<li><p><strong>Relevance to Savings</strong>:</p>
+<ul>
+<li>Since underwriting procedures aim to <strong>detect and price risk
+correctly</strong>, persistency affects the <strong>long-term cost
+savings</strong> of these procedures.</li>
+<li>If more high-risk individuals stay insured, the importance of
+accurately assessing their risk <strong>increases</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-3"><strong>Takeaway</strong>:</h3>
+<p>Persistency directly influences the effectiveness of underwriting.
+When more policyholders keep their policies for longer, the
+<strong>cumulative impact of excess mortality/morbidity grows</strong>,
+making accurate risk assessment even more critical for maximizing
+<strong>savings</strong>.</p>
+<h3 id="summary-explanation-4"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage discusses a second reason why
+<strong>persistency</strong> is important, particularly for
+<strong>substandard</strong> policyholders.</p>
+<h3 id="key-points-4"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Substandard Policyholders Have Fewer
+Options</strong>:</p>
+<ul>
+<li>People with <strong>higher health risks</strong> (substandard
+insureds) often <strong>accept substandard coverage</strong> only
+because they have <strong>no better alternative</strong>.</li>
+<li>Unlike standard insureds, they <strong>cannot easily switch to a
+cheaper or better policy</strong> elsewhere.</li>
+</ul></li>
+<li><p><strong>Higher Persistency Among Substandard
+Policyholders</strong>:</p>
+<ul>
+<li>Because they lack alternative options, substandard policyholders
+tend to <strong>keep their policies longer</strong> than standard
+insureds.</li>
+<li>This leads to <strong>higher persistency</strong> in the substandard
+risk group.</li>
+</ul></li>
+<li><p><strong>Why Substandard Policyholders Avoid Lapsing</strong>:</p>
+<ul>
+<li>If a <strong>substandard insured voluntarily cancels (lapses) their
+policy</strong>, they often know that:
+<ul>
+<li>They might not <strong>qualify for new coverage</strong> anywhere
+else.</li>
+<li>If they do qualify, it may be <strong>even more expensive</strong>
+than their current policy.</li>
+</ul></li>
+</ul></li>
+</ol>
+<h3 id="takeaway-4"><strong>Takeaway</strong>:</h3>
+<p>Persistency is especially high among <strong>substandard
+insureds</strong> because they have limited alternatives. They are
+<strong>less likely to cancel</strong> their policies, knowing that
+obtaining new coverage could be difficult or impossible. This makes
+<strong>accurate risk assessment even more critical</strong> for
+insurers, as substandard policyholders are likely to stay on the books
+longer.</p>
+<h3 id="summary-explanation-5"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains the importance of the <strong>interest
+rate</strong> when evaluating the savings from an underwriting
+procedure.</p>
+<h3 id="key-points-5"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Excess Mortality/Morbidity (M/M) Occurs Over
+Time</strong>:</p>
+<ul>
+<li>The <strong>financial impact of excess M/M is spread over many
+years</strong>, potentially for the entire life of an insurance
+contract.</li>
+<li>To properly assess the <strong>value of an underwriting
+procedure</strong>, insurers must <strong>convert future excess M/M
+savings into present value</strong>.</li>
+</ul></li>
+<li><p><strong>Present Value Calculation</strong>:</p>
+<ul>
+<li>Since costs (such as the expense of an underwriting procedure) occur
+<strong>immediately</strong>, while the savings (from avoided excess
+M/M) occur <strong>gradually</strong>, a <strong>present value
+comparison</strong> is needed.</li>
+<li>This allows insurers to directly compare <strong>the up-front cost
+of underwriting vs. the long-term savings</strong>.</li>
+</ul></li>
+<li><p><strong>Impact of Interest Rate</strong>:</p>
+<ul>
+<li>The <strong>chosen interest rate</strong> reflects the insurer’s
+<strong>time-value of money</strong> (i.e., how much they value money
+now versus later).</li>
+<li><strong>Higher interest rates</strong> → <strong>Lower present
+value</strong> of excess M/M savings (because future savings are
+discounted more).</li>
+<li><strong>Lower interest rates</strong> → <strong>Higher present
+value</strong> of excess M/M savings (because future savings are
+discounted less).</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-5"><strong>Takeaway</strong>:</h3>
+<p>Since underwriting savings happen over time, insurers
+<strong>discount future savings to present value</strong> using an
+interest rate. The <strong>higher</strong> the rate, the
+<strong>lower</strong> the present value of future savings, meaning the
+underwriting procedure might appear <strong>less beneficial</strong>.
+The chosen rate should reflect the insurer’s financial outlook and
+time-value preferences.</p>
+<h3 id="summary-explanation-6"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains how the <strong>time period</strong> over which
+excess mortality/morbidity (M/M) is measured affects its <strong>present
+value</strong> and the overall savings evaluation of an underwriting
+procedure.</p>
+<h3 id="key-points-6"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Longer Time Period = Higher Present Value of Excess
+M/M</strong>:</p>
+<ul>
+<li>The longer the time frame used to measure excess M/M, the
+<strong>greater the total impact</strong>.</li>
+<li>This happens because:
+<ul>
+<li>More years of <strong>excess M/M</strong> are included in the
+calculation.</li>
+<li>Excess M/M tends to <strong>increase with age</strong> (as insured
+individuals grow older, their risk of mortality or morbidity
+rises).</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Shorter Time Period Leads to Conservative
+Estimates</strong>:</p>
+<ul>
+<li>If the time period chosen for measurement is <strong>shorter than
+the maximum possible contract duration</strong>, the <strong>present
+value of excess M/M will be underestimated</strong>.</li>
+<li>This means the <strong>savings impact of the underwriting procedure
+might appear smaller than it actually is</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-6"><strong>Takeaway</strong>:</h3>
+<p>The <strong>longer the time period</strong>, the
+<strong>higher</strong> the present value of excess M/M due to
+<strong>cumulative risk and aging effects</strong>. If the time frame is
+<strong>too short</strong>, insurers may <strong>undervalue</strong> the
+long-term benefits of an underwriting procedure, leading to a
+conservative estimate of its financial impact.</p>
+<h3 id="summary-explanation-7"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains how <strong>prevalence</strong> (the proportion
+of the insured population that actually has excess mortality/morbidity
+(M/M)) affects the overall savings from an underwriting procedure.</p>
+<h3 id="key-points-7"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Accuracy Alone Isn’t Enough</strong>:</p>
+<ul>
+<li>Even if an underwriting procedure is <strong>perfectly
+accurate</strong> (no false positives or false negatives), its overall
+financial impact depends on <strong>how common excess M/M is</strong> in
+the insured population.</li>
+<li>If very few people have excess M/M, even a perfect test won’t lead
+to significant savings.</li>
+</ul></li>
+<li><p><strong>The Role of Prevalence</strong>:</p>
+<ul>
+<li>The <strong>true proportion of people with excess M/M</strong>
+influences the value of an underwriting procedure.</li>
+<li>If <strong>prevalence is high</strong>, identifying excess M/M can
+lead to <strong>substantial savings</strong>.</li>
+<li>If <strong>prevalence is low</strong>, the potential for savings is
+smaller, <strong>even if the procedure works perfectly</strong>.</li>
+</ul></li>
+<li><p><strong>Impact on Underwriting Strategy</strong>:</p>
+<ul>
+<li>When prevalence is <strong>high</strong>, stricter underwriting
+procedures may be more justified.</li>
+<li>When prevalence is <strong>low</strong>, costly or invasive
+procedures may <strong>not be worth the expense</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-7"><strong>Takeaway</strong>:</h3>
+<p>Even a <strong>perfect underwriting procedure</strong> will only
+generate meaningful savings if <strong>a significant portion of the
+insured population actually has excess M/M</strong>. Understanding
+<strong>prevalence</strong> helps insurers decide <strong>which
+procedures are worth using</strong> based on their potential financial
+impact.</p>
+<h3 id="summary-explanation-8"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage expands on how <strong>prevalence</strong> (the
+proportion of people with excess mortality/morbidity) affects
+underwriting decisions and the use of medical testing.</p>
+<h3 id="key-points-8"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Low Overall Prevalence → Selective Testing</strong>:</p>
+<ul>
+<li>If <strong>few applicants</strong> actually have excess M/M, testing
+<strong>everyone</strong> may be too expensive and unnecessary.</li>
+<li>Instead, testing may be <strong>limited</strong> to applicants
+seeking <strong>higher amounts of insurance</strong> to ensure
+cost-effectiveness.</li>
+<li>Example: In <strong>life insurance</strong>, as mortality rates
+improve and underwriting costs rise, insurers have <strong>raised the
+insurance amount threshold</strong> for requiring certain medical
+tests.</li>
+</ul></li>
+<li><p><strong>Geographic Variations in Prevalence</strong>:</p>
+<ul>
+<li>Some conditions, like <strong>HIV infection</strong>, vary by
+location.</li>
+<li>In such cases, underwriting requirements may depend on <strong>where
+the applicant lives</strong>, within <strong>legal
+constraints</strong>.</li>
+<li>Example: Insurers might require additional testing in regions with
+<strong>higher HIV prevalence</strong>.</li>
+</ul></li>
+<li><p><strong>Age-Based Variations in Prevalence</strong>:</p>
+<ul>
+<li>Some conditions, like <strong>coronary artery disease</strong>,
+become more common <strong>as people age</strong>.</li>
+<li>This means underwriting requirements may depend on <strong>both age
+and the amount of insurance requested</strong>.</li>
+<li>Example: Older applicants may face <strong>stricter health
+screenings</strong> for heart disease.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-8"><strong>Takeaway</strong>:</h3>
+<p>Insurers <strong>adjust their underwriting procedures</strong> based
+on <strong>prevalence trends</strong> to balance cost-effectiveness and
+risk assessment. They may <strong>limit testing</strong> to certain
+policy sizes, <strong>adjust requirements based on location</strong>, or
+<strong>increase screening for older applicants</strong> based on
+disease patterns.</p>
+<h3 id="summary-explanation-9"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage highlights a <strong>commonly overlooked factor</strong>
+in <strong>protective value studies</strong>: the cost of
+<strong>undetected excess mortality/morbidity (M/M)</strong> when not
+all applicants undergo underwriting procedures.</p>
+<h3 id="key-points-9"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Not Testing Everyone Leads to Undetected
+Risk</strong>:</p>
+<ul>
+<li>To save costs, underwriting procedures are often performed only on
+applicants seeking <strong>higher insurance amounts</strong>.</li>
+<li>However, this means some applicants with <strong>excess M/M</strong>
+(who apply for lower amounts) <strong>go undetected</strong>, leading to
+potential <strong>financial losses</strong> for the insurer.</li>
+</ul></li>
+<li><p><strong>The Trade-off Between Testing Costs &amp; Undetected
+M/M</strong>:</p>
+<ul>
+<li>The decision to <strong>limit testing</strong> is usually based on
+<strong>prevalence</strong>—if a condition is rare, testing everyone
+isn’t cost-effective.</li>
+<li>But <strong>not testing everyone</strong> comes with a cost: some
+high-risk applicants will <strong>slip through and be charged standard
+rates</strong>, leading to <strong>underpricing and potential
+losses</strong>.</li>
+</ul></li>
+<li><p><strong>Using Business Distribution to Estimate Undetected
+Risk</strong>:</p>
+<ul>
+<li>If insurers know how their policies are distributed <strong>by
+coverage amount</strong>, they can estimate <strong>how much undetected
+M/M is costing them</strong>.</li>
+<li>This helps determine whether a broader or more selective
+underwriting approach is more financially beneficial.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-9"><strong>Takeaway</strong>:</h3>
+<p>Limiting underwriting to <strong>higher-value policies</strong> saves
+on testing costs but risks <strong>missing high-risk
+individuals</strong> who take smaller policies. The <strong>cost of
+undetected M/M</strong> should be factored into the overall evaluation
+of an underwriting procedure to ensure a <strong>balanced approach
+between cost savings and risk management</strong>.</p>
+<h3 id="summary-explanation-10"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage provides a <strong>formula</strong> for calculating the
+overall <strong>savings</strong> from an underwriting procedure by
+accounting for both <strong>tested and untested applicants</strong>.</p>
+<h3 id="key-points-10"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Savings Formula</strong>:</p>
+<ul>
+<li>The <strong>total savings</strong> from an underwriting procedure is
+calculated as: [ = ( - ) ]</li>
+<li>This means savings depend on both <strong>how common excess
+mortality/morbidity (M/M) is (prevalence)</strong> and the difference
+between:
+<ul>
+<li>The <strong>present value (PV) of excess M/M</strong> detected in
+<strong>tested</strong> applicants.</li>
+<li>The <strong>present value of excess M/M</strong> that goes
+undetected in <strong>untested</strong> applicants.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Factors Affecting Present Values (PV)</strong>:</p>
+<ul>
+<li><strong>Persistency</strong>:
+<ul>
+<li>Substandard individuals who are <strong>not tested</strong> tend to
+<strong>stay insured longer</strong> (since they may not have better
+alternatives), increasing <strong>PV Untested</strong>.</li>
+</ul></li>
+<li><strong>Interest Rate</strong>:
+<ul>
+<li>A <strong>higher interest rate</strong> lowers the present value of
+excess M/M.</li>
+<li>A <strong>lower interest rate</strong> increases it.</li>
+</ul></li>
+<li><strong>Time Period</strong>:
+<ul>
+<li>The <strong>longer</strong> the time frame considered, the
+<strong>higher</strong> the present value of excess M/M.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Why This Matters</strong>:</p>
+<ul>
+<li>If <strong>more high-risk people go undetected</strong>, <strong>PV
+Untested increases</strong>, reducing overall savings.</li>
+<li>If <strong>testing effectively identifies substandard
+risks</strong>, <strong>PV Tested increases</strong>, maximizing
+savings.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-10"><strong>Takeaway</strong>:</h3>
+<p>The savings from an underwriting procedure depend on <strong>how well
+it detects excess risk</strong> (tested applicants) <strong>versus how
+much risk slips through</strong> (untested applicants). Insurers must
+balance <strong>prevalence, persistency, interest rates, and time
+period</strong> to determine if underwriting procedures are
+cost-effective.</p>
+<h3 id="summary-explanation-11"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains what should be included in the <strong>cost
+calculation</strong> of an underwriting procedure.</p>
+<h3 id="key-points-11"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Total Cost Includes More Than Just the Test</strong>:</p>
+<ul>
+<li>The cost of an underwriting procedure isn’t just the price of
+obtaining medical information (e.g., <strong>Attending Physician
+Statement (APS)</strong>).</li>
+<li>It also includes <strong>administrative and processing
+costs</strong>, such as:
+<ul>
+<li><strong>Mailing fees</strong></li>
+<li><strong>Tracking and handling</strong> in the insurer’s system</li>
+<li><strong>Data entry and review</strong></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Costs Are Generally Fixed</strong>:</p>
+<ul>
+<li>These costs <strong>do not vary</strong> based on the <strong>age of
+the applicant or the insurance amount</strong>.</li>
+<li>Every applicant for whom the procedure is performed incurs
+<strong>the same fixed cost</strong>.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-11"><strong>Takeaway</strong>:</h3>
+<p>When evaluating the cost-effectiveness of an underwriting procedure,
+insurers must consider <strong>both direct and administrative
+costs</strong>. Since these costs are <strong>fixed per
+applicant</strong>, insurers need to ensure that the <strong>savings
+from detecting excess mortality/morbidity outweigh these costs</strong>
+to justify the procedure.</p>
+<h3 id="summary-explanation-12"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage introduces the <strong>decision criteria</strong> used
+to determine whether an underwriting procedure is financially
+justified.</p>
+<h3 id="key-points-12"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Core Question</strong>:</p>
+<ul>
+<li>The fundamental decision is: <strong>“Will I save more than I
+spend?”</strong></li>
+<li>To answer this, insurers use <strong>two primary
+methods</strong>.</li>
+</ul></li>
+<li><p><strong>Two Decision Criteria</strong>:</p>
+<ul>
+<li><strong>Break-even Method</strong>:
+<ul>
+<li>This method determines whether the <strong>savings from the
+procedure at least equal its cost</strong>.</li>
+<li>If savings <strong>≥ cost</strong>, the procedure is considered
+<strong>worth implementing</strong>.</li>
+</ul></li>
+<li><strong>Return on Investment (ROI) Method</strong>:
+<ul>
+<li>This method evaluates <strong>how much return</strong> is generated
+per dollar spent on the procedure.</li>
+<li>ROI helps compare different procedures or investment options
+<strong>by measuring profitability</strong>.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Differences Between the Two</strong>:</p>
+<ul>
+<li>The <strong>Break-even Method</strong> is a
+<strong>pass/fail</strong> test: does the procedure <strong>cover its
+cost or not</strong>?</li>
+<li>The <strong>ROI Method</strong> provides a <strong>more detailed
+financial perspective</strong>, showing how efficient the investment
+is.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-12"><strong>Takeaway</strong>:</h3>
+<p>Insurers use <strong>Break-even Analysis</strong> to check if a
+procedure is <strong>viable</strong> and <strong>ROI Analysis</strong>
+to assess its <strong>profitability</strong>. Understanding both methods
+helps in making better underwriting decisions.</p>
+<h3 id="summary-explanation-13"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains the <strong>Break-even Method</strong>, a way
+to determine if an underwriting procedure is financially justified.</p>
+<h3 id="key-points-13"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>Definition of Break-even</strong>:</p>
+<ul>
+<li>The <strong>break-even (or threshold) level</strong> is the amount
+of insurance at which the <strong>savings from the underwriting
+procedure exactly equal its cost</strong>.</li>
+<li>If an applicant’s insurance amount is <strong>above this
+threshold</strong>, the procedure is
+<strong>cost-effective</strong>.</li>
+</ul></li>
+<li><p><strong>Break-even Amount May Not Be Unique</strong>:</p>
+<ul>
+<li>There can be <strong>multiple break-even points</strong>, meaning
+different insurance amounts might yield the same financial result.</li>
+<li>The example mentioned (but not provided) would demonstrate
+situations where different levels of coverage still result in a
+break-even outcome.</li>
+</ul></li>
+<li><p><strong>Interest Rate Considerations</strong>:</p>
+<ul>
+<li>The <strong>interest rate</strong> used in break-even calculations
+is <strong>arbitrary but fixed</strong>.</li>
+<li>However, it should reflect the <strong>insurer’s time-value of
+money</strong>, meaning how the company values money now vs. in the
+future.</li>
+<li>A reasonable choice for this rate is <strong>the one the insurer
+uses to establish policy reserves</strong> (the money set aside to pay
+future claims).</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-13"><strong>Takeaway</strong>:</h3>
+<p>The <strong>Break-even Method</strong> helps determine the minimum
+amount of insurance needed for an underwriting procedure to be
+<strong>cost-effective</strong>. It relies on <strong>fixed interest
+rates</strong> and may have <strong>multiple break-even points</strong>.
+The chosen interest rate should align with the insurer’s
+<strong>financial strategy</strong>, such as policy reserve
+calculations.</p>
+<h3 id="summary-explanation-14"><strong>Summary &amp;
+Explanation:</strong></h3>
+<p>This passage explains the <strong>Return on Investment (ROI)
+Method</strong>, another way to assess whether an underwriting procedure
+is financially beneficial.</p>
+<h3 id="key-points-14"><strong>Key Points:</strong></h3>
+<ol type="1">
+<li><p><strong>How ROI is Calculated</strong>:</p>
+<ul>
+<li>The <strong>ROI method</strong> finds the <strong>interest
+rate</strong> at which the <strong>savings from the underwriting
+procedure exactly equal its cost</strong> for a given amount of
+insurance.</li>
+<li>This interest rate is referred to as the <strong>ROI</strong>.</li>
+</ul></li>
+<li><p><strong>Decision Rule</strong>:</p>
+<ul>
+<li>If the <strong>ROI is greater</strong> than the insurer’s
+<strong>time-value of money</strong> (i.e., the rate the insurer uses
+for financial decision-making), then the procedure <strong>has
+protective value</strong>.</li>
+<li>This means the insurer is earning a return on the underwriting
+procedure that is higher than their internal financial benchmark, making
+the procedure a <strong>worthwhile investment</strong>.</li>
+</ul></li>
+<li><p><strong>Comparison to the Break-even Method</strong>:</p>
+<ul>
+<li>If the <strong>ROI equals</strong> the insurer’s time-value of
+money, the <strong>ROI method and the Break-even method will yield the
+same result</strong>.</li>
+<li>The <strong>Break-even method</strong> finds the insurance amount
+where savings = cost, while the <strong>ROI method</strong> finds the
+interest rate where savings = cost for a given insurance amount.</li>
+</ul></li>
+</ol>
+<h3 id="takeaway-14"><strong>Takeaway</strong>:</h3>
+<p>The <strong>ROI Method</strong> evaluates the
+<strong>profitability</strong> of an underwriting procedure by
+determining whether its return exceeds the insurer’s <strong>financial
+benchmark</strong>. If <strong>ROI &gt; time-value of money</strong>,
+the procedure is <strong>beneficial</strong>. If <strong>ROI =
+time-value of money</strong>, it provides the <strong>same insights as
+the Break-even Method</strong>.</p>
+    
+</body>
+</html>

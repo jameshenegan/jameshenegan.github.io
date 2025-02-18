@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="summary">Summary</h1>
+<p>Below is a detailed summary of the article “Work with registered
+models in Azure Machine Learning.” This summary covers the key concepts,
+requirements, and processes for registering, managing, and using models
+in Azure Machine Learning through the studio UI, CLI, and Python
+SDK.</p>
+<hr />
+<h2 id="overview">1. Overview</h2>
+<p><strong>Purpose</strong><br />
+Azure Machine Learning allows you to register models in a centralized
+registry. This registry manages versioning, organization, and tracking
+of trained models. You can interact with the registry:</p>
+<ul>
+<li>Via the Azure Machine Learning studio (web UI).</li>
+<li>Using the Azure Machine Learning (v2) CLI.</li>
+<li>Using the Python Azure Machine Learning (v2) SDK.</li>
+</ul>
+<p><strong>Key Capabilities</strong></p>
+<ul>
+<li>Create registered models from local files, data stores, or job
+outputs (MLflow or custom-trained).</li>
+<li>Manage different types of models (custom, MLflow, Triton).</li>
+<li>Integrate registered models as inputs or outputs in training
+pipelines or jobs.</li>
+<li>Manage model assets over their lifecycle (list, show details,
+update, archive).</li>
+</ul>
+<hr />
+<h2 id="model-registration">2. Model Registration</h2>
+<p><strong>What is model registration?</strong><br />
+Model registration stores and versions your model in the Azure Machine
+Learning workspace. Each registration entry, or “registered model,”
+becomes an asset in Azure ML that can be referenced in training,
+deployment, or lineage tracking.</p>
+<p><strong>Supported Paths</strong><br />
+When registering a model, you must provide a path that points to the
+model’s location. Azure ML supports the following path types and
+syntaxes:</p>
+<ol type="1">
+<li><p><strong>Local</strong>:</p>
+<pre><code>&lt;model-folder&gt;/&lt;model-filename&gt;</code></pre></li>
+<li><p><strong>Azure ML datastore</strong>:</p>
+<pre><code>azureml://datastores/&lt;datastore-name&gt;/paths/&lt;path_on_datastore&gt;</code></pre></li>
+<li><p><strong>Azure ML job output</strong>:</p>
+<pre><code>azureml://jobs/&lt;job-name&gt;/outputs/&lt;output-name&gt;/paths/&lt;path-to-model-relative-to-the-named-output-location&gt;</code></pre></li>
+<li><p><strong>MLflow job run</strong>:</p>
+<pre><code>runs:/&lt;run-id&gt;/&lt;path-to-model-relative-to-the-root-of-the-artifact-location&gt;</code></pre></li>
+<li><p><strong>Model asset in a workspace</strong>:</p>
+<pre><code>azureml:&lt;model-name&gt;:&lt;version&gt;</code></pre></li>
+<li><p><strong>Model asset in a registry</strong>:</p>
+<pre><code>azureml://registries/&lt;registry-name&gt;/models/&lt;model-name&gt;/versions/&lt;version&gt;</code></pre></li>
+</ol>
+<p><strong>Supported Modes</strong><br />
+When specifying a model as an input or output, you can define how the
+data is made available or captured on the compute target:</p>
+<ul>
+<li><code>ro_mount</code>: Mount as read-only.</li>
+<li><code>rw_mount</code>: Mount as read-write.</li>
+<li><code>download</code>: Copy/download the model to the local file
+system of the compute target.</li>
+<li><code>upload</code>: Upload data from the compute target to the
+model’s output location.</li>
+<li><code>direct</code>: Pass the URI as a string, without actually
+moving or mounting data.</li>
+</ul>
+<p>Different model types (custom file, custom folder, MLflow) support
+different subsets of these modes.</p>
+<hr />
+<h2 id="prerequisites">3. Prerequisites</h2>
+<p>To use the Azure ML v2 CLI or Python SDK for model registration:</p>
+<ul>
+<li><p>An <strong>Azure subscription</strong> (free or paid).</p></li>
+<li><p>An <strong>Azure Machine Learning workspace</strong>.</p></li>
+<li><p><strong>Azure CLI version 2.38.0 or higher</strong>.</p></li>
+<li><p><strong>ML extension (v2) for the Azure CLI</strong>, installed
+via:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> extension add <span class="at">-n</span> ml</span></code></pre></div></li>
+<li><p>For Python usage, the <strong>azure-ai-ml v2</strong>
+package.</p></li>
+</ul>
+<hr />
+<h2 id="register-a-model-via-the-studio-ui">4. Register a Model via the
+Studio UI</h2>
+<ol type="1">
+<li>In the <strong>Machine Learning studio</strong>, go to your
+workspace and select <strong>Models</strong> on the left.</li>
+<li>Click <strong>Register</strong>, and choose one of the options:
+<ul>
+<li><strong>From local files</strong></li>
+<li><strong>From a job output</strong></li>
+<li><strong>From datastore</strong></li>
+<li><strong>From local files (based on framework)</strong></li>
+</ul></li>
+<li>Select your model file/folder (from local, datastore, or job
+output).</li>
+<li>Choose the model type (MLflow, Triton, or Unspecified).</li>
+<li>Provide a <strong>name</strong> and <strong>optional
+settings</strong>.</li>
+<li>Review and click <strong>Register</strong>.</li>
+</ol>
+<hr />
+<h2 id="register-a-model-via-cli-or-python-sdk">5. Register a Model via
+CLI or Python SDK</h2>
+<p>You can register either a <strong>custom model</strong>
+(files/folders with your own training approach) or an <strong>MLflow
+model</strong> (contains MLmodel file and associated dependencies).</p>
+<h3 id="connect-to-your-workspace-cli">5.1 Connect to Your Workspace
+(CLI)</h3>
+<ol type="1">
+<li><p>Sign in to Azure:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> login</span></code></pre></div></li>
+<li><p>Set your defaults:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> account set <span class="at">--subscription</span> <span class="op">&lt;</span>subscription-id<span class="op">&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> configure <span class="at">--defaults</span> workspace=<span class="op">&lt;</span>workspace-name<span class="op">&gt;</span> group=<span class="op">&lt;</span>resource-group<span class="op">&gt;</span> location=<span class="op">&lt;</span>location<span class="op">&gt;</span></span></code></pre></div></li>
+</ol>
+<h3 id="create-a-registered-model">5.2 Create a Registered Model</h3>
+<p>Below are examples of where the model can originate:</p>
+<h4 id="a.-local-file-or-folder">A. Local File or Folder</h4>
+<ol type="1">
+<li><p>Create a YAML file (e.g., <code>model.yml</code>) with your model
+definition:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/model.schema.json</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> local-file-example</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">path</span><span class="kw">:</span><span class="at"> mlflow-model/model.pkl</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Model created from local file.</span></span></code></pre></div></li>
+<li><p>Run the CLI command:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="at">-f</span> model.yml</span></code></pre></div></li>
+</ol>
+<h4 id="b.-azure-ml-datastore">B. Azure ML Datastore</h4>
+<p>Specify a path on a datastore with <code>azureml://</code>
+syntax:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="at">--name</span> my-model <span class="at">--version</span> 1 <span class="dt">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--path</span> azureml://datastores/myblobstore/paths/models/cifar10/cifar.pt</span></code></pre></div>
+<h4 id="c.-job-output">C. Job Output</h4>
+<p>If your model was produced by a training job, you can reference:</p>
+<ol type="1">
+<li><strong>MLflow runs</strong> (using the
+<code>runs:/&lt;run-id&gt;/...</code> format).</li>
+<li><strong>Azure ML job outputs</strong> (using
+<code>azureml://jobs/&lt;job-id&gt;/outputs/...</code>).</li>
+</ol>
+<p>Example (MLflow run URI):</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="at">--name</span> my-registered-model <span class="at">--version</span> 1 <span class="dt">\</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--path</span> runs:/my_run_0000000000/model/ <span class="at">--type</span> mlflow_model</span></code></pre></div>
+<p>Example (Azure ML job output URI):</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="at">--name</span> run-model-example <span class="at">--version</span> 1 <span class="dt">\</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--path</span> azureml://jobs/my_run_0000000000/outputs/artifacts/paths/model/</span></code></pre></div>
+<hr />
+<h2 id="use-models-for-training">6. Use Models for Training</h2>
+<p>You can specify models as inputs or outputs of training jobs (command
+jobs), which helps track lineage and ensure reproducibility.</p>
+<h3 id="model-as-an-input">6.1 Model as an Input</h3>
+<p>Create a job YAML (e.g., <code>job-spec.yml</code>) defining an
+<code>inputs</code> section that references a model asset. For
+example:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/commandJob.schema.json</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">command</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  ls ${{inputs.my_model}}</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">my_model</span><span class="kw">:</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> mlflow_model</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ../../assets/model/mlflow-model</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml://registries/azureml/environments/sklearn-1.5/labels/latest</span></span></code></pre></div>
+<p>Run the job:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml job create <span class="at">-f</span> job-spec.yml</span></code></pre></div>
+<h3 id="model-as-an-output">6.2 Model as an Output</h3>
+<p>Specify a model in the <code>outputs</code> section to write data
+(model artifacts) to cloud storage:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/commandJob.schema.json</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  python hello-model-as-output.py</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  --input_model ${{inputs.input_model}}</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  --custom_model_output ${{outputs.output_folder}}</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">input_model</span><span class="kw">:</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> mlflow_model</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ../../assets/model/mlflow-model</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">output_folder</span><span class="kw">:</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> custom_model</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml://registries/azureml/environments/sklearn-1.5/labels/latest</span></span></code></pre></div>
+<p>Create the job:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml job create <span class="at">--file</span> job-spec.yml</span></code></pre></div>
+<hr />
+<h2 id="manage-models-lifecycle-operations">7. Manage Models (Lifecycle
+Operations)</h2>
+<p>Once models are registered, you can list, show details, update, or
+archive them.</p>
+<h3 id="list-models">7.1 List Models</h3>
+<ul>
+<li><p><strong>All models in a workspace</strong>:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model list</span></code></pre></div></li>
+<li><p><strong>Specific model name</strong> (to list versions):</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model list <span class="at">--name</span> <span class="op">&lt;</span>model-name<span class="op">&gt;</span></span></code></pre></div></li>
+</ul>
+<h3 id="show-model-details">7.2 Show Model Details</h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model show <span class="at">--name</span> <span class="op">&lt;</span>model-name<span class="op">&gt;</span> --version <span class="op">&lt;</span>version-number<span class="op">&gt;</span></span></code></pre></div>
+<h3 id="update-a-model">7.3 Update a Model</h3>
+<p>Only certain fields (e.g., <code>description</code> and
+<code>tags</code>) are mutable. Use the CLI’s <code>--set</code>
+parameter:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model update <span class="dt">\</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--name</span> <span class="op">&lt;</span>model-name<span class="op">&gt;</span> --version <span class="op">&lt;</span>version<span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--set</span> description=<span class="st">&quot;This is an updated description.&quot;</span> <span class="dt">\</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--set</span> tags.stage=<span class="st">&quot;Prod&quot;</span></span></code></pre></div>
+<h3 id="archive-a-model">7.4 Archive a Model</h3>
+<p>Archiving hides a model from default list queries, but you can still
+use it in workflows.</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model archive <span class="at">--name</span> <span class="op">&lt;</span>model-name<span class="op">&gt;</span> --version <span class="op">&lt;</span>version<span class="op">&gt;</span></span></code></pre></div>
+<p>If you omit <code>--version</code>, <strong>all</strong> versions of
+that model name will be archived.</p>
+<hr />
+<h2 id="related-resources">8. Related Resources</h2>
+<ul>
+<li><strong>Share models, components, and environments</strong> with
+Azure ML registries.</li>
+<li><strong>Azure CLI ml extension</strong> reference.</li>
+<li><strong>MLflow with Azure Machine Learning</strong> for logging and
+model management.</li>
+<li><strong>Deploy MLflow models</strong> to online endpoints.</li>
+</ul>
+<hr />
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol type="1">
+<li><strong>Flexible Registration</strong>: You can register models from
+local paths, datastore paths, or job outputs.</li>
+<li><strong>Rich Integration</strong>: Registered models can be used
+directly as inputs or outputs in further training or pipelines.</li>
+<li><strong>Lifecycle Management</strong>: Commands allow listing,
+viewing, updating, or archiving models to maintain a clean and
+well-organized model repository.</li>
+<li><strong>Types of Models</strong>: Azure ML supports multiple model
+file structures (custom, MLflow, Triton) with different interaction
+modes (mount, download, direct, etc.).</li>
+</ol>
+<p>This completes the detailed summary of how to register, manage, and
+use models in Azure Machine Learning.</p>
+<h1 id="application">Application</h1>
+<p><strong>Short answer:</strong> Yes. You can absolutely configure an
+Azure DevOps pipeline to trigger an Azure Machine Learning training
+pipeline, then have that training job register a model in the Azure
+Machine Learning registry as part of the process.</p>
+<p>Below is an overview of how you can accomplish this:</p>
+<hr />
+<h2 id="high-level-workflow">1. High-Level Workflow</h2>
+<ol type="1">
+<li><p><strong>Azure DevOps Pipeline (CI/CD):</strong></p>
+<ul>
+<li>Triggered by a code commit, pull request, or a manual
+invocation.</li>
+<li>Calls Azure Machine Learning (AML) commands (via the Azure CLI or
+Python SDK) to submit a training pipeline or job in your AML
+workspace.</li>
+</ul></li>
+<li><p><strong>Azure Machine Learning Pipeline/Job (Training &amp;
+Registration):</strong></p>
+<ul>
+<li>Runs your training script, trains the model, and outputs the trained
+artifacts.</li>
+<li>Registers the final model in the AML model registry.</li>
+<li>Optionally, you can have steps for data prep, model evaluation, or
+additional post-processing within the AML pipeline.</li>
+</ul></li>
+<li><p><strong>Post-Registration Steps in DevOps
+(Optional):</strong></p>
+<ul>
+<li>After model registration, you might deploy the model to an Azure ML
+endpoint (for serving) or store metadata (e.g., logs, metrics) in
+DevOps.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="common-approaches">2. Common Approaches</h2>
+<h3 id="a.-using-azure-cli-in-an-azure-devops-pipeline">A. Using Azure
+CLI in an Azure DevOps Pipeline</h3>
+<ol type="1">
+<li><p><strong>Add the Azure CLI to your DevOps agent</strong> (or use a
+Microsoft-hosted agent that has it preinstalled).</p></li>
+<li><p><strong>Install the Azure ML CLI extension (v2)</strong> on the
+agent:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>      az extension add -n ml</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install AML CLI extension&quot;</span></span></code></pre></div></li>
+<li><p><strong>Sign in to Azure</strong> (e.g., via a Service Principal
+or Managed Identity) in DevOps:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> AzureCLI@2</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">azureSubscription</span><span class="kw">:</span><span class="at"> &lt;service-connection-name&gt;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">scriptType</span><span class="kw">:</span><span class="at"> bash</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">scriptLocation</span><span class="kw">:</span><span class="at"> inlineScript</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">      inlineScript</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        az account set --subscription &lt;subscription-id&gt;</span></code></pre></div></li>
+<li><p><strong>Submit your AML pipeline or job</strong>:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>      az ml job create -f path/to/train-job.yml</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Submit AML Training Job&quot;</span></span></code></pre></div>
+<ul>
+<li>The job (or pipeline) YAML will define your training script,
+compute, environment, etc.</li>
+</ul></li>
+<li><p><strong>Register the model</strong> using CLI after the job
+completes:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">  - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>      az ml model create -f path/to/model-registration.yml</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Register model in AML&quot;</span></span></code></pre></div>
+<p>Or, you can embed the registration inside the AML job itself (for
+instance, by specifying <code>outputs</code> or MLflow logging within
+the training script).</p></li>
+</ol>
+<h3 id="b.-using-the-python-sdk-in-an-azure-devops-pipeline">B. Using
+the Python SDK in an Azure DevOps Pipeline</h3>
+<ol type="1">
+<li><p><strong>Install Python and the azure-ai-ml package</strong> in
+your DevOps pipeline:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">script</span><span class="kw">:</span><span class="at"> pip install azure-ai-ml</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install Azure ML Python SDK&quot;</span></span></code></pre></div></li>
+<li><p><strong>Authenticate</strong> with Azure inside the pipeline
+(e.g., using <code>az login</code> or a service principal).</p></li>
+<li><p><strong>Submit your training pipeline</strong>:</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> (</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    PipelineJob,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    CommandComponent</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ...</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>credential <span class="op">=</span> DefaultAzureCredential()</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>ml_client <span class="op">=</span> MLClient(credential, subscription_id, resource_group, workspace_name)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Define or load your pipeline job</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>pipeline_job <span class="op">=</span> PipelineJob(</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ...</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Submit pipeline</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>submitted_job <span class="op">=</span> ml_client.jobs.create_or_update(pipeline_job)</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>submitted_job.wait_for_completion()</span></code></pre></div></li>
+<li><p><strong>Register the model</strong> in Python:</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> Model</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Model(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;my-trained-model&quot;</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span><span class="st">&quot;path/to/model/folder&quot;</span>,  <span class="co"># or runs:/ job-output path, etc.</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&quot;Model from pipeline run&quot;</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>ml_client.models.create_or_update(model)</span></code></pre></div></li>
+<li><p><strong>Add this Python script</strong> as a step in your DevOps
+pipeline, ensuring you pass necessary parameters.</p></li>
+</ol>
+<hr />
+<h2 id="key-considerations">3. Key Considerations</h2>
+<ol type="1">
+<li><p><strong>Authentication &amp; Permissions</strong></p>
+<ul>
+<li>Ensure your Azure DevOps agent or service principal has
+<strong>Contributor</strong> or <strong>ML Admin</strong> rights on your
+AML workspace.</li>
+<li>You can use a Service Connection in Azure DevOps that references
+your Azure credentials.</li>
+</ul></li>
+<li><p><strong>Versioning &amp; Naming</strong></p>
+<ul>
+<li>Provide clear names and versions for models in AML. The pipeline or
+job can dynamically include a build number (e.g.,
+“my-model:buildID”).</li>
+</ul></li>
+<li><p><strong>Model Lineage</strong></p>
+<ul>
+<li>By registering the model as part of the <strong>same</strong> job
+that trained it (for example, referencing a job output path), you’ll
+automatically capture lineage in AML (which run produced which
+model).</li>
+</ul></li>
+<li><p><strong>Pipeline Completion</strong></p>
+<ul>
+<li>If you need to wait for the AML pipeline to finish training before
+proceeding, ensure your DevOps pipeline either polls or blocks until the
+AML job is complete (e.g.,
+<code>az ml job create ... --set wait=true</code> or by programmatically
+checking job status in Python).</li>
+</ul></li>
+<li><p><strong>Artifact Storage</strong></p>
+<ul>
+<li>AML automatically manages artifacts in storage linked to your AML
+workspace. If you wish to copy logs/model artifacts into Azure DevOps,
+you can use Azure DevOps artifact tasks or keep everything in AML’s
+native artifact store.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="putting-it-all-together-example-azure-devops-yaml">4. Putting It
+All Together (Example Azure DevOps YAML)</h2>
+<p>Here’s a simplified multi-stage pipeline outline:</p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> main</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> TrainAndRegister</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> TrainJob</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Train Model and Register&quot;</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;ubuntu-latest&quot;</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>              az extension add -n ml</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Install AML extension&quot;</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> AzureCLI@2</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Submit AML Training Job&quot;</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">azureSubscription</span><span class="kw">:</span><span class="at"> &lt;service-connection-name&gt;</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptType</span><span class="kw">:</span><span class="at"> bash</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptLocation</span><span class="kw">:</span><span class="at"> inlineScript</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="fu">              inlineScript</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>                az account set --subscription &lt;subscription-id&gt;</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>                az ml job create -f train_job.yml</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> AzureCLI@2</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Register Model&quot;</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">azureSubscription</span><span class="kw">:</span><span class="at"> &lt;service-connection-name&gt;</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptType</span><span class="kw">:</span><span class="at"> bash</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptLocation</span><span class="kw">:</span><span class="at"> inlineScript</span></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a><span class="fu">              inlineScript</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>                az ml model create -f model_registration.yml</span></code></pre></div>
+<p>Where:</p>
+<ul>
+<li><code>train_job.yml</code> is your AML job/pipeline definition for
+training.</li>
+<li><code>model_registration.yml</code> is a YAML definition pointing to
+the newly trained model output location.</li>
+</ul>
+<hr />
+<h2 id="additional-resources">5. Additional Resources</h2>
+<ul>
+<li><strong><a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-mlops-azure-devops">Azure
+ML Documentation – MLOps &amp; DevOps integration</a></strong></li>
+<li><strong><a
+href="https://github.com/Azure-Samples/azureml-ops-templates">Azure
+DevOps + Azure ML GitHub Samples</a></strong></li>
+<li><strong><a href="https://learn.microsoft.com/cli/azure/ml">Azure CLI
+ml extension reference</a></strong></li>
+<li><strong><a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-register-model?tabs=python">Register
+a model in Azure ML</a></strong></li>
+</ul>
+<hr />
+<h3 id="conclusion">Conclusion</h3>
+<p>Yes, it’s entirely feasible to have your Azure DevOps pipeline
+orchestrate end-to-end model training within Azure Machine Learning,
+then automatically register the model in AML’s model registry. By using
+either the Azure CLI or the Python SDK from your DevOps pipeline, you
+can automate the entire process, ensuring continuous integration and
+delivery of your ML models.</p>
+<h1 id="details">Details</h1>
+<p>Below is a more in-depth explanation of how to wire up a training
+job’s outputs to a model registration step, especially if you’re using
+separate YAML files (one for the training job, one for the model
+registration). The core question is how the “model registration YAML”
+knows the path to the newly trained artifacts from the “training job
+YAML.”</p>
+<hr />
+<h2 id="two-main-patterns">1. Two Main Patterns</h2>
+<h3
+id="pattern-a-register-your-model-within-the-same-pipeline-job"><strong>Pattern
+A: Register Your Model Within the Same Pipeline Job</strong></h3>
+<p>You can define <strong>both</strong> the training step
+<strong>and</strong> the model registration in a <strong>single</strong>
+Azure Machine Learning pipeline/job YAML. In other words, the pipeline
+itself has an output (<code>outputs:</code>) that’s configured to be of
+type <code>mlflow_model</code> or <code>custom_model</code>, which
+effectively “registers” your model as part of the pipeline’s last
+step.</p>
+<ul>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li>Simpler single YAML flow in AML; direct references from one step’s
+output to the next step’s input.</li>
+<li>You don’t need a separate “model registration” YAML or a second CLI
+call.</li>
+<li>You get direct lineage in AML (the pipeline’s final step is model
+registration).</li>
+</ul></li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li>Less flexible if you really want to keep training vs. registration
+steps entirely separate or controlled by separate triggers.</li>
+</ul></li>
+</ul>
+<h3
+id="pattern-b-separate-training-job-yaml-and-model-registration-yaml"><strong>Pattern
+B: Separate “Training Job YAML” and “Model Registration
+YAML”</strong></h3>
+<p>In this scenario, you’ll have:</p>
+<ol type="1">
+<li>A <strong>train_job.yml</strong> (or pipeline YAML) that, when
+submitted via <code>az ml job create -f train_job.yml</code>, runs your
+training code and outputs model files or folders.</li>
+<li>A <strong>model_registration.yml</strong> that expects to know
+<em>where</em> the model files are located so it can register them.</li>
+</ol>
+<p>This often boils down to capturing the <strong>Job ID</strong> or
+<strong>path</strong> from the first step and passing it into the second
+step. That job ID is used in a registration command that references the
+job output path.</p>
+<hr />
+<h2 id="how-to-pass-the-job-output-to-the-registration-step">2. How to
+Pass the Job Output to the Registration Step</h2>
+<p>If you use <strong>Pattern B</strong>, you have two main ways to
+handle the “chaining” of outputs from the training job to the
+registration step.</p>
+<h3 id="using-azuremljobsjob-idoutputs...-in-your-registration-yaml">2.1
+Using <code>azureml://jobs/&lt;job-id&gt;/outputs/...</code> in Your
+Registration YAML</h3>
+<ol type="1">
+<li><p><strong>Submit your training job</strong> and capture its
+<strong>Job ID</strong> (a.k.a. Run ID) in your Azure DevOps pipeline
+step.</p>
+<ul>
+<li><p>For example, in a Bash script within the Azure DevOps
+pipeline:</p>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="va">JOB_ID</span><span class="op">=</span><span class="va">$(</span><span class="ex">az</span> ml job create <span class="at">-f</span> train_job.yml <span class="at">--query</span> name <span class="at">-o</span> tsv<span class="va">)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;##vso[task.setvariable variable=TRAINING_JOB_ID]</span><span class="va">$JOB_ID</span><span class="st">&quot;</span></span></code></pre></div>
+<p>This sets an Azure DevOps pipeline variable called
+<code>TRAINING_JOB_ID</code> to the AML job’s ID.</p></li>
+</ul></li>
+<li><p><strong>Use the captured variable in a subsequent step</strong>
+to reference the job’s output in your
+<code>model_registration.yml</code> or CLI call:</p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="dt">\</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--name</span> my-registered-model <span class="dt">\</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--version</span> 1 <span class="dt">\</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--type</span> mlflow_model <span class="dt">\</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--path</span> azureml://jobs/<span class="va">$(</span><span class="ex">TRAINING_JOB_ID</span><span class="va">)</span>/outputs/<span class="op">&lt;</span>output-name<span class="op">&gt;</span>/paths/<span class="op">&lt;</span>path-to-model<span class="op">&gt;</span></span></code></pre></div>
+<p>If your training job saves the model to the default artifact
+location, you may see something like:</p>
+<pre><code>azureml://jobs/$(TRAINING_JOB_ID)/outputs/artifacts/paths/model_folder/</code></pre>
+<p>Or if you have a named output in the job YAML:</p>
+<pre><code>azureml://jobs/$(TRAINING_JOB_ID)/outputs/my_named_output/paths/</code></pre>
+<p>This is where you specifically reference the job’s outputs.</p></li>
+<li><p><strong>(Optional) Combine with a
+<code>model_registration.yml</code></strong>:</p>
+<ul>
+<li>If you prefer to keep a YAML definition for registration, you can
+define the <code>path</code> field there but parameterize it. The idea
+is you replace a placeholder (e.g., <code>{{JOB_ID}}</code>) at runtime
+in DevOps using a variable substitution strategy, or you dynamically
+generate the YAML file before calling
+<code>az ml model create -f model_registration.yml</code>.</li>
+</ul></li>
+</ol>
+<p><strong>Important Note</strong>: You must know how your training job
+is saving or naming its outputs. For example:</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train_job.yml example snippet</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">my_named_output</span><span class="kw">:</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">path</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;outputs/model-folder&quot;</span></span></code></pre></div>
+<p>Then in code, your training script might place the artifacts in that
+<code>outputs/model-folder</code>. AML automatically uploads them to
+that job’s output path in the workspace storage.</p>
+<h3 id="using-mlflow-runsartifact_path-syntax">2.2 Using MLflow
+“runs:/<run-id>/artifact_path” Syntax</h3>
+<p>If you used MLflow tracking/logging in your training script (for
+example, <code>mlflow.sklearn.log_model(...)</code>), you can rely on
+the MLflow <code>runs:/&lt;run-id&gt;/model_folder/</code> syntax to
+register an MLflow model. The flow is similar:</p>
+<ol type="1">
+<li><p>Capture the AML job ID (which typically matches the MLflow run
+ID) in DevOps.</p></li>
+<li><p>Pass it into the “model registration” CLI command:</p>
+<div class="sourceCode" id="cb37"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="dt">\</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--name</span> my-registered-model <span class="dt">\</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--type</span> mlflow_model <span class="dt">\</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--path</span> runs:/<span class="va">${</span><span class="er">{TRAINING_JOB_ID</span><span class="va">}</span>}/model_folder</span></code></pre></div>
+<p>You get the same chaining effect: you’re just referencing the MLflow
+artifacts from the training run.</p></li>
+</ol>
+<hr />
+<h2 id="example-azure-devops-multi-step-pipeline">3. Example: Azure
+DevOps Multi-Step Pipeline</h2>
+<p>Here’s a small example of a multi-step pipeline in Azure DevOps that
+keeps the training job and the model registration YAML separate. It uses
+the CLI approach:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> main</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pool</span><span class="kw">:</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vmImage</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;ubuntu-latest&#39;</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> AzureCLI@2</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Train Model in AML&quot;</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">azureSubscription</span><span class="kw">:</span><span class="at"> &lt;service-connection-name&gt;</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">scriptType</span><span class="kw">:</span><span class="at"> bash</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="fu">    scriptLocation</span><span class="kw">: </span><span class="at">inlineScript: </span><span class="ch">|</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>      # 1. Create training job</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>      echo &quot;Starting training job...&quot;</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>      TRAIN_JOB_ID=$(az ml job create -f train_job.yml --query name -o tsv)</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>      # 2. Save the TRAIN_JOB_ID as an Azure DevOps pipeline variable</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>      echo &quot;##vso[task.setvariable variable=TRAIN_JOB_ID]$TRAIN_JOB_ID</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> AzureCLI@2</span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Register Model from Training Output&quot;</span></span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">azureSubscription</span><span class="kw">:</span><span class="at"> &lt;service-connection-name&gt;</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">scriptType</span><span class="kw">:</span><span class="at"> bash</span></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a><span class="fu">    scriptLocation</span><span class="kw">: </span><span class="at">inlineScript: </span><span class="ch">|</span></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>      echo &quot;Registering model from job $TRAIN_JOB_ID&quot;</span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>      # Option A: Direct command with path reference</span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>      az ml model create \</span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>        --name my-model \</span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>        --version 1 \</span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>        --type mlflow_model \</span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>        --path azureml://jobs/$TRAIN_JOB_ID/outputs/artifacts/paths/model/</span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>      # or, if you have a separate YAML for registration:</span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a>      # sed &quot;s/&lt;JOB_ID&gt;/$TRAIN_JOB_ID/g&quot; model_registration.template.yml &gt; model_registration.yml</span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a>      # az ml model create -f model_registration.yml</span></code></pre></div>
+<p><strong>What’s happening here:</strong></p>
+<ol type="1">
+<li><p><strong>Train Model in AML</strong> step:</p>
+<ul>
+<li>Submits the training job via <code>train_job.yml</code>.</li>
+<li>Grabs the job name/ID from the output.</li>
+<li>Exports it as a DevOps pipeline variable.</li>
+</ul></li>
+<li><p><strong>Register Model</strong> step:</p>
+<ul>
+<li>Uses that job ID to construct the path to the output artifacts (the
+trained model).</li>
+<li>Calls <code>az ml model create</code> with the correct
+<code>--path</code>.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="detailed-train_job.yml-example">4. Detailed
+<code>train_job.yml</code> Example</h2>
+<div class="sourceCode" id="cb39"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/commandJob.schema.json</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml:cpu-cluster</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">code</span><span class="kw">:</span><span class="at"> ./src</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">command</span><span class="kw">: </span><span class="ch">&gt;-</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  python train.py </span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  --data ${{inputs.train_data}}</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  --output_dir ${{outputs.model_artifacts}}</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml:your-env:1</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">train_data</span><span class="kw">:</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_file</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">path</span><span class="kw">:</span><span class="at"> azureml://datastores/workspaceblobstore/paths/data/train.csv</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">model_artifacts</span><span class="kw">:</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">path</span><span class="kw">:</span><span class="at"> outputs/model-folder</span><span class="co"> # relative local path in the job container</span></span></code></pre></div>
+<ul>
+<li>The training script <code>train.py</code> will save the model to
+<code>outputs/model-folder</code>.</li>
+<li>AML will automatically upload the contents of
+<code>outputs/model-folder</code> to the job run’s artifact store and
+reference it via
+<code>azureml://jobs/&lt;job-id&gt;/outputs/model_artifacts/paths/...</code></li>
+</ul>
+<p>So, in your registration step, you could point to:</p>
+<pre><code>azureml://jobs/&lt;job-id&gt;/outputs/model_artifacts/paths/</code></pre>
+<p>Or if you further nest subdirectories:</p>
+<pre><code>azureml://jobs/&lt;job-id&gt;/outputs/model_artifacts/paths/some-subfolder</code></pre>
+<hr />
+<h2 id="detailed-model_registration.yml-example">5. Detailed
+<code>model_registration.yml</code> Example</h2>
+<p>If you <em>really</em> want to keep a separate YAML, you might do
+something like:</p>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$schema</span><span class="kw">:</span><span class="at"> https://azuremlschemas.azureedge.net/latest/model.schema.json</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> my-registered-model</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">type</span><span class="kw">:</span><span class="at"> mlflow_model</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">path</span><span class="kw">:</span><span class="at"> azureml://jobs/&lt;JOB_ID&gt;/outputs/model_artifacts/paths/</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Registration from the output of a training job&quot;</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tags</span><span class="kw">:</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">project</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;my-mlops-project&quot;</span></span></code></pre></div>
+<p>Then in your pipeline step, you replace <code>&lt;JOB_ID&gt;</code>
+with the actual ID from the training step. For instance, via a simple
+<code>sed</code> command or template substitution in your DevOps
+pipeline:</p>
+<div class="sourceCode" id="cb43"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="st">&quot;s|&lt;JOB_ID&gt;|</span><span class="va">$TRAIN_JOB_ID</span><span class="st">|g&quot;</span> model_registration.yml <span class="op">&gt;</span> model_registration_temp.yml</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml model create <span class="at">-f</span> model_registration_temp.yml</span></code></pre></div>
+<hr />
+<h2 id="final-thoughts">6. Final Thoughts</h2>
+<ol type="1">
+<li><strong>Yes</strong>, your model registration YAML can indeed depend
+on the output path from your training job. You just need a way to
+<em>inject</em> the correct job ID/path once the training job
+completes.</li>
+<li>The easiest approach is often to store that job ID in a pipeline
+variable (DevOps) or an environment variable, then reference it in the
+model registration step.</li>
+<li>Alternatively, you might skip a separate YAML for registration
+altogether and do the registration within the same job/pipeline that
+trains the model (Pattern A). That approach sometimes simplifies things
+if you don’t strictly need separation.</li>
+</ol>
+<hr />
+<h3 id="in-summary">In Summary</h3>
+<ul>
+<li>You’re not missing anything; it <em>does</em> require referencing
+the output from the training step.</li>
+<li>The typical solution: capture the job’s ID (or run ID) in one step,
+then pass it to the next step that performs model registration. This can
+be done via CLI commands or by dynamically modifying your registration
+YAML at runtime.</li>
+</ul>
+<p>Hopefully, this clarifies how to tie the output from your training
+job YAML to the subsequent model registration YAML. If you have more
+specific questions or a particular setup in mind, feel free to follow
+up!</p>
+    
+</body>
+</html>
