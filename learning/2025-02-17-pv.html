@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="protective-value">Protective Value</h1>
+<p><strong>Detailed Summary</strong></p>
+<p>This paper introduces the concept of a <em>protective value
+study</em> for underwriting procedures in insurance. The essential
+question is whether a particular underwriting process saves more
+(through identifying and appropriately charging for higher mortality or
+morbidity risks) than it costs to implement. The author lays out a
+straightforward but thorough framework for conducting such an analysis,
+focusing on the following key elements:</p>
+<hr />
+<h3 id="fundamental-question">1. Fundamental Question</h3>
+<ul>
+<li><strong>Core Principle</strong>: An underwriting procedure has
+positive economic value if the present value of savings in
+mortality/morbidity (M/M) exceeds the total cost of performing the
+procedure.</li>
+<li>The savings arise because, without the procedure, an insurer would
+charge <em>standard</em> premiums to applicants who actually present
+<em>substandard</em> risks.</li>
+</ul>
+<hr />
+<h3 id="measuring-mortalitymorbidity-savings">2. Measuring
+Mortality/Morbidity Savings</h3>
+<ol type="1">
+<li><p><strong>Excess M/M</strong>:</p>
+<ul>
+<li>Typically expressed as a percentage above the standard M/M
+assumption.</li>
+<li>For example, if a substandard risk is projected to have 150% of the
+standard mortality rate, the excess 50% is what contributes to the
+protective value when identified.</li>
+</ul></li>
+<li><p><strong>Special Considerations</strong>:</p>
+<ul>
+<li><strong>Declined Applications</strong>: Can be modeled as having a
+very high “virtual” substandard rating (e.g., standard + 50%
+extra).</li>
+<li><strong>Not Takens</strong>: If a substandard offer is made but not
+accepted, it can be viewed differently than a policy that is
+accepted.</li>
+<li><strong>Exclusions or Modified Coverage</strong>: If coverage
+modifications do not include a substandard premium rating, one might
+still treat them like a high substandard rating for analysis.</li>
+</ul></li>
+<li><p><strong>Clinical/Alternate Data</strong>:</p>
+<ul>
+<li>If standard reinsurance manuals or standard tables do not exist for
+certain impairments, the underwriter can rely on clinical or medical
+studies.</li>
+<li>These data must be adapted (or “mapped”) to known standard tables
+(e.g., SOA 1975–80 Basic Mortality) to estimate the relative excess
+M/M.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="persistency">3. Persistency</h3>
+<ul>
+<li><strong>Impact on Savings</strong>: Higher persistency (lower lapse
+rate) means more individuals remain in force over time, which increases
+the insurer’s exposure but also increases the aggregate excess M/M
+collected from substandard risks.</li>
+<li><strong>Substandard Cohorts Often Have Higher Persistency</strong>:
+Applicants with fewer market options for coverage (due to substandard
+health) may be <em>less</em> likely to lapse. This elevates their
+overall contribution to excess M/M.</li>
+</ul>
+<hr />
+<h3 id="interest-rate-and-time-period">4. Interest Rate and Time
+Period</h3>
+<ol type="1">
+<li><p><strong>Discounting Future Savings</strong>:</p>
+<ul>
+<li>Because excess M/M savings occur over future years, they must be
+discounted to a present value.</li>
+<li>A higher discount rate reduces the present value of those future M/M
+savings; a lower rate increases it.</li>
+</ul></li>
+<li><p><strong>Time Horizon</strong>:</p>
+<ul>
+<li>The number of years included in the analysis will affect total
+calculated savings.</li>
+<li>Over many years, especially if a policy can remain in force for a
+long duration, the cumulative M/M differences can be significant.</li>
+<li>Choosing a shorter-than-maximum horizon <em>understates</em> the
+potential savings.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="prevalence">5. Prevalence</h3>
+<ul>
+<li><p><strong>Definition</strong>: The proportion of applicants who
+actually have the excess mortality/morbidity condition.</p></li>
+<li><p><strong>Influence on Protective Value</strong>:</p>
+<ol type="1">
+<li><em>Low Prevalence</em>: It may be inefficient to test everyone if
+very few applicants exhibit the impairment. Thus, insurers often raise
+the coverage thresholds or target specific ages and amounts for more
+thorough underwriting.</li>
+<li><em>Geographical Variation</em>: Different regions can have
+different prevalence rates (e.g., HIV infection rates). This can drive
+selective use of certain tests in certain territories (subject to legal
+constraints).</li>
+<li><em>Age Variation</em>: Some conditions, such as coronary artery
+disease, occur more frequently at older ages, guiding insurers to
+introduce underwriting requirements by age bands.</li>
+</ol></li>
+<li><p><strong>Partial Testing and “Untested” Risk</strong>: If an
+insurer chooses not to test all applicants (e.g., below a certain
+coverage amount), some proportion of substandard risks will remain
+unidentified. The associated “missed” excess M/M is a cost that must be
+accounted for.</p></li>
+<li><p><strong>Overall Formula</strong>:<br />
+[ ;=; ( ;-; ) ]<br />
+This captures how many substandard cases are identified (prevalence) and
+the difference between present value of losses in tested vs. untested
+groups.</p></li>
+</ul>
+<hr />
+<h3 id="costs-of-the-procedure">6. Costs of the Procedure</h3>
+<ul>
+<li><strong>All-In Costs</strong>:
+<ul>
+<li>Direct cost of the test or report (e.g., physician’s statement, lab
+test).</li>
+<li>Ancillary processing expenses (e.g., mailing, administrative
+overhead).</li>
+</ul></li>
+<li>These generally do not vary by age or policy size but are incurred
+for each applicant tested.</li>
+</ul>
+<hr />
+<h3 id="decision-criteria">7. Decision Criteria</h3>
+<ol type="1">
+<li><p><strong>Break-Even Method</strong>:</p>
+<ul>
+<li>Find the coverage amount (or threshold) at which the present value
+of M/M savings equals the underwriting procedure’s cost.</li>
+<li>The interest rate is chosen to reflect the insurer’s opportunity
+cost or internal rate for reserves.</li>
+</ul></li>
+<li><p><strong>Return on Investment (ROI) Method</strong>:</p>
+<ul>
+<li>Solve for the discount rate at which the present value of savings
+equals the cost for a given amount of insurance.</li>
+<li>If the resulting ROI is higher than the insurer’s internal target
+rate, the procedure is deemed to have protective value at that coverage
+level.</li>
+</ul></li>
+</ol>
+<ul>
+<li>These two methods produce consistent conclusions if the same
+discount rate is used as the insurer’s time-value of money. However, the
+break-even method emphasizes an “amount of insurance” threshold, whereas
+ROI focuses on the implied rate of return.</li>
+</ul>
+<hr />
+<h3 id="conclusion">Conclusion</h3>
+<p>The paper provides a <em>simple and general</em> approach to
+determine the protective value of underwriting procedures. By breaking
+down:</p>
+<ul>
+<li>How to measure excess mortality/morbidity,</li>
+<li>The significance of persistency and prevalence,</li>
+<li>The time-value of money (interest rate and time horizon),</li>
+<li>And the costs involved,</li>
+</ul>
+<p>the author shows how insurers can systematically quantify whether the
+savings from identifying substandard risks <em>outweigh</em> the
+expenses of underwriting. This framework is then applied (in
+hypothetical examples) to illustrate how to decide if an underwriting
+method is economically justified, either by finding the break-even
+coverage threshold or by comparing the ROI to the insurer’s required
+rate of return.</p>
+    
+</body>
+</html>
