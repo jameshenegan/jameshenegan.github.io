@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>In <strong>most real‐world MLOps setups</strong>, you typically split
+responsibilities into <strong>at least two distinct pipelines</strong>
+(or sets of pipelines):</p>
+<ol type="1">
+<li><strong>Training (Build) Pipeline</strong></li>
+<li><strong>Inference (Deployment) Pipeline</strong></li>
+</ol>
+<p>In broad strokes, you are definitely on the right track. Below are
+the main considerations that usually guide how to structure these
+pipelines.</p>
+<hr />
+<h2 id="training-build-pipeline">1. Training (Build) Pipeline</h2>
+<p><strong>Key responsibilities</strong>:</p>
+<ol type="1">
+<li><strong>Data ingestion &amp; preparation</strong> (in your case,
+generating or pulling data).</li>
+<li><strong>Model training</strong> (e.g. using MLflow in Azure Machine
+Learning).</li>
+<li><strong>Evaluation &amp; validation</strong> (metrics, QA
+checks).</li>
+<li><strong>Model registration</strong> (AML Workspace or AML
+Registry).</li>
+</ol>
+<p>Essentially, your “training pipeline” handles the entire end-to-end
+process of producing a new model. The output of this pipeline is a newly
+registered model along with metadata such as version, metrics,
+environment, etc.</p>
+<h3 id="registering-in-an-aml-registry-vs.-aml-workspace">Registering in
+an AML Registry vs. AML Workspace</h3>
+<ul>
+<li><strong>AML Registry</strong> is a more centralized store that can
+be shared across multiple workspaces or even different teams and
+environments.</li>
+<li><strong>AML Workspace</strong>-level model registration is more
+localized.</li>
+</ul>
+<p>Since you mentioned you will soon want to auto‐register in the Azure
+Machine Learning Registry, that is a <strong>perfectly standard</strong>
+next step. You can register to the AML Workspace first as you’re doing
+now, and then promote or copy that same model into the Registry if you
+want to share it or use it in multiple environments (e.g., Dev, QA,
+Prod) or across teams.</p>
+<hr />
+<h2 id="inference-deployment-pipeline">2. Inference (Deployment)
+Pipeline</h2>
+<p><strong>Key responsibilities</strong>:</p>
+<ol type="1">
+<li><strong>Pull the registered model</strong> (from the AML Registry or
+AML Workspace).</li>
+<li><strong>Bundle or containerize the model</strong> (if you’re doing a
+container-based deployment).</li>
+<li><strong>Deploy to an endpoint</strong> (Azure Kubernetes Service,
+Azure Container Instances, Managed Online Endpoints, etc.).</li>
+<li><strong>Run end‐to‐end tests</strong> (sanity checks, integration
+tests).</li>
+<li><strong>Optionally</strong>: set up monitors for data drift,
+performance, etc.</li>
+</ol>
+<h3 id="why-keep-it-separate">Why keep it separate?</h3>
+<ul>
+<li><strong>Isolation and clarity</strong>: The training process is
+computationally intensive, and it’s usually triggered when new code/data
+versions become available or on a schedule. Deployment can be triggered
+on a different cadence (e.g., only after certain quality thresholds are
+met, or upon a manual approval).</li>
+<li><strong>Promotion across environments</strong>: Typically, you want
+to “promote” a versioned model from dev → staging → prod. Each
+environment can have its own inference pipeline that references the
+newly registered model from a central registry.</li>
+<li><strong>Faster iterations</strong>: You may update your
+infrastructure/deployment code more frequently (e.g. changes to the
+environment, scaling policy) without retraining the model.</li>
+</ul>
+<hr />
+<h2 id="putting-it-all-together">3. Putting It All Together</h2>
+<p>From your description, you currently have:</p>
+<ol type="1">
+<li><strong>Azure DevOps Repo</strong>: Contains your code.</li>
+<li><strong>Azure DevOps Pipeline</strong>: Orchestrates your code
+runs.</li>
+<li><strong>Azure ML pipeline</strong> (within Dev workspace):
+<ul>
+<li>Step 1: Generate simulated data.</li>
+<li>Step 2: Train an MLflow model on that data.</li>
+</ul></li>
+</ol>
+<p>The <strong>next steps</strong> logically would be:</p>
+<ol type="1">
+<li><p><strong>Add Model Registration</strong></p>
+<ul>
+<li>As soon as training completes, add a step to register that model in
+your AML Workspace or directly to an AML Registry once it’s set up.</li>
+</ul></li>
+<li><p><strong>Set up an Inference or Deployment Pipeline</strong></p>
+<ul>
+<li>This could be triggered either automatically (e.g., whenever a new
+model is successfully registered) or via manual approval if you want
+more control.</li>
+<li>The pipeline would take the model from the registry/workspace,
+package or containerize it, and <strong>deploy</strong> it to a test or
+dev endpoint.</li>
+</ul></li>
+<li><p><strong>Testing &amp; Metrics</strong></p>
+<ul>
+<li>You can test the deployed endpoint with some sample data or
+integration tests.</li>
+<li>Optionally, gather real traffic or additional test data to confirm
+performance and stability.</li>
+</ul></li>
+<li><p><strong>Promotion</strong></p>
+<ul>
+<li>If your dev endpoint tests pass, promote that same model to a
+staging or production endpoint. This can be a separate environment, a
+separate workspace, or simply a separate endpoint in the same workspace
+(depending on your org’s structure).</li>
+</ul></li>
+</ol>
+<p>In practice, many teams define separate Azure DevOps pipelines for
+each environment, referencing the same model but using different
+configuration files (infrastructure settings, endpoint URLs, secrets,
+etc.).</p>
+<hr />
+<h2 id="bottom-line">4. Bottom Line</h2>
+<ul>
+<li><strong>Yes, you are on the right track</strong>.</li>
+<li>Real-world projects do <strong>often</strong> separate training and
+inference into different pipelines or at least into different phases of
+the same pipeline to ensure clarity, maintainability, and
+reliability.</li>
+<li>Your immediate next step to auto-register the model in AML and then
+create a follow-up inference pipeline to do testing and eventual
+deployment is exactly what most MLOps workflows look like.</li>
+</ul>
+<p>You can continue to build on this by:</p>
+<ul>
+<li>Adding <strong>automated tests</strong> and quality checks in your
+training pipeline.</li>
+<li>Setting up a <strong>deployment pipeline</strong> referencing the
+newly registered model.</li>
+<li>Handling environment <strong>promotion</strong> (Dev → Staging →
+Prod) with a gating or manual approval step if needed.</li>
+</ul>
+<p>With those enhancements, you’ll have a fairly standard MLOps setup
+that’s ready for real production workloads.</p>
+    
+</body>
+</html>

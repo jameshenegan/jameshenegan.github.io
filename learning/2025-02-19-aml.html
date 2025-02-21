@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="summary-1">Summary 1</h1>
+<p>Below is a detailed summary of the “Manage Azure Machine Learning
+registries” article, covering its main concepts and step-by-step
+guidance.</p>
+<hr />
+<h2 id="overview-of-azure-machine-learning-registries">Overview of Azure
+Machine Learning Registries</h2>
+<ul>
+<li><strong>Assets vs. Resources:</strong>
+<ul>
+<li><strong>Assets</strong> (e.g., models, environments, components,
+datasets) are “durable” and can be shared across different workspaces
+and possibly different regions.</li>
+<li><strong>Resources</strong> (e.g., compute, jobs, endpoints) are
+“transient” and specific to a particular workspace.</li>
+</ul></li>
+<li><strong>Purpose of Registries:</strong><br />
+Azure Machine Learning registries allow you to centrally store and
+manage these <em>durable</em> ML assets. You can then use them in
+multiple workspaces (even across regions) to streamline sharing and
+collaboration.</li>
+<li><strong>Multi-Region Replication:</strong><br />
+When you create a registry, Azure automatically provisions blob storage
+accounts in each supported region and a single Azure Container Registry
+(ACR) replicated across those regions. This replication improves
+performance (low latency) and redundancy.</li>
+</ul>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<ol type="1">
+<li><strong>Azure CLI (v2) with the ml extension installed</strong>
+<ul>
+<li>See <a
+href="https://learn.microsoft.com/azure/machine-learning/reference-azure-machine-learning-cli">Install,
+set up, and use the CLI (v2)</a> for instructions.</li>
+</ul></li>
+<li><strong>An existing Azure Machine Learning workspace</strong>
+<ul>
+<li>If you don’t have one, follow the steps in the CLI (v2)
+documentation to create a new workspace.</li>
+</ul></li>
+<li><strong>Permission level</strong>
+<ul>
+<li>You should be an “Owner” or “Contributor” on the subscription or
+resource group where you intend to create the registry. This ensures you
+can create and manage registry resources.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="planning-before-you-create-a-registry">Planning Before You
+Create a Registry</h2>
+<ol type="1">
+<li><strong>Choose a Name</strong>
+<ul>
+<li>Pick a name that reflects its broad sharing scope within your
+organization (e.g., group, division, entire org).</li>
+<li>Name uniqueness is enforced <strong>within your Microsoft Entra
+tenant</strong>.</li>
+<li>The name can’t be changed after creation because it becomes part of
+the ID used for models, environments, and components.</li>
+<li>Valid name criteria: 2–32 characters; alphanumeric, underscores,
+hyphens allowed (must start with an alphanumeric).</li>
+</ul></li>
+<li><strong>Select Azure Regions</strong>
+<ul>
+<li>Decide which regions to replicate assets across; consider where your
+current and near-future workspaces reside.</li>
+<li>You must define a <strong>primary region</strong> (unchangeable
+later) and a list of other replication regions (which can be updated
+later).</li>
+</ul></li>
+<li><strong>Check Permissions</strong>
+<ul>
+<li>Confirm you have the “Owner” or “Contributor” role on the
+subscription or resource group.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="creating-a-registry">Creating a Registry</h2>
+<p>You can create a registry via the <strong>Azure CLI</strong>,
+<strong>Azure Machine Learning Studio</strong>, <strong>Azure
+portal</strong>, or <strong>REST API</strong>. Below focuses on the CLI
+approach using YAML:</p>
+<h3 id="create-a-yaml-definition-registry.yml">1. Create a YAML
+Definition (registry.yml)</h3>
+<p>A basic example:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> DemoRegistry1</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tags</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> Basic registry with one primary region and additional regions</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">foo</span><span class="kw">:</span><span class="at"> bar</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">location</span><span class="kw">:</span><span class="at"> eastus</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">replication_locations</span><span class="kw">:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> eastus</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> eastus2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> westus</span></span></code></pre></div>
+<ul>
+<li><code>location</code> is the primary region (here,
+<code>eastus</code>).</li>
+<li><code>replication_locations</code> includes the primary region
+(again) plus any additional regions.</li>
+</ul>
+<p><strong>Tip</strong>: Use
+<code>az account list-locations -o table</code> to find the proper
+“no-space, lower-case” names for regions.</p>
+<h3 id="run-the-registry-create-command">2. Run the Registry Create
+Command</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml registry create <span class="at">--file</span> registry.yml</span></code></pre></div>
+<ul>
+<li>This command provisions the registry with the specified regions and
+tags.</li>
+</ul>
+<hr />
+<h2 id="specifying-storage-account-type-and-sku-optional">Specifying
+Storage Account Type and SKU (Optional)</h2>
+<ul>
+<li>Azure Storage offers various account types (e.g., Standard_LRS,
+Standard_GRS).</li>
+<li>You can configure <strong>Data Lake Storage Gen2</strong> by setting
+<code>storage_account_hns: true</code> or use <strong>Azure Blob
+Storage</strong> by setting it to <code>false</code>.</li>
+<li>Example advanced YAML configuration:</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> DemoRegistry2</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tags</span><span class="kw">:</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">description</span><span class="kw">:</span><span class="at"> Registry with additional storage configuration</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">foo</span><span class="kw">:</span><span class="at"> bar</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">location</span><span class="kw">:</span><span class="at"> eastus</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">replication_locations</span><span class="kw">:</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> eastus</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">storage_config</span><span class="kw">:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">storage_account_hns</span><span class="kw">:</span><span class="at"> </span><span class="ch">False</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">storage_account_type</span><span class="kw">:</span><span class="at"> Standard_LRS</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> eastus2</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">storage_config</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">storage_account_hns</span><span class="kw">:</span><span class="at"> </span><span class="ch">False</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">storage_account_type</span><span class="kw">:</span><span class="at"> Standard_LRS</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> westus</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">storage_config</span><span class="kw">:</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">storage_account_hns</span><span class="kw">:</span><span class="at"> </span><span class="ch">False</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">storage_account_type</span><span class="kw">:</span><span class="at"> Standard_LRS</span></span></code></pre></div>
+<ul>
+<li>Each <code>location</code> block can override the default storage
+type (e.g., to enable hierarchical namespace for Data Lake Gen2 or set a
+specific SKU).</li>
+</ul>
+<hr />
+<h2 id="managing-registry-access-and-permissions">Managing Registry
+Access and Permissions</h2>
+<p>Deciding who can <strong>read assets, create assets, or manage the
+entire registry</strong> is done via Azure role-based access control
+(RBAC). The main options:</p>
+<ol type="1">
+<li><p><strong>Allow Users to Read (Use) Assets Only</strong></p>
+<ul>
+<li>Assign the built-in <strong>Reader</strong> role, or</li>
+<li>Create a custom role that includes:
+<ul>
+<li><code>Microsoft.MachineLearningServices/registries/read</code></li>
+<li><code>Microsoft.MachineLearningServices/registries/assets/read</code></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Allow Users to Create and Use Assets</strong></p>
+<ul>
+<li>In addition to the read permissions above, grant:
+<ul>
+<li><code>Microsoft.MachineLearningServices/registries/assets/write</code></li>
+<li><code>Microsoft.MachineLearningServices/registries/assets/delete</code></li>
+</ul></li>
+<li>Note that built-in <strong>Contributor</strong> and
+<strong>Owner</strong> roles also give these permissions but include
+broader abilities (like managing registries themselves).</li>
+</ul></li>
+<li><p><strong>Allow Users to Create and Manage Registries</strong></p>
+<ul>
+<li>Assign built-in <strong>Contributor</strong> or
+<strong>Owner</strong> roles, or create a custom role that includes:
+<ul>
+<li><code>Microsoft.MachineLearningServices/registries/write</code></li>
+<li><code>Microsoft.MachineLearningServices/registries/delete</code></li>
+</ul></li>
+<li>This lets users create, update, or delete entire registries.</li>
+</ul></li>
+</ol>
+<p><strong>Important</strong>: The built-in Contributor and Owner roles
+let users do everything, including registry creation. If you only want
+them to create assets (not the registry itself), you should create a
+custom role.</p>
+<hr />
+<h2 id="related-topics">Related Topics</h2>
+<ul>
+<li><strong>Sharing Models, Components, and Environments</strong>: How
+to share assets across workspaces using registries.</li>
+<li><strong>Network Isolation</strong>: Best practices and
+configurations for securely handling registry traffic.</li>
+</ul>
+<hr />
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol type="1">
+<li><strong>Registry = Central Repository</strong> for ML assets
+(models, environments, components, datasets).</li>
+<li><strong>Multi-Region Replication</strong> is built in for fast,
+global access and redundancy.</li>
+<li><strong>Creation</strong> involves defining the registry name,
+primary region, and replication locations in a YAML file, then running
+the <code>az ml registry create</code> command.</li>
+<li><strong>Storage Configuration</strong> can be customized to use
+different Azure Storage SKUs or Data Lake Gen2 with hierarchical
+namespace.</li>
+<li><strong>Role-Based Access Control</strong> ensures appropriate
+permissions for reading, creating, and managing both registries and
+assets.</li>
+</ol>
+<p>This covers the main points needed to understand and manage Azure
+Machine Learning registries.</p>
+<h1 id="question">Question</h1>
+<p>suppose i want to train a model in a dev AML workspace, then register
+that model to a Registry, then use the model in a prod AML workspace.
+should I create the registry in the dev AML workspace or in the prod
+workspace? does that question make sense? for more context: our dev
+workspace lives in one resource group and our prod workspace lives in
+another resource group. maybe the real question is: which resource group
+should the registry belong to?</p>
+<h1 id="response">Response</h1>
+<p>It’s not a strict requirement, but using separate resource groups for
+your dev and prod workspaces is generally considered a best practice.
+Here are some advantages and disadvantages to consider:</p>
+<hr />
+<h3 id="advantages">Advantages</h3>
+<ul>
+<li><p><strong>Isolation and Security:</strong><br />
+By placing dev and prod in separate resource groups, you isolate
+production assets from development ones. This means that any accidental
+changes or issues in the dev group won’t impact your prod environment.
+It also allows you to apply stricter security and access control
+policies to production.</p></li>
+<li><p><strong>Tailored Governance and Policy Management:</strong><br />
+Different resource groups can have their own policies, role-based access
+controls (RBAC), and management rules. For instance, you might want to
+enforce tighter compliance rules and auditing on the prod resource
+group, while keeping dev more flexible for experimentation.</p></li>
+<li><p><strong>Cost Management and Monitoring:</strong><br />
+Segregating environments makes it easier to track and manage costs, as
+you can monitor resource usage, spending, and billing separately for dev
+and prod.</p></li>
+<li><p><strong>Lifecycle Management:</strong><br />
+Development environments are often more transient. Having them in a
+separate resource group makes it simpler to clean up, redeploy, or
+experiment without affecting the production workload.</p></li>
+</ul>
+<hr />
+<h3 id="disadvantages">Disadvantages</h3>
+<ul>
+<li><p><strong>Cross-Resource Permissions Setup:</strong><br />
+When you separate environments, you need to ensure that identities
+(users or service principals) have the appropriate permissions to
+operate across resource groups. For example, if you want a model trained
+in dev to be registered in a registry in the prod resource group, you’ll
+need to configure RBAC carefully. While not inherently difficult, it
+does add a layer of complexity.</p></li>
+<li><p><strong>Administrative Overhead:</strong><br />
+Managing multiple resource groups can introduce some extra
+administrative overhead, especially if you have many environments or if
+the processes for cross-environment communication aren’t
+streamlined.</p></li>
+<li><p><strong>Complexity in Automation:</strong><br />
+Deploying resources that span multiple resource groups may require
+additional automation steps (for example, in your CI/CD pipelines) to
+handle resource group-specific configurations and dependencies.</p></li>
+</ul>
+<hr />
+<h3 id="conclusion">Conclusion</h3>
+<p>Using separate resource groups for dev and prod environments offers
+clear benefits in terms of isolation, security, and governance. However,
+it does require careful planning around cross-resource permissions and
+might add some administrative complexity. Overall, the
+benefits—especially for critical production environments—often outweigh
+the additional setup work.</p>
+<h1 id="question-1">Question</h1>
+<p>I’m a little confused about something with respect to Azure Machine
+Learning. If I train a model using MLFlow in an AML workspace, then I
+see an option to “register” a model. If I do that, then I can go to the
+“Models” tab of my AML workspace. There, I can see my model on something
+called a models list. Is that the same thing as a registry?</p>
+<h1 id="response-1">Response</h1>
+<p>No, they’re not exactly the same thing. When you register a model in
+your AML workspace, that model appears in the workspace’s “Models”
+list—this is a local registry for that specific workspace. In contrast,
+an Azure Machine Learning registry is a separate, centralized repository
+that can store ML assets (models, environments, components, etc.) and
+share them across multiple workspaces and even regions.</p>
+<p>In summary:</p>
+<ul>
+<li><p><strong>Models List in AML Workspace:</strong><br />
+Shows the models registered within that particular workspace. It’s a
+workspace-scoped asset store.</p></li>
+<li><p><strong>Azure Machine Learning Registry:</strong><br />
+A dedicated, central repository designed to enable asset sharing across
+different AML workspaces, with additional features like multi-region
+replication for improved access and governance.</p></li>
+</ul>
+<p>So if you simply register a model through MLflow in your dev
+workspace, you’ll see it in the local models list—not in an AML registry
+unless you’ve specifically configured and linked one for cross-workspace
+sharing.</p>
+<h1 id="question-2">Question</h1>
+<p>i have found another article. just to help me understand: the
+following article is about registering it to the “local models list”,
+not a registry, right? here is the article — Work with registered models
+in Azure Machine Learning</p>
+<h1 id="response-2">Response</h1>
+<p>Yes, that’s correct. The article you found focuses on how to register
+models to the local model registry within an Azure Machine Learning
+workspace—the list you see in the “Models” tab—rather than a separate,
+central registry that shares assets across workspaces.</p>
+<p>In this context:</p>
+<ul>
+<li><p><strong>Local Model Registry (Models List):</strong><br />
+When you register a model via the Studio UI, CLI, or Python SDK, it
+becomes part of your workspace’s model registry. This lets you version,
+organize, and manage your models within that specific
+workspace.</p></li>
+<li><p><strong>Centralized AML Registry:</strong><br />
+A dedicated AML registry is a separate repository designed for sharing
+assets (models, environments, components) across multiple workspaces and
+regions. This is not what the article is describing.</p></li>
+</ul>
+<p>So, the article details the processes to register and manage models
+locally in your workspace—not using the cross-workspace registry
+mechanism.</p>
+<h1 id="summary">Summary</h1>
+<p>Below is a detailed summary of the article “Share models, components,
+and environments across workspaces with registries”:</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>Azure Machine Learning registries are designed to enable
+collaboration across workspaces by centrally storing ML assets—models,
+components, and environments. This allows teams to share and reuse these
+assets across development, testing, and production workspaces,
+preserving the full lineage (training data, code, metrics, and
+environment) and promoting reproducibility.</p>
+<hr />
+<h2 id="key-scenarios">Key Scenarios</h2>
+<ol type="1">
+<li><p><strong>Cross-Workspace MLOps:</strong></p>
+<ul>
+<li>Train a model in a development workspace and deploy it in test and
+production.</li>
+<li>Maintain end-to-end traceability from training to deployment.</li>
+</ul></li>
+<li><p><strong>Sharing and Reuse Across Teams:</strong></p>
+<ul>
+<li>Publish trained models along with their components and environments
+into a central catalog.</li>
+<li>Enable colleagues from different teams to discover and reuse these
+assets in their own experiments.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="prerequisites-1">Prerequisites</h2>
+<ul>
+<li><p><strong>Azure Subscription &amp; AML Resources:</strong></p>
+<ul>
+<li>An active Azure subscription.</li>
+<li>An Azure Machine Learning registry and at least one AML
+workspace.</li>
+</ul></li>
+<li><p><strong>Tools:</strong></p>
+<ul>
+<li>Azure CLI with the ml extension (or the Python SDK v2).</li>
+<li>Properly configured defaults (subscription, workspace, resource
+group, and region).</li>
+</ul></li>
+<li><p><strong>Region Compatibility:</strong></p>
+<ul>
+<li>The workspace’s Azure region must be supported by the registry.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="main-steps-and-processes">Main Steps and Processes</h2>
+<h3 id="creating-an-environment-in-the-registry">1. Creating an
+Environment in the Registry</h3>
+<ul>
+<li><strong>Purpose:</strong><br />
+An environment defines the Docker container and Python dependencies
+needed to run training jobs or deploy models.</li>
+<li><strong>Process:</strong>
+<ul>
+<li>Use a YAML file (e.g., <code>env_train.yml</code>) that specifies
+the environment details such as base Docker image (e.g.,
+<code>python:3.8</code>) and required packages.</li>
+<li>Create the environment in the registry using the CLI command with
+the <code>--registry-name</code> parameter.</li>
+<li>Verify and list the environments in the registry.</li>
+</ul></li>
+</ul>
+<h3 id="creating-a-component-in-the-registry">2. Creating a Component in
+the Registry</h3>
+<ul>
+<li><strong>Purpose:</strong><br />
+Components are reusable building blocks of ML pipelines that package
+code, commands, and dependencies.</li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Components stored in a registry can be used across any
+workspace.</li>
+<li>Encourages modularity and collaboration.</li>
+</ul></li>
+<li><strong>Process:</strong>
+<ul>
+<li>Define the component in a YAML file (e.g., <code>train.yml</code>),
+specifying inputs (like training data), outputs (such as a trained
+model), and the command to run.</li>
+<li>Reference the environment in the component definition using the
+registry URI.</li>
+<li>Create the component in the registry using the Azure CLI or Python
+SDK.</li>
+</ul></li>
+</ul>
+<h3 id="running-a-pipeline-job-using-a-registry-component">3. Running a
+Pipeline Job Using a Registry Component</h3>
+<ul>
+<li><strong>Objective:</strong><br />
+Run a training pipeline in a workspace that leverages a component stored
+in the registry.</li>
+<li><strong>Process:</strong>
+<ul>
+<li>Update the pipeline job YAML (e.g.,
+<code>single-job-pipeline.yml</code>) to reference the component from
+the registry.</li>
+<li>Submit the job in the workspace, ensuring compute resources and data
+paths are defined locally.</li>
+<li>This approach enables you to use the same training logic across
+different workspaces without duplicating the component definition.</li>
+</ul></li>
+</ul>
+<h3 id="registering-and-sharing-a-model-in-the-registry">4. Registering
+and Sharing a Model in the Registry</h3>
+<ul>
+<li><strong>Approaches:</strong>
+<ul>
+<li><strong>Directly from Local Files:</strong><br />
+Download the model output from a training job and then create the model
+asset in the registry.</li>
+<li><strong>Sharing from a Workspace:</strong><br />
+First register the model in the workspace and then share it (copy it) to
+the registry.</li>
+</ul></li>
+<li><strong>Benefits:</strong>
+<ul>
+<li>Centralizes model management.</li>
+<li>Preserves links to training jobs and lineage data.</li>
+</ul></li>
+</ul>
+<h3 id="deploying-a-model-from-the-registry">5. Deploying a Model from
+the Registry</h3>
+<ul>
+<li><strong>Process:</strong>
+<ul>
+<li>Create an online endpoint in the desired workspace.</li>
+<li>Update a deployment YAML file (e.g., <code>deploy.yml</code>) to
+reference the model from the registry.</li>
+<li>Deploy the model to the online endpoint and test by submitting
+inference requests.</li>
+</ul></li>
+<li><strong>Outcome:</strong><br />
+This enables a seamless promotion of models from a central registry to
+any workspace (e.g., production), maintaining a consistent deployment
+process.</li>
+</ul>
+<hr />
+<h2 id="additional-considerations">Additional Considerations</h2>
+<ul>
+<li><p><strong>Reusable Assets:</strong><br />
+Storing environments, components, and models in a registry creates a
+shared asset catalog that improves collaboration and accelerates
+deployment across multiple teams and workspaces.</p></li>
+<li><p><strong>Lineage and Governance:</strong><br />
+By sharing assets via a registry, you preserve the full lineage
+information (code, metrics, training data, etc.) and enforce governance
+and version control across the organization.</p></li>
+<li><p><strong>Resource Management:</strong><br />
+The article also provides guidance on cloning example repositories,
+setting up SDK client connections, and cleaning up resources (e.g.,
+deleting online endpoints) to control costs.</p></li>
+</ul>
+<hr />
+<p>Overall, the article details how to build, register, share, and
+deploy ML assets centrally through an Azure Machine Learning registry,
+making cross-workspace collaboration and production-grade MLOps easier
+and more consistent.</p>
+<h1 id="question-3">Question</h1>
+<p>now suppose i am working at a company. my role at the company is
+“data scientist” but I am helping set up the architecture for mlops. but
+the main thing is that I won’t have “ownership” permissions for
+anything. but i still need to make a request to IT so that they can set
+up resources for us. we currently have an dev aml workspace in one
+resource group and a prod aml workspace in another resource group. we’re
+thinking about setting up a registry in the same resource group as the
+prod workspace. i don’t think the IT team knows too much about this or
+even what we’re trying to do. but we want to be able to train a model in
+the dev workspace (where we have access) and then register that model to
+the registry. we will be doing this as part of an azure devops / azure
+machine learning pipeline . basically, i want you general advice on how
+to do this. is this a reasonable approach so far? what information
+should i provide in our request to set up the registry?</p>
+<h1 id="response-3">Response</h1>
+<p>Your approach is sound and aligns with best practices for MLOps in
+Azure Machine Learning. Even though you’re not an owner, you can work
+with IT to set up a central registry that both your dev and prod
+workspaces can access. Here are some key points and recommendations you
+can share with your IT team:</p>
+<hr />
+<h3 id="why-a-centralized-registry-makes-sense">Why a Centralized
+Registry Makes Sense</h3>
+<ul>
+<li><p><strong>Shared Asset Repository:</strong><br />
+The AML registry is designed to store and version models, components,
+and environments so they can be used across multiple workspaces. This is
+ideal for your scenario, where you train a model in the dev workspace
+and then want to register and deploy it in production.</p></li>
+<li><p><strong>Cross-Workspace Integration:</strong><br />
+Although your dev workspace exists in a different resource group, the
+registry (even if created in the prod resource group) is accessible
+across workspaces as long as the proper permissions are set up.</p></li>
+<li><p><strong>Governance and Security:</strong><br />
+Placing the registry in the prod resource group typically aligns with
+stricter governance and compliance requirements. This also makes it
+easier to control access and manage production assets.</p></li>
+</ul>
+<hr />
+<h3 id="key-information-to-provide-in-your-request">Key Information to
+Provide in Your Request</h3>
+<ol type="1">
+<li><p><strong>Registry Location and Resource Group:</strong></p>
+<ul>
+<li><strong>Request:</strong> Create an Azure Machine Learning registry
+in the resource group where the production AML workspace resides.</li>
+<li><strong>Reasoning:</strong> This centralizes production assets and
+aligns with your governance policies.</li>
+</ul></li>
+<li><p><strong>Access and Permissions:</strong></p>
+<ul>
+<li><strong>Cross-Resource Access:</strong><br />
+Ensure that the registry allows access from both the prod and dev
+workspaces. Specifically, the service principals or user groups
+associated with your dev AML workspace (and the Azure DevOps pipeline)
+need appropriate RBAC permissions (e.g., Contributor or a custom role
+with write access for asset registration).</li>
+<li><strong>Details to Include:</strong><br />
+Ask IT to grant the necessary permissions for model registration,
+management, and retrieval. This might include permissions like:
+<ul>
+<li><code>Microsoft.MachineLearningServices/registries/read</code></li>
+<li><code>Microsoft.MachineLearningServices/registries/assets/write</code></li>
+<li><code>Microsoft.MachineLearningServices/registries/assets/delete</code></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Configuration Specifications:</strong></p>
+<ul>
+<li><strong>Multi-Region Replication:</strong><br />
+If your organization requires low latency or redundancy across regions,
+note whether multi-region replication is needed.</li>
+<li><strong>Storage Options:</strong><br />
+Mention if you have any requirements for the underlying storage account
+type (e.g., Standard_LRS) or if you prefer Azure Blob Storage versus
+Azure Data Lake Storage Gen2 (with hierarchical namespace enabled).</li>
+</ul></li>
+<li><p><strong>Integration with Pipelines:</strong></p>
+<ul>
+<li><strong>Azure DevOps / AML Pipeline Usage:</strong><br />
+Explain that the registry is a key part of your automated ML pipeline.
+You train models in the dev workspace, register them to the central
+registry, and then deploy them in the prod workspace.</li>
+<li><strong>Lineage and Versioning:</strong><br />
+Emphasize the need for versioning and lineage tracking, which the
+registry supports, to maintain a clear audit trail from model training
+to deployment.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="summary-2">Summary</h3>
+<ul>
+<li><p><strong>Reasonable Approach:</strong><br />
+Training in the dev workspace and registering models to a central
+registry in the production resource group is not only feasible but
+recommended for centralized management and governance.</p></li>
+<li><p><strong>IT Request Essentials:</strong><br />
+Provide details about the registry’s location (prod resource group),
+access requirements (RBAC for cross-workspace usage), desired storage
+configuration, and its role in your Azure DevOps-driven MLOps
+pipeline.</p></li>
+</ul>
+<p>By clearly outlining these requirements, you’ll help the IT team
+understand both the technical and business needs, making it easier for
+them to provision the right resources and set the appropriate
+permissions.</p>
+<h1 id="question-4">Question</h1>
+<p>one point i’d like clarificaiton on: when you say – -Ask IT to grant
+the necessary permissions for model registration, management, and
+retrieval. This might include permissions like:
+Microsoft.MachineLearningServices/registries/read
+Microsoft.MachineLearningServices/registries/assets/write
+Microsoft.MachineLearningServices/registries/assets/delete — do you mean
+that <em>I</em> need these permissions? Or something like a “service
+principal” needs those permissions?</p>
+<h1 id="response-4">Response</h1>
+<p>It applies to whichever identity is executing the registration
+actions. In an automated pipeline scenario, that’s typically a service
+principal (or managed identity) that needs the permissions. If you’re
+doing these tasks manually through your account, then your user account
+would need them. The key is that the identity (whether it’s yours or a
+service principal) used to register, manage, and retrieve models must
+have the required RBAC permissions on the registry.</p>
+<h1 id="question-5">Question</h1>
+<p>Finally, can you help me understand the details about how this works
+in practice? do i first register the model from the dev workspace to the
+“local models list” in that workspace and then register it to the
+registry? how does this work in terms of the pipelines we’re building
+with azure devops and azure machine learning?</p>
+<h1 id="response-5">Response</h1>
+<p>In practice, there are a couple of common workflows for promoting
+models from a dev environment to production using Azure Machine Learning
+and Azure DevOps pipelines. Here’s an overview of how it can work:</p>
+<hr />
+<h3 id="option-1-two-step-registration">Option 1: Two-Step
+Registration</h3>
+<ol type="1">
+<li><p><strong>Register Locally in Dev Workspace:</strong></p>
+<ul>
+<li>After training in the dev workspace, you first register the model in
+that workspace. This makes it part of the local models list and lets you
+validate and test the model.</li>
+<li>This registration is often done as part of your training pipeline
+using the Azure ML CLI or Python SDK.</li>
+</ul></li>
+<li><p><strong>Promote (Share) the Model to the Central
+Registry:</strong></p>
+<ul>
+<li>Once the model is validated, you then “promote” or share it to the
+central registry (which, in your case, resides in the production
+resource group).</li>
+<li>This is typically done using the <code>az ml model share</code>
+command (or an equivalent SDK call), which copies the model asset along
+with its metadata to the central registry.</li>
+<li>Your production deployment pipelines then reference the model in the
+central registry rather than the dev workspace’s local list.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="option-2-direct-registration-to-the-central-registry">Option 2:
+Direct Registration to the Central Registry</h3>
+<ul>
+<li><strong>Direct Registration:</strong><br />
+If permissions and pipeline configuration allow, you can register the
+model directly to the central registry from the dev workspace.
+<ul>
+<li>In this case, you’d use commands with the
+<code>--registry-name</code> flag so that the model is immediately
+stored in the central registry.</li>
+<li>This approach eliminates the intermediate step of having the model
+in the dev workspace’s local models list.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="how-this-fits-into-your-pipelines">How This Fits into Your
+Pipelines</h3>
+<ul>
+<li><p><strong>Azure DevOps Pipelines:</strong><br />
+Your CI/CD pipeline can have stages that:</p>
+<ol type="1">
+<li><strong>Train and Validate:</strong><br />
+Run the training job in the dev workspace and register the model (either
+locally or directly to the registry).</li>
+<li><strong>Promotion:</strong><br />
+If the model is first registered locally, include a step that promotes
+the model to the central registry after passing tests.</li>
+<li><strong>Deployment:</strong><br />
+Deploy the model from the central registry to production endpoints. The
+deployment pipeline will reference the model using its registry
+URI.</li>
+</ol></li>
+<li><p><strong>Why This Two-Step Process Is Useful:</strong></p>
+<ul>
+<li>It allows you to verify the model in a controlled dev environment
+before promoting it.</li>
+<li>It preserves a clear lineage: you can track where the model came
+from (its training job, data, environment, etc.) before it’s
+shared.</li>
+<li>It separates development from production, aligning with best
+practices in governance and model management.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="summary-3">Summary</h3>
+<ul>
+<li><strong>Local Registration:</strong><br />
+Often, you first register the model in the dev workspace to test and
+validate it.</li>
+<li><strong>Promotion/Sharing:</strong><br />
+Then, you promote or share that model to the central registry, where
+production systems can access it.</li>
+<li><strong>Pipeline Integration:</strong><br />
+Both steps can be automated in your Azure DevOps pipelines, ensuring
+that your MLOps workflow maintains clear lineage and proper separation
+between development and production environments.</li>
+</ul>
+<p>Choose the approach that best fits your team’s permissions and
+workflow preferences. If you have full control over the pipeline’s
+service principal and cross-resource access is configured correctly,
+direct registration may streamline the process. Otherwise, a two-step
+process helps ensure quality control before production deployment.</p>
+    
+</body>
+</html>
