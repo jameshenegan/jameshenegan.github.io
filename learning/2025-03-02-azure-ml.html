@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="understanding-aml">Understanding AML</h1>
+<p>In Azure Machine Learning, there are essentially two (related)
+concepts at play:</p>
+<ol type="1">
+<li><strong>The job’s ephemeral working directory</strong> (the place on
+disk where your script actually runs).</li>
+<li><strong>The job’s uploaded artifacts</strong> (the logs, models, and
+other outputs that get automatically uploaded to Azure’s storage so you
+can inspect or re-use them later).</li>
+</ol>
+<p>Below is a step-by-step mental model of what’s going on:</p>
+<hr />
+<h2 id="standard-out-logs">1. Standard Out Logs</h2>
+<ul>
+<li>When you submit a job (e.g., via Python SDK, CLI, or YAML) that runs
+a script, everything you <code>print()</code> (or write to standard out)
+goes into an ephemeral local file (on the compute target) while the job
+is running.</li>
+<li>After the job finishes, Azure ML automatically uploads that file to
+your run artifacts.</li>
+<li>So yes, you’ll see <code>stdout</code> and <code>stderr</code> logs
+in the “Run Details” portal UI (or in the CLI / Python SDK) under
+something like <code>azureml-logs/70_driver_log.txt</code>, or
+<code>std_log.txt</code> (naming can differ slightly based on the
+compute type).</li>
+</ul>
+<p>In short: <strong>stdout</strong> is captured automatically and
+becomes a “Run Artifact” you can browse after the job completes.</p>
+<hr />
+<h2 id="mlflow-logged-models">2. MLflow-Logged Models</h2>
+<p>If you do something like:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow.sklearn</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> ...  <span class="co"># train your model in code</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mlflow.sklearn.log_model(model, artifact_path<span class="op">=</span><span class="st">&quot;model&quot;</span>)</span></code></pre></div>
+<p>then MLflow creates a <strong>local folder</strong>
+(e.g. <code>./model</code>) with the necessary files (including the
+<code>MLmodel</code> configuration file, conda environment file, etc.).
+Azure ML sees that folder in your job’s workspace and automatically
+uploads it as part of the run’s artifacts, under the path
+<code>artifact_path="model"</code>.</p>
+<p>So, after your run finishes, you’ll see something like:</p>
+<pre><code>artifacts/
+  └─ model/
+       ├─ conda.yaml
+       ├─ MLmodel
+       ├─ ...other model files...</code></pre>
+<p>That folder is in the run’s artifact storage (the same place you’ll
+see your logs).</p>
+<blockquote>
+<p><strong>Note</strong>: From there, you can “register” that
+MLflow-logged model into the Azure ML model registry (i.e.,
+<code>mlflow.register_model(...)</code>). If you do that, you’ll see it
+show up in your workspace’s “Models” section.</p>
+</blockquote>
+<hr />
+<h2 id="job-outputs-vs.-run-artifacts">3. Job Outputs vs. Run
+Artifacts</h2>
+<p>You also mentioned “outputs” in the context of an
+<strong><code>rw_mount</code></strong> or a pipeline step. Azure ML has
+a concept of <strong>job inputs/outputs</strong>. For a single,
+standalone job, you can define output folders/files to be uploaded. In
+pipeline scenarios, these outputs can be “passed along” to the next
+pipeline step as an <strong>input</strong>.</p>
+<p><strong>Key differences:</strong></p>
+<ol type="1">
+<li><p><strong>Run artifacts</strong></p>
+<ul>
+<li>Everything logged via MLflow or <code>mlflow.log_artifacts()</code>,
+or automatically captured logs, ends up in the run’s artifact
+store.</li>
+<li>You can see them by clicking the job in the studio, or by listing
+artifacts via the SDK/CLI.</li>
+<li>They live in Azure’s storage under some auto-generated path.</li>
+</ul></li>
+<li><p><strong>Job outputs</strong></p>
+<ul>
+<li>If, in your job definition (YAML or Python SDK), you declare an
+output like <code>my_output</code> of type <code>uri_folder</code> or
+<code>mltable</code>, etc. then you typically write your files
+<strong>into a special output folder</strong> inside the ephemeral job
+environment.</li>
+<li>Azure ML automatically syncs that folder back to the workspace’s
+storage account as well.</li>
+<li>In a pipeline, you can wire the <code>my_output</code> from one step
+as the <code>my_input</code> of a subsequent step, so that next step
+sees the folder that was produced earlier.</li>
+</ul></li>
+</ol>
+<p>In practice, these two concepts (artifacts vs. outputs) are
+<em>very</em> similar. They both result in data being stored “somewhere”
+in Azure’s storage so you can find it later. The main difference is that
+“outputs” are how you link data between steps in a pipeline. By
+contrast, “artifacts” are slightly more free-form (they’re simply
+“logged stuff” associated with the run).</p>
+<hr />
+<h2 id="saving-a-model-folder-to-an-output">4. Saving a Model Folder to
+an Output</h2>
+<p>You asked specifically: <strong>“How do I get the ‘model’ folder from
+my MLflow run to show up as a pipeline output that I can pass to the
+next step?”</strong></p>
+<p>There are two common approaches:</p>
+<h3
+id="approach-a-let-mlflow-handle-it-then-reference-the-runs-artifact-path."><strong>Approach
+A) Let MLflow handle it, then reference the run’s artifact
+path.</strong></h3>
+<ol type="1">
+<li><p>Use MLflow as usual in step 1 of the pipeline:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mlflow.sklearn.log_model(model, artifact_path<span class="op">=</span><span class="st">&quot;model&quot;</span>)</span></code></pre></div></li>
+<li><p>After step 1 completes, you’ll see your <code>model/</code>
+folder in that step’s run artifacts.</p></li>
+<li><p>In your pipeline definition, you can specify that the next step
+consumes the “output” of step 1 by referencing the run’s artifacts
+location.</p>
+<p>However, to do that neatly, you often define <code>outputs</code> for
+the step in the pipeline YAML (or Python) so that Azure ML automatically
+associates that artifact folder with a pipeline output.</p>
+<ul>
+<li><p>For example, in your step’s YAML:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">model_output</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span></code></pre></div></li>
+<li><p>Then inside your script, you copy the MLflow “model” folder into
+the special path that Azure ML expects for <code>model_output</code>.
+For example:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>model_output_dir <span class="op">=</span> os.environ[<span class="st">&quot;AZUREML_OUTPUT_model_output&quot;</span>]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>shutil.copytree(<span class="st">&quot;model&quot;</span>, model_output_dir)</span></code></pre></div></li>
+<li><p>Azure ML will then treat <code>model_output</code> as the
+“official” pipeline output.</p></li>
+<li><p>Step 2 can declare:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">model_input</span><span class="kw">:</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span></code></pre></div>
+<p>and wire <code>model_input</code> to
+<code>step1.outputs.model_output</code>.</p></li>
+</ul></li>
+</ol>
+<h3
+id="approach-b-skip-mlflow-logging-explicitly-store-your-model-in-the-pipeline-output-folder."><strong>Approach
+B) Skip MLflow logging, explicitly store your model in the pipeline
+output folder.</strong></h3>
+<ol type="1">
+<li><p>Just call:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>joblib.dump(model, <span class="st">&quot;my_local_model_dir/model.pkl&quot;</span>)</span></code></pre></div></li>
+<li><p>Copy that folder into the output mount:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>output_dir <span class="op">=</span> os.environ[<span class="st">&quot;AZUREML_OUTPUT_model_output&quot;</span>]  <span class="co"># or a pipeline-supplied path</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>shutil.copytree(<span class="st">&quot;my_local_model_dir&quot;</span>, output_dir)</span></code></pre></div></li>
+<li><p>That output directory is then automatically available to
+downstream steps in the pipeline as
+<code>step1.outputs.model_output</code>.</p></li>
+</ol>
+<p>Either way, once the pipeline step finishes, Azure ML will
+automatically upload that folder to the run’s “artifacts” storage area
+(it will look something like
+<code>azureml://some_container_name/...</code> under the hood).</p>
+<hr />
+<h2 id="using-the-output-in-subsequent-steps">5. Using the Output in
+Subsequent Steps</h2>
+<p>In your pipeline definition, once you’ve flagged that folder as an
+<code>Output</code>, you can do:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pipeline_job.yaml</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">train_step</span><span class="kw">:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">    # ...</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">trained_model</span><span class="kw">:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">score_step</span><span class="kw">:</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">    # ...</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_folder</span><span class="kw">:</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">job_output</span><span class="kw">:</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">job</span><span class="kw">:</span><span class="at"> train_step</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">output</span><span class="kw">:</span><span class="at"> trained_model</span></span></code></pre></div>
+<p>Inside the <strong><code>score_step</code></strong> code, you’d refer
+to it (in Python) via something like:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> os.environ[<span class="st">&quot;AZUREML_INPUT_model_folder&quot;</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> joblib.load(os.path.join(model_path, <span class="st">&quot;model.pkl&quot;</span>))</span></code></pre></div>
+<p>(Or whatever folder structure you had.)</p>
+<hr />
+<h2 id="summary">6. Summary</h2>
+<ul>
+<li><strong>Stdout</strong> is automatically captured as run
+artifacts.</li>
+<li><strong>MLflow-logged artifacts</strong> (including your “model”
+folder) are uploaded as run artifacts.</li>
+<li><strong>Job outputs</strong> are a more formal mechanism for
+specifying which folders you want to pass from one pipeline step to
+another.</li>
+<li><strong>Everything</strong> ultimately lands in a storage account
+behind the scenes.</li>
+<li>You can see these artifacts and outputs by looking at the job in the
+UI or by browsing via the CLI/SDK.</li>
+<li>If you need those artifacts in a subsequent step (in a single
+pipeline run), you typically define them as pipeline outputs in step 1
+and pipeline inputs in step 2.</li>
+</ul>
+<p>Most people either log the MLflow model (and optionally register it
+in the workspace Model registry if it’s a final artifact), or explicitly
+save via joblib into a pipeline output folder. Both ways end up in the
+“Artifactory” for that run, just with slightly different usage patterns
+for pipeline chaining.</p>
+<hr />
+<p><strong>TL;DR</strong>:</p>
+<ol type="1">
+<li>Everything you print out ends up in a log file, which Azure ML
+automatically captures.</li>
+<li>Any MLflow “model” folder also ends up in your run artifacts by
+default (provided you log it via MLflow).</li>
+<li>To make that folder an <em>output</em> for a pipeline step (so the
+next step can take it as input), you usually define an
+<code>outputs</code> block in your pipeline job config and then copy (or
+directly write) the “model” folder into the designated output path
+inside your training script.</li>
+</ol>
+<h1 id="notes">Notes</h1>
+<p>That line:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>model_output_dir <span class="op">=</span> os.environ[<span class="st">&quot;AZUREML_OUTPUT_model_output&quot;</span>]</span></code></pre></div>
+<p>is how your training script finds the <strong>local filesystem
+path</strong> where Azure ML wants you to put the files for an output
+named <strong><code>model_output</code></strong>.</p>
+<hr />
+<h2 id="how-does-azureml_output_model_output-get-set">How does
+<code>AZUREML_OUTPUT_model_output</code> get set?</h2>
+<p>If in your pipeline (or job) definition you declare something
+like:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">model_output</span><span class="kw">:</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span></code></pre></div>
+<p>then, when your code runs on the compute target, Azure ML
+automatically creates a local directory on disk for that output
+<em>and</em> sets an environment variable named
+<code>AZUREML_OUTPUT_model_output</code> that points to it. For
+instance, on the compute node it might be:</p>
+<pre><code>AZUREML_OUTPUT_model_output=&quot;/mnt/azml-runs/&lt;unique_run_id&gt;/outputs/model_output&quot;</code></pre>
+<p>Your script can read this environment variable to figure out exactly
+<strong>where</strong> to save the files you want treated as the
+“model_output” from the job. After the job finishes, Azure ML will
+upload everything under that directory back into its artifact storage so
+it becomes accessible as the job’s output.</p>
+<hr />
+<h2 id="why-do-we-do-this">Why do we do this?</h2>
+<ol type="1">
+<li><p><strong>Consistent naming</strong>:<br />
+You name the output in your pipeline/job definition as “model_output,”
+and in code, you reference <code>AZUREML_OUTPUT_model_output</code> to
+read/write to that directory.</p></li>
+<li><p><strong>Automatic upload</strong>:<br />
+Whatever you write into <code>model_output_dir</code> will automatically
+be uploaded as the output for that job step once the script completes.
+That means in the Azure ML portal (and via SDK/CLI), you can easily find
+those files for your run.</p></li>
+<li><p><strong>Pipelining</strong>:<br />
+If this is part of a multi-step pipeline, you can define a subsequent
+step that takes “model_output” from step 1 as an <strong>input</strong>
+in step 2, so the second step automatically sees the contents of that
+folder without your having to manually copy or transfer them.</p></li>
+</ol>
+<hr />
+<h3 id="example-yaml-snippet">Example YAML snippet</h3>
+<p>Below is a basic example of how you might wire up an output in a
+pipeline (in YAML):</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">train_step</span><span class="kw">:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">component</span><span class="kw">:</span><span class="at"> your_training_component</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_output</span><span class="kw">:</span><span class="co"> # &lt;--- declare output name</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">score_step</span><span class="kw">:</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> command</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">component</span><span class="kw">:</span><span class="at"> your_scoring_component</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">model_input</span><span class="kw">:</span><span class="co"> # &lt;--- declare input name</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">job_output</span><span class="kw">:</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">job</span><span class="kw">:</span><span class="at"> train_step</span><span class="co"> # reference train step</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">output</span><span class="kw">:</span><span class="at"> model_output</span><span class="co"> # reference the same output name</span></span></code></pre></div>
+<h3 id="example-code-inside-train_step">Example code inside
+<code>train_step</code></h3>
+<p>Inside your training script (i.e.,
+<code>your_training_component</code> code):</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> shutil</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you trained an MLflow model locally in a folder called &quot;model&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>local_mlflow_folder <span class="op">=</span> <span class="st">&quot;./model&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve the special directory for outputs</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>model_output_dir <span class="op">=</span> os.environ[<span class="st">&quot;AZUREML_OUTPUT_model_output&quot;</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy your local model folder to the official output directory</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>shutil.copytree(local_mlflow_folder, model_output_dir)</span></code></pre></div>
+<p>When the job finishes, Azure ML sees everything inside
+<code>model_output_dir</code>, uploads it, and registers it as
+<code>train_step.outputs.model_output</code>. The next step
+(<code>score_step</code>) can reference it as an input named
+<code>model_input</code>.</p>
+<hr />
+<h3 id="in-short">In Short</h3>
+<ul>
+<li><strong><code>AZUREML_OUTPUT_model_output</code></strong> is just an
+environment variable that Azure ML sets at runtime.</li>
+<li><strong>The key</strong> is that “model_output” (the name in the
+code) matches the name of the output in your pipeline/job
+definition.</li>
+<li>Anything you write into
+<code>os.environ["AZUREML_OUTPUT_model_output"]</code> will end up in
+the final run’s artifacts as that pipeline output.</li>
+</ul>
+<h1 id="documentation">Documentation</h1>
+<p>Azure’s official documentation doesn’t call out the
+<code>AZUREML_OUTPUT_&lt;name&gt;</code> environment variables in big
+bold letters, but they do mention (somewhat indirectly) how inputs and
+outputs are mapped to environment variables in component (or job) code.
+Here are a few references you can look at:</p>
+<ol type="1">
+<li><p><strong>Command Job YAML reference</strong></p>
+<ul>
+<li><a
+href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-job-command?tabs=python#inputs-and-outputs">Command
+job specification (v2) – Inputs and outputs</a></li>
+<li>This section explains how you declare inputs/outputs in YAML, and it
+notes (in the text) that Azure Machine Learning will inject environment
+variables that point to the local paths for these inputs/outputs at
+runtime.</li>
+</ul></li>
+<li><p><strong>Using environment variables</strong></p>
+<ul>
+<li><a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-use-environment-variables?tabs=cli">How
+to use environment variables in your training scripts</a></li>
+<li>Although this doc doesn’t explicitly show the
+<code>AZUREML_OUTPUT_&lt;name&gt;</code> variable, it does cover the
+general approach of reading environment variables in your Python script
+and how these get set.</li>
+</ul></li>
+<li><p><strong>Pipeline job YAML reference</strong></p>
+<ul>
+<li><a
+href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-job-pipeline">Pipeline
+job specification (v2)</a></li>
+<li>Similar to the command job doc, but geared toward pipelines. It
+describes how outputs from one step become inputs to another step, and
+how those inputs/outputs become local paths in the environment at
+runtime.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="where-the-azureml_output_name-variables-come-from">Where the
+<code>AZUREML_OUTPUT_&lt;name&gt;</code> Variables Come From</h3>
+<p>Under the hood:</p>
+<ul>
+<li><strong>When you declare an output</strong> in your component or
+command job YAML (for example, <code>model_output</code> in
+<code>outputs:</code>), the Azure ML runtime will create a local
+directory on the compute node for that output and then set an
+environment variable named <code>AZUREML_OUTPUT_model_output</code> to
+that local path.</li>
+<li>If you have an input named <code>data_input</code> in your YAML,
+you’ll see a corresponding environment variable
+<code>AZUREML_DATA_data_input</code> (or something similar) inside the
+script.</li>
+</ul>
+<p>Unfortunately, the docs don’t always show a direct “here is the
+environment variable name” table, but the pattern is consistent:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">outputs</span><span class="kw">:</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">&lt;some_output_name&gt;</span><span class="kw">:</span><span class="co"> # e.g., model_output</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span></code></pre></div>
+<p>…maps to an environment variable:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">AZUREML_OUTPUT_</span><span class="op">&lt;</span>some_output_name<span class="op">&gt;</span></span></code></pre></div>
+<p>within the job environment.</p>
+<hr />
+<h3 id="practical-example-in-the-docs">Practical Example in the
+Docs</h3>
+<p>For example, <a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-create-component-pipeline?tabs=python">this
+Microsoft tutorial on creating a pipeline job (v2)</a> shows an outline
+of how to define inputs and outputs in your component YAML. While it
+doesn’t explicitly show the environment variable’s name in the tutorial,
+once the job runs, you can open up the <code>driver_log</code> (or your
+script logs) and observe that environment variables get set for all your
+declared inputs and outputs.</p>
+<hr />
+<h3 id="key-takeaway">Key Takeaway</h3>
+<p>There isn’t a single doc page titled “AZUREML<em>OUTPUT</em>*
+environment variables,” but the concept is sprinkled across the docs on
+<strong>Command components</strong>, <strong>Pipeline
+components</strong>, <strong>Inputs/Outputs</strong>, and
+<strong>Environment variables</strong>. The short version is:</p>
+<ul>
+<li>If your component declares <code>outputs: { something: ... }</code>,
+Azure ML will set <code>AZUREML_OUTPUT_something</code> in the job’s
+environment.</li>
+<li>If your component declares <code>inputs: { data: ... }</code>, Azure
+ML sets a corresponding environment variable (like
+<code>AZUREML_DATA_data</code>) in the job’s environment.</li>
+</ul>
+<p><strong>You can then
+<code>os.environ["AZUREML_OUTPUT_something"]</code></strong> (or
+<code>_data_</code>) <strong>from within your script</strong> to locate
+where the job expects you to read/write data for that input/output.</p>
+    
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a high-level overview of common patterns for performing
+batch inference in Azure Machine Learning (AML), how they differ from
+real-time (online) inference, and some suggestions for structuring your
+MLOps pipeline to accommodate batch inference without running into
+headaches.</p>
+<hr />
+<h2 id="two-common-approaches-to-batch-inference">1. Two Common
+Approaches to Batch Inference</h2>
+<h3
+id="approach-a-batch-inference-via-an-aml-pipeline-a-command-job-or-pipeline-job"><strong>Approach
+A: Batch Inference via an AML Pipeline (a “Command Job” or “Pipeline
+Job”)</strong></h3>
+<ol type="1">
+<li><strong>Register</strong> your model to your AML Workspace or to an
+AML Registry.</li>
+<li><strong>Create a pipeline (or just a single command job)</strong>
+that:
+<ul>
+<li>Pulls the <em>registered model</em>.</li>
+<li>Reads the input data (from Blob Storage, a Data Lake, a datastore,
+etc.).</li>
+<li>Runs a scoring script (e.g., <code>score.py</code>).</li>
+<li>Writes the output predictions somewhere accessible (again, typically
+in Blob or a Data Lake).</li>
+</ul></li>
+<li><strong>Trigger</strong> that pipeline/job programmatically (from
+Azure DevOps, from the AML Studio UI, or from the CLI).</li>
+</ol>
+<p>This approach does <em>not</em> use a deployed endpoint. Instead, you
+are simply orchestrating a scoring job with AML’s compute. You can scale
+out scoring by using features like a parallel job (formerly
+<code>ParallelRunStep</code>) to process large data sets in parallel on
+multiple nodes.</p>
+<h3
+id="approach-b-batch-inference-via-amls-batch-endpoints"><strong>Approach
+B: Batch Inference via AML’s Batch Endpoints</strong></h3>
+<ol type="1">
+<li><strong>Register</strong> your model to your AML Workspace or AML
+Registry.</li>
+<li><strong>Create a <code>BatchEndpoint</code></strong> and a
+<code>BatchDeployment</code> in Azure Machine Learning. This involves:
+<ul>
+<li>Defining the environment (Docker, Conda dependencies, etc.).</li>
+<li>A scoring script that can handle reading from the input data source,
+processing the data in <em>mini-batches</em>, and writing predictions
+out.</li>
+</ul></li>
+<li><strong>Invoke</strong> the batch endpoint with the desired input
+data (via the CLI, Python SDK, or REST). AML will create a “job” that
+runs your scoring script on ephemeral compute. You can watch logs, see
+status, and retrieve outputs once it completes.</li>
+</ol>
+<p>With batch endpoints, AML manages the spin-up/spin-down of compute
+for the job. It is quite powerful if you have regularly scheduled or
+ad-hoc large-scale inference needs.</p>
+<hr />
+<h2 id="real-time-online-endpoints-vs.-batch-endpoints">2. Real-Time
+(Online) Endpoints vs. Batch Endpoints</h2>
+<p>When you hear the term “deploy the model to an endpoint,” that
+usually implies an <em>online</em> (real-time) endpoint. In practice,
+you <em>can</em> call an online endpoint in a loop (simulating batch),
+but:</p>
+<ul>
+<li><strong>Online endpoints</strong> are designed for <em>real-time,
+low-latency</em> scoring (think: a REST API that your application calls
+for a single record or small batch).</li>
+<li><strong>Batch endpoints</strong> are designed for <em>asynchronous,
+large-scale</em> offline inference (think: tens of thousands or millions
+of rows, or large media files, with job-based parallel processing).</li>
+</ul>
+<p>If your scenario truly needs <em>batch</em> scoring, it’s typically
+much more efficient to rely on either an <em>AML pipeline job</em> or a
+dedicated <em>batch endpoint</em>, rather than hitting a real-time
+endpoint repeatedly.</p>
+<hr />
+<h2
+id="common-reasons-for-errors-when-batch-scoring-via-an-online-endpoint">3.
+Common Reasons for Errors When “Batch Scoring via an Online
+Endpoint”</h2>
+<ol type="1">
+<li><strong>Payload Size or Request Timeouts:</strong> If you are
+passing large data payloads through an online endpoint, you may exceed
+default request size/time limits.</li>
+<li><strong>Concurrency or Scalability Limits:</strong> Online endpoints
+can scale, but they’re not designed for massive parallel ingestion of
+large datasets the same way batch endpoints or parallel job pipelines
+are.</li>
+<li><strong>Misconfigured Environment or Score Script:</strong> If your
+batch job is calling the real-time endpoint, you might run into issues
+around how the scoring script processes data that is chunked or
+streamed.</li>
+</ol>
+<hr />
+<h2 id="recommended-mlops-setup-for-batch-scoring">4. Recommended MLOps
+Setup for Batch Scoring</h2>
+<p><strong>Typically, you want:</strong></p>
+<ol type="1">
+<li><p><strong>Model Training (Build/Train Pipeline)</strong></p>
+<ul>
+<li>Runs model training code.</li>
+<li>Registers the model (to AML Workspace or AML Registry).</li>
+<li>Possibly triggers an automated test or evaluation job.</li>
+</ul></li>
+<li><p><strong>Model Deployment (to Production)</strong></p>
+<ul>
+<li>If you need <em>real-time inference</em>, you deploy to an
+<em>online endpoint</em>.</li>
+<li>If you need <em>batch inference</em>, you create a <em>batch
+endpoint</em> or a pipeline-based batch job definition that references
+your model.</li>
+</ul></li>
+<li><p><strong>Batch Inference Pipeline or Job</strong></p>
+<ul>
+<li><em>Triggered on-demand</em> (via a schedule, or whenever new data
+arrives).</li>
+<li>Or triggered from your CI/CD tool (Azure DevOps, GitHub Actions,
+etc.) when the new model is ready and you want to re-infer on a backlog
+of data.</li>
+<li>References the model version from the registry/workspace, and
+references the input data location.</li>
+<li>Writes out results/predictions to a known location.</li>
+</ul></li>
+</ol>
+<hr />
+<h2
+id="how-to-implement-a-simple-batch-pipeline-command-job-with-a-registered-model">5.
+How to Implement a Simple Batch Pipeline (Command Job) with a Registered
+Model</h2>
+<p>A minimal example flow using the Python SDK might look like this:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> CommandJob, Environment</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.identity <span class="im">import</span> DefaultAzureCredential</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Connect to your workspace</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>credential <span class="op">=</span> DefaultAzureCredential()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ml_client <span class="op">=</span> MLClient(credential, subscription_id, resource_group, workspace_name)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Define the command job</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> CommandJob(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    code<span class="op">=</span><span class="st">&quot;./src&quot;</span>,  <span class="co"># folder with score.py</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span><span class="st">&quot;python score.py --model_path $</span><span class="sc">{{</span><span class="st">inputs.model_path</span><span class="sc">}}</span><span class="st"> --input_data $</span><span class="sc">{{</span><span class="st">inputs.input_data</span><span class="sc">}}</span><span class="st"> --output_data $</span><span class="sc">{{</span><span class="st">outputs.output_data</span><span class="sc">}}</span><span class="st">&quot;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span>Environment(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">&quot;mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># or conda environment, etc.</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;model_path&quot;</span>: <span class="st">&quot;azureml://registries/&lt;registry-name&gt;/models/&lt;model-name&gt;/versions/&lt;version&gt;&quot;</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;input_data&quot;</span>: <span class="st">&quot;azureml://datastores/&lt;datastore-name&gt;/paths/&lt;input-folder&gt;&quot;</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>{</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;output_data&quot;</span>: Output(</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            <span class="bu">type</span><span class="op">=</span><span class="st">&quot;uri_folder&quot;</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            mode<span class="op">=</span><span class="st">&quot;rw_mount&quot;</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            path<span class="op">=</span><span class="st">&quot;azureml://datastores/&lt;datastore-name&gt;/paths/&lt;output-folder&gt;&quot;</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    compute<span class="op">=</span><span class="st">&quot;&lt;your-compute-cluster-name&gt;&quot;</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&quot;batch-scoring-job&quot;</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Submit the job</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>returned_job <span class="op">=</span> ml_client.jobs.create_or_update(job)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Created job: </span><span class="sc">{</span>returned_job<span class="sc">.</span>name<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p>In <code>score.py</code>, you would:</p>
+<ol type="1">
+<li>Load the model (from <code>--model_path</code>).</li>
+<li>Read data (from <code>--input_data</code>).</li>
+<li>Perform inference.</li>
+<li>Write predictions to <code>--output_data</code>.</li>
+</ol>
+<p>When this job runs, it will spin up a compute node (or more, if you
+add parallelization) and run <code>score.py</code> in a batch style,
+saving results to your chosen location. No need for an “endpoint” in
+this scenario.</p>
+<hr />
+<h2 id="how-to-implement-a-batch-endpoint">6. How to Implement a Batch
+Endpoint</h2>
+<p>If you’d like a <em>long-lived</em> “API” for batch inference (versus
+a one-off job), you can create a batch endpoint:</p>
+<ol type="1">
+<li><p><strong>Create a Batch Endpoint</strong>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># batch_endpoint.yaml</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> my-batch-endpoint</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">defaults</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">deployment</span><span class="kw">:</span><span class="at"> my-batch-deployment</span></span></code></pre></div></li>
+<li><p><strong>Create a Batch Deployment</strong> referencing your
+model:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># batch_deployment.yaml</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> my-batch-deployment</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">endpoint_name</span><span class="kw">:</span><span class="at"> my-batch-endpoint</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> my-registered-model</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">code_configuration</span><span class="kw">:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">code</span><span class="kw">:</span><span class="at"> ./src</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">scoring_script</span><span class="kw">:</span><span class="at"> score.py</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">environment</span><span class="kw">:</span><span class="at"> azureml://registries/&lt;registry-name&gt;/environments/&lt;env-name&gt;/versions/&lt;env-version&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">compute</span><span class="kw">:</span><span class="at"> azureml://subscriptions/&lt;subId&gt;/resourceGroups/&lt;rg&gt;/providers/Microsoft.MachineLearningServices/workspaces/&lt;ws&gt;/computes/&lt;cluster-name&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">instance_count</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">max_concurrency_per_instance</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">input</span><span class="kw">:</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_file</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> uri_folder</span></span></code></pre></div></li>
+<li><p><strong>Invoke</strong> (submit a batch scoring job) by passing
+an input:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> ml batch-endpoint invoke <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--name</span> my-batch-endpoint <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--input</span> <span class="st">&quot;azureml://datastores/&lt;datastore-name&gt;/paths/&lt;input-file-or-folder&gt;&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--resource-group</span> <span class="op">&lt;</span>rg<span class="op">&gt;</span> <span class="dt">\</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--workspace-name</span> <span class="op">&lt;</span>ws<span class="op">&gt;</span></span></code></pre></div>
+<p>You’ll get a job ID back, and can track the status. Results end up in
+the default or specified output location.</p></li>
+</ol>
+<hr />
+<h2 id="why-you-may-be-seeing-errors">7. Why You May Be Seeing
+Errors</h2>
+<ul>
+<li>If you try to <em>repurpose an online (real-time) endpoint for large
+scale batch scoring</em>, you could run into:
+<ul>
+<li>Timeout errors.</li>
+<li>Memory or concurrency errors.</li>
+<li>High costs or unresponsiveness (online endpoints keep the container
+or VM always running).</li>
+</ul></li>
+<li>If you’re mixing up AML’s new “registry-based model references”
+vs. older “workspace-based models,” you might need to ensure your code
+references them properly.</li>
+<li>Make sure your <em>compute targets</em> are configured and
+accessible, and that your environment or scoring script dependencies
+match your batch approach.</li>
+</ul>
+<hr />
+<h2 id="key-takeaways">8. Key Takeaways</h2>
+<ol type="1">
+<li><strong>Don’t</strong> overcomplicate batch inference by calling a
+real-time endpoint in a loop. Azure ML offers:
+<ul>
+<li>A simple pipeline-based approach, or</li>
+<li>A dedicated “batch endpoint” feature.</li>
+</ul></li>
+<li><strong>Register</strong> your model once; re-use it for both
+real-time and batch deployments if needed, or reference it from pipeline
+jobs.</li>
+<li>For <strong>MLOps</strong> in Azure DevOps:
+<ul>
+<li><strong>CI</strong> triggers your training pipeline.</li>
+<li>Once you have a stable model, you “promote” or “release” it to a
+<em>deployment stage</em>, which could be:
+<ul>
+<li>An <em>online endpoint</em> for real-time traffic.</li>
+<li>A <em>batch endpoint</em> (or pipeline job definition) for
+scheduled/offline inference.</li>
+</ul></li>
+</ul></li>
+<li>If you’re “running into an error” specifically about calling an
+online endpoint in a loop, strongly consider the standard batch
+approaches above—most issues get resolved by letting AML handle it with
+the right compute and job orchestration.</li>
+</ol>
+<hr />
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-deploy-batch-endpoints?tabs=python">Azure
+ML: How to Create and Use Batch Endpoints</a></li>
+<li><a
+href="https://learn.microsoft.com/azure/machine-learning/how-to-use-parallel-job">Azure
+ML: Build and Submit a Parallel Job (ParallelRunStep)</a></li>
+<li><a
+href="https://learn.microsoft.com/azure/machine-learning/cli-for-machine-learning#batch-endpoints">Azure
+ML CLI v2 Examples for Batch Inference</a></li>
+</ul>
+<p>Use these references as a blueprint for your pipeline or endpoint
+code. After you pick the method that best suits your scenario (pipeline
+jobs vs. batch endpoints), you should have fewer errors and a cleaner
+MLOps workflow for batch scoring.</p>
+<h1 id="score.py">score.py</h1>
+<p>Below is a <strong>minimal</strong> example of what a
+<code>score.py</code> script might look like for a batch scoring job
+using a registered model. This example assumes:</p>
+<ol type="1">
+<li><strong>You have a scikit-learn model</strong> (saved via
+<code>joblib</code> or <code>pickle</code>).</li>
+<li><strong>Your input data</strong> is one or more CSV files located in
+a directory (mounted by AML).</li>
+<li><strong>You’ll output</strong> a single CSV file with
+predictions.</li>
+</ol>
+<p>Of course, you can adapt this to your data formats (Parquet, images,
+etc.) and modeling frameworks (PyTorch, TensorFlow, etc.).</p>
+<hr />
+<h2 id="example-score.py">Example <code>score.py</code></h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">score.py</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">Example scoring script for an Azure ML batch job.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">- Loads a model from the --model_path argument</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">- Reads CSV input data from --input_data folder</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">- Performs inference</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">- Writes predictions to --output_data folder as a CSV file</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_args():</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    parser <span class="op">=</span> argparse.ArgumentParser()</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--model_path&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the registered model directory or file.&quot;</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--input_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the input data folder or file.&quot;</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    parser.add_argument(<span class="st">&quot;--output_data&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, required<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">help</span><span class="op">=</span><span class="st">&quot;Path to the output folder where predictions will be saved.&quot;</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> parser.parse_args()</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_model(model_path):</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">    Load the scikit-learn model from the specified path.</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">    The path might be a folder or a direct file depending on how you registered/saved it.</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If model_path is a directory, the actual file could be something like model.pkl</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># or model.joblib inside that directory.</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For demonstration, let&#39;s assume &#39;model.joblib&#39; is directly in the model_path folder.</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    model_file <span class="op">=</span> os.path.join(model_path, <span class="st">&quot;model.joblib&quot;</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> joblib.load(model_file)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_input_data(input_path):</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">    Read CSV file(s) from input_path.</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">    In this example, we&#39;ll assume there&#39;s a single CSV file.</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">    If multiple CSV files exist, you can loop and concatenate them here.</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If there&#39;s only one file, you can do something like:</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for file_name in os.listdir(input_path):</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">#     if file_name.endswith(&quot;.csv&quot;):</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>    <span class="co">#         data = pd.read_csv(os.path.join(input_path, file_name))</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    <span class="co">#         break</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Or if you’re sure there is exactly one CSV, do:</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    csv_files <span class="op">=</span> [f <span class="cf">for</span> f <span class="kw">in</span> os.listdir(input_path) <span class="cf">if</span> f.endswith(<span class="st">&quot;.csv&quot;</span>)]</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> csv_files:</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f&quot;No CSV files found in </span><span class="sc">{</span>input_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> pd.read_csv(os.path.join(input_path, csv_files[<span class="dv">0</span>]))</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> main():</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>    args <span class="op">=</span> parse_args()</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Loading model...&quot;</span>)</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> load_model(args.model_path)</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Model loaded from </span><span class="sc">{</span>args<span class="sc">.</span>model_path<span class="sc">}</span><span class="ss">.&quot;</span>)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Reading input data...&quot;</span>)</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    input_df <span class="op">=</span> read_input_data(args.input_data)</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Input data shape: </span><span class="sc">{</span>input_df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------------------------</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Perform predictions</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------------------------</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Performing inference...&quot;</span>)</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Assume input_df has all the features needed by the model</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> model.predict(input_df)</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create an output DataFrame with predictions (plus maybe IDs or original features)</span></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>    output_df <span class="op">=</span> input_df.copy()</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>    output_df[<span class="st">&quot;prediction&quot;</span>] <span class="op">=</span> predictions</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------------------------</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save results</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------------------------</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Saving predictions...&quot;</span>)</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>    os.makedirs(args.output_data, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>    output_csv <span class="op">=</span> os.path.join(args.output_data, <span class="st">&quot;predictions.csv&quot;</span>)</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>    output_df.to_csv(output_csv, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Predictions saved to </span><span class="sc">{</span>output_csv<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>    main()</span></code></pre></div>
+<h3 id="explanation-of-key-steps">Explanation of Key Steps</h3>
+<ol type="1">
+<li><p><strong>Argument Parsing</strong><br />
+We define <code>--model_path</code>, <code>--input_data</code>, and
+<code>--output_data</code>. Azure ML will automatically pass these paths
+to the script based on how you configure your <code>CommandJob</code>
+(or pipeline).</p></li>
+<li><p><strong>Model Loading</strong></p>
+<ul>
+<li>We assume the model was registered in AML and is loaded via
+<code>joblib</code> from <code>model_path</code>.</li>
+<li>If your model file is named something else, adjust accordingly.</li>
+<li>If you have a PyTorch or TensorFlow model, change the loading logic
+(e.g., <code>torch.load(...)</code> or
+<code>tf.keras.models.load_model(...)</code>).</li>
+</ul></li>
+<li><p><strong>Reading Input Data</strong></p>
+<ul>
+<li>We show an example of scanning for <code>.csv</code> files in the
+input folder.</li>
+<li>If you have multiple CSVs, you might want to loop through them, read
+each, and combine them (<code>pd.concat([...])</code>). Or you may have
+a single CSV.</li>
+<li>If your data is in Parquet, images, or any other format, you’d adapt
+this part.</li>
+</ul></li>
+<li><p><strong>Performing Inference</strong></p>
+<ul>
+<li>Calls <code>model.predict(...)</code> on your input DataFrame.</li>
+<li>If your model expects a different shape or columns, you might need
+to select columns from the DataFrame first, do feature transformations,
+etc.</li>
+</ul></li>
+<li><p><strong>Writing Output</strong></p>
+<ul>
+<li>AML expects the outputs to be written to the directory you specify
+for <code>--output_data</code>. We create that directory if it does not
+exist.</li>
+<li>We then write the predictions to <code>predictions.csv</code>.</li>
+<li>In an enterprise scenario, you might store more details like
+timestamps, input data references, etc.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="how-this-ties-into-your-commandjob">How This Ties Into Your
+<code>CommandJob</code></h2>
+<p>Recall from your pipeline/job definition, you might specify:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>job <span class="op">=</span> CommandJob(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    code<span class="op">=</span><span class="st">&quot;./src&quot;</span>,  <span class="co"># folder containing score.py</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span><span class="st">&quot;python score.py --model_path $</span><span class="sc">{{</span><span class="st">inputs.model_path</span><span class="sc">}}</span><span class="st"> --input_data $</span><span class="sc">{{</span><span class="st">inputs.input_data</span><span class="sc">}}</span><span class="st"> --output_data $</span><span class="sc">{{</span><span class="st">outputs.output_data</span><span class="sc">}}</span><span class="st">&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ...</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;model_path&quot;</span>: <span class="st">&quot;azureml://registries/&lt;registry-name&gt;/models/&lt;model-name&gt;/versions/&lt;version&gt;&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;input_data&quot;</span>: <span class="st">&quot;azureml://datastores/&lt;datastore-name&gt;/paths/&lt;input-folder&gt;&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>{</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;output_data&quot;</span>: Output(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">type</span><span class="op">=</span><span class="st">&quot;uri_folder&quot;</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            mode<span class="op">=</span><span class="st">&quot;rw_mount&quot;</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            path<span class="op">=</span><span class="st">&quot;azureml://datastores/&lt;datastore-name&gt;/paths/&lt;output-folder&gt;&quot;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ...</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Then Azure ML will automatically make these three arguments available
+to <code>score.py</code>:</p>
+<ul>
+<li><code>--model_path</code> =&gt; a local mounted path containing the
+model files</li>
+<li><code>--input_data</code> =&gt; a local mounted path with your
+CSV(s)</li>
+<li><code>--output_data</code> =&gt; an empty local directory where your
+script should write predictions</li>
+</ul>
+<hr />
+<h2 id="modifying-for-parallel-processing">Modifying for Parallel
+Processing</h2>
+<p>If you have <strong>very large</strong> data or need to run on
+multiple nodes, consider using:</p>
+<ul>
+<li>The AML <strong>Parallel Job</strong> feature (previously
+“ParallelRunStep”), or</li>
+<li>A <strong>batch endpoint</strong> with parallelization
+settings.</li>
+</ul>
+<p>In that scenario, you might read just a <em>portion</em> of the data
+in each worker, then combine results. The general flow in your
+<code>score.py</code> remains similar, just subdividing or merging
+partitions as needed.</p>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>The <code>score.py</code> above provides a <strong>basic</strong>
+structure for batch scoring with Azure ML. You can tweak it to your
+framework, data format, or parallelization scheme. The key points
+are:</p>
+<ul>
+<li><strong>Parse arguments</strong> for model path, input location, and
+output location.</li>
+<li><strong>Load</strong> the model from the given path.</li>
+<li><strong>Read</strong> data from the mounted directory (input).</li>
+<li><strong>Predict</strong> using the model.</li>
+<li><strong>Save</strong> your predictions to the mounted directory
+(output).</li>
+</ul>
+<p>This is exactly what Azure ML expects for a simple batch inference
+job.</p>
+    
+</body>
+</html>
