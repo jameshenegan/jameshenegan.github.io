@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="approval-gates-and-rollback-mechanisms-in-mlops">Approval Gates
+and Rollback Mechanisms in MLOps</h1>
+<h2 id="approval-gates">1) Approval Gates</h2>
+<h3 id="what-they-are">What They Are</h3>
+<p>Approval gates ensure that <strong>no model is promoted to
+production</strong> (or an equivalent environment) without an explicit
+checkpoint—often a human sign-off, a set of automated checks, or
+both.</p>
+<h3 id="why-they-matter">Why They Matter</h3>
+<ul>
+<li><strong>Regulatory &amp; Compliance:</strong> Auditors frequently
+want to see that changes to production are reviewed, documented, and
+authorized by someone with the right responsibility.</li>
+<li><strong>Quality Control:</strong> Even if you have automated
+metrics, you still want a final decision-maker to confirm the model
+should be deployed. This is particularly important in domains like
+finance, healthcare, or insurance, where errors can be costly.</li>
+</ul>
+<h3 id="common-ways-to-implement-approval-gates">Common Ways to
+Implement Approval Gates</h3>
+<ol type="1">
+<li><p><strong>Pull Request Reviews</strong></p>
+<ul>
+<li>The simplest approach: before merging new code or pipeline
+definitions that would trigger a production deployment, require at least
+one reviewer (like a manager or senior data scientist) to sign off.</li>
+<li>This is easy to enforce in Azure DevOps via <strong>branch
+policies</strong> and pull request settings.</li>
+</ul></li>
+<li><p><strong>Azure DevOps Pipeline Approvals</strong></p>
+<ul>
+<li>You can add a <strong>manual approval</strong> step in your DevOps
+pipeline—for example, after a “train and test” stage but before “deploy
+to production.” That step can pause the pipeline until the right person
+grants approval.</li>
+</ul></li>
+<li><p><strong>Automated Metric Thresholds</strong></p>
+<ul>
+<li>As an additional gate, you can have your pipeline compare new model
+metrics to baseline metrics. If the new model underperforms, the
+pipeline fails automatically (no manual approval needed). If it passes,
+only then is a manual sign-off required.</li>
+</ul></li>
+</ol>
+<h3 id="tips-best-practices">Tips &amp; Best Practices</h3>
+<ul>
+<li><strong>Keep It Simple</strong>: Avoid layering multiple approvals
+unless you truly need them. Each additional gate slows you down.</li>
+<li><strong>Document the Flow</strong>: Auditors will want to see how
+approvals are tracked and who approved what. Document each gate in your
+DevOps boards, or keep logs in the pipeline run history.</li>
+<li><strong>Combine Automated &amp; Manual</strong>: Let the pipeline
+auto-reject clearly subpar models and only require manual approval for
+borderline or good models.</li>
+</ul>
+<hr />
+<h2 id="rollback-mechanism">2) Rollback Mechanism</h2>
+<h3 id="what-it-is">What It Is</h3>
+<p>A rollback mechanism lets you <strong>revert</strong> to a previously
+deployed model version if something goes wrong with the new version—or
+if the business decides the previous model was better.</p>
+<h3 id="why-it-matters">Why It Matters</h3>
+<ul>
+<li><strong>Risk Mitigation</strong>: If a newly deployed model starts
+causing unexpected errors or performance drops, you don’t want to
+scramble to fix it. You can revert to a known stable model version.</li>
+<li><strong>Auditing &amp; Reproducibility</strong>: Many regulations
+require you to prove you can restore a known-good model, especially if
+you’re making predictions for critical business decisions.</li>
+</ul>
+<h3 id="how-to-implement-it">How to Implement It</h3>
+<ol type="1">
+<li><p><strong>Versioning Models</strong></p>
+<ul>
+<li>Whether you use Azure Machine Learning’s built-in model registry or
+MLflow’s model registry, each new model is automatically assigned a
+version.</li>
+<li>The simplest rollback approach is: “point your inference pipeline to
+<code>version N-1</code> instead of <code>version N</code>.”</li>
+</ul></li>
+<li><p><strong>Keep the Supporting Artifacts</strong></p>
+<ul>
+<li>A model alone isn’t always enough. You may need:
+<ul>
+<li>The data version used for training.</li>
+<li>The code or environment (conda environment, Docker image) used.</li>
+<li>Any feature engineering or data preprocessing steps.</li>
+</ul></li>
+<li>If you rely on advanced MLOps, these artifacts should also be
+versioned (e.g., in Git, data version control, or AML’s job
+history).</li>
+</ul></li>
+<li><p><strong>Automate the Rollback</strong></p>
+<ul>
+<li>You can have a pipeline step or DevOps pipeline task that allows the
+user to choose a model version to deploy. So “rollback” is simply
+redeploying an older model version.</li>
+<li>Alternatively, keep a “backup” deployment slot: the old model
+remains active in a second endpoint, and you can switch traffic back if
+needed.</li>
+</ul></li>
+<li><p><strong>Testing the Rollback</strong></p>
+<ul>
+<li>It’s wise to test your rollback process. For example, once a month
+or once a quarter, you might do a “rollback drill,” ensuring that
+re-deploying an older version of the model truly works in practice.</li>
+</ul></li>
+</ol>
+<h3 id="tips-best-practices-1">Tips &amp; Best Practices</h3>
+<ul>
+<li><strong>Keep Rollback Lightweight</strong>: You don’t necessarily
+need a huge pipeline for rollback—often, it’s just a matter of choosing
+the older model version in the registry.</li>
+<li><strong>Automate Where Possible</strong>: If rolling back is a
+manual, multi-hour process, it might be too cumbersome in a real
+emergency. Make it a quick pipeline or CLI command.</li>
+<li><strong>Track Dependencies</strong>: The environment and data used
+by older models must remain accessible. If you delete those resources,
+rollback may fail.</li>
+</ul>
+<hr />
+<h2 id="putting-it-all-together">Putting It All Together</h2>
+<ul>
+<li><strong>Approval gates</strong> and <strong>rollback</strong> are
+both critical governance features in an MLOps workflow.</li>
+<li>In <strong>Azure DevOps</strong>, you can handle approval gates via
+either pipeline approvals or pull request requirements.</li>
+<li>A <strong>rollback</strong> mechanism is typically easiest if you
+use versioned model storage (AML registry or MLflow) and keep a known
+path to redeploy older models.</li>
+<li>Document these processes clearly so that auditors and internal
+stakeholders understand exactly how you decide when to deploy, who
+approves it, and how you revert if needed.</li>
+</ul>
+<p>These two practices help ensure your ML solutions are both
+<strong>stable</strong> (you can revert if needed) and
+<strong>compliant</strong> (you have a record of approvals). They do add
+some overhead, but in regulated or high-stakes industries, that overhead
+is necessary to maintain trust, quality, and accountability.</p>
+    
+</body>
+</html>
