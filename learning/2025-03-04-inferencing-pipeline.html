@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="prompt">Prompt</h1>
+<p>Suppose I’m working on a project in Azure Machine Learning. Suppose I
+have a model registered to some Azure Machine Learning registry. I also
+have some inferencing data stored as a data asset to some data store or
+perhaps to some azure machine learning registry. i have created an
+inferencing pipeline that (1) pulls down the inferencing data, (2) pulls
+down the model, (3) performs inferencing by applying the model to the
+inferencing data to generate predictions. right now, these predictions
+aren’t getting saved anywhere. i’m wondering: where should they get
+saved? how do I save them? should the predictions be saved as a data
+asset? or should they be saved in azure blob storage? i’m going to want
+to have something like an “ID” column in the original inferencing data.
+I suppose the end result would be something like a CSV file with two
+columns : id and score, where score is the result of the
+inferencing.</p>
+<h1 id="response">Response</h1>
+<p>There’s no single “right” answer to where predictions should be
+saved, but there are a few common patterns and considerations when
+deciding how to store them. Below are a few approaches:</p>
+<hr />
+<h2 id="register-predictions-as-a-data-asset-in-azure-ml">1. Register
+Predictions as a <strong>Data Asset</strong> in Azure ML</h2>
+<p>If you need your predictions to be “first-class citizens” in your ML
+workspace—perhaps for re-use in other pipelines, versioning, or
+lineage—you can write the inference outputs to a Data Asset.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li><strong>Versioning and lineage</strong>: You get to keep track of
+what input data and model produced these predictions.</li>
+<li><strong>Reusability</strong>: They’re easy to feed into new or
+downstream pipeline steps in Azure Machine Learning.</li>
+<li><strong>Integration</strong>: Once saved as a Data Asset, your
+predictions can be consumed anywhere else in AML that references that
+asset.</li>
+</ul>
+<p><strong>How to do it</strong></p>
+<ul>
+<li>In your pipeline job’s YAML (v2) or in Python job definitions, you
+can define an output with type <code>mltable</code> or
+<code>uri_folder</code>.</li>
+<li>Have your scoring script write out a CSV or Parquet file with
+columns like <code>id, score</code>.</li>
+<li>The pipeline job artifact can then be registered as a data
+asset.</li>
+</ul>
+<hr />
+<h2 id="save-to-a-blob-storage-or-data-lake">2. Save to a Blob Storage
+or Data Lake</h2>
+<p>If you just need the results in a bucket somewhere—perhaps to be
+consumed by a non-AML process (e.g., a reporting system, a data
+engineering pipeline, or a database load)—you can have your inference
+component write out a CSV/Parquet to Azure Blob Storage or Azure Data
+Lake Storage.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li><strong>Easier integration with non-ML processes</strong>: Other
+systems (e.g., Spark, Databricks, or SQL ingestion) may already be set
+up to read from the blob or data lake.</li>
+<li><strong>Cost management</strong>: You can manage storage costs,
+retention, and policies in a standard data store.</li>
+<li><strong>Scalability</strong>: Storing large volumes of inference
+results in Azure Storage is straightforward.</li>
+</ul>
+<p><strong>How to do it</strong></p>
+<ul>
+<li><p>In your pipeline component’s code, write directly to a container
+path:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.storage.blob <span class="im">import</span> BlobServiceClient</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>blob_service_client <span class="op">=</span> BlobServiceClient.from_connection_string(<span class="st">&quot;&lt;your-connection-string&gt;&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>container_client <span class="op">=</span> blob_service_client.get_container_client(<span class="st">&quot;&lt;container-name&gt;&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you wrote a local CSV file &quot;predictions.csv&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;predictions.csv&quot;</span>, <span class="st">&quot;rb&quot;</span>) <span class="im">as</span> data:</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    container_client.upload_blob(<span class="st">&quot;predictions_folder/predictions.csv&quot;</span>, data, overwrite<span class="op">=</span><span class="va">True</span>)</span></code></pre></div></li>
+<li><p>Alternatively, mount or reference the storage account as a
+<code>datastore</code> in AML and write your file there.</p></li>
+</ul>
+<hr />
+<h2 id="insert-results-into-a-database">3. Insert Results into a
+Database</h2>
+<p>Another pattern is to write the predictions back to some database—SQL
+Database, Cosmos DB, etc.—especially if your downstream consumers or
+APIs expect to query them in real time.</p>
+<p><strong>Advantages</strong></p>
+<ul>
+<li><strong>Live consumption</strong>: Great for building dashboards or
+real-time lookups on predicted results.</li>
+<li><strong>Security and transactions</strong>: Fine-grained
+permissions, rollbacks, and transactional writes.</li>
+</ul>
+<p><strong>How to do it</strong></p>
+<ul>
+<li>In your scoring script, connect to the database, do an
+<code>INSERT</code> or <code>UPSERT</code> matching your records’
+IDs.</li>
+</ul>
+<hr />
+<h2 id="format-for-downstream-use">4. Format for Downstream Use</h2>
+<p>Regardless of whether you choose to store the predictions as a Data
+Asset or in Blob Storage, you’ll need a file format or table schema
+that’s easy to interpret. A simple CSV or Parquet file with columns like
+<code>id, score</code> is usually enough.</p>
+<p><strong>Things to keep in mind</strong></p>
+<ol type="1">
+<li><strong>Include a unique identifier</strong> in the output
+predictions so you can join them back to the original data.</li>
+<li><strong>Include metadata</strong> (e.g., model version, inference
+time, data version) if you need traceability.</li>
+<li><strong>Plan how these predictions will be consumed</strong>—will
+they be used by a dashboard, further transformations, or a monitoring
+pipeline?</li>
+</ol>
+<hr />
+<h2 id="so-which-should-you-pick">So Which Should You Pick?</h2>
+<ul>
+<li><strong>Short-lifespan results / ephemeral debugging</strong>: You
+might just write predictions to the pipeline’s output (temporary) or a
+local location.</li>
+<li><strong>Downstream AML consumption or re-use</strong>: Register them
+as a Data Asset.</li>
+<li><strong>Large-scale or multi-system integration</strong>: Save them
+to Blob Storage or ADLS, then optionally register that location as a
+Data Asset if you want to track it in AML.</li>
+<li><strong>Real-time or Database-driven</strong>: Insert them into a
+database for immediate consumption.</li>
+</ul>
+<p>In many cases, users end up storing the final predictions in
+<strong>Blob Storage</strong> or <strong>Data Lake</strong> as the
+“source of truth,” and—if they want them easily discoverable or
+versioned in AML—they <strong>also register a corresponding Data
+Asset</strong> in their Azure ML workspace that simply points to that
+location.</p>
+<hr />
+<h3 id="sample-approach-for-azure-ml-pipelines">Sample Approach for
+Azure ML Pipelines</h3>
+<p>Let’s assume you want to do your entire pipeline in Azure ML, and you
+want the inference results to become a Data Asset. In a Python-based
+(v2) pipeline job, you might have something like:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml <span class="im">import</span> MLClient</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.entities <span class="im">import</span> PipelineJob, CommandJob</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> azure.ai.ml.constants <span class="im">import</span> AssetTypes</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you already have code that does the inference:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># It reads from an input data asset and writes out predictions.csv</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>inference_job <span class="op">=</span> CommandJob(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&quot;inference-step&quot;</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span><span class="st">&quot;python infer.py --input_data $</span><span class="sc">{{</span><span class="st">inputs.in_data</span><span class="sc">}}</span><span class="st"> --output_data $</span><span class="sc">{{</span><span class="st">outputs.out_data</span><span class="sc">}}</span><span class="st">&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    environment<span class="op">=</span><span class="st">&quot;your-inference-env@latest&quot;</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;in_data&quot;</span>: Input(<span class="bu">type</span><span class="op">=</span>AssetTypes.MLTABLE, path<span class="op">=</span><span class="st">&quot;azureml:your_inference_data@latest&quot;</span>),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span>{</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;out_data&quot;</span>: Output(<span class="bu">type</span><span class="op">=</span>AssetTypes.URI_FOLDER)  <span class="co"># or MLTable</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Then define your pipeline:</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>pipeline_job <span class="op">=</span> PipelineJob(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&quot;inference-pipeline&quot;</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    jobs<span class="op">=</span>{<span class="st">&quot;inference_step&quot;</span>: inference_job},</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Once the pipeline is run successfully, you can version that output:</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># ml_client is an MLClient instance</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>returned_job <span class="op">=</span> ml_client.jobs.create_or_update(pipeline_job)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionally: register the output folder as a new data asset</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>ml_client.data.create_or_update(</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    Data(</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="st">&quot;my_inference_predictions&quot;</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        path<span class="op">=</span>returned_job.outputs.out_data,  <span class="co"># The path from your pipeline&#39;s output</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">type</span><span class="op">=</span>AssetTypes.MLTABLE,</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        description<span class="op">=</span><span class="st">&quot;Predictions from my model&quot;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>Now you have a new data asset named
+<code>my_inference_predictions</code> that points to the predictions
+that were generated by your pipeline.</p>
+<hr />
+<h3 id="summary">Summary</h3>
+<ol type="1">
+<li><strong>Yes, you can save them as a data asset in AML</strong> if
+you want that data to be discoverable, versioned, or consumed in other
+AML pipelines.</li>
+<li><strong>Yes, you can save them in Azure Blob Storage or
+ADLS</strong> if you prefer to keep them in a more general-purpose
+storage.</li>
+<li><strong>You almost certainly want some kind of ID column</strong> in
+the original data so you can join the predictions back to the source
+records.</li>
+<li><strong>A CSV or Parquet file with <code>[id, score]</code>
+columns</strong> is the standard minimal output for inference.</li>
+</ol>
+<p>Pick the approach that best suits your organization’s pipeline
+structure, governance requirements, and downstream consumption patterns.
+Often a combination of a Blob/Data Lake location plus a Data Asset
+registration in AML provides the best of both worlds.</p>
+    
+</body>
+</html>
