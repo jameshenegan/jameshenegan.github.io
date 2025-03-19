@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a cleaned-up version of your transcript. I’ve removed filler
+words, reorganized some sentences, and smoothed out any awkward
+phrasing. I’ve also made small inferences where transcription errors
+seemed likely. Otherwise, I’ve kept the overall flow and meaning
+intact.</p>
+<hr />
+<p>I want to begin by talking about large language models (LLMs). These
+models play a major role in our project, so it’s helpful to establish a
+basic understanding of some core concepts. At some point, I’ll want to
+cover a brief history—perhaps discussing what’s been happening with LLMs
+over the past few years, starting around 2018 with the introduction of
+transformers or the “attention” mechanism, then mentioning GPT-1, GPT-2,
+GPT-3, GPT-3.5, and GPT-4. It’s also interesting to note how the context
+window has grown larger over time. However, I might save those more
+detailed explanations for later.</p>
+<p>A good way to start might be with ChatGPT, since most people have
+heard of it. There are two main points I’d like to highlight about
+ChatGPT. First, it’s just one example of a large language model—there
+are many others out there. Also, ChatGPT isn’t a single, static model;
+it’s more accurate to think of it as a series of versions—ChatGPT-1,
+ChatGPT-2, 3.5, and so on—that improve over time. Second, when we say
+“ChatGPT,” we might be talking about the underlying model itself or the
+web interface that lets you interact with it like a chatbot. People
+often assume ChatGPT is just that one interface, but in reality, that’s
+only one possible way to use a large language model.</p>
+<p>Because there’s so much hype surrounding ChatGPT, people sometimes
+wonder how “intelligent” or “creative” it could become in the future.
+For our purposes, though, we don’t need to speculate about what might
+happen down the road. We’re interested in a specific capability LLMs
+already handle quite well: question-based retrieval. By “question-based
+retrieval,” I mean you can ask the model a question, provide it with
+relevant information, and it will use that information to answer. It can
+already do this impressively well, which is something I want to
+emphasize. It’s not a futuristic feature; it exists right now. How it
+works behind the scenes can be mind-boggling, but practically speaking,
+we can take advantage of this capability today.</p>
+<p>Another task LLMs handle effectively is summarization. It’s
+straightforward to test: just tell the model, “Please summarize the
+following text,” then paste in a chunk of text. You can judge for
+yourself how well it does. This is especially remarkable because the
+context windows—essentially, how much text the model can handle at
+once—have been getting larger. That allows the model to deal with more
+extensive passages, whether it’s for summarizing or for question-based
+retrieval.</p>
+<p>When ChatGPT first became mainstream, one issue people noticed was
+that it could “hallucinate,” or simply make up answers. Providing the
+model with the relevant information it needs (rather than expecting it
+to conjure up facts unprompted) helps reduce that problem. This
+approach, sometimes called “retrieval-augmented generation,” ensures the
+model’s answers are grounded in the data you supply, assuming your data
+is accurate.</p>
+<p>To summarize, if we’re going to discuss ChatGPT and large language
+models more broadly—especially in the context of this project—we might
+emphasize:</p>
+<ol type="1">
+<li><strong>ChatGPT is one among many LLMs.</strong> There are multiple
+versions and other competing models.</li>
+<li><strong>“ChatGPT” can mean the underlying model or the web/chat
+interface.</strong> These are different things, though people often
+conflate them.</li>
+<li><strong>LLMs can do several tasks—conversation, summarization,
+question-based retrieval—and some of these they already do quite
+well.</strong></li>
+<li><strong>Context window size is significant.</strong> It’s been
+growing rapidly, which expands how much text the model can summarize or
+use when answering questions.</li>
+<li><strong>We’re primarily interested in summarization and
+question-based retrieval.</strong> These capabilities already work
+reliably enough to be useful right now.</li>
+</ol>
+<p>These ideas set the stage for what our project can achieve using
+large language models—without needing to rely on speculative “future”
+advances in AI.</p>
+    
+</body>
+</html>

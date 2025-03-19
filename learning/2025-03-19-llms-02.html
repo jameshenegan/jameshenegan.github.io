@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Here’s a cleaned-up version of your transcript with improved clarity,
+structure, and flow:</p>
+<hr />
+<p>We’re going to begin by discussing large language models,
+particularly focusing on ChatGPT. When people think about ChatGPT, they
+often associate it with the web interface—the version accessible through
+a browser. However, it’s important to understand that this is not the
+only way to interact with a large language model.</p>
+<p>These models are also accessible through something called an API. To
+build an intuitive understanding of what a large language model is and
+how it works, we can start by considering how we typically interact with
+a chatbot. From there, we can explore what’s happening behind the
+scenes.</p>
+<p>When you converse with a chatbot, each interaction involves a series
+of API calls. Every time you send a new message, you’re not just sending
+that single message—you’re also including the entire conversation
+history up to that point. This provides context, allowing the model to
+generate more relevant and coherent responses. Understanding this
+process gives insight into how chatbots function at a fundamental
+level.</p>
+<p>However, our interest in large language models extends beyond chatbot
+applications. While chatbots are a common use case, these models have
+broader capabilities. One particularly valuable feature is text
+summarization. For instance, if you have a long document that you don’t
+have time to read in full, you can ask the model to summarize the key
+ideas for you. Large language models excel at this task, making them
+useful for digesting large amounts of information efficiently.</p>
+<p>In our project, this summarization capability plays a crucial role.
+However, we’re not just interested in generic summarization; we’re
+specifically focused on using large language models to extract relevant
+information in response to questions. This differs slightly from
+summarization—it involves retrieving and synthesizing information to
+provide direct answers.</p>
+<p>The process works as follows:</p>
+<ol type="1">
+<li>We start with a question we want to answer.</li>
+<li>We identify a set of texts or sources that likely contain the
+answer.</li>
+<li>We provide both the question and the reference materials to the
+model.</li>
+<li>The model then searches through the provided information and
+formulates a response.</li>
+<li>Importantly, we also want the model to indicate which sources it
+used when generating its answer.</li>
+</ol>
+<p>This approach ensures that responses are not only accurate but also
+transparent, allowing us to trace back the information to its original
+source.</p>
+<p>Taking this a step further, we can ask: What if we could automate the
+process of gathering reference materials? Instead of manually curating
+relevant texts, we could streamline this step by automatically searching
+for and compiling useful sources. This is where the concept of a
+generative engine comes in.</p>
+<p>A generative engine can automate the process of retrieving reference
+material by leveraging the internet to search for information
+programmatically. Once the relevant materials are collected, they can be
+structured and passed to the large language model for processing. This
+automation makes the system more efficient, reducing the need for manual
+intervention and allowing for real-time information retrieval.</p>
+<p>In summary, while large language models are often associated with
+chatbots, their potential extends far beyond simple conversations. They
+can summarize information, extract answers from relevant sources, and
+even automate parts of the research process. By integrating these
+capabilities into a generative engine, we can build powerful tools that
+streamline information retrieval and synthesis.</p>
+<hr />
+<p>This version keeps your original meaning intact while improving
+readability, logical flow, and clarity. Let me know if you’d like any
+further refinements!</p>
+    
+</body>
+</html>
