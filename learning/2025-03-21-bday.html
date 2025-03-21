@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is one systematic way to answer both questions:</p>
+<p><strong>Part A. Probability that at least two Davids share the exact
+same birthday</strong></p>
+<p>We have 8 people named David and 365 possible birthdays (ignoring
+leap years). We assume each birthday is equally likely and independent
+from others.</p>
+<ol type="1">
+<li><p><strong>Probability that no two Davids share the same
+birthday</strong></p>
+<ul>
+<li>The first David can have any of the 365 days.</li>
+<li>The second must avoid that day, so has 364 choices,</li>
+<li>The third must avoid those 2 days, so has 363 choices, and so
+on…</li>
+<li>In general, the number of ways to assign pairwise-distinct birthdays
+to 8 people is<br />
+[ 365 (365 - 8 + 1). ]</li>
+<li>The total number of ways (with no restriction) is (365^8).</li>
+<li>Hence,<br />
+[ P() = . ]</li>
+</ul></li>
+<li><p><strong>Probability that at least two Davids share the same
+birthday</strong><br />
+[ 1 ;-; P() ;=; 1 ;-; . ]</p></li>
+</ol>
+<p>Let’s compute that number in Python:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prob_same_birthday(n<span class="op">=</span><span class="dv">8</span>, days<span class="op">=</span><span class="dv">365</span>):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># numerator of the &quot;all-distinct&quot; probability</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    numerator <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        numerator <span class="op">*=</span> (days <span class="op">-</span> i)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># denominator is days^n</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    denominator <span class="op">=</span> days<span class="op">**</span>n</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">-</span> numerator<span class="op">/</span>denominator</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>p_same_day <span class="op">=</span> prob_same_birthday(<span class="dv">8</span>, <span class="dv">365</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>p_same_day</span></code></pre></div>
+<p>If you run this code, you should get a probability around
+<strong>5.63%</strong>. (Often stated as about 5.6% or 0.056.)</p>
+<hr />
+<p><strong>Part B. Probability that at least two Davids have birthdays
+within 1 day of each other</strong></p>
+<p>This means we are looking for at least one pair ((d_i, d_j)) of
+Davids whose birthday days differ by 1 or 0 (e.g. David #1 is born on
+day 100, David #2 on day 99 or 101), <em>without</em> wrap-around across
+the start/end of the year. We assume day 1 and day 365 are <em>not</em>
+considered “1 day apart.”</p>
+<p>There is no simple closed-form formula for this “within 1 day” event.
+A practical way is to do a Monte Carlo (random) simulation:</p>
+<ol type="1">
+<li><strong>Simulation approach</strong>
+<ul>
+<li>Generate many random draws of size 8 from the 365 possible
+birthdays.</li>
+<li>Each time, check whether any pair is within 1 day of each
+other.</li>
+<li>Count how often that happens, and divide by the number of trials to
+estimate the probability.</li>
+</ul></li>
+</ol>
+<p>Here is sample Python code to do it:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> two_within_one_day(birthdays):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Return True if at least one pair of birthdays is within 1 day (ignoring wraparound).&quot;&quot;&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sort the birthdays so we can check neighbors easily.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    b_sorted <span class="op">=</span> <span class="bu">sorted</span>(birthdays)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check consecutive pairs in the sorted list</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(b_sorted) <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(b_sorted[i<span class="op">+</span><span class="dv">1</span>] <span class="op">-</span> b_sorted[i]) <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_prob_within_one_day(num_people<span class="op">=</span><span class="dv">8</span>, days<span class="op">=</span><span class="dv">365</span>, trials<span class="op">=</span><span class="dv">10_000_000</span>):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(trials):</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Generate 8 birthdays, each uniform from [1..365]</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        bdays <span class="op">=</span> [random.randint(<span class="dv">1</span>, days) <span class="cf">for</span> __ <span class="kw">in</span> <span class="bu">range</span>(num_people)]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> two_within_one_day(bdays):</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> count <span class="op">/</span> trials</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the simulation (this may take a few seconds for 10 million trials)</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>p_within_1_day_est <span class="op">=</span> estimate_prob_within_one_day(trials<span class="op">=</span><span class="dv">500_000</span>)  <span class="co"># e.g. 500k or 1M for speed</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>p_within_1_day_est</span></code></pre></div>
+<p>When run with a large number of trials (e.g. 1 million or 5 million),
+you should see an estimate around <strong>14–15%</strong> (i.e., about
+<strong>0.14–0.15</strong>). A typical outcome might be around
+<strong>0.148</strong>.</p>
+<p>Hence, the approximate probabilities are:</p>
+<ol type="1">
+<li><p><strong>Probability that at least two Davids have exactly the
+same birthday:</strong><br />
+[ (5.6%) ]</p></li>
+<li><p><strong>Probability that at least two Davids have birthdays
+within one day of each other (no wraparound):</strong><br />
+[ (15%) ]</p></li>
+</ol>
+<hr />
+<h3 id="final-answers">Final Answers</h3>
+<ul>
+<li><strong>Same day:</strong> About <strong>5.6%</strong>.</li>
+<li><strong>Within 1 day:</strong> About <strong>14–15%</strong>.</li>
+</ul>
+    
+</body>
+</html>
