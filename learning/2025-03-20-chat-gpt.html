@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a cleaned-up version of the text, with inferred corrections
+and smoother phrasing. References to audio filenames have been removed,
+and “Chat GBT” has been replaced with “ChatGPT” (or “GPT-4,” etc.) where
+appropriate.</p>
+<hr />
+<h2
+id="large-language-models-llms-and-their-role-in-the-livingston-labs-innovation-day-project">Large
+Language Models (LLMs) and Their Role in the Livingston Labs Innovation
+Day Project</h2>
+<h3 id="introduction">Introduction</h3>
+<p>Large Language Models (LLMs) are a relatively new type of technology
+that play a significant role in our Innovation Day project. Before
+giving our main presentation, we thought it would be helpful to spend
+some time clarifying how LLMs work and how we are using them in this
+project.</p>
+<h3 id="the-relationship-between-llms-and-chatgpt">The Relationship
+Between LLMs and ChatGPT</h3>
+<p>When you hear the term “large language model,” it’s natural to think
+of something like ChatGPT. However, one key point is that ChatGPT itself
+is not <strong>just</strong> a large language model. ChatGPT is a web
+application that provides a user-friendly interface for interacting with
+a family of large language models (for example, GPT-4, GPT-4 Mini,
+etc.).</p>
+<p>In other words, ChatGPT consists of both:</p>
+<ol type="1">
+<li><strong>A front end</strong> – the user interface that makes it feel
+like a chatbot or conversation window.</li>
+<li><strong>A back end</strong> – the actual large language models that
+process and generate responses.</li>
+</ol>
+<p>This conversational, back-and-forth style is only one use case for
+large language models—albeit a complex one that has garnered a lot of
+public interest.</p>
+<h3 id="other-use-cases-for-large-language-models">Other Use Cases for
+Large Language Models</h3>
+<p>Beyond conversation, there are many other tasks LLMs can handle.
+Unlike a multi-turn chat, these tasks can sometimes be accomplished in a
+single “request → response” flow. Two examples include:</p>
+<ol type="1">
+<li><p><strong>Text Summarization</strong><br />
+LLMs can summarize large amounts of text. A typical prompt might
+be:<br />
+<em>“Please summarize the following text:”</em><br />
+followed by the text to be summarized.</p></li>
+<li><p><strong>Question-Related Retrieval</strong><br />
+In this scenario, the LLM answers a specific question using information
+you provide. A prompt might look like:<br />
+*“You will be provided with:</p>
+<ol type="1">
+<li>A question</li>
+<li>Information that can be used to answer that question.<br />
+Please answer the question using only the information provided.”*</li>
+</ol></li>
+</ol>
+<h3 id="how-we-are-using-llms-in-our-project">How We Are Using LLMs in
+Our Project</h3>
+<p>Our project focuses less on “chatting” with an LLM and more on tasks
+resembling a single request-and-response interaction. Because of this,
+we don’t need to rely on a web application interface; instead, we can
+send requests directly to a large language model via an API.</p>
+<p>In particular, we are interested in <strong>question-related
+retrieval</strong>—having an LLM answer questions accurately by using a
+specific body of information. This approach aligns more closely with our
+project goals than simply conducting open-ended conversations with a
+large language model.</p>
+<hr />
+<p><em>End of cleaned-up text.</em></p>
+    
+</body>
+</html>
