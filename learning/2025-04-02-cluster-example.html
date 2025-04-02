@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a <strong>self-contained tutorial</strong> that covers:</p>
+<ol type="1">
+<li><strong>Data Loading</strong> (using Iris as a stand-in for your own
+dataset)</li>
+<li><strong>Exploratory Data Analysis</strong>
+<ul>
+<li><strong>Pearson Correlation</strong> between features</li>
+<li><strong>Mutual Information</strong> between features</li>
+</ul></li>
+<li><strong>Data Preprocessing</strong> (using MinMaxScaler)</li>
+<li><strong>K-Means Clustering</strong> without prior knowledge of
+optimal (k)</li>
+<li><strong>Choosing the Best (k)</strong> (via elbow method and
+silhouette scores)</li>
+<li><strong>Evaluation</strong> (silhouette score, optional cross-tab if
+labels exist)</li>
+</ol>
+<p>Feel free to adapt any part of this code to your own data.</p>
+<hr />
+<h2 id="setup-and-imports">1. Setup and Imports</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score, mutual_info_score</span></code></pre></div>
+<hr />
+<h2 id="load-explore-the-data">2. Load &amp; Explore the Data</h2>
+<p><strong>Replace this section</strong> with however you load your real
+dataset. For demonstration purposes, we’ll use the Iris dataset, which
+has 4 numeric features (<code>sepal length</code>,
+<code>sepal width</code>, <code>petal length</code>,
+<code>petal width</code>) and 1 target column
+(<code>species</code>).</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Iris dataset as a toy example. Replace this with your own data loading process.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>iris <span class="op">=</span> load_iris()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> iris.data</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> iris.target  <span class="co"># If you have no labels, you can ignore this.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> iris.feature_names</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DataFrame</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>feature_names)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># If you have an actual label or target, you can store it as well:</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;species&#39;</span>] <span class="op">=</span> y  <span class="co"># For real unlabeled data, you&#39;d skip this.</span></span></code></pre></div>
+<hr />
+<h2 id="correlation-analysis">3. Correlation Analysis</h2>
+<h3 id="pearson-correlation">3.1 Pearson Correlation</h3>
+<p>Pearson correlation measures linear relationships between pairs of
+features.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Pearson correlation matrix</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pearson_corr <span class="op">=</span> df[feature_names].corr(method<span class="op">=</span><span class="st">&#39;pearson&#39;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Pearson Correlation Matrix:&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pearson_corr)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot a heatmap of the Pearson correlation matrix (optional)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>plt.imshow(pearson_corr, cmap<span class="op">=</span><span class="st">&#39;viridis&#39;</span>, interpolation<span class="op">=</span><span class="st">&#39;nearest&#39;</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>plt.colorbar(label<span class="op">=</span><span class="st">&quot;Correlation Coefficient&quot;</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>plt.xticks(<span class="bu">range</span>(<span class="bu">len</span>(feature_names)), feature_names, rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>plt.yticks(<span class="bu">range</span>(<span class="bu">len</span>(feature_names)), feature_names)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Pearson Correlation Heatmap&quot;</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="mutual-information">3.2 Mutual Information</h3>
+<p>Unlike correlation, <strong>mutual information</strong> can detect
+any kind of dependence (not just linear) between two variables. For
+continuous data, we often discretize/bucket the data or use a 2D
+histogram approach.</p>
+<p>Below is a helper function that:</p>
+<ol type="1">
+<li>Creates a 2D histogram of the two continuous features.</li>
+<li>Computes <strong>mutual information</strong> from that contingency
+table using <code>sklearn.metrics.mutual_info_score</code>.</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mutual_info_2d(x, y, n_bins<span class="op">=</span><span class="dv">30</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the mutual information between two continuous variables x and y</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    by discretizing them into a 2D histogram.</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    c_xy <span class="op">=</span> np.histogram2d(x, y, bins<span class="op">=</span>n_bins)[<span class="dv">0</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    mi <span class="op">=</span> mutual_info_score(<span class="va">None</span>, <span class="va">None</span>, contingency<span class="op">=</span>c_xy)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mi</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mutual_info_matrix(dataframe, n_bins<span class="op">=</span><span class="dv">30</span>):</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute a pairwise mutual information matrix for all columns in a dataframe.</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> dataframe.columns</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(cols)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    mi_mat <span class="op">=</span> np.zeros((n, n))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> i <span class="op">==</span> j:</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Some people define MI(x, x) as the entropy of x;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                <span class="co"># but to keep it simple, we&#39;ll just set it to 0.</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                mi_mat[i, j] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>                mi_mat[i, j] <span class="op">=</span> mutual_info_2d(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                    dataframe.iloc[:, i],</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>                    dataframe.iloc[:, j],</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>                    n_bins<span class="op">=</span>n_bins</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(mi_mat, columns<span class="op">=</span>cols, index<span class="op">=</span>cols)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate mutual information matrix for the 4 features:</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>mi_matrix <span class="op">=</span> mutual_info_matrix(df[feature_names], n_bins<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Mutual Information Matrix:&quot;</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mi_matrix)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) Plot a heatmap for Mutual Information</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>plt.imshow(mi_matrix, cmap<span class="op">=</span><span class="st">&#39;viridis&#39;</span>, interpolation<span class="op">=</span><span class="st">&#39;nearest&#39;</span>)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>plt.colorbar(label<span class="op">=</span><span class="st">&quot;Mutual Information&quot;</span>)</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>plt.xticks(<span class="bu">range</span>(<span class="bu">len</span>(feature_names)), feature_names, rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>plt.yticks(<span class="bu">range</span>(<span class="bu">len</span>(feature_names)), feature_names)</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Mutual Information Heatmap&quot;</span>)</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>From these tables (Pearson correlation and mutual information), you
+can identify highly correlated features or strongly dependent feature
+pairs. In some cases, you might choose to drop or combine such features
+before clustering.</p>
+<hr />
+<h2 id="data-preprocessing-minmaxscaler">4. Data Preprocessing
+(MinMaxScaler)</h2>
+<p>Now that you’ve inspected your features, you can transform them if
+needed. Here, we use <strong>MinMaxScaler</strong> to scale each feature
+to the range [0, 1].</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> MinMaxScaler()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> scaler.fit_transform(df[feature_names])</span></code></pre></div>
+<hr />
+<h2 id="determine-optimal-number-of-clusters">5. Determine Optimal
+Number of Clusters</h2>
+<p>We typically don’t know the best number of clusters (k) in advance.
+We can use:</p>
+<ul>
+<li><strong>Inertia</strong> (sum of squared distances to cluster
+centers) for an elbow plot.</li>
+<li><strong>Silhouette Score</strong> for a measure of cluster
+separation.</li>
+</ul>
+<p>We’ll try (k) from 2 to 10.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>k_values <span class="op">=</span> <span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">11</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>inertias <span class="op">=</span> []</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sil_scores <span class="op">=</span> []</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> k_values:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    kmeans.fit(X_scaled)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> kmeans.labels_</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Inertia: sum of squared distances to the cluster centers</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    inertias.append(kmeans.inertia_)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Silhouette Score (range is [-1, 1], higher is better)</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    sil_scores.append(silhouette_score(X_scaled, labels))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the results</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>plt.plot(k_values, inertias, marker<span class="op">=</span><span class="st">&#39;o&#39;</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Number of Clusters (k)&#39;</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Inertia&#39;</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Elbow Method using Inertia&#39;</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>plt.plot(k_values, sil_scores, marker<span class="op">=</span><span class="st">&#39;o&#39;</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Number of Clusters (k)&#39;</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Silhouette Score&#39;</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Silhouette Scores for Various k&#39;</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>Look for:</p>
+<ul>
+<li>An “<strong>elbow</strong>” in the inertia plot, where the rate of
+decrease sharply changes.</li>
+<li>The <strong>peak</strong> in silhouette score.</li>
+</ul>
+<hr />
+<h2 id="k-means-clustering-evaluation">6. K-Means Clustering &amp;
+Evaluation</h2>
+<p>Assume you pick (k=3) based on the above plots (in a real scenario,
+you’d examine the charts). Let’s do the final fit.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>best_k <span class="op">=</span> <span class="dv">3</span>  <span class="co"># Example choice; inspect the plots to decide</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>best_k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>kmeans.fit(X_scaled)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>cluster_labels <span class="op">=</span> kmeans.labels_</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>final_sil_score <span class="op">=</span> silhouette_score(X_scaled, cluster_labels)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Final model with k=</span><span class="sc">{</span>best_k<span class="sc">}</span><span class="ss">, silhouette score = </span><span class="sc">{</span>final_sil_score<span class="sc">:.3f}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="optional-if-you-have-true-labels">(Optional) If You Have True
+Labels</h3>
+<p>If your data has known categories (e.g., “species”), you can do a
+quick comparison:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> cluster_labels</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">&#39;species&#39;</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    comparison <span class="op">=</span> pd.crosstab(df[<span class="st">&#39;species&#39;</span>], df[<span class="st">&#39;cluster&#39;</span>])</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Species vs. Cluster Assignments:&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(comparison)</span></code></pre></div>
+<blockquote>
+<p>For truly unlabeled data, you won’t have this step. Instead, you’d
+rely on internal metrics (like silhouette score) or domain knowledge to
+evaluate the clusters.</p>
+</blockquote>
+<hr />
+<h2 id="summary">Summary</h2>
+<ol type="1">
+<li><strong>Correlation &amp; Mutual Information</strong>: Identify
+redundant or highly dependent features (remove or combine as
+appropriate).</li>
+<li><strong>Scaling</strong>: Use <code>MinMaxScaler</code> (or another
+scaler) to normalize your data so that all features contribute fairly to
+the distance metrics in K-Means.</li>
+<li><strong>K-Means &amp; (k) Selection</strong>: Use the inertia (elbow
+method) and silhouette score to find a good range for (k).</li>
+<li><strong>Fit &amp; Evaluate</strong>: Choose the best (k), fit your
+final K-Means model, and evaluate its performance.</li>
+</ol>
+<p>Feel free to adapt this approach to any numeric dataset you have!</p>
+    
+</body>
+</html>
