@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="section">1</h1>
+<p><strong>A Tutorial on Understanding and Managing “Documentation”
+Across Multiple Teams</strong></p>
+<p>This tutorial provides an overview of how “documentation” can be
+interpreted differently within an organization and offers strategies for
+managing documentation efforts across varied teams—especially when
+there’s an auditing or compliance requirement in play.</p>
+<hr />
+<h2 id="background-why-documentation-matters-for-auditing">1.
+Background: Why Documentation Matters for Auditing</h2>
+<ol type="1">
+<li><p><strong>Accounting Perspective</strong></p>
+<ul>
+<li>When an IT department builds software or other technology
+“in-house,” that work may be treated as an asset on the company’s
+books.</li>
+<li>Accounting needs evidence that the intangible asset genuinely exists
+and that resources were appropriately allocated to create it.</li>
+</ul></li>
+<li><p><strong>Auditing Perspective</strong></p>
+<ul>
+<li>Auditors verify that the work claimed to have been done (which may
+be capitalized) has indeed been completed.</li>
+<li>Tools like Azure DevOps Boards store tasks, user stories, sprints,
+and other records showing how and when work was completed.</li>
+<li>This “paper trail” is critical: it provides proof of the tasks done,
+the code changes, and the testing completed—essentially confirming that
+the intangible asset truly exists.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="recognizing-different-types-of-documentation">2. Recognizing
+Different Types of Documentation</h2>
+<p>The term “documentation” can be confusing because it’s used in
+multiple ways for multiple audiences. Common documentation categories
+include:</p>
+<ol type="1">
+<li><p><strong>Technical/Developer Documentation</strong></p>
+<ul>
+<li>Written by developers for developers.</li>
+<li>Explains code structure, design decisions, APIs, how modules
+integrate, etc.</li>
+<li>Main goal: Make future maintenance and extensions easier.</li>
+</ul></li>
+<li><p><strong>User Documentation</strong></p>
+<ul>
+<li>Created for end users or business stakeholders who need to operate
+or consume a product.</li>
+<li>May include step-by-step instructions, FAQs, screenshots of
+workflows, etc.</li>
+</ul></li>
+<li><p><strong>Process/Project Documentation</strong> (e.g., Azure
+DevOps Boards)</p>
+<ul>
+<li>Documents how tasks, user stories, or product increments are planned
+and completed.</li>
+<li>Useful for project managers, auditors, or anyone needing an overview
+of the work’s progress and sign-offs.</li>
+</ul></li>
+<li><p><strong>Audit/Compliance Documentation</strong></p>
+<ul>
+<li>Specifically addresses regulatory and audit needs.</li>
+<li>Focuses on proving that proper controls, processes, and sign-offs
+were followed.</li>
+<li>Demonstrates compliance with internal or external standards.</li>
+</ul></li>
+</ol>
+<p>Depending on the organization and the project, these types of
+documentation may overlap or even be combined. However, each typically
+serves a distinct audience or purpose.</p>
+<hr />
+<h2
+id="real-world-scenario-four-different-teams-four-different-documentation-needs">3.
+Real-World Scenario: Four Different Teams, Four Different Documentation
+Needs</h2>
+<p>Imagine a department with four teams:</p>
+<ol type="1">
+<li><strong>Data Governance</strong> – Creates data policies, standards,
+and compliance guidelines.</li>
+<li><strong>Data Analytics</strong> – Works on statistical or
+machine-learning models, advanced analytics, or data-driven
+insights.</li>
+<li><strong>Data Engineering</strong> – Builds and maintains data
+pipelines, ingestion processes, ETL/ELT frameworks, and often handles
+data infrastructure.</li>
+<li><strong>Business Intelligence (BI)</strong> – Creates dashboards,
+visualizations, and reports (e.g., in Power BI).</li>
+</ol>
+<p>Each of these teams requires documentation, but the form and content
+of that documentation can vary:</p>
+<ul>
+<li><strong>Data Governance Documentation</strong> might be policy
+manuals, frameworks for handling data quality and compliance, or records
+of data usage and retention policies.</li>
+<li><strong>Data Analytics Documentation</strong> might describe
+methodologies for models, data sources used, code snippets for
+reproducible research, or Jupyter notebooks.</li>
+<li><strong>Data Engineering Documentation</strong> might detail
+pipeline architectures, code for ETL processes, infrastructure diagrams,
+or DevOps pipeline logs.</li>
+<li><strong>BI Documentation</strong> might include user guides for
+dashboards, instructions on how to refresh or maintain the reports, and
+the logic behind KPIs.</li>
+</ul>
+<hr />
+<h2 id="challenges-lack-of-manager-involvement-standardization">4.
+Challenges: Lack of Manager Involvement &amp; Standardization</h2>
+<p>When you are tasked with creating a “documentation strategy” for the
+entire department, you can face issues such as:</p>
+<ul>
+<li><strong>Different Teams, Different Needs</strong><br />
+The diverse nature of the teams makes it tricky to create a single,
+one-size-fits-all approach.</li>
+<li><strong>No Managerial Sponsorship</strong><br />
+Without leadership support, it can be hard to mandate consistent
+documentation practices.</li>
+<li><strong>Unclear Ownership</strong><br />
+It’s often unclear who is accountable for ensuring that documentation is
+maintained and meets the required standards.</li>
+</ul>
+<hr />
+<h2 id="practical-strategies-to-move-forward">5. Practical Strategies to
+Move Forward</h2>
+<ol type="1">
+<li><p><strong>Seek Management Buy-In</strong></p>
+<ul>
+<li>Present a concise summary of the benefits and risks:
+<ul>
+<li><em>Benefits:</em> easier onboarding, reduced maintenance time,
+clearer audit trails.</li>
+<li><em>Risks of doing nothing:</em> unverified work, inconsistent
+processes, difficulty passing audits.</li>
+</ul></li>
+<li>Even a short manager-approved plan can bolster cooperation across
+teams.</li>
+</ul></li>
+<li><p><strong>Set Minimal, Common Requirements</strong></p>
+<ul>
+<li>Identify a few “universal” standards (e.g., a shared repository,
+basic versioning rules, naming conventions).</li>
+<li>Don’t over-prescribe. Let each team add specialized sections or
+details they need.</li>
+</ul></li>
+<li><p><strong>Use a Standard Template with Space for
+Customization</strong></p>
+<ul>
+<li>Include basic fields like <em>Title, Owner, Revision Date, Purpose,
+and Dependencies.</em></li>
+<li>Encourage each team to add sections relevant to their deliverables
+(e.g., policy vs. code docs vs. dashboards).</li>
+</ul></li>
+<li><p><strong>Involve Key Representatives from Each Team</strong></p>
+<ul>
+<li>If direct managers aren’t available, aim to get input from senior
+contributors or team leads.</li>
+<li>Ask them to champion consistent documentation practices within their
+team.</li>
+</ul></li>
+<li><p><strong>Pilot and Iterate</strong></p>
+<ul>
+<li>Start with a single, smaller project or a single team.</li>
+<li>Gather feedback on the process, fix pain points, then roll out a
+refined version department-wide.</li>
+</ul></li>
+<li><p><strong>Clarify Auditing vs. Technical Documentation</strong></p>
+<ul>
+<li>Recognize that “documentation for audit” (tasks in Azure DevOps,
+compliance checklists) can be separate from “developer documentation”
+(code-level explanations, architecture diagrams).</li>
+<li>Overlap may exist, but the audience and purpose differ.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="conclusion">6. Conclusion</h2>
+<p>“Documentation” is a broad term that means different things to
+different people. In an environment with diverse teams (Data Governance,
+Analytics, Engineering, BI), each producing different deliverables for
+various audiences (internal developers, auditors, end users), you need a
+flexible but standardized approach. The key is to:</p>
+<ol type="1">
+<li><strong>Obtain buy-in from leadership</strong> to validate
+documentation requirements.</li>
+<li><strong>Create a minimal, shared structure</strong> that still
+allows each team to adapt as needed.</li>
+<li><strong>Iterate and refine</strong>—documentation practices often
+evolve over time as the teams and their deliverables change.</li>
+</ol>
+<p>This balanced approach helps ensure each team’s work is clearly
+captured for both day-to-day operational benefits (future maintenance,
+project handovers) and broader organizational needs (audit compliance,
+intangible asset verification).</p>
+<h1
+id="a-tutorial-on-overcoming-the-wicked-problem-of-documentation-tapping-subject-matter-experts-and-avoiding-a-low-bus-factor">2
+<strong>A Tutorial on Overcoming the “Wicked Problem” of Documentation,
+Tapping Subject Matter Experts, and Avoiding a Low Bus
+Factor</strong></h1>
+<p>Organizations often struggle to implement effective documentation
+strategies, especially when diverse teams and evolving requirements are
+involved. In this tutorial, we’ll explore three interrelated
+challenges:</p>
+<ol type="1">
+<li>The “Wicked Problem” nature of creating a documentation
+solution.</li>
+<li>The dilemma with subject matter experts (SMEs) who already “know the
+answer.”</li>
+<li>The “bus factor,” which highlights the risk of single-person
+dependencies.</li>
+</ol>
+<p>By understanding these concepts and employing practical strategies,
+you can improve how your organization captures and retains
+knowledge.</p>
+<hr />
+<h2 id="understanding-the-wicked-problem-of-documentation">1.
+Understanding the Wicked Problem of Documentation</h2>
+<p><strong>What is a Wicked Problem?</strong><br />
+A wicked problem is one where the requirements are unclear or change
+over time, and there’s no single “right” solution. Documentation in a
+multi-team environment (e.g., Data Governance, Data Analytics, Data
+Engineering, and Business Intelligence) exemplifies a wicked problem
+because:</p>
+<ul>
+<li><strong>Multiple Stakeholders, Multiple Needs</strong><br />
+Each team has different deliverables and audiences for
+documentation.</li>
+<li><strong>Unclear or Evolving Constraints</strong><br />
+Organizational priorities, technology stacks, and personnel often shift,
+requiring documentation practices to adapt.</li>
+<li><strong>No Definitive Finish Line</strong><br />
+A single approach might work momentarily but must be revisited or
+iterated on as the organization grows.</li>
+</ul>
+<p><strong>Practical Tips for Tackling This Wicked Problem</strong></p>
+<ol type="1">
+<li><strong>Start Small and Iterate</strong>
+<ul>
+<li>Implement a pilot documentation standard on a limited project.
+Gather feedback and refine before rolling out more broadly.</li>
+</ul></li>
+<li><strong>Establish Shared Minimums</strong>
+<ul>
+<li>Define a core “template” or “checklist” for everyone to follow
+(e.g., file naming conventions, required fields like “owner” and “last
+updated”), but allow each team to add or tailor sections to their unique
+context.</li>
+</ul></li>
+<li><strong>Seek Managerial or Leadership Buy-In</strong>
+<ul>
+<li>The complexity of a wicked problem usually demands leadership
+support. Show the risks of not documenting (e.g., bottlenecks, delayed
+onboarding, audit issues) and ask for a mandate that encourages team
+participation.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="subject-matter-experts-the-paradox-of-knowledge-holders">2.
+Subject Matter Experts: The Paradox of Knowledge Holders</h2>
+<p><strong>The SME Dilemma</strong><br />
+The person most qualified to document a system or process is often the
+person least motivated to do so. They already know the details by heart,
+so writing it all down can feel like an unnecessary extra
+step—particularly under tight deadlines.</p>
+<p><strong>Strategies to Capture SME Knowledge</strong></p>
+<ol type="1">
+<li><strong>Pair Writing</strong>
+<ul>
+<li>Match the SME with a colleague who needs the knowledge. The SME
+explains verbally while the colleague documents in real time. This
+leverages the SME’s expertise without making them handle all the
+clerical work.</li>
+</ul></li>
+<li><strong>Documentation Sprints</strong>
+<ul>
+<li>Allocate short, dedicated sessions for SMEs to share important
+information. Make sure someone else is capturing the details in a shared
+repository.</li>
+</ul></li>
+<li><strong>Incentives and Cultural Norms</strong>
+<ul>
+<li>Encourage (or require) SMEs to document by tying it to performance
+reviews, career progression, or by highlighting how good documentation
+reduces long-term interruptions for everyone (including the SME).</li>
+</ul></li>
+<li><strong>Ongoing Maintenance</strong>
+<ul>
+<li>Foster a “leave it better than you found it” mindset, where any time
+the SME (or anyone) modifies a piece of code or process, they add or
+update documentation accordingly.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="the-bus-factor-avoiding-single-points-of-failure">3. The Bus
+Factor: Avoiding Single Points of Failure</h2>
+<p><strong>What is the Bus Factor?</strong><br />
+Also known as a “knowledge single-point-of-failure,” the bus factor
+quantifies how many people on a team can be “lost” (due to departure,
+leave, sudden unavailability) before a project is at risk. A bus factor
+of 1 means only one person understands a critical process—so if that
+person disappears, the project stalls.</p>
+<p><strong>Why a Low Bus Factor is Risky</strong></p>
+<ul>
+<li><strong>Operational Delays</strong><br />
+Getting a newcomer up to speed can be slow and error-prone if no one
+else has the necessary knowledge.</li>
+<li><strong>Increased Pressure on Other Team Members</strong><br />
+Others must scramble to learn or maintain the abandoned system—often at
+the expense of their own tasks.</li>
+<li><strong>Potential for Critical Errors</strong><br />
+Without the original expert, new maintainers might introduce mistakes
+simply because they lack the big-picture understanding.</li>
+</ul>
+<p><strong>Strategies to Improve the Bus Factor</strong></p>
+<ol type="1">
+<li><strong>Cross-Training</strong>
+<ul>
+<li>Rotate tasks or pair up team members so that knowledge is shared
+organically.</li>
+</ul></li>
+<li><strong>Job Shadowing</strong>
+<ul>
+<li>Encourage occasional “shadow” days where one team member observes an
+SME’s routine tasks.</li>
+</ul></li>
+<li><strong>Shared Repositories and Version Control</strong>
+<ul>
+<li>Keep code, diagrams, and process docs in a central, accessible
+place. The more transparent the workflow, the easier it is for a second
+person to learn.</li>
+</ul></li>
+<li><strong>Regular Knowledge-Sharing Meetings</strong>
+<ul>
+<li>Hold short, recurring sessions where teammates explain a specific
+process or update. This raises overall team awareness and reduces
+single-person risk.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="bringing-it-all-together">4. Bringing It All Together</h2>
+<p><strong>1. Recognize the Complexity (Wicked Problem)</strong><br />
+Documentation across different teams won’t be solved overnight.
+Understand that it’s an ongoing challenge requiring leadership
+commitment, iterative improvement, and flexible frameworks.</p>
+<p><strong>2. Encourage SMEs to Share</strong><br />
+Adopt practical methods—pair writing, documentation sprints, cultural
+incentives—to capture crucial knowledge from the experts who are
+otherwise least inclined to write it down.</p>
+<p><strong>3. Reduce Single Points of Failure (Bus
+Factor)</strong><br />
+Consciously distribute knowledge across multiple people, ensuring at
+least one backup per critical domain. Cross-training and collaborative
+documentation practices help increase your bus factor.</p>
+<hr />
+<h2 id="conclusion-1">5. Conclusion</h2>
+<p>Documentation is both an art and a strategy, made more complex by
+differing team needs, SME bottlenecks, and the risk of losing critical
+knowledge if key people leave. By viewing the challenge as a wicked
+problem, employing structured methods to capture SME expertise, and
+boosting your bus factor, you create a more resilient, adaptive
+organization—one better able to respond to change and maintain
+continuity of operations.</p>
+<h1 id="section-1">3</h1>
+<p>Below is a concise “Project Description” that captures the key points
+and current progress. You can share this summary with all team members
+to ensure everyone has a clear, unified understanding of the
+initiative.</p>
+<hr />
+<h2
+id="project-description-documentation-centralization-standardization">Project
+Description: Documentation Centralization &amp; Standardization</h2>
+<h3 id="background-objective">Background &amp; Objective</h3>
+<p>The <strong>Corporate Data &amp; Analytics</strong> department is
+tackling longstanding issues with how we create, store, and access
+documentation. Currently, critical information is scattered across
+various platforms (e.g., Azure DevOps, SharePoint, email, chat), and
+there is no consistent method to find or create new documentation. Our
+goal is to establish a <strong>centralized, standardized, and
+user-friendly</strong> system that enables easier knowledge sharing,
+ensures continuity, and supports our auditing requirements.</p>
+<h3 id="proposed-solution">Proposed Solution</h3>
+<ol type="1">
+<li><strong>Central Knowledge Base</strong><br />
+Store all departmental documentation in a structured format (e.g.,
+Markdown) within Azure DevOps Repos.</li>
+<li><strong>Consistent Templates</strong><br />
+Develop a small set of standardized templates for key documentation
+types (e.g., policies, processes, technical guides).</li>
+<li><strong>User-Friendly Website</strong><br />
+Build a pipeline that converts Markdown files in the repo into a
+browsable website, allowing for simple navigation and search.</li>
+<li><strong>AI-Enabled Workflows</strong> (Longer Term)
+<ul>
+<li><strong>Speech-to-Text + Templates</strong>: Streamline document
+creation by taking audio input, converting it to text, and using an AI
+tool to format that text into standardized Markdown.</li>
+<li><strong>Retrieval-Augmented Generation (RAG)</strong>: Provide an
+AI-based Q&amp;A interface that retrieves relevant documents from the
+knowledge base to answer user queries.</li>
+</ul></li>
+</ol>
+<h3 id="current-state">Current State</h3>
+<ol type="1">
+<li><strong>Initial Platform Setup</strong>
+<ul>
+<li>An Azure DevOps project has been created with a dedicated repository
+for Markdown files.</li>
+<li>Basic knowledge of Markdown has been shared among team members.</li>
+</ul></li>
+<li><strong>Templates in Development</strong>
+<ul>
+<li>A few core templates (e.g., “Process Documentation,” “Policy,”
+“Technical Write-up”) are being drafted and tested.</li>
+<li>Each team (Business Intelligence, Data Analytics, Data Governance,
+and Data Engineering) is providing feedback to ensure these templates
+meet their needs.</li>
+</ul></li>
+<li><strong>MVP Planning</strong>
+<ul>
+<li>The <strong>Minimum Viable Product (MVP)</strong> is scheduled for
+completion in about two weeks.</li>
+<li>The MVP will include:
+<ul>
+<li>A small set of Markdown documents demonstrating the new format.</li>
+<li>A pipeline to publish these documents to a basic website or static
+page.</li>
+<li>Optionally, a simple AI prototype (RAG or speech-to-text workflow)
+using generic, non-sensitive data.</li>
+</ul></li>
+</ul></li>
+<li><strong>Security &amp; Compliance</strong>
+<ul>
+<li>Sensitive or proprietary information will <em>not</em> be included
+in the MVP.</li>
+<li>The team is engaging cybersecurity to define future guidelines for
+handling confidential content.</li>
+</ul></li>
+</ol>
+<h3 id="next-steps">Next Steps</h3>
+<ol type="1">
+<li><strong>Finalize MVP Scope</strong>
+<ul>
+<li>Confirm exactly which templates and documents will be included.</li>
+<li>Set up the pipeline for auto-publishing Markdown to a web
+interface.</li>
+</ul></li>
+<li><strong>Conduct Template Trials</strong>
+<ul>
+<li>Gather real or representative content from each team to validate
+templates.</li>
+<li>Incorporate feedback to refine the structure and formatting.</li>
+</ul></li>
+<li><strong>Prototype AI Integration</strong>
+<ul>
+<li>Demonstrate how an AI tool could transform raw text (e.g.,
+speech-to-text) into the standardized templates.</li>
+<li>Explore a basic Q&amp;A feature (RAG) using non-sensitive
+documentation samples.</li>
+</ul></li>
+<li><strong>Plan for Rollout &amp; Governance</strong>
+<ul>
+<li>Discuss how documentation ownership and periodic reviews will ensure
+accuracy over time.</li>
+<li>Evaluate longer-term licensing and cost considerations for the full
+solution.</li>
+</ul></li>
+</ol>
+<hr />
+<p><strong>Contact/Questions</strong></p>
+<ul>
+<li>If you have questions about the MVP timeline, templates, or AI
+experiments, reach out to the project team.</li>
+<li>For concerns about security or data sensitivity, please coordinate
+with our cybersecurity liaison.</li>
+</ul>
+<p><strong>Summary</strong><br />
+This project aims to <strong>centralize and streamline</strong> how we
+handle departmental knowledge. By creating standardized templates,
+storing everything in a single repository, and eventually leveraging AI
+for faster document creation and retrieval, we’ll reduce duplicated
+effort, minimize knowledge gaps, and improve overall efficiency and
+compliance. The upcoming MVP demonstration will showcase our progress
+and serve as a foundation for continued development.</p>
+    
+</body>
+</html>
