@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="cluster-tips">Cluster Tips</h1>
+<p><strong>Should you use all 150 variables in the clustering
+analysis?</strong><br />
+Generally, it’s not a good idea to throw all available variables (in
+this case, 150) into a clustering algorithm without any form of variable
+selection or dimensionality reduction. There are a few reasons for
+this:</p>
+<ol type="1">
+<li><p><strong>Curse of Dimensionality</strong>: As the number of
+variables (dimensions) grows, distances in high-dimensional spaces can
+become less meaningful. Many distance-based clustering algorithms
+struggle to find clear structure when there are too many
+dimensions.</p></li>
+<li><p><strong>Noise vs. Signal</strong>: Not all 150 variables are
+likely to be equally important for separating observations into distinct
+clusters. Including variables that are mostly noise or
+non-discriminatory can obscure the “true” clusters.</p></li>
+<li><p><strong>Interpretability</strong>: Clustering with fewer, more
+interpretable variables makes your final clusters easier to
+explain.</p></li>
+</ol>
+<p>Instead, a common practice is to:</p>
+<ul>
+<li><strong>Perform feature selection</strong> or <strong>dimensionality
+reduction</strong> (e.g., via PCA, factor analysis, or domain-driven
+filtering).</li>
+<li>Use methods like <strong>variance/importance filtering</strong> or
+<strong>domain-knowledge filtering</strong> to select a subset of
+critical variables.</li>
+<li>Possibly embed the data into fewer dimensions if those dimensions
+capture the relevant variability.</li>
+</ul>
+<hr />
+<p><strong>Are the variables used in clustering necessarily the same
+ones you’d use to describe the clusters?</strong><br />
+No, they do not have to be exactly the same set of variables.</p>
+<ol type="1">
+<li><strong>Variables for Clustering</strong>: Typically, you pick
+variables that are most helpful for separating the observations into
+distinct, meaningful groups.</li>
+<li><strong>Variables for Describing</strong>: After clusters are
+formed, you can bring in additional variables that help
+<em>characterize</em> or <em>interpret</em> each cluster. These might
+include variables that:
+<ul>
+<li>Were excluded from clustering because they wouldn’t help in
+separation,</li>
+<li>Weren’t as discriminatory but are highly interpretable or critical
+to your stakeholders,</li>
+<li>Have clearer business meaning or are essential for explaining
+differences among the clusters.</li>
+</ul></li>
+</ol>
+<p>Hence, the statement “<em>the variables used in the clustering aren’t
+necessarily the ones to use in the descriptive part… and vice
+versa</em>” is indeed correct. The set of variables optimal for creating
+the clusters might not be the same set that best describes or labels
+them to a business or scientific audience.</p>
+<h1 id="pca">PCA</h1>
+<p>Using PCA in a clustering project does introduce some extra
+complexity, but it’s still very commonly done. Below is an overview of
+<em>why</em> and <em>how</em> you might use PCA in clustering, along
+with what it means for interpretability and for placing new data points
+into existing clusters:</p>
+<hr />
+<h2 id="why-use-pca-for-clustering">1. Why use PCA for clustering?</h2>
+<ol type="1">
+<li><p><strong>Reduce dimensionality</strong><br />
+If you have many variables (e.g., 150), clustering in the original space
+can be problematic:</p>
+<ul>
+<li>The “curse of dimensionality” can make distance measures less
+meaningful.</li>
+<li>Many of the variables might be highly correlated or redundant.</li>
+</ul></li>
+<li><p><strong>Stabilize cluster solutions</strong><br />
+Reducing the data to a smaller set of principal components often helps
+the clustering algorithm find more stable clusters. It removes some of
+the “noise” and focuses on the main patterns in the data.</p></li>
+</ol>
+<hr />
+<h2 id="how-pca-works-in-simple-terms">2. How PCA works in simple
+terms</h2>
+<p>PCA finds new axes (called <em>principal components</em>) that are
+linear combinations of your original variables. The first principal
+component (PC1) is the direction in which the data vary the most, the
+second (PC2) is the direction of the second most variation (and is
+orthogonal to PC1), and so on.</p>
+<p>Each original data point is then represented by its coordinates in
+this new space (i.e., its “scores” on each principal component). Instead
+of (for example) 150 original features, you might retain the first 5 or
+10 principal components that capture most of the variance.</p>
+<hr />
+<h2 id="how-to-interpret-pca-based-clusters">3. How to interpret
+PCA-based clusters</h2>
+<p><strong>Challenge</strong>: When you cluster on principal components,
+you’re clustering on abstract axes (the PCs), not your original
+variables directly. That can make it tougher to provide a direct
+explanation like, “Cluster 1 is higher on [original variable X] but
+lower on [original variable Y].”</p>
+<p><strong>Solution</strong>: Look at the PCA “loadings.”</p>
+<ul>
+<li>Each principal component is associated with <em>loadings</em> that
+tell you how much each original variable contributes to that
+component.</li>
+<li>By examining these loadings (and sometimes building a correlation
+table between the principal components and the original variables), you
+can see which original variables are driving each component.</li>
+<li>Once you see how each cluster differs in terms of principal
+component scores, you can map that back to the original variables.</li>
+</ul>
+<p><strong>In practice</strong>:</p>
+<ul>
+<li>Cluster on the PC scores (say, on PC1 to PC5).</li>
+<li>Identify which components differentiate each cluster (e.g., Cluster
+A might be high on PC1, Cluster B might be high on PC2).</li>
+<li>Then, interpret each principal component in terms of the original
+variables (via the loadings).</li>
+<li>This gives you a story of “Cluster A is high on PC1, which is driven
+mainly by these original variables…”</li>
+</ul>
+<hr />
+<h2 id="using-pca-but-still-wanting-interpretability">4. Using PCA but
+still wanting interpretability</h2>
+<p>If the project heavily emphasizes interpretability, you can use any
+of these approaches:</p>
+<ol type="1">
+<li><p><strong>Partial PCA</strong>: Maybe reduce 150 variables down to
+20 principal components, then do a smaller “feature selection” among
+those 20 components if interpretation of 20 PCs is still too big a
+leap.</p></li>
+<li><p><strong>Hybrid approach</strong>:</p>
+<ul>
+<li>Use domain knowledge to select, say, 30 out of the 150 variables
+that are truly relevant.</li>
+<li>Then do PCA on those 30 to reduce to fewer components (e.g.,
+10).</li>
+<li>Cluster on those 10 PC scores.</li>
+<li>Because you started with domain-relevant features and fewer PCs, it
+may be easier to interpret.</li>
+</ul></li>
+<li><p><strong>Factor Analysis or other techniques</strong>: Instead of
+PCA, some practitioners use methods like Factor Analysis or other
+dimensionality reduction approaches that aim for “simpler” or more
+interpretable latent factors. (Though these still produce linear
+combinations, they can sometimes yield more directly interpretable
+factor structures.)</p></li>
+</ol>
+<hr />
+<h2 id="how-to-place-new-data-into-pca-based-clusters">5. How to place
+new data into PCA-based clusters</h2>
+<p>One of your goals is to take new data in the future and place them
+into your existing clusters. Here’s the typical workflow:</p>
+<ol type="1">
+<li><p><strong>Save your preprocessing steps</strong></p>
+<ul>
+<li>If you standardized or scaled your variables before PCA, you need to
+save and reapply the <em>exact same</em> scaling to the new data (e.g.,
+using the same mean and standard deviation from the original training
+set).</li>
+</ul></li>
+<li><p><strong>Apply the <em>trained</em> PCA transform</strong></p>
+<ul>
+<li>PCA is trained on your original dataset. It computes principal
+components and loadings that best explain the variation in <em>that</em>
+dataset.</li>
+<li>When you get new data, you transform them using the <em>same</em>
+PCA model. The new data’s original variables are projected onto the
+existing principal components. This yields PC scores for the new
+data.</li>
+</ul></li>
+<li><p><strong>Assign the new data points to clusters</strong></p>
+<ul>
+<li>If you used K-means (or a similar centroid-based method), you have
+final cluster centers in the PCA space.</li>
+<li>Calculate the distance of the new point’s PC scores to each cluster
+center, and assign the new point to the nearest cluster center.</li>
+<li>For other algorithms (like hierarchical or Gaussian mixture models),
+the principle is the same: you have a final clustering model in the
+principal component space, and you use the new point’s PC scores to
+figure out cluster membership.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="combining-pca-clustering-and-describing-clusters">6. Combining
+PCA, clustering, and describing clusters</h2>
+<p>Here’s a more step-by-step summary that brings it all together:</p>
+<ol type="1">
+<li><p><strong>Preprocessing &amp; Feature Selection</strong></p>
+<ul>
+<li>Clean your data, handle missing values, and consider selecting the
+most relevant features (if you have domain knowledge to do so).</li>
+</ul></li>
+<li><p><strong>Dimensionality Reduction</strong></p>
+<ul>
+<li>Perform PCA on those selected features.</li>
+<li>Decide how many principal components to keep by looking at explained
+variance or using a scree plot.</li>
+</ul></li>
+<li><p><strong>Clustering</strong></p>
+<ul>
+<li>Perform your clustering on the PC scores for each data point.</li>
+</ul></li>
+<li><p><strong>Interpreting Clusters</strong></p>
+<ul>
+<li>Look at which principal components are high or low in each
+cluster.</li>
+<li>Investigate the PCA loadings to see which original variables
+influence those principal components.</li>
+<li>(Optionally) also look at other variables you didn’t include in PCA,
+to help describe differences between clusters.</li>
+</ul></li>
+<li><p><strong>Scoring New Data</strong></p>
+<ul>
+<li>For a new observation, apply the exact same preprocessing and PCA
+transformation, then assign the new observation to whichever cluster is
+most appropriate in the reduced-dimensional space.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="key-takeaways">Key Takeaways</h2>
+<ul>
+<li><strong>Yes, using PCA can make interpretation a bit harder</strong>
+because you’re working with linear combinations of variables rather than
+the original variables directly.</li>
+<li><strong>However, it’s quite doable</strong> to interpret and
+describe clusters afterward by examining which original variables are
+strongly related to each principal component.</li>
+<li><strong>You can still assign new data to these clusters</strong> by
+applying the same PCA transformation to the new observations and seeing
+where they land in the reduced-dimensional space.</li>
+<li><strong>If interpretability is top priority</strong>, you can
+consider:
+<ul>
+<li>Carefully selecting fewer original variables (to potentially skip
+PCA),</li>
+<li>Or using domain-driven dimensionality reduction approaches,</li>
+<li>Or using PCA with fewer components plus thorough loadings
+analysis.</li>
+</ul></li>
+</ul>
+<p>Ultimately, the decision to use PCA is a balance between <em>reducing
+complexity / improving cluster quality</em> and <em>maintaining
+interpretability</em>.</p>
+    
+</body>
+</html>
