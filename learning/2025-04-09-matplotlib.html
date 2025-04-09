@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a step-by-step tutorial on creating a bar chart using
+matplotlib—focusing on how to set custom labels below each bar and how
+to handle the challenge of label overlap when there are many bars.</p>
+<hr />
+<h2 id="install-and-import-the-necessary-packages">1. Install and Import
+the Necessary Packages</h2>
+<ol type="1">
+<li><p><strong>Installation (if you don’t already have matplotlib
+installed):</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install matplotlib</span></code></pre></div></li>
+<li><p><strong>Import in your Python script or notebook:</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div></li>
+</ol>
+<hr />
+<h2 id="understanding-the-data">2. Understanding the Data</h2>
+<p>You mentioned your data has three columns: <code>x_position</code>,
+<code>x_axis_label</code>, and <code>count</code>, like so:</p>
+<table>
+<thead>
+<tr>
+<th>x_position</th>
+<th>x_axis_label</th>
+<th>count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>M</td>
+<td>12</td>
+</tr>
+<tr>
+<td>2</td>
+<td>S</td>
+<td>15</td>
+</tr>
+<tr>
+<td>3</td>
+<td>F</td>
+<td>20</td>
+</tr>
+<tr>
+<td>4</td>
+<td>P</td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong><code>x_position</code></strong>: numeric values that
+specify where each bar will be placed along the x-axis.</li>
+<li><strong><code>x_axis_label</code></strong>: strings (e.g., “M”, “S”,
+“F”, “P”) that serve as labels for each bar.</li>
+<li><strong><code>count</code></strong>: the height of each bar.</li>
+</ul>
+<p>Typically, you can either:</p>
+<ol type="1">
+<li>Use the numeric <code>x_position</code> as the actual x-values and
+then map them to the string labels, <strong>or</strong></li>
+<li>Simply use a sequence of integers (like
+<code>[0, 1, 2, 3, ...]</code>) and then place your labels at those same
+positions.</li>
+</ol>
+<hr />
+<h2 id="basic-bar-chart-example">3. Basic Bar Chart Example</h2>
+<p>Below is a quick example that shows how to turn your data into a
+basic bar chart:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you read this data from a file or have it in lists:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>x_positions <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]          <span class="co"># numeric positions on the x-axis</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>x_axis_labels <span class="op">=</span> [<span class="st">&quot;M&quot;</span>, <span class="st">&quot;S&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;P&quot;</span>] <span class="co"># string labels for each position</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> [<span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">14</span>]            <span class="co"># heights of the bars</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a figure (optional, but helps control chart size)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the bar chart</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.bar(x_positions, counts)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels to the x-axis</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># The &#39;xticks&#39; call replaces the numeric positions with your custom labels</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.xticks(ticks<span class="op">=</span>x_positions, labels<span class="op">=</span>x_axis_labels)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Add axis labels and a title</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Category&quot;</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Count&quot;</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Example Bar Chart&quot;</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># This automatically adjusts spacing so labels fit</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the figure</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="whats-going-on-here">What’s going on here?</h3>
+<ol type="1">
+<li><strong><code>plt.figure(figsize=(6, 4))</code></strong>: Creates a
+new figure with a 6-inch width and 4-inch height (you can increase or
+decrease if you have many labels and want more space).</li>
+<li><strong><code>plt.bar(x_positions, counts)</code></strong>: Makes a
+bar for each <code>x_position</code> with the corresponding height from
+<code>counts</code>.</li>
+<li><strong><code>plt.xticks(...)</code></strong>: Manually sets the
+labels on the x-axis. If you did not do this step, the x-axis would show
+<code>1, 2, 3, 4</code> (the numeric values from
+<code>x_positions</code>), rather than your desired text labels
+(<code>"M", "S", "F", "P"</code>).</li>
+<li><strong><code>plt.tight_layout()</code></strong>: Helps
+automatically manage spacing so your labels don’t get cut off.</li>
+</ol>
+<hr />
+<h2 id="handling-overlapping-labels">4. Handling Overlapping Labels</h2>
+<h3 id="rotate-the-labels">4.1 Rotate the Labels</h3>
+<p>If you have many bars (say 20 or more) and your labels start to
+collide or become unreadable, you can <strong>rotate</strong> them:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.xticks(ticks<span class="op">=</span>x_positions, labels<span class="op">=</span>x_axis_labels, rotation<span class="op">=</span><span class="dv">45</span>)</span></code></pre></div>
+<ul>
+<li><code>rotation=45</code> rotates the labels 45 degrees, which often
+helps with tight spacing.</li>
+<li>You can try different angles like 30, 60, or 90 degrees, depending
+on how long the labels are.</li>
+</ul>
+<h3 id="increase-figure-size-or-use-plt.tight_layout">4.2 Increase
+Figure Size or Use <code>plt.tight_layout()</code></h3>
+<ul>
+<li>Increase <code>figsize=(10, 6)</code> or something larger to give
+more horizontal space for the labels.</li>
+<li><code>plt.tight_layout()</code> automatically reduces overlapping,
+so combine the two if necessary.</li>
+</ul>
+<h3 id="use-a-horizontal-bar-chart">4.3 Use a Horizontal Bar Chart</h3>
+<p>If your category labels are very long or if you have many categories,
+a <strong>horizontal bar chart</strong> might be more readable:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.barh(x_positions, counts)  <span class="co"># Note: this uses barh instead of bar</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, the x_positions are vertically spaced. You&#39;d use plt.yticks to set the labels:</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.yticks(ticks<span class="op">=</span>x_positions, labels<span class="op">=</span>x_axis_labels)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># x-axis is now &#39;Count&#39;, y-axis is the category</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Count&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Category&quot;</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<hr />
+<h2 id="putting-it-all-together-in-a-script">5. Putting It All Together
+in a Script</h2>
+<p>Here’s a more comprehensive example script that demonstrates reading
+data into lists, plotting, rotating the labels, and using a larger
+figure size:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Example data</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>x_positions <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>x_axis_labels <span class="op">=</span> [<span class="st">&quot;M&quot;</span>, <span class="st">&quot;S&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;P&quot;</span>]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> [<span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">14</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a figure with more width so labels have space</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the bar chart</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plt.bar(x_positions, counts)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign your custom labels to the x-axis</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Rotate the labels to avoid overlap (adjust rotation as needed)</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.xticks(ticks<span class="op">=</span>x_positions, labels<span class="op">=</span>x_axis_labels, rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Label the axes</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Category&quot;</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Count&quot;</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Title (optional but recommended)</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Bar Chart of Categories vs. Count&quot;</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Auto-adjust layout to prevent label cutoff</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the bar chart</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="tips">Tips:</h3>
+<ul>
+<li>If labels still overlap, increase the figure size (e.g.,
+<code>figsize=(10, 6)</code> or larger).</li>
+<li>Try <code>rotation=90</code> if your labels are still crashing into
+each other.</li>
+</ul>
+<hr />
+<h2 id="common-variations">6. Common Variations</h2>
+<ol type="1">
+<li><p><strong>Adding Grid Lines</strong></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>, axis<span class="op">=</span><span class="st">&#39;y&#39;</span>)  <span class="co"># Adds horizontal grid lines</span></span></code></pre></div>
+<p>This can help viewers read bar heights more easily.</p></li>
+<li><p><strong>Adding Text on Top of Bars</strong><br />
+If you want to display the numeric count above each bar:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, c <span class="kw">in</span> <span class="bu">zip</span>(x_positions, counts):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    plt.text(x, c <span class="op">+</span> <span class="fl">0.5</span>, <span class="bu">str</span>(c), ha<span class="op">=</span><span class="st">&#39;center&#39;</span>, va<span class="op">=</span><span class="st">&#39;bottom&#39;</span>)</span></code></pre></div>
+<ul>
+<li><code>ha='center'</code> horizontally centers the text at the
+x-position.</li>
+<li><code>va='bottom'</code> places the text just above the bar.</li>
+<li><code>c + 0.5</code> means the text is placed slightly above the
+bar’s height.</li>
+</ul></li>
+<li><p><strong>Horizontal Bar Chart</strong> (as mentioned earlier):</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plt.barh(x_positions, counts)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plt.yticks(x_positions, x_axis_labels)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Count&quot;</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Category&quot;</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div></li>
+</ol>
+<hr />
+<h2 id="summary">7. Summary</h2>
+<ul>
+<li><strong>Use numeric positions</strong> (like
+<code>[0, 1, 2, 3]</code> or <code>[1, 2, 3, 4]</code>) for the
+bars.</li>
+<li><strong>Match those positions to labels</strong> (like
+<code>[“M”, “S”, “F”, “P”]</code>) via <code>plt.xticks(...)</code> or
+<code>plt.yticks(...)</code>.</li>
+<li><strong>Use <code>rotation</code> or increase
+<code>figsize</code></strong> to handle overlapping labels.</li>
+<li><strong><code>plt.tight_layout()</code></strong> or manual spacing
+with <code>plt.subplots_adjust(...)</code> helps keep labels from
+getting cut off.</li>
+</ul>
+<p>With these tips, you should be able to create clear bar charts in
+matplotlib that appropriately show your labels, even when there are many
+categories.</p>
+    
+</body>
+</html>
