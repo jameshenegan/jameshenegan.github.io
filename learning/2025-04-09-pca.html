@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a tutorial focused specifically on <strong>Principal
+Component Analysis (PCA) loadings</strong>—what they are, how to compute
+them in Python, and how to interpret them in the context of
+dimensionality reduction and feature importance.</p>
+<hr />
+<h1 id="pca-loadings-a-detailed-tutorial">PCA Loadings: A Detailed
+Tutorial</h1>
+<h2 id="introduction">1. Introduction</h2>
+<p>Principal Component Analysis (PCA) is a powerful technique for
+<strong>dimensionality reduction</strong>. It transforms the original
+features into new, uncorrelated features called <strong>principal
+components (PCs)</strong>. Each principal component is a linear
+combination of the original features.</p>
+<ul>
+<li>The <strong>PCA loadings</strong> (also called “factor loadings” in
+some contexts) tell you how each original feature contributes to each
+principal component.</li>
+<li>By examining loadings, you can understand which variables have the
+greatest influence on each component.</li>
+</ul>
+<h3 id="key-terms">Key Terms</h3>
+<ol type="1">
+<li><strong>Principal Components (PCs)</strong>: New axes in the data
+that capture maximal variance in descending order.</li>
+<li><strong>Eigenvectors</strong> (a.k.a. <strong>loadings</strong> in
+PCA context): Coefficients that define how each original feature is
+combined to form a principal component.</li>
+<li><strong>Eigenvalues</strong>: The amount of variance in the data
+explained by each principal component.</li>
+</ol>
+<hr />
+<h2 id="recap-of-pca-math">2. Recap of PCA Math</h2>
+<p>Given a dataset ( X ) (assume it’s centered and scaled, so each
+column has mean 0 and standard deviation 1):</p>
+<ol type="1">
+<li>Compute the <strong>covariance matrix</strong> ( = X^X ).</li>
+<li>Find the <strong>eigenvalues</strong> and
+<strong>eigenvectors</strong> of ( ).</li>
+<li>Sort the eigenvectors in descending order of the corresponding
+eigenvalues (the first eigenvector corresponds to the first principal
+component, the second to the second principal component, etc.).</li>
+<li>Each <strong>eigenvector</strong> is a vector of
+<strong>loadings</strong> telling you how the original features combine
+to form that principal component.</li>
+</ol>
+<p>Mathematically, if (v_1) is the first eigenvector (loadings for PC1)
+of length (d) (where (d) = number of original features), then:</p>
+<p>[ <em>1 = v</em>{1,1} X<em>1 + v</em>{1,2} X<em>2 + + v</em>{1,d} X_d
+]</p>
+<p>Where (v_{1,i}) is the loading for feature (i) in the first principal
+component.</p>
+<hr />
+<h2 id="why-pca-loadings-matter">3. Why PCA Loadings Matter</h2>
+<ol type="1">
+<li><strong>Feature Importance</strong>: PCA loadings highlight which
+variables contribute most to each principal component. Large absolute
+values in a loading vector indicate a strong influence of that variable
+on the component.</li>
+<li><strong>Interpretability</strong>: After dimensionality reduction,
+you might only look at the first few principal components. Loadings help
+you interpret what these components represent in terms of the original
+features.</li>
+</ol>
+<hr />
+<h2 id="example-with-python">4. Example with Python</h2>
+<h3 id="import-libraries">4.1. Import Libraries</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div>
+<h3 id="generate-a-synthetic-dataset">4.2. Generate a Synthetic
+Dataset</h3>
+<p>For demonstration, we will create a small synthetic dataset of 10
+features.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s create 500 samples, 10 features</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>n_samples <span class="op">=</span> <span class="dv">500</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>n_features <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># For illustration, some features will be correlated</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>X_synthetic <span class="op">=</span> np.random.randn(n_samples, n_features) <span class="op">*</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X_synthetic, columns<span class="op">=</span>[<span class="ss">f&quot;feature_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_features)])</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div>
+<blockquote>
+<p>In practice, you’ll load your real-world dataset. Make sure you
+handle missing data, outliers, and scaling as needed.</p>
+</blockquote>
+<h3 id="data-preprocessing">4.3. Data Preprocessing</h3>
+<ol type="1">
+<li><strong>Standardize</strong> your data. PCA works best on scaled
+data (mean=0, std=1), especially if your features are on different
+scales.</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_scaled <span class="op">=</span> scaler.fit_transform(df)</span></code></pre></div>
+<h3 id="fit-pca">4.4. Fit PCA</h3>
+<p>Let’s say we want to keep all principal components for
+interpretability in this demonstration. (In real projects, you often
+choose fewer components to reduce dimensionality.)</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span>n_features)  <span class="co"># since n_features=10</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pca.fit(df_scaled)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The principal components (PC scores) can be obtained via:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df_pca_scores <span class="op">=</span> pca.transform(df_scaled)</span></code></pre></div>
+<ul>
+<li><code>pca.components_</code> contains the loadings (eigenvectors)
+for each principal component.</li>
+<li><code>pca.explained_variance_ratio_</code> tells us how much
+variance each PC explains.</li>
+</ul>
+<h3 id="examine-explained-variance">4.5. Examine Explained Variance</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>expl_variance <span class="op">=</span> pca.explained_variance_ratio_</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cumulative_variance <span class="op">=</span> np.cumsum(expl_variance)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Variance Ratio by Component:&quot;</span>, expl_variance)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Cumulative Variance:&quot;</span>, cumulative_variance)</span></code></pre></div>
+<ul>
+<li>Typically, you might see that the first few components explain a
+significant amount of variance.</li>
+</ul>
+<h3 id="extracting-and-interpreting-pca-loadings">4.6. Extracting and
+Interpreting PCA Loadings</h3>
+<p>The <strong>PCA loadings</strong> are in
+<code>pca.components_</code>. Its shape is ((, )).</p>
+<ul>
+<li>Row (i) = loadings for the (i)-th principal component.</li>
+<li>Column (j) = the weight (coefficient) of the (j)-th original feature
+in that principal component.</li>
+</ul>
+<h4 id="view-the-loadings-in-a-dataframe">4.6.1. View the Loadings in a
+DataFrame</h4>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>loadings <span class="op">=</span> pca.components_</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to a DataFrame for easier viewing</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df_loadings <span class="op">=</span> pd.DataFrame(loadings,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                           columns<span class="op">=</span>[<span class="ss">f&quot;feature_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_features)],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                           index<span class="op">=</span>[<span class="ss">f&quot;PC</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_features)])</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>df_loadings</span></code></pre></div>
+<p>This DataFrame shows how each original feature contributes to each
+principal component.</p>
+<h4 id="magnitude-of-loadings">4.6.2. Magnitude of Loadings</h4>
+<p>To see which features have the <strong>largest absolute
+contribution</strong> to a given PC, you can sort by the absolute
+loadings. For example, to see the top features for the first principal
+component:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pc1_loadings <span class="op">=</span> df_loadings.loc[<span class="st">&quot;PC1&quot;</span>].<span class="bu">abs</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pc1_loadings)</span></code></pre></div>
+<p>The feature(s) at the top of this list are the ones that most
+strongly define PC1.</p>
+<hr />
+<h2 id="visualizing-loadings-optional">5. Visualizing Loadings
+(Optional)</h2>
+<h3 id="bar-plot-of-loadings">5.1. Bar Plot of Loadings</h3>
+<p>As a simple example, let’s visualize the loadings for PC1 as a bar
+plot:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.bar(<span class="bu">range</span>(n_features), df_loadings.loc[<span class="st">&quot;PC1&quot;</span>])</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.xticks(<span class="bu">range</span>(n_features), df_loadings.columns, rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;PC1 Loadings&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Features&quot;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Loading Coefficient&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>This lets you see at a glance which features have high positive or
+negative loadings for PC1.</p>
+<h3 id="biplots-advanced">5.2. Biplots (Advanced)</h3>
+<p>A <strong>biplot</strong> can plot:</p>
+<ul>
+<li>The data points in the space of the first two principal components
+(PC1 vs. PC2).</li>
+<li>The vectors (loadings) that show how each feature projects onto
+those two components.</li>
+</ul>
+<p>Constructing a biplot manually requires a bit of work with
+Matplotlib, but it’s a handy way to see how features relate to each
+other and to the principal components in a 2D space.</p>
+<hr />
+<h2 id="interpreting-pca-loadings-in-practice">6. Interpreting PCA
+Loadings in Practice</h2>
+<ol type="1">
+<li><p><strong>Sign and Magnitude</strong>:</p>
+<ul>
+<li><strong>Sign</strong> (+ or –) indicates the direction of influence.
+A negative loading means that higher values of that feature correspond
+to lower scores in that principal component.</li>
+<li><strong>Magnitude</strong> (absolute value) tells you how strongly
+that feature influences the component.</li>
+</ul></li>
+<li><p><strong>Dominant Features</strong>:</p>
+<ul>
+<li>A feature with a large absolute loading in a principal component is
+a dominant contributor. If a principal component explains a significant
+portion of the variance, that feature plays an important role in overall
+data variability.</li>
+</ul></li>
+<li><p><strong>Grouping Features</strong>:</p>
+<ul>
+<li>Features with similar loading patterns across several principal
+components can indicate underlying latent factors that tie those
+variables together.</li>
+</ul></li>
+<li><p><strong>Domain Knowledge</strong>:</p>
+<ul>
+<li>Interpreting loadings is partly a data-driven process, but also
+informed by <strong>domain expertise</strong>. You should ask:
+<ul>
+<li>“Does it make sense that these variables are grouped together in
+PC1?”</li>
+<li>“Are we missing some known relationship not captured by PCA?”</li>
+</ul></li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="key-points-and-next-steps">7. Key Points and Next Steps</h2>
+<ol type="1">
+<li><strong>Preprocessing</strong>: Always center/scale data before PCA
+(unless your use case specifically requires otherwise).</li>
+<li><strong>Choosing the Number of PCs</strong>: Examine
+<code>explained_variance_ratio_</code> or use methods like the “elbow
+rule” to decide how many PCs to keep.</li>
+<li><strong>Interpreting Loadings</strong>: Look for variables with
+large absolute loadings in each PC to identify which features are
+driving the main directions of variance.</li>
+<li><strong>Further Analysis</strong>:
+<ul>
+<li>If interpretability is essential, you might try <strong>varimax
+rotation</strong> (common in factor analysis) or other rotations that
+sometimes yield more interpretable factors (though in practice,
+scikit-learn’s PCA does not directly offer rotation).</li>
+<li>Consider domain-specific constraints to decide which components (and
+which features) are truly meaningful for your analysis.</li>
+</ul></li>
+</ol>
+<hr />
+<h1 id="final-thoughts">Final Thoughts</h1>
+<p>Understanding <strong>PCA loadings</strong> is crucial for
+interpreting the reduced feature space and for communicating the results
+of your dimensionality reduction. By looking at which features have the
+highest loadings on a principal component, you gain insight into what
+that component “means” in the context of your dataset.</p>
+<ul>
+<li><strong>Technical side</strong>: Loadings come from eigenvectors of
+the data’s covariance matrix (after scaling).</li>
+<li><strong>Practical side</strong>: Sort loadings by absolute value,
+see which features dominate each principal component, and then combine
+that with domain knowledge to understand and label each component.</li>
+</ul>
+<p>With this process, PCA becomes not just a black-box dimensionality
+reduction method, but a valuable tool for discovering structure,
+grouping variables, and shedding light on complex, high-dimensional
+datasets.</p>
+    
+</body>
+</html>

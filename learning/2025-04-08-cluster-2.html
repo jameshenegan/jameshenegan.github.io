@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a step-by-step guide on how you might approach selecting the
+most meaningful variables from a dataset with 500 features (columns) for
+use in a clustering project. This tutorial will include:</p>
+<ol type="1">
+<li><strong>High-Level Overview</strong></li>
+<li><strong>Data Preprocessing</strong></li>
+<li><strong>Exploratory Data Analysis (EDA)</strong></li>
+<li><strong>Feature Reduction &amp; Feature Selection
+Methods</strong></li>
+<li><strong>Example in Python</strong></li>
+<li><strong>Interpreting Results &amp; Next Steps</strong></li>
+</ol>
+<hr />
+<h2 id="high-level-overview">1. High-Level Overview</h2>
+<p>When you have a dataset with an extremely high number of features
+(variables), it’s often crucial to reduce dimensionality before running
+a clustering algorithm. High-dimensional data can lead to:</p>
+<ul>
+<li><strong>The curse of dimensionality</strong> – Distances in
+high-dimensional spaces can become less meaningful.</li>
+<li><strong>Overfitting</strong> or over-complication – While clustering
+is unsupervised, too many variables can make cluster boundaries less
+distinct.</li>
+<li><strong>Performance issues</strong> – Large feature sets increase
+computation time and memory requirements.</li>
+</ul>
+<p><strong>Goal</strong>: Identify a subset of features (or transform
+them into fewer dimensions) that retain as much of the meaningful
+information as possible for your cluster analysis.</p>
+<hr />
+<h2 id="data-preprocessing">2. Data Preprocessing</h2>
+<p>Before any form of feature selection or clustering, ensure your data
+is well-prepared:</p>
+<ol type="1">
+<li><p><strong>Clean the data</strong>: Remove or impute missing
+values.</p>
+<ul>
+<li>E.g., <code>df.dropna()</code> or
+<code>df.fillna(method='ffill')</code>, depending on the nature of your
+data.</li>
+</ul></li>
+<li><p><strong>Handle outliers</strong>: Outliers can distort measures
+like variance and correlation. Depending on your domain, outliers might
+need capping or removal.</p></li>
+<li><p><strong>Normalize/Standardize</strong> (often essential for
+clustering):</p>
+<ul>
+<li>Some clustering algorithms (like K-Means) assume variables are on a
+comparable scale.</li>
+<li>Common approaches: <code>StandardScaler()</code> (mean=0, std=1) or
+<code>MinMaxScaler()</code> (range=[0,1]).</li>
+</ul></li>
+<li><p><strong>Encode categorical variables</strong> (if any):</p>
+<ul>
+<li>Convert categorical variables into numerical form (e.g., One-Hot
+Encoding).</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="exploratory-data-analysis-eda">3. Exploratory Data Analysis
+(EDA)</h2>
+<p>Even with 500 variables, it’s often helpful to do some initial
+investigations:</p>
+<ol type="1">
+<li><strong>Check distributions</strong>: For a sample set of columns,
+see if the data is skewed, has outliers, etc.</li>
+<li><strong>Variance</strong>: Some columns might have little to no
+variance (e.g., all values are nearly constant). Low-variance features
+rarely help distinguish clusters.</li>
+<li><strong>Pairwise Correlations</strong>: Generate a correlation
+matrix or heatmap for a subset of features to identify highly correlated
+variables (though with 500 features, the full matrix can be
+unwieldy).</li>
+</ol>
+<hr />
+<h2 id="feature-reduction-feature-selection-methods">4. Feature
+Reduction &amp; Feature Selection Methods</h2>
+<p>Below are a few common techniques for reducing the number of
+variables before clustering:</p>
+<h3 id="a.-variance-threshold">A. Variance Threshold</h3>
+<ul>
+<li><strong>Method</strong>: Remove features whose variance is below a
+certain threshold.</li>
+<li><strong>Rationale</strong>: Features with extremely low variance do
+not contribute to differentiating between data points (all points look
+similar on that feature).</li>
+<li><strong>Pros</strong>: Fast and simple.</li>
+<li><strong>Cons</strong>: Ignores relationships between features (e.g.,
+correlated features).</li>
+</ul>
+<h3 id="b.-correlation-based-feature-selection">B. Correlation-Based
+Feature Selection</h3>
+<ul>
+<li><strong>Method</strong>: Eliminate one of two features that are
+highly correlated. For example, if two features have a correlation above
+0.9, you can keep only one.</li>
+<li><strong>Rationale</strong>: Highly correlated features are often
+redundant.</li>
+<li><strong>Pros</strong>: Retains interpretability,
+straightforward.</li>
+<li><strong>Cons</strong>: Still somewhat manual. Doesn’t handle complex
+(non-linear) relationships.</li>
+</ul>
+<h3 id="c.-principal-component-analysis-pca">C. Principal Component
+Analysis (PCA)</h3>
+<ul>
+<li><strong>Method</strong>: Linear transformation that projects the
+data into a new space of uncorrelated components (principal components).
+You then keep the top ( k ) principal components that explain most of
+the variance.</li>
+<li><strong>Rationale</strong>: Reduces dimensionality while retaining
+most variance.</li>
+<li><strong>Pros</strong>: Powerful, widely used, good for continuous
+data.</li>
+<li><strong>Cons</strong>: Each principal component is a linear
+combination of the original features, so you lose direct
+interpretability.</li>
+</ul>
+<h3 id="d.-autoencoders-neural-networkbased">D. Autoencoders (Neural
+Network–based)</h3>
+<ul>
+<li><strong>Method</strong>: Use a neural network to learn a compressed
+(bottleneck) representation of your data.</li>
+<li><strong>Rationale</strong>: Non-linear dimensionality reduction that
+can capture more complex patterns than PCA.</li>
+<li><strong>Pros</strong>: Can handle large data sets and
+non-linearities.</li>
+<li><strong>Cons</strong>: More complex to train and tune;
+interpretability is limited.</li>
+</ul>
+<h3 id="e.-embedded-or-wrapper-methods-with-caveats">E. Embedded or
+Wrapper Methods (with Caveats)</h3>
+<ul>
+<li>In supervised contexts, people often use models like Random Forest
+or Lasso (L1-regularized) to rank feature importance. However, for
+<strong>unsupervised</strong> clustering, you don’t have target
+labels.</li>
+<li>One trick is to apply “pseudo-labeling” if you have some domain
+knowledge or if you create clusters first, then check which features are
+most influential in separating them.</li>
+</ul>
+<hr />
+<h2 id="putting-it-all-together-example-in-python">5. Putting It All
+Together (Example in Python)</h2>
+<p>Below is an illustrative example in Python. We will:</p>
+<ol type="1">
+<li>Generate synthetic data with 500 features.</li>
+<li>Apply basic filters (Variance Threshold &amp; Correlation).</li>
+<li>Use PCA to reduce features further.</li>
+<li>Perform clustering with K-Means.</li>
+</ol>
+<blockquote>
+<p><strong>Note</strong>: In a real-world scenario, you’ll load your own
+dataset rather than generating random data.</p>
+</blockquote>
+<h3 id="installimport-required-libraries">5.1. Install/Import Required
+Libraries</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_classification</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> VarianceThreshold</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span></code></pre></div>
+<h3 id="generate-synthetic-data">5.2. Generate Synthetic Data</h3>
+<p>Let’s create a dataset with 2,000 samples and 500 features. By
+design, some features will be informative, and others will be noise.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X, _ <span class="op">=</span> make_classification(n_samples<span class="op">=</span><span class="dv">2000</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                           n_features<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                           n_informative<span class="op">=</span><span class="dv">10</span>,    <span class="co"># only 10 features are truly informative</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                           n_redundant<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                           n_repeated<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                           n_clusters_per_class<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                           random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to a DataFrame for easier manipulation</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X, columns<span class="op">=</span>[<span class="ss">f&quot;feature_</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">500</span>)])</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div>
+<h3 id="data-preprocessing-1">5.3. Data Preprocessing</h3>
+<ol type="1">
+<li><strong>Check for missing values</strong> (our synthetic data has
+none, but you may need to handle them in real data).</li>
+<li><strong>Standardize</strong> each feature so that they have mean 0
+and standard deviation 1.</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_scaled <span class="op">=</span> scaler.fit_transform(df)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df_scaled <span class="op">=</span> pd.DataFrame(df_scaled, columns<span class="op">=</span>df.columns)</span></code></pre></div>
+<h3 id="feature-selection">5.4. Feature Selection</h3>
+<h4 id="a.-variance-threshold-1">A. Variance Threshold</h4>
+<p>We remove features with variance below a certain threshold. You can
+experiment with the threshold value. A typical approach is to set it to
+a small number like <code>0.01</code> (but it depends on your data
+scale).</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>selector <span class="op">=</span> VarianceThreshold(threshold<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_var_filtered <span class="op">=</span> selector.fit_transform(df_scaled)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df_var_filtered.shape</span></code></pre></div>
+<ul>
+<li>This will tell you how many features remain after removing
+low-variance ones.</li>
+</ul>
+<h4 id="b.-correlation-based-feature-removal-optional-extra-step">B.
+Correlation-Based Feature Removal (Optional Extra Step)</h4>
+<p>Suppose after the variance threshold, you still have many features.
+You can remove highly correlated features:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to DataFrame for correlation analysis</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df_var_filtered_pd <span class="op">=</span> pd.DataFrame(df_var_filtered)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="op">=</span> df_var_filtered_pd.corr().<span class="bu">abs</span>()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>upper_tri <span class="op">=</span> corr_matrix.where(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    np.triu(np.ones(corr_matrix.shape), k<span class="op">=</span><span class="dv">1</span>).astype(<span class="bu">bool</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify columns to drop if correlation above 0.9</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    column <span class="cf">for</span> column <span class="kw">in</span> <span class="bu">range</span>(upper_tri.shape[<span class="dv">1</span>])</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">any</span>(upper_tri[column] <span class="op">&gt;</span> <span class="fl">0.9</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>df_corr_filtered <span class="op">=</span> df_var_filtered_pd.drop(to_drop, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>df_corr_filtered.shape</span></code></pre></div>
+<p>Now you have a (potentially) reduced set of columns that are not
+highly correlated.</p>
+<h3 id="dimensionality-reduction-via-pca">5.5. Dimensionality Reduction
+via PCA</h3>
+<p>Even after removing low-variance and highly correlated features, you
+might still have a lot of features. PCA can project them into fewer
+uncorrelated dimensions:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">10</span>)  <span class="co"># keep 10 principal components</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df_pca <span class="op">=</span> pca.fit_transform(df_corr_filtered)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_pca.shape</span></code></pre></div>
+<ul>
+<li>Here, <code>df_pca</code> is a NumPy array with shape
+<code>(n_samples, 10)</code>.</li>
+<li>You can decide how many components to keep by looking at the
+<strong>explained<em>variance_ratio</em></strong> attribute from the PCA
+object.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>explained_variance <span class="op">=</span> pca.explained_variance_ratio_</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cumulative_explained_variance <span class="op">=</span> np.cumsum(explained_variance)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Explained variance by component:&quot;</span>, explained_variance)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Cumulative explained variance:&quot;</span>, cumulative_explained_variance)</span></code></pre></div>
+<p>Choose the smallest number of components that capture an acceptable
+amount of total variance (e.g., 80-95%).</p>
+<h3 id="clustering-and-evaluation">5.6. Clustering and Evaluation</h3>
+<p>Now that you have reduced the dimensionality to something more
+manageable:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s cluster using KMeans</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> kmeans.fit_predict(df_pca)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate using Silhouette Score (higher is better)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>sil_score <span class="op">=</span> silhouette_score(df_pca, labels)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Silhouette Score: </span><span class="sc">{</span>sil_score<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<ol type="1">
+<li><strong>Number of clusters</strong>: Often determined by methods
+like the “Elbow Method” or “Silhouette Score” across different values of
+<code>k</code> (e.g., 2 to 10).</li>
+<li><strong>Interpretation</strong>: If PCA is used, interpret principal
+components to get a sense of which original features load heavily onto
+each component.</li>
+</ol>
+<hr />
+<h2 id="interpreting-results-next-steps">6. Interpreting Results &amp;
+Next Steps</h2>
+<h3 id="understanding-most-meaningful-features">6.1. Understanding “Most
+Meaningful” Features</h3>
+<ol type="1">
+<li><strong>PCA Loadings</strong>: If you used PCA, you can inspect the
+loading matrix (<code>pca.components_</code>) to see which original
+features contribute most to each principal component.</li>
+<li><strong>Domain Knowledge</strong>: Combine the above with domain
+knowledge to determine if certain variables are known to be important
+(or if they don’t make sense and can be excluded).</li>
+</ol>
+<h3 id="further-refinements">6.2. Further Refinements</h3>
+<ol type="1">
+<li><strong>Additional Dimensionality Reduction</strong>: Methods like
+t-SNE or UMAP can be used for visualization in 2D/3D.</li>
+<li><strong>Autoencoders</strong>: If your dataset is large and complex
+(images, texts, or very non-linear relationships), an autoencoder might
+learn more nuanced embeddings for clustering.</li>
+<li><strong>Advanced Feature Selection</strong>: There are more
+specialized methods (like feature selection for clustering using
+advanced filters or wrappers), but they can be more involved to
+implement.</li>
+</ol>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>When facing 500 (or more) variables:</p>
+<ol type="1">
+<li><strong>Preprocess &amp; Clean</strong> your data.</li>
+<li><strong>Filter Out</strong> unnecessary features:
+<ul>
+<li>Low variance</li>
+<li>Highly correlated</li>
+</ul></li>
+<li><strong>Dimensionality Reduction</strong>: Use PCA or other
+techniques to further compress information into fewer components.</li>
+<li><strong>Clustering</strong>: Apply your clustering algorithm (e.g.,
+K-Means) on the reduced dataset.</li>
+<li><strong>Evaluate &amp; Interpret</strong> results (e.g., with
+silhouette score).</li>
+<li><strong>Refine</strong> your feature set or dimensionality reduction
+method until you balance interpretability with clustering
+performance.</li>
+</ol>
+<p>By following these steps, you should be able to identify which
+features (or transformed components) best differentiate clusters in your
+data, leading to more robust and interpretable cluster analysis.</p>
+    
+</body>
+</html>
