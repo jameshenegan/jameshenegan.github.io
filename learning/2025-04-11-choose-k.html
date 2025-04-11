@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="choice">Choice</h1>
+<p>Below is a high-level outline of how you might approach the problem,
+followed by some illustrative Python snippets. Keep in mind there’s no
+single “right” way to do variable selection in an unsupervised setting,
+but here are some standard techniques and considerations.</p>
+<hr />
+<h2 id="use-individual-level-data-for-clustering">1. Use
+Individual-Level Data for Clustering</h2>
+<p>In general, yes—if your primary goal is to segment/cluster
+individuals based on demographics, behaviors, or other signals that
+truly belong to the individual, those are the variables you use when
+<em>generating</em> the clusters. Typically, you want the clustering
+algorithm to see the most direct, relevant signals about each
+person.</p>
+<h3 id="why-not-throw-in-everything-at-once">Why not throw in everything
+at once?</h3>
+<ul>
+<li><strong>Risk of Overweighting</strong>: If you include hundreds of
+census or propensity variables, they can dominate distance/similarity
+calculations, drowning out the individual-level variables you care most
+about.</li>
+<li><strong>Interpretability</strong>: With too many variables (many of
+which may be correlated), interpreting the resulting clusters is more
+difficult.</li>
+</ul>
+<p>Thus, it’s perfectly reasonable to cluster on the “core”
+individual-level variables (e.g., age, gender, marital status, income).
+Then, in the second phase, you can “describe” or “profile” each cluster
+using those big sets of propensity and census variables.</p>
+<hr />
+<h2
+id="selecting-which-propensity-census-variables-to-use-for-descriptions">2.
+Selecting Which Propensity &amp; Census Variables To Use for
+Descriptions</h2>
+<p>Once you’ve formed your clusters, you’ll want to characterize each
+segment by how it differs across relevant propensity and census factors.
+The catch: you have 500 audience propensity variables and 500 census
+variables. You <em>do not</em> want to simply dump all 1,000 of these
+into a giant table and show cluster means for each—no one will parse
+that easily.</p>
+<h3 id="two-pillars-of-variable-reduction">Two Pillars of Variable
+Reduction</h3>
+<ol type="1">
+<li><p><strong>Subject-Matter Expertise &amp; Domain
+Knowledge</strong></p>
+<ul>
+<li>Use your metadata to discard clearly irrelevant or redundant
+variables.</li>
+<li>For instance, if you have 5 variables all measuring slightly
+different facets of “time spent on Twitter,” pick the most relevant or
+the broadest one.</li>
+<li>If certain census metrics have little bearing on your business
+question, exclude them.</li>
+</ul></li>
+<li><p><strong>Data-Driven Techniques</strong></p>
+<ul>
+<li><strong>Variance/Prevalence Filtering</strong>: Exclude variables
+that have near-constant values or extremely low variance, as they
+provide little to no discrimination.</li>
+<li><strong>Correlation-Based Filtering</strong>: When many variables
+are highly correlated, consider retaining only one from each correlated
+cluster of features.</li>
+<li><strong>Dimensionality Reduction</strong>: Techniques like
+PCA/Factor Analysis can help reduce hundreds of variables to fewer
+“latent factors,” each of which can be described by top-loading
+variables.</li>
+<li><strong>Unsupervised Feature Selection</strong>: Although feature
+selection is often done in a supervised context, you can adapt certain
+methods (like Random Forests or XGBoost) if you create a pseudo-label
+for each cluster. However, that’s <em>after</em> you’ve done some
+initial clustering, so it’s a more advanced 2-stage approach.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="illustrative-steps-in-python">3. Illustrative Steps in
+Python</h2>
+<p>Below is a simplified example that shows one way to reduce a large
+set of variables. Let’s assume you have:</p>
+<ul>
+<li>A DataFrame called <code>df_propensity</code> with ~500 audience
+propensity variables.</li>
+<li>A DataFrame called <code>df_census</code> with ~500 census-level
+variables.</li>
+<li>Each row corresponds to an individual record, so each row includes
+both the propensity scores for that individual <em>and</em> the census
+data for that individual’s ZIP code.</li>
+</ul>
+<h3 id="basic-cleaning-and-variance-threshold">3.1 Basic Cleaning and
+Variance Threshold</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> VarianceThreshold</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you have these dataframes:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># df_propensity (n rows x 500 columns)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df_census (n rows x 500 columns)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine them for a single set of 1,000 variables you want to reduce</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df_all <span class="op">=</span> pd.concat([df_propensity, df_census], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Remove near-constant features</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust threshold as needed. For example, threshold=0.01 means the feature</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># must have at least 1% variance to be kept.</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>vt <span class="op">=</span> VarianceThreshold(threshold<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>df_var_filtered <span class="op">=</span> vt.fit_transform(df_all)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep track of column names</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>cols_to_keep <span class="op">=</span> df_all.columns[vt.get_support()]</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>df_var_filtered <span class="op">=</span> pd.DataFrame(df_var_filtered, columns<span class="op">=</span>cols_to_keep)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Shape before variance filter:&quot;</span>, df_all.shape)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Shape after variance filter:&quot;</span>, df_var_filtered.shape)</span></code></pre></div>
+<p><strong>What this does</strong>: Any column where (max value - min
+value) is extremely small (indicating near-constant values) or the
+variance is below the threshold will be removed.</p>
+<h3 id="correlation-based-filtering">3.2 Correlation-Based
+Filtering</h3>
+<p>Next, we remove redundancy by dropping columns that are highly
+correlated with others. Typically, you choose a threshold—commonly 0.80
+or 0.90.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Remove highly correlated features</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="op">=</span> df_var_filtered.corr().<span class="bu">abs</span>()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Select upper triangle of correlation matrix</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>upper_tri <span class="op">=</span> corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k<span class="op">=</span><span class="dv">1</span>).astype(<span class="bu">bool</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Find columns with correlation above 0.80</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [column <span class="cf">for</span> column <span class="kw">in</span> upper_tri.columns <span class="cf">if</span> <span class="bu">any</span>(upper_tri[column] <span class="op">&gt;</span> <span class="fl">0.80</span>)]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>df_corr_filtered <span class="op">=</span> df_var_filtered.drop(columns<span class="op">=</span>to_drop, errors<span class="op">=</span><span class="st">&#39;ignore&#39;</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Shape after correlation filter:&quot;</span>, df_corr_filtered.shape)</span></code></pre></div>
+<p><strong>What this does</strong>: For each pair of columns that exceed
+the correlation threshold, you keep only one.</p>
+<h3 id="further-reduction-via-pca-optional">3.3 Further Reduction via
+PCA (Optional)</h3>
+<p>You could stop here—maybe you now have a few hundred variables left,
+down from 1,000. Or you could do a <em>further</em> reduction via PCA
+(or factor analysis) to see if there’s a small subset of “latent
+factors” that capture most of the variance. Then, for interpretability,
+you might look at each principal component’s top loadings to identify
+“which variables matter most” for that component.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let’s say you want 25 principal components</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">25</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df_pca <span class="op">=</span> pca.fit_transform(df_corr_filtered)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df_pca is now (n rows x 25 components)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># You could examine pca.components_ to see which original variables</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># have the highest absolute loadings in each component.</span></span></code></pre></div>
+<p>Alternatively, if you don’t want to rely on PCA for final descriptive
+variables, you can:</p>
+<ul>
+<li>Look at the absolute loading of each original variable on the
+principal components.</li>
+<li>Pick the top few variables that load strongly on each of the main
+components.</li>
+<li>End up with ~25 or so “key” variables that collectively span the
+variance in your data.</li>
+</ul>
+<hr />
+<h2 id="how-to-use-those-reduced-variables-for-describing-clusters">4.
+How to Use Those Reduced Variables for Describing Clusters</h2>
+<p>After you’ve selected (say) 25 audience propensity variables and 25
+census variables:</p>
+<ol type="1">
+<li><strong>Finalize your Clusters</strong>: Perform clustering (e.g.,
+K-Means, hierarchical, etc.) on the individual-level features (age,
+gender, income, etc.).</li>
+<li><strong>Add Descriptors</strong>: For each cluster, compute the
+average (or median) of the 25 propensity variables and 25 census
+variables <em>within that cluster</em>. Look for large differences
+across clusters.</li>
+<li><strong>Communicate</strong>: “Cluster A has high average propensity
+to watch sports on TV and tends to live in ZIP codes with higher average
+age,” etc.</li>
+</ol>
+<hr />
+<h2 id="practical-tips-considerations">5. Practical Tips &amp;
+Considerations</h2>
+<ol type="1">
+<li><p><strong>Balance Domain Knowledge with Data-Driven
+Approaches</strong></p>
+<ul>
+<li>Don’t rely solely on correlation or PCA. If you know from business
+context that certain variables are crucial, keep them even if they might
+be correlated with something else.</li>
+</ul></li>
+<li><p><strong>Avoid Overfitting the Clustering</strong></p>
+<ul>
+<li>If you have 1,000+ variables, you might get “weird” clusters if you
+feed them all in at once. That’s part of why you’re planning to do the
+cluster definitions on just the core, validated set of variables that
+truly measure each individual.</li>
+</ul></li>
+<li><p><strong>Scaling / Normalization</strong></p>
+<ul>
+<li>Many clustering algorithms are sensitive to scale. Be sure to
+standardize or normalize your variables (e.g.,
+<code>StandardScaler</code>) if they’re on different scales (like income
+in the thousands vs. a 0–1 probability of using Twitter).</li>
+</ul></li>
+<li><p><strong>Iterative Process</strong></p>
+<ul>
+<li>Rarely do you get the final set of 25 + 25 variables in one shot.
+You’ll likely iterate with your domain experts, refine thresholds, run
+correlation or PCA, and settle on a set that’s both meaningful and
+discriminative.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="short-answer-to-does-it-make-sense">Short Answer to “Does It
+Make Sense?”</h2>
+<p><strong>Yes.</strong> In many projects, you do the segmentation
+(clustering) on the variables that most directly define how the
+individuals differ from one another. Then, once the segments are formed,
+you pull in other data sources (propensity, census, etc.) to
+<em>describe</em> or <em>enrich</em> the clusters. This is a perfectly
+valid two-phase approach:</p>
+<ol type="1">
+<li><strong>Phase 1</strong>: Clustering on the essential,
+<em>direct</em> individual-level data.</li>
+<li><strong>Phase 2</strong>: Describing or profiling clusters using
+additional variables (after doing some variable reduction so that the
+descriptions are clear and not overwhelming).</li>
+</ol>
+<p>That way, the “extra” data helps you interpret and market to each
+segment, but does not overshadow the main differences you care about
+when forming the clusters.</p>
+<hr />
+<h3 id="final-thoughts">Final Thoughts</h3>
+<ul>
+<li>Keep an eye on the business/marketing objectives. Feature selection
+is not purely a statistical exercise; it’s also about interpretability
+and practical utility.</li>
+<li>Combine domain knowledge with unsupervised filtering (variance
+threshold, correlation checks, etc.).</li>
+<li>For describing clusters, a thoughtful selection of variables that
+highlight meaningful differences is far more useful than throwing all
+1,000 at a stakeholder.</li>
+</ul>
+    
+</body>
+</html>

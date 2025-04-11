@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Certainly! You <em>can</em> use machine learning models—such as
+Random Forest or Gradient Boosting regressors/classifiers—in a multiple
+imputation by chained equations (MICE) framework. In fact,
+scikit-learn’s <a
+href="https://scikit-learn.org/stable/modules/generated/sklearn.impute.IterativeImputer.html">IterativeImputer</a>
+(introduced as “experimental” in 0.20 and more stable in later versions)
+makes it relatively straightforward to swap in different regression or
+classification estimators for the chained equations process.</p>
+<hr />
+<h2 id="how-iterativeimputer-works">1. How IterativeImputer works</h2>
+<ol type="1">
+<li><p><strong>Chained Equations</strong><br />
+The essence of MICE is to iterate over each feature (with missing
+values) and impute it using a predictive model built from the
+<em>other</em> features. Then repeat this process in a cycle for
+multiple “rounds” until the imputations converge or you hit a specified
+iteration limit.</p></li>
+<li><p><strong>Multiple Imputations</strong><br />
+Strictly speaking, to do <em>multiple</em> imputations, you would:</p>
+<ul>
+<li>Run the entire “chained equations” procedure several times, each
+time with a different random seed or small variations (for instance,
+adding noise, or drawing from a posterior).</li>
+<li>You end up with multiple imputed datasets which you then analyze
+separately.</li>
+<li>Finally, you pool the results (e.g., pool coefficients, test
+statistics) following standard multiple imputation rules.</li>
+</ul></li>
+<li><p><strong>Default Estimator</strong><br />
+If you do nothing else, IterativeImputer uses a linear model (by
+default, <code>BayesianRidge</code> for numerical data). But you can
+pass any scikit-learn regressor (for numeric variables) or classifier
+(for categorical/binary variables) that follows the usual
+<code>fit</code>/<code>predict</code> API.</p></li>
+</ol>
+<hr />
+<h2 id="using-random-forest-in-iterativeimputer">2. Using Random Forest
+in IterativeImputer</h2>
+<p>Here’s a simple example of using a Random Forest regressor in
+scikit-learn’s <code>IterativeImputer</code>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.experimental <span class="im">import</span> enable_iterative_imputer  <span class="co"># noqa</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> IterativeImputer</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample data with missing values</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">1</span>,    <span class="dv">2</span>,  np.nan],</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">2</span>,    np.nan, <span class="dv">4</span>],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    [<span class="dv">3</span>,    <span class="dv">6</span>,  <span class="dv">9</span>],</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    [np.nan, <span class="dv">2</span>,  <span class="dv">3</span>],</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create an IterativeImputer that uses a RandomForestRegressor</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>imputer <span class="op">=</span> IterativeImputer(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    estimator<span class="op">=</span>RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    max_iter<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>X_imputed <span class="op">=</span> imputer.fit_transform(X)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X_imputed)</span></code></pre></div>
+<p>Key points in this example:</p>
+<ul>
+<li>We set <code>estimator=RandomForestRegressor(...)</code> so that
+each feature with missing values is predicted by a random forest model
+trained on the other features.</li>
+<li>We can control how many iterations (<code>max_iter</code>) of the
+chained equations we want.</li>
+<li>Because a random forest doesn’t produce a convenient <em>posterior
+distribution</em>, if you need fully “Bayesian” draws in your MICE
+procedure, you might need to add your own random noise or rely on
+alternative methods (e.g., <code>BayesianRidge</code>). Otherwise,
+random forest can work well for capturing nonlinear relationships in
+your data.</li>
+</ul>
+<hr />
+<h2 id="using-logisticregression-for-binarycategory-imputation">3. Using
+LogisticRegression for Binary/Category Imputation</h2>
+<p>If you have categorical variables (e.g., binary 0/1), you can do
+something like:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.experimental <span class="im">import</span> enable_iterative_imputer  <span class="co"># noqa</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> IterativeImputer</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>imputer <span class="op">=</span> IterativeImputer(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    estimator<span class="op">=</span>LogisticRegression(solver<span class="op">=</span><span class="st">&#39;lbfgs&#39;</span>, max_iter<span class="op">=</span><span class="dv">1000</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    max_iter<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>X_imputed <span class="op">=</span> imputer.fit_transform(X_categorical)</span></code></pre></div>
+<p>The principle is the same: each column with missing values is treated
+as the “target,” and the other columns act as predictors. After each
+round, the imputed values for that column are updated until convergence
+or until the iteration limit is reached.</p>
+<hr />
+<h2 id="multiple-runs-for-true-multiple-imputation">4. Multiple Runs for
+“True” Multiple Imputation</h2>
+<p>If you want “multiple” imputed datasets:</p>
+<ol type="1">
+<li>Create multiple <code>IterativeImputer</code> objects with different
+seeds or small variations in the estimator (if it supports
+randomness).</li>
+<li>Fit and transform each one to create separate imputed datasets.</li>
+<li>Analyze each imputed dataset separately, then pool results (e.g.,
+combine parameter estimates, confidence intervals) using Rubin’s rules
+or similar.</li>
+</ol>
+<p>For example:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.experimental <span class="im">import</span> enable_iterative_imputer  <span class="co"># noqa</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> IterativeImputer</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>n_imputations <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>imputed_datasets <span class="op">=</span> []</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_imputations):</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    imp_rf <span class="op">=</span> IterativeImputer(</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        estimator<span class="op">=</span>RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span>i),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        max_iter<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span>i</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    X_imp <span class="op">=</span> imp_rf.fit_transform(X)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    imputed_datasets.append(X_imp)</span></code></pre></div>
+<p>Now you have five sets of imputed data
+(<code>imputed_datasets</code>), each slightly different, and you can do
+your analyses and combine estimates.</p>
+<hr />
+<h2 id="caveats-and-alternatives">5. Caveats and Alternatives</h2>
+<ol type="1">
+<li><p><strong>No built-in Bayesian sampling for tree-based
+methods</strong><br />
+As mentioned, Random Forest or Gradient Boosting typically don’t provide
+a direct posterior distribution. Some users address this by adding
+random draws or noise at each imputation step.</p></li>
+<li><p><strong>Computational Cost</strong><br />
+Using large random forests for each iteration and each variable can be
+computationally heavy. You might want to limit the number of trees or
+optimize hyperparameters accordingly.</p></li>
+<li><p><strong>Convergence</strong><br />
+The iterative approach can be more sensitive to hyperparameters or
+random seeds, especially if you have many columns to impute. Always
+check whether your imputations stabilize over multiple
+iterations.</p></li>
+<li><p><strong>Other Tools</strong></p>
+<ul>
+<li><a
+href="https://github.com/AnotherSamWilson/miceforest"><strong>miceforest</strong></a>:
+A library dedicated to MICE with random forests in Python.</li>
+<li><a
+href="https://github.com/iskandr/fancyimpute"><strong>FancyImpute</strong></a>:
+Provides various advanced imputation methods, but it’s not as actively
+maintained lately.</li>
+<li><strong>statsmodels</strong>: Has some MICE functionality, but it’s
+more geared toward classical regression approaches than random
+forests.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="summary">Summary</h3>
+<ul>
+<li>You <em>can</em> use Random Forest (or other complex models) for
+chained equations by plugging them into <strong>scikit-learn’s
+<code>IterativeImputer</code></strong>.</li>
+<li>This can capture nonlinearities and interactions better than basic
+linear or logistic regression.</li>
+<li>For truly <em>multiple</em> imputations, run
+<code>IterativeImputer</code> multiple times with different seeds, then
+pool results.</li>
+<li>Be aware that more complex models might increase runtime and make it
+trickier to capture a proper Bayesian-like “uncertainty” for each
+imputation draw.</li>
+</ul>
+<p>If your goal is purely predictive performance for the imputed values
+and capturing complex relationships, random forests or gradient boosting
+can be a great approach. If you need a principled Bayesian approach to
+reflect parameter uncertainty accurately, you might lean toward
+<code>BayesianRidge</code> or incorporate some random draws with your
+tree-based methods.</p>
+    
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a step-by-step tutorial showing:</p>
+<ol type="1">
+<li><strong>How to train random forests</strong> (both regression and
+classification) in scikit-learn.</li>
+<li><strong>How to manually “chain”</strong> random forest
+regression/classification for iterative imputation across multiple
+columns (some continuous, some binary) that have missing values.</li>
+</ol>
+<p>We will:</p>
+<ul>
+<li>Create a <strong>synthetic dataset</strong> with 10 columns (6
+complete, 2 continuous with missing, 2 binary with missing).</li>
+<li>Walk through a <strong>manual iterative imputation</strong> process.
+In each iteration, for each column with missing values:
+<ul>
+<li>If the column is continuous, we fit a Random Forest
+<strong>Regressor</strong> on the other columns.</li>
+<li>If the column is binary, we fit a Random Forest
+<strong>Classifier</strong> on the other columns.</li>
+<li>We predict the missing values for that column and fill them in.</li>
+</ul></li>
+<li>Repeat this chain for several iterations until the imputations
+stabilize (or until we hit a chosen iteration limit).</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>: scikit-learn’s built-in <a
+href="https://scikit-learn.org/stable/modules/generated/sklearn.impute.IterativeImputer.html">IterativeImputer</a>
+currently only supports a single estimator for <em>all</em> columns, and
+it treats everything as regression (meaning you’d have to post-process
+the output for binary columns). The <em>manual</em> approach below shows
+how you can truly use a regressor for continuous columns and a
+classifier for binary columns.</p>
+</blockquote>
+<hr />
+<h2 id="random-forest-basics-in-scikit-learn">1. Random Forest Basics in
+scikit-learn</h2>
+<h3 id="random-forest-for-regression">1.1 Random Forest for
+Regression</h3>
+<p>A <strong>Random Forest Regressor</strong> trains multiple decision
+trees on bootstrapped samples of the data, then averages their
+predictions for a continuous target.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Example X and y (no missing data in this simple demonstration)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>X_reg <span class="op">=</span> [[<span class="dv">1</span>, <span class="dv">5</span>], [<span class="dv">2</span>, <span class="dv">6</span>], [<span class="dv">3</span>, <span class="dv">7</span>], [<span class="dv">4</span>, <span class="dv">8</span>]]  <span class="co"># Features</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y_reg <span class="op">=</span> [<span class="fl">2.3</span>, <span class="fl">2.7</span>, <span class="fl">3.5</span>, <span class="fl">3.8</span>]             <span class="co"># Continuous target</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the model</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>rf_reg <span class="op">=</span> RandomForestRegressor(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>rf_reg.fit(X_reg, y_reg)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict new values</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>X_new <span class="op">=</span> [[<span class="fl">2.5</span>, <span class="fl">6.5</span>]]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>reg_prediction <span class="op">=</span> rf_reg.predict(X_new)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Regression prediction:&quot;</span>, reg_prediction)</span></code></pre></div>
+<h3 id="random-forest-for-classification">1.2 Random Forest for
+Classification</h3>
+<p>A <strong>Random Forest Classifier</strong> trains multiple decision
+trees on bootstrapped samples of the data, then uses a majority vote (or
+average probability) for a categorical target.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Example X and y (no missing data in this simple demonstration)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>X_clf <span class="op">=</span> [[<span class="dv">1</span>, <span class="dv">0</span>], [<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">3</span>, <span class="dv">1</span>], [<span class="dv">4</span>, <span class="dv">0</span>]]  <span class="co"># Features</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>y_clf <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>]                     <span class="co"># Binary target</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and fit the model</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>rf_clf <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>rf_clf.fit(X_clf, y_clf)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict new values</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>X_new <span class="op">=</span> [[<span class="fl">2.5</span>, <span class="dv">0</span>]]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>clf_prediction <span class="op">=</span> rf_clf.predict(X_new)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>clf_prob <span class="op">=</span> rf_clf.predict_proba(X_new)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Classification prediction:&quot;</span>, clf_prediction)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Prediction probabilities:&quot;</span>, clf_prob)</span></code></pre></div>
+<hr />
+<h2 id="synthetic-dataset-with-missing-values">2. Synthetic Dataset with
+Missing Values</h2>
+<p>Let’s create a small synthetic dataset with 10 columns (100 rows),
+where:</p>
+<ul>
+<li>6 columns are fully observed (<strong>complete</strong>).</li>
+<li>2 columns are <strong>continuous</strong> but have missing
+values.</li>
+<li>2 columns are <strong>binary</strong> (0/1) but have missing
+values.</li>
+</ul>
+<p>We’ll illustrate how to iteratively impute the missing columns using
+random forests for regression and classification.</p>
+<h3 id="generate-data-and-introduce-missingness">2.1 Generate Data and
+Introduce Missingness</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of rows</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 6 columns that have no missing data:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   Let&#39;s say 3 are numeric, 3 are binary.</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>complete_numeric1 <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">50</span>, scale<span class="op">=</span><span class="dv">10</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>complete_numeric2 <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">1</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>complete_numeric3 <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">100</span>, scale<span class="op">=</span><span class="dv">5</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   Binary columns (0 or 1):</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>complete_binary1 <span class="op">=</span> np.random.binomial(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.3</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>complete_binary2 <span class="op">=</span> np.random.binomial(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.7</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>complete_binary3 <span class="op">=</span> np.random.binomial(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.5</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 columns are continuous with missing</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   Let&#39;s create some correlation to the complete columns for realism</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>cont_with_missing1 <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> complete_numeric1 <span class="op">+</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">5</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>cont_with_missing2 <span class="op">=</span> <span class="fl">2.0</span> <span class="op">*</span> complete_numeric2 <span class="op">+</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">2</span>, size<span class="op">=</span>n)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 columns are binary with missing</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>binary_with_missing1 <span class="op">=</span> (<span class="fl">0.3</span> <span class="op">*</span> complete_numeric2 <span class="op">+</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">1</span>, size<span class="op">=</span>n) <span class="op">&gt;</span> <span class="dv">0</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>binary_with_missing2 <span class="op">=</span> (<span class="fl">0.8</span> <span class="op">*</span> complete_numeric1 <span class="op">+</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">10</span>, size<span class="op">=</span>n) <span class="op">&gt;</span> <span class="dv">40</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert everything to a DataFrame</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;complete_num1&#39;</span>: complete_numeric1,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;complete_num2&#39;</span>: complete_numeric2,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;complete_num3&#39;</span>: complete_numeric3,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;complete_bin1&#39;</span>: complete_binary1,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;complete_bin2&#39;</span>: complete_binary2,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;complete_bin3&#39;</span>: complete_binary3,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;cont_miss1&#39;</span>: cont_with_missing1,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;cont_miss2&#39;</span>: cont_with_missing2,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;bin_miss1&#39;</span>: binary_with_missing1,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;bin_miss2&#39;</span>: binary_with_missing2</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Introduce missingness in the 4 columns</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># We&#39;ll randomly mask 20% of values as missing in those columns</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>mask_cont1 <span class="op">=</span> np.random.rand(n) <span class="op">&lt;</span> <span class="fl">0.2</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>mask_cont2 <span class="op">=</span> np.random.rand(n) <span class="op">&lt;</span> <span class="fl">0.2</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>mask_bin1 <span class="op">=</span> np.random.rand(n) <span class="op">&lt;</span> <span class="fl">0.2</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>mask_bin2 <span class="op">=</span> np.random.rand(n) <span class="op">&lt;</span> <span class="fl">0.2</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>df.loc[mask_cont1, <span class="st">&#39;cont_miss1&#39;</span>] <span class="op">=</span> np.nan</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>df.loc[mask_cont2, <span class="st">&#39;cont_miss2&#39;</span>] <span class="op">=</span> np.nan</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>df.loc[mask_bin1, <span class="st">&#39;bin_miss1&#39;</span>] <span class="op">=</span> np.nan</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>df.loc[mask_bin2, <span class="st">&#39;bin_miss2&#39;</span>] <span class="op">=</span> np.nan</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s see how many missing values we have in each column</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.isna().<span class="bu">sum</span>())</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">10</span>)</span></code></pre></div>
+<p>After this, we have:</p>
+<ul>
+<li>Columns <code>cont_miss1</code> and <code>cont_miss2</code>
+(continuous) with ~20% missing.</li>
+<li>Columns <code>bin_miss1</code> and <code>bin_miss2</code> (binary)
+with ~20% missing.</li>
+<li>Columns <code>complete_num[1-3]</code> and
+<code>complete_bin[1-3]</code> have no missing.</li>
+</ul>
+<hr />
+<h2 id="manual-iterative-imputation-with-random-forests">3. Manual
+Iterative Imputation with Random Forests</h2>
+<p>To “chain” these imputations:</p>
+<ol type="1">
+<li>Pick an order in which to impute columns (e.g.,
+<code>cont_miss1</code> → <code>cont_miss2</code> →
+<code>bin_miss1</code> → <code>bin_miss2</code>).</li>
+<li>For each column in that order:
+<ul>
+<li>Separate the data into <strong>rows with observed</strong> values in
+that column and <strong>rows missing</strong>.</li>
+<li>Train a suitable model (RandomForestRegressor or
+RandomForestClassifier) on the observed rows:
+<ul>
+<li>The <strong>target</strong> is that column (the one we want to
+impute).</li>
+<li>The <strong>features</strong> (X) are all the <em>other</em> columns
+(including any columns we may have imputed in previous steps).</li>
+</ul></li>
+<li>Predict the missing values and fill them in.</li>
+</ul></li>
+<li>Repeat this cycle for several iterations until the values stabilize
+or until a chosen <code>max_iter</code>.</li>
+</ol>
+<p>Below is a simple approach that does <strong>N</strong> passes over
+the columns in a fixed order.</p>
+<h3 id="helper-function-to-detect-binary-vs-continuous">3.1 Helper
+Function to Detect “Binary” vs “Continuous”</h3>
+<p>We’ll assume:</p>
+<ul>
+<li>Columns with dtype <code>float</code> and multiple unique values are
+continuous.</li>
+<li>Columns with dtype <code>float</code> but are really 0/1 might still
+be considered binary if that’s how we conceptualize them. (We’ll
+override manually for these two columns.)</li>
+<li>You can also check if the number of unique values is 2 to treat a
+column as binary.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_binary_series(series, threshold<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Heuristic: check unique values to see if a column is binary.&quot;&quot;&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    unique_vals <span class="op">=</span> <span class="bu">set</span>(series.dropna().unique())</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">len</span>(unique_vals) <span class="op">&lt;=</span> threshold</span></code></pre></div>
+<h3 id="iterative-imputation-code">3.2 Iterative Imputation Code</h3>
+<p>We’ll write a function
+<code>random_forest_chained_imputation()</code> that:</p>
+<ul>
+<li>Takes a DataFrame</li>
+<li>Knows which columns are continuous vs binary</li>
+<li>Iterates over them in a chosen order</li>
+<li>Trains a model, imputes missing values, repeats</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor, RandomForestClassifier</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> random_forest_chained_imputation(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    col_order,          <span class="co"># list of columns in the order we want to impute</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    n_iter<span class="op">=</span><span class="dv">5</span>,           <span class="co"># how many full passes to do</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    n_estimators<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Perform manual chained imputation with separate RandomForest Regressors/Classifiers.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">    df : pd.DataFrame</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">        DataFrame with missing values</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">    col_order : list</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">        Columns (in order) to impute</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">    n_iter : int</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Number of complete passes</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">    n_estimators : int</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">        Number of trees in each random forest</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">    random_state : int</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">        Seed for reproducibility</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">    -------</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">    pd.DataFrame</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">        DataFrame with imputed values</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    df_imputed <span class="op">=</span> df.copy()  <span class="co"># Work on a copy</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> it <span class="kw">in</span> <span class="bu">range</span>(n_iter):</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="ch">\n</span><span class="ss">Iteration </span><span class="sc">{</span>it<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>n_iter<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> col <span class="kw">in</span> col_order:</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Identify which rows are missing this column</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>            missing_mask <span class="op">=</span> df_imputed[col].isna()</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If no missing in this column, skip</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> missing_mask.<span class="bu">any</span>():</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Prepare the training data (rows where col is not missing)</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>            df_obs <span class="op">=</span> df_imputed.loc[<span class="op">~</span>missing_mask]</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>            y_obs <span class="op">=</span> df_obs[col]</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Prepare features: all other columns except `col`</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>            X_obs <span class="op">=</span> df_obs.drop(columns<span class="op">=</span>[col])</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Prepare the test data (rows where col is missing)</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>            df_miss <span class="op">=</span> df_imputed.loc[missing_mask]</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>            X_miss <span class="op">=</span> df_miss.drop(columns<span class="op">=</span>[col])</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Decide if it&#39;s binary or continuous</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>            <span class="co"># You could do this by your own logic or by data type or by stored metadata</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>            unique_obs_values <span class="op">=</span> <span class="bu">set</span>(y_obs.dropna().unique())</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>            is_binary <span class="op">=</span> (<span class="bu">len</span>(unique_obs_values) <span class="op">&lt;=</span> <span class="dv">2</span>)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> is_binary:</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Classification</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>                model <span class="op">=</span> RandomForestClassifier(</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>                    n_estimators<span class="op">=</span>n_estimators,</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>                    random_state<span class="op">=</span>random_state</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Regression</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>                model <span class="op">=</span> RandomForestRegressor(</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>                    n_estimators<span class="op">=</span>n_estimators,</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>                    random_state<span class="op">=</span>random_state</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Fit on observed data</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>            model.fit(X_obs, y_obs)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Predict the missing</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>            y_pred <span class="op">=</span> model.predict(X_miss)</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> is_binary:</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Round or threshold at 0.5</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>                <span class="co"># y_pred can be either probability or direct class predictions</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>                <span class="co"># .predict() from an RFClassifier should already be 0 or 1</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>                <span class="co"># But if we used .predict_proba() we&#39;d threshold</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>                y_pred <span class="op">=</span> np.<span class="bu">round</span>(y_pred)  <span class="co"># ensure integer 0/1</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Fill in the missing values</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>            df_imputed.loc[missing_mask, col] <span class="op">=</span> y_pred</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df_imputed</span></code></pre></div>
+<h3 id="run-the-imputation">3.3 Run the Imputation</h3>
+<p>We’ll specify that we want to impute these 4 columns (in this order,
+for example):</p>
+<ol type="1">
+<li><code>cont_miss1</code> (continuous)</li>
+<li><code>cont_miss2</code> (continuous)</li>
+<li><code>bin_miss1</code> (binary)</li>
+<li><code>bin_miss2</code> (binary)</li>
+</ol>
+<p>We’ll do 5 full iterations over them.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cols_to_impute <span class="op">=</span> [<span class="st">&#39;cont_miss1&#39;</span>, <span class="st">&#39;cont_miss2&#39;</span>, <span class="st">&#39;bin_miss1&#39;</span>, <span class="st">&#39;bin_miss2&#39;</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_imputed <span class="op">=</span> random_forest_chained_imputation(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    col_order<span class="op">=</span>cols_to_impute,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    n_iter<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    n_estimators<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Original Missing Counts:&quot;</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[cols_to_impute].isna().<span class="bu">sum</span>())</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Imputed Missing Counts (should be 0):&quot;</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_imputed[cols_to_impute].isna().<span class="bu">sum</span>())</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>df_imputed.head(<span class="dv">10</span>)</span></code></pre></div>
+<p>You should see after 5 iterations that there are no missing values in
+those columns.</p>
+<hr />
+<h2 id="extensions-best-practices">4. Extensions &amp; Best
+Practices</h2>
+<ol type="1">
+<li><p><strong>Multiple Imputation</strong></p>
+<ul>
+<li>True multiple imputation means creating multiple <em>different</em>
+imputed datasets (e.g., by using different random seeds or slightly
+altering model parameters). Then you run your analytic model on each
+dataset and <em>pool</em> the results (e.g., using Rubin’s rules).</li>
+<li>In practice, you can wrap the above process in a loop for (m) times,
+each with a different <code>random_state</code>.</li>
+</ul></li>
+<li><p><strong>Order of Columns</strong></p>
+<ul>
+<li>Typically, you might start with columns with the least missingness
+or the strongest relationships. In the classical “MICE” approach, each
+iteration just cycles in a fixed order. You can experiment with the best
+approach for your data.</li>
+</ul></li>
+<li><p><strong>Convergence Checks</strong></p>
+<ul>
+<li>After each iteration, you might compare the newly imputed values to
+the previous iteration to see if they’ve stabilized (e.g., average
+change is below some threshold).</li>
+</ul></li>
+<li><p><strong>Handling Binary Columns</strong></p>
+<ul>
+<li>By default, if you put them into a regressor, you’d get floating
+outputs between 0 and 1, which you might threshold at 0.5. But that’s
+not “true” classification. The manual approach above ensures you can
+explicitly do classification. This is one reason the built-in
+<code>IterativeImputer</code> is more natural for purely continuous
+columns.</li>
+</ul></li>
+<li><p><strong>Computational Costs</strong></p>
+<ul>
+<li>If you have many columns and large data, training multiple random
+forests for each column at each iteration can be
+<strong>expensive</strong>. Consider smaller <code>n_estimators</code>,
+or more efficient algorithms if needed.</li>
+</ul></li>
+<li><p><strong>Other Tools</strong></p>
+<ul>
+<li>The <a
+href="https://github.com/AnotherSamWilson/miceforest"><strong>miceforest</strong></a>
+library specifically implements MICE with random forests in Python. It
+handles multiple imputations, looped training, and optional
+post-processing automatically.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="wrapping-up">5. Wrapping Up</h2>
+<ul>
+<li>You now have a fully <strong>imputed</strong> DataFrame
+(<code>df_imputed</code>) with no missing values in the target
+columns.</li>
+<li>This procedure used random forests for both <em>regression</em>
+(continuous columns) and <em>classification</em> (binary columns) in a
+chained manner.</li>
+<li>If you need truly “multiple” imputations for rigorous statistical
+inference, repeat the entire chained procedure with different seeds to
+produce multiple versions of imputed data, analyze them separately, and
+pool parameter estimates.</li>
+</ul>
+<p><strong>Key Takeaways</strong>:</p>
+<ul>
+<li><strong>Random Forest</strong> can handle both regression and
+classification tasks, making it flexible for columns of different
+types.</li>
+<li><strong>Chained equations (MICE)</strong> involves iteratively
+updating missing values column by column, using the latest estimates as
+features for the next imputation.</li>
+<li><strong>scikit-learn</strong>’s <code>IterativeImputer</code> is
+convenient for purely continuous features but is not natively designed
+to handle classification (binary/categorical columns) differently from
+regression. A <strong>manual approach</strong> (as shown here) or a
+specialized library like <strong>miceforest</strong> can bridge that
+gap.</li>
+</ul>
+<p>This completes the in-depth walk-through of using random forests
+(both for regression and classification) in a chained iterative
+imputation context. Good luck with your analyses!</p>
+    
+</body>
+</html>
