@@ -250,6 +250,173 @@ facets to apply <code>set(xlim=(0,100))</code>.</p></li>
 </ul>
 <p>Either pattern gives you a single PNG (or PDF/SVG) containing all 20
 histograms, ready to drop into a report or slide deck.</p>
+<h1 id="with-metadata-top-left">With Metadata (Top left)</h1>
+<p>Below is a pattern that leaves your histogram mechanics exactly as
+they are, but draws the extra metadata — alternate name, mean, label,
+description — <em>inside</em> each subplot.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> textwrap</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1. DATA ---------------------------------------------------------</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df ............. your 20‑column numeric DataFrame</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># meta_df ........ has columns: var_name, alternate_var_name, mean,</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  var_label, var_description</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>meta_df <span class="op">=</span> meta_df.set_index(<span class="st">&quot;var_name&quot;</span>)   <span class="co"># faster lookup later</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">21</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>n_rows, n_cols <span class="op">=</span> <span class="dv">4</span>, <span class="dv">5</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(n_rows, n_cols,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                         figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">12</span>),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                         sharex<span class="op">=</span><span class="va">True</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2. DRAW HISTOGRAMS + METADATA -----------------------------------</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, col <span class="kw">in</span> <span class="bu">zip</span>(axes.ravel(), df.columns):</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># histogram</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    ax.hist(df[col].dropna(), bins<span class="op">=</span>bins, <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="dv">100</span>))</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="dv">0</span>, <span class="dv">100</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># -----------------------------------------------------------------</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pull this variable’s metadata row</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    meta <span class="op">=</span> meta_df.loc[col]</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># build the annotation text (wrap long descriptions)</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    wrapped_desc <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(textwrap.wrap(meta.var_description, width<span class="op">=</span><span class="dv">38</span>))</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    note <span class="op">=</span> (</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;Alt:  </span><span class="sc">{</span>meta<span class="sc">.</span>alternate_var_name<span class="sc">}</span><span class="ch">\n</span><span class="ss">&quot;</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;Mean: </span><span class="sc">{</span>meta<span class="sc">.</span>mean<span class="sc">:.2f}</span><span class="ch">\n</span><span class="ss">&quot;</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;Lbl:  </span><span class="sc">{</span>meta<span class="sc">.</span>var_label<span class="sc">}</span><span class="ch">\n</span><span class="ss">&quot;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;</span><span class="sc">{</span>wrapped_desc<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># annotate *inside* the axes in “axes fraction” coords</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.02</span>, <span class="fl">0.95</span>,                 <span class="co"># near top‑left</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        note,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">&quot;left&quot;</span>, va<span class="op">=</span><span class="st">&quot;top&quot;</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        transform<span class="op">=</span>ax.transAxes,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">&quot;round,pad=0.3&quot;</span>, facecolor<span class="op">=</span><span class="st">&quot;white&quot;</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># keep main title short (the var_name) above the plot</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    ax.set_title(col, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&quot;Histograms with In‑Plot Metadata (0–100 scale)&quot;</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(top<span class="op">=</span><span class="fl">0.93</span>)</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;histograms_with_metadata.png&quot;</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co"># or plt.show() in a notebook</span></span></code></pre></div>
+<h3 id="why-this-works">Why this works</h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr>
+<th>Technique</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>meta_df.set_index("var_name")</code></strong></td>
+<td>Lets you fetch the metadata row for any column in O(1) with
+<code>loc</code>.</td>
+</tr>
+<tr>
+<td><strong><code>ax.text(..., transform=ax.transAxes)</code></strong></td>
+<td>Uses <em>axes fraction</em> coordinates: (0, 0) is bottom‑left,
+(1, 1) is top‑right, so the annotation stays anchored even if you resize
+the figure.</td>
+</tr>
+<tr>
+<td><strong>Wrapped description</strong></td>
+<td>Long descriptions won’t spill outside the axes; adjust
+<code>width=</code> to taste.</td>
+</tr>
+<tr>
+<td><strong><code>bbox=dict(...)</code></strong></td>
+<td>Gives the text a semi‑transparent white background so it remains
+legible even over dark histogram bars.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="tips-variations">Tips &amp; variations</h4>
+<ul>
+<li><strong>Truncate or elide very long descriptions</strong> if you
+need the figure to stay compact,
+e.g. <code>wrapped_desc = wrapped_desc[:120] + "…"</code></li>
+<li><strong>Color‑coding the box</strong> (e.g. by mean value) can add a
+quick visual cue; set <code>facecolor</code> dynamically.</li>
+<li><strong>Interactive notebooks</strong> – if you’re in Jupyter,
+replace <code>plt.savefig</code> with <code>plt.show()</code> to
+preview, then export once satisfied.</li>
+</ul>
+<p>Drop this block in place of the earlier loop and you’ll get a single
+image file with every histogram annotated by its own metadata.</p>
+<h1 id="with-metadata-top-right">With Metadata (Top Right)</h1>
+<p>Sure thing—just shift the annotation anchor from the upper‑left
+corner to the upper‑right.<br />
+All that changes is the <strong><code>ax.text</code></strong> call:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> textwrap</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">21</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>n_rows, n_cols <span class="op">=</span> <span class="dv">4</span>, <span class="dv">5</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(n_rows, n_cols,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                         figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">12</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                         sharex<span class="op">=</span><span class="va">True</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>meta_df <span class="op">=</span> meta_df.set_index(<span class="st">&quot;var_name&quot;</span>)      <span class="co"># same as before</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, col <span class="kw">in</span> <span class="bu">zip</span>(axes.ravel(), df.columns):</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    ax.hist(df[col].dropna(), bins<span class="op">=</span>bins, <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="dv">100</span>))</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="dv">0</span>, <span class="dv">100</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    meta <span class="op">=</span> meta_df.loc[col]</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    wrapped_desc <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(textwrap.wrap(meta.var_description, width<span class="op">=</span><span class="dv">38</span>))</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    note <span class="op">=</span> (</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;Alt:  </span><span class="sc">{</span>meta<span class="sc">.</span>alternate_var_name<span class="sc">}</span><span class="ch">\n</span><span class="ss">&quot;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;Mean: </span><span class="sc">{</span>meta<span class="sc">.</span>mean<span class="sc">:.2f}</span><span class="ch">\n</span><span class="ss">&quot;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;Lbl:  </span><span class="sc">{</span>meta<span class="sc">.</span>var_label<span class="sc">}</span><span class="ch">\n</span><span class="ss">&quot;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&quot;</span><span class="sc">{</span>wrapped_desc<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- only the coords &amp; alignment changed -------------</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        <span class="fl">0.98</span>, <span class="fl">0.95</span>,                <span class="co"># x, y in axes‑fraction coords (top‑right)</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        note,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">&quot;right&quot;</span>, va<span class="op">=</span><span class="st">&quot;top&quot;</span>,      <span class="co"># anchor to that corner</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        transform<span class="op">=</span>ax.transAxes,</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        fontsize<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        bbox<span class="op">=</span><span class="bu">dict</span>(boxstyle<span class="op">=</span><span class="st">&quot;round,pad=0.3&quot;</span>, facecolor<span class="op">=</span><span class="st">&quot;white&quot;</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    ax.set_title(col, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&quot;Histograms with In‑Plot Metadata (0–100 scale)&quot;</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(top<span class="op">=</span><span class="fl">0.93</span>)</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;histograms_with_metadata.png&quot;</span>, dpi<span class="op">=</span><span class="dv">300</span>)  <span class="co"># or plt.show()</span></span></code></pre></div>
+<ul>
+<li><code>x = 0.98, y = 0.95</code> puts the anchor a hair in from the
+upper‑right edge.</li>
+<li><code>ha="right", va="top"</code> tells Matplotlib to align the
+text’s <em>right/top</em> corner at that point.</li>
+<li>The semi‑transparent white <code>bbox</code> still keeps the
+annotation legible even over darker bars.</li>
+</ul>
+<p>Run the loop with these tweaks and each histogram’s metadata will sit
+neatly in the empty space at the top‑right of its panel.</p>
     
 </body>
 </html>
