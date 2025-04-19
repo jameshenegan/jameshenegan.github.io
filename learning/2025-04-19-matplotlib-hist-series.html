@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Here’s a tidy, reproducible pattern I use whenever I need “one‑page”
+histograms that all share the same 0 – 100 scale.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># df is your existing 20‑column DataFrame</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------------------------------------------</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Decide on common bin edges so every plot is laid out identically</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">21</span>)          <span class="co"># 20 equal‑width bins, 0–100 inclusive</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Create a grid of sub‑plots</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>n_cols <span class="op">=</span> <span class="dv">5</span>                              <span class="co"># 4 × 5 works nicely for 20 plots</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n_rows <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(n_rows, n_cols,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                         figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">12</span>),      <span class="co"># tune to taste / page size</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                         sharex<span class="op">=</span><span class="va">True</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Draw each histogram</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax, col <span class="kw">in</span> <span class="bu">zip</span>(axes.ravel(), df.columns):</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    ax.hist(df[col].dropna(), bins<span class="op">=</span>bins, <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="dv">100</span>))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    ax.set_title(col, fontsize<span class="op">=</span><span class="dv">9</span>)        <span class="co"># column name as the subplot title</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="dv">0</span>, <span class="dv">100</span>)                  <span class="co"># enforce identical x‑range</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    ax.grid(<span class="va">True</span>, ls<span class="op">=</span><span class="st">&quot;:&quot;</span>, lw<span class="op">=</span><span class="fl">0.5</span>)        <span class="co"># optional but helps readability</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Cosmetic touches</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&quot;Histograms (common 0–100 scale)&quot;</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(top<span class="op">=</span><span class="fl">0.93</span>)            <span class="co"># keep the main title visible</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Output</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;all_histograms.png&quot;</span>, dpi<span class="op">=</span><span class="dv">300</span>)  <span class="co"># or plt.show() in a notebook</span></span></code></pre></div>
+<h3 id="why-this-works-well">Why this works well</h3>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Common <code>bins</code> and
+<code>range</code></strong></td>
+<td>Guarantees every histogram uses identical bin edges and limits, so
+visual comparisons are meaningful.</td>
+</tr>
+<tr>
+<td><strong><code>sharex=True, sharey=True</code></strong></td>
+<td>All axes inherit the same scale; it also removes duplicate
+tick‑labels, making the figure cleaner.</td>
+</tr>
+<tr>
+<td><strong>Grid shape</strong></td>
+<td>With 20 variables, 4 × 5 keeps each subplot roughly square and easy
+to read. Adjust <code>figsize</code> if you need larger text or higher
+resolution.</td>
+</tr>
+<tr>
+<td><strong>Looping over <code>axes.ravel()</code></strong></td>
+<td>Keeps the code short and ensures you don’t miss any axes when you
+tweak limits or styling later.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="alternative-shortcuts">Alternative shortcuts</h4>
+<ul>
+<li><p><strong><code>df.hist(...)</code> helper</strong> – Pandas’
+built‑in <code>DataFrame.hist</code> wraps the same logic into one
+line:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> df.hist(bins<span class="op">=</span>bins, <span class="bu">range</span><span class="op">=</span>(<span class="dv">0</span>, <span class="dv">100</span>),</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>               layout<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">5</span>), figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">12</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>               sharex<span class="op">=</span><span class="va">True</span>, sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> axes.flatten():</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="dv">0</span>, <span class="dv">100</span>)</span></code></pre></div></li>
+<li><p><strong>Seaborn <code>displot</code></strong> – Fine if you
+prefer seaborn’s aesthetics, but you’ll still need to loop through
+facets to apply <code>set(xlim=(0,100))</code>.</p></li>
+</ul>
+<p>Either pattern gives you a single PNG (or PDF/SVG) containing all 20
+histograms, ready to drop into a report or slide deck.</p>
+    
+</body>
+</html>
