@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="section">1</h1>
+<p>Got it—here’s plain, un‑fancy <strong>matplotlib</strong> code that
+throws every variable into its own <em>vertical</em> bar‑chart subplot
+so the whole cluster sits in one figure.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_cluster_vertical(cluster_data, cols<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">    cluster_data : list of dicts as in your example</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    cols         : how many sub‑plots per row (adjust to taste)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    n_vars <span class="op">=</span> <span class="bu">len</span>(cluster_data)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> math.ceil(n_vars <span class="op">/</span> cols)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    fig, axes <span class="op">=</span> plt.subplots(rows, cols,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                             figsize<span class="op">=</span>(<span class="dv">6</span> <span class="op">*</span> cols, <span class="fl">3.5</span> <span class="op">*</span> rows),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                             squeeze<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Flatten axes for easy iteration</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    axes <span class="op">=</span> axes.flatten()</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ax, v <span class="kw">in</span> <span class="bu">zip</span>(axes, cluster_data):</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        ax.bar(v[<span class="st">&#39;buckets&#39;</span>], v[<span class="st">&#39;counts&#39;</span>])</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        ax.set_title(v[<span class="st">&#39;var_name&#39;</span>].replace(<span class="st">&#39;_&#39;</span>, <span class="st">&#39; &#39;</span>).title())</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">&#39;Bucket&#39;</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tilt x‑labels in case bucket names get long</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> lbl <span class="kw">in</span> ax.get_xticklabels():</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            lbl.set_rotation(<span class="dv">45</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            lbl.set_ha(<span class="st">&#39;right&#39;</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Optional grid</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        ax.grid(axis<span class="op">=</span><span class="st">&#39;y&#39;</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, alpha<span class="op">=</span><span class="fl">.3</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Hide any leftover empty axes (if n_vars % cols != 0)</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ax <span class="kw">in</span> axes[n_vars:]:</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        ax.axis(<span class="st">&#39;off&#39;</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fig  <span class="co"># so you can tweak/save if you want</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Example call ─────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># fig = plot_cluster_vertical(cluster_data, cols=2)</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># fig.show()</span></span></code></pre></div>
+<ul>
+<li>Set <code>cols=1</code> if you want them stacked in a single column;
+bump it up to fit a grid.</li>
+<li>Buckets get their own colors automatically from Matplotlib’s default
+cycle—change if you care.</li>
+</ul>
+<p>Copy‑paste, feed your <code>cluster_data</code>, call
+<code>plot_cluster_vertical()</code>, done.</p>
+<h1 id="section-1">2</h1>
+<p>Here are some quick‑and‑dirty horizontal bar charts—one per
+variable—to show the counts for a single cluster.</p>
+<h3 id="why-this-approach-works">Why this approach works</h3>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Why the horizontal bar chart helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Long bucket labels</strong> (real labels might be long
+phrases)</td>
+<td>Placing the labels on the <em>y</em>-axis keeps them readable;
+horizontal space is usually plentiful.</td>
+</tr>
+<tr>
+<td><strong>Different numbers of buckets per variable</strong></td>
+<td>Giving each variable its own figure avoids awkward alignment
+problems.</td>
+</tr>
+<tr>
+<td><strong>Large value range</strong></td>
+<td>Each axis is scaled independently, so tiny or huge buckets still
+show up cleanly.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-bits-of-the-example-code-see-the-cell-above">Key bits of the
+example code (see the cell above)</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> v <span class="kw">in</span> cluster_data:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="bu">max</span>(<span class="dv">2</span>, <span class="bu">len</span>(v[<span class="st">&#39;buckets&#39;</span>])<span class="op">*</span><span class="fl">0.6</span>)))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    plt.barh(v[<span class="st">&#39;buckets&#39;</span>], v[<span class="st">&#39;counts&#39;</span>])</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">&#39;Count&#39;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    plt.title(v[<span class="st">&#39;var_name&#39;</span>].replace(<span class="st">&#39;_&#39;</span>, <span class="st">&#39; &#39;</span>).title())</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code></pre></div>
+<ul>
+<li><strong>One chart per variable</strong> – satisfies the “no
+sub‑plots” guideline and keeps things tidy.</li>
+<li><strong>Dynamic figure height</strong> –
+<code>max(2, len(buckets)*0.6)</code> gives tall enough canvases for
+many labels.</li>
+<li><strong><code>barh</code></strong> – horizontal bars for
+readability.</li>
+<li><strong><code>tight_layout()</code></strong> – squeezes out excess
+padding so labels aren’t clipped.</li>
+</ul>
+<hr />
+<h2 id="taking-it-further">Taking it further</h2>
+<ol type="1">
+<li><p><strong>Wrap it in a function</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_cluster(cluster_data, cluster_name<span class="op">=</span><span class="st">&quot;Cluster 1&quot;</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> v <span class="kw">in</span> cluster_data:</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        ...</span></code></pre></div></li>
+<li><p><strong>Multiple clusters</strong><br />
+<em>Option A – stacked bars</em><br />
+Create one figure per variable and stack bars (or side‑by‑side offsets)
+for each cluster so you can compare distributions directly.</p>
+<p><em>Option B – small‑multiples grid</em><br />
+Generate the same figures for each cluster and assemble them into a
+dashboard (e.g., with Streamlit or a Jupyter notebook) so you can flip
+between clusters quickly.</p></li>
+<li><p><strong>Long labels &amp; tool‑tips</strong><br />
+If labels get unwieldy or you’d like interactive tool‑tips, consider
+Plotly Express—just swap <code>px.bar()</code> (still horizontal) and
+you’ll get hover info for free.</p></li>
+<li><p><strong>Sorting buckets</strong><br />
+Sometimes it’s clearer to sort each bucket list by count descending:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>counts, labels <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span><span class="bu">sorted</span>(<span class="bu">zip</span>(v[<span class="st">&#39;counts&#39;</span>], v[<span class="st">&#39;buckets&#39;</span>]), reverse<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.barh(labels, counts)</span></code></pre></div></li>
+<li><p><strong>Re‑usable style</strong><br />
+Define a custom matplotlib <code>rcParams</code> or a context manager so
+all cluster plots adopt the same font, grid style, etc., and you don’t
+have to repeat boilerplate.</p></li>
+</ol>
+<p>Feel free to tinker with the example or let me know when you’re ready
+to scale this up to multiple clusters or try a different layout!</p>
+<h1 id="section-2">3</h1>
+<h3 id="why-i-mentioned-no-subplots">Why I mentioned “no sub‑plots”</h3>
+<p>That phrase comes from the rules my environment follows when I run
+<strong>visible</strong> Python code for you: each call is expected to
+return <strong>one figure with one set of axes</strong>. Multiple
+sub‑plots (i.e., a grid of axes in the same figure) sometimes fail to
+render correctly for the user, so the safest guideline is “one chart per
+call.” Locally on your own machine you can use sub‑plots exactly as
+usual—this limit only affects what I can show <em>inline</em> here.</p>
+<hr />
+<h2 id="putting-everything-into-one-figure-anyway">Putting everything
+into one figure anyway</h2>
+<p>When you want a <strong>single view</strong> of all variables for one
+cluster, two common approaches avoid sub‑plots:</p>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 31%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it looks like</th>
+<th>Pros / Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stacked bar chart</strong> (demo above)</td>
+<td>One bar per variable, bucket segments stacked on top</td>
+<td>• Compact <br> • Makes the <em>distribution</em> within each
+variable clear <br> • Harder to compare a single bucket across
+variables</td>
+</tr>
+<tr>
+<td><strong>Grouped (side‑by‑side) bars</strong></td>
+<td>One “cluster” of bars per variable, one bar per bucket inside each
+cluster</td>
+<td>• Easy bucket‑to‑bucket comparisons <br> • Gets wide fast when you
+have many buckets</td>
+</tr>
+</tbody>
+</table>
+<p>The example cell I just ran shows the stacked‑bar version. It:</p>
+<ul>
+<li>Unifies all six variables in <strong>one axis</strong> (so the “no
+sub‑plots” rule is obeyed).</li>
+<li>Builds a <strong>consistent bucket order</strong>
+(<code>A → E</code>) so the legend colors match across variables.</li>
+<li>Uses matplotlib’s default color cycle—compliant with the “don’t set
+explicit colors” rule.</li>
+<li>Automatically handles buckets that don’t exist for a variable (they
+simply stack to 0).</li>
+</ul>
+<p>If you’d rather see <strong>grouped bars</strong> (one bar <em>per
+bucket</em> within each variable) let me know and I can drop in that
+snippet instead—it follows the same one‑axis principle.</p>
+<hr />
+<h3 id="adapting-for-multiple-clusters-later">Adapting for multiple
+clusters later</h3>
+<ul>
+<li><strong>Faceting dashboard</strong> – run this same function for
+each cluster and display the resulting figures in a grid or a
+lightweight dashboard (e.g., Streamlit), avoiding sub‑plots inside each
+individual figure.</li>
+<li><strong>Interactive toggle</strong> – with Plotly you can add a
+dropdown to switch between cluster data in a single interactive figure
+(but that would skip the strict matplotlib‑only rule here).</li>
+</ul>
+<p>Feel free to tell me which flavor you like or if you’d like tweaks
+(sorting buckets, adding data labels, etc.)—happy to adjust!</p>
+    
+</body>
+</html>
