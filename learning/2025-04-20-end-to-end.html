@@ -1158,6 +1158,162 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="
 <code>seg_results/</code>.</p>
 <p>Let me know if you’d like any part (e.g., Spark adaptation,
 auto‑encoder example, richer KPI lift charts) fleshed out further!</p>
+<h1 id="section-5">5</h1>
+<h3 id="can-zip-codes-be-used-for-clustering">Can ZIP codes be used for
+clustering?</h3>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 35%" />
+<col style="width: 24%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Option</th>
+<th>How you’d engineer it</th>
+<th>When it helps</th>
+<th>Watch‑outs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Raw 5‑digit ZIP as a categorical</strong></td>
+<td>One‑hot (≈ 42 k columns) or target / frequency encode</td>
+<td>Almost never—the code itself has no ordinal meaning and explodes
+dimensionality</td>
+<td>Curse of dimensionality; distance metrics treat two adjacent ZIPs as
+“maximally different”</td>
+</tr>
+<tr>
+<td><strong>Lat / lon centroid</strong></td>
+<td>Map each ZIP to its latitude &amp; longitude, standardize, feed as
+two numeric features</td>
+<td>When geographic proximity is the signal you care about (e.g.,
+service distance, weather)</td>
+<td><em>K‑means</em>’ Euclidean distance on lat/lon is only approximate;
+consider Haversine or convert to UTM</td>
+</tr>
+<tr>
+<td><strong>Derived geodemographics</strong></td>
+<td>Join external tables: rural/urban flag, county poverty rate, median
+HH income, population density, Nielsen PRIZM cluster, etc.</td>
+<td>When you suspect socioeconomic context drives behavior</td>
+<td>Adds real signal without exploding feature space</td>
+</tr>
+<tr>
+<td><strong>Spatial embeddings / distance matrices</strong></td>
+<td>Pre‑compute adjacency graph or distance‑to‑nearest‑N ZIPs and use
+graph‑based clustering (HDBSCAN, Leiden)</td>
+<td>When true “neighborhoods” matter more than city/state lines</td>
+<td>Heavier engineering; harder to explain to non‑technical
+stakeholders</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What I’d do in your project</strong></p>
+<ol type="1">
+<li><strong>Add lat &amp; lon</strong> for every record (two numeric
+columns).</li>
+<li>Optional: pull in <strong>one or two contextual scores</strong>
+(median income, rural/urban).</li>
+<li>Skip the raw ZIP code column during clustering; keep it only for
+post‑hoc descriptions like “Cluster 3 skews toward Denver suburbs.”</li>
+</ol>
+<hr />
+<h3 id="what-about-an-occupation-variable-with-40-categories">What about
+an occupation variable with &gt; 40 categories?</h3>
+<p>Forty‑odd categories is manageable, but think through these
+angles:</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 31%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Pros</th>
+<th>Cons / mitigations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>One‑hot encode all 40</strong></td>
+<td>Simple, transparent; 40 extra columns is tiny vs. 150 base
+features</td>
+<td>Treats occupations as independent; can dilute distances if many
+low‑freq jobs → consider frequency‑based pruning (“Other” bucket for
+categories &lt; 1 % of sample).</td>
+</tr>
+<tr>
+<td><strong>Group into major SOC codes</strong> (e.g., 10‑15
+sectors)</td>
+<td>Easier to interpret (“Healthcare”, “Construction”)</td>
+<td>You lose granularity; do this only if stakeholders want higher‑level
+personas.</td>
+</tr>
+<tr>
+<td><strong>Ordinal encode by median income or job
+prestige</strong></td>
+<td>Injects business meaning; keeps it 1D</td>
+<td>Assumes monotonic effect that may not exist; fine if income is the
+real driver and you already have salary bands.</td>
+</tr>
+<tr>
+<td><strong>Entity embeddings</strong> (learned in a shallow neural net
+before clustering)</td>
+<td>Captures similarity between occupations (e.g., “nurse” closer to
+“physician assistant” than to “truck driver”)</td>
+<td>Extra engineering; you need TensorFlow/PyTorch loop and to freeze
+the embedding before clustering.</td>
+</tr>
+<tr>
+<td><strong>Weight‑of‑Evidence / target encoding</strong> (if you have a
+KPI)</td>
+<td>Squeezes information into a single numeric with predictive
+power</td>
+<td>Risk of leakage unless you use out‑of‑fold encodings; ties the
+clustering to that KPI.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Practical pick</strong><br />
+<em>With 1.5 M rows,</em> one‑hot encoding 40 categories usually works
+fine and keeps the pipeline simple. Drop the few occupations with
+&lt; 1 % frequency into an “Other” bucket to avoid tiny dummy columns.
+If interpretability is paramount, map the 40 codes to 10–15 SOC
+super‑groups <strong>and</strong> keep the original fine‑grained codes
+for post‑hoc profiling.</p>
+<hr />
+<h3
+id="recommended-minimal-additions-to-the-pipeline-you-already-have">Recommended
+minimal additions to the pipeline you already have</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># After loading df …</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- Zip‑code engineering -------------------------------------------</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>zip_meta <span class="op">=</span> pd.read_csv(<span class="st">&quot;zip_lat_lon_income.csv&quot;</span>)  <span class="co"># ZIP, lat, lon, median_income</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.merge(zip_meta, on<span class="op">=</span><span class="st">&quot;zip&quot;</span>, how<span class="op">=</span><span class="st">&quot;left&quot;</span>)     <span class="co"># adds &#39;lat&#39;, &#39;lon&#39;, &#39;zip_income&#39;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>num_cols.extend([<span class="st">&#39;lat&#39;</span>, <span class="st">&#39;lon&#39;</span>, <span class="st">&#39;zip_income&#39;</span>])     <span class="co"># use in clustering</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ---- Occupation one‑hots ---------------------------------------------</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>occ_freq <span class="op">=</span> df[<span class="st">&#39;occupation&#39;</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>rare <span class="op">=</span> occ_freq[occ_freq <span class="op">&lt;</span> <span class="fl">0.01</span>].index</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;occupation_mod&#39;</span>] <span class="op">=</span> df[<span class="st">&#39;occupation&#39;</span>].where(<span class="op">~</span>df[<span class="st">&#39;occupation&#39;</span>].isin(rare), <span class="st">&#39;Other&#39;</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>cat_cols.append(<span class="st">&#39;occupation_mod&#39;</span>)                 <span class="co"># treated by OneHotEncoder</span></span></code></pre></div>
+<p>This keeps the clustering engine lightweight, injects meaningful
+geography and occupation signal, and still allows you to say in the
+final deck:</p>
+<blockquote>
+<p>“Cluster 4: younger professionals, Denver‑metro ZIPs, tech &amp;
+healthcare occupations, median income $78 k.”</p>
+</blockquote>
+<p>Let me know if you’d like code for a geospatial distance kernel or
+embedding‑based occupation encoding!</p>
     
 </body>
 </html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="section">1</h1>
+<p>Below is a practical, two‑track playbook I’ve found works well when
+you need <strong>(a)</strong> robust clusters and <strong>(b)</strong> a
+crisp executive story. Feel free to tweak names or thresholds to match
+your own corporate norms.</p>
+<hr />
+<h2 id="get-your-master-feature-list-into-shape-first">1  Get your
+“master” feature list into shape first</h2>
+<ol type="1">
+<li><strong>Consolidate hierarchy</strong> – If you have person‑,
+household‑, and place‑level fields in the same row, decide whether to:
+<ul>
+<li>keep them all,</li>
+<li>aggregate person → household (e.g., count of children, avg. income),
+or</li>
+<li>explode households into multiple person rows.<br />
+Whatever you do, do it <strong>before</strong> feature selection so
+you’re comparing like with like.</li>
+</ul></li>
+<li><strong>Engineering &amp; hygiene</strong>
+<ul>
+<li>Impute or flag missing values (don’t let K‑means treat <em>NA</em>
+as “big numbers”).</li>
+<li>Standard‑scale numeric columns; one‑hot or target‑encode
+categoricals.</li>
+<li>Label propensity scores clearly so you remember they’re modeled, not
+observed.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="selecting-features-for-the-clustering-step">2  Selecting
+features <strong>for the clustering step</strong></h2>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 20%" />
+<col style="width: 39%" />
+<col style="width: 14%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>Why</th>
+<th>Quick Python idea</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2.1 Variance / dominance filter</strong><br>Drop near‑zero
+variance or 99 % the same value.</td>
+<td>They add noise and slow K‑means.</td>
+<td><code>VarianceThreshold(threshold=0.01)</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>2.2 Redundancy filter</strong><br>Remove one of any pair
+with</td>
+<td>ρ</td>
+<td> &gt; 0.90 (numeric) or Cramér’s V &gt; 0.80 (categorical).</td>
+<td>K‑means assumes spherical clusters; collinearity skews
+distance.</td>
+<td><code>df.corr().abs().stack()</code></td>
+</tr>
+<tr>
+<td><strong>2.3 Domain sanity pass</strong></td>
+<td>Keep “must‑haves” (e.g., life‑stage, product holdings).</td>
+<td>Manual list</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>2.4 Optional: unsupervised embedded ranking</strong></td>
+<td>Lets the data vote on what matters.</td>
+<td><em>Pick one:</em><br>• <strong>LaplacianScore</strong> or
+<strong>SPEC</strong> from <code>sklearn‑contrib‑fs</code><br>•
+<strong>Autoencoder</strong>: push input through a tight bottleneck,
+keep weights with largest magnitude</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>2.5 Re‑run K‑means iteratively</strong></td>
+<td>Check silhouette / CH score; stop when metrics plateau and clusters
+remain interpretable.</td>
+<td><code>silhouette_score(X, labels)</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rules of thumb</strong></p>
+<ul>
+<li>End up with ± 30–40 variables max; lower if your n is small.</li>
+<li>Keep ratio <strong>n / p ≥ 10</strong>—K‑means hates the curse of
+dimensionality.</li>
+<li>If propensities dominate Euclidean distances, consider
+<strong>whitening</strong> or <strong>mixing distance metrics</strong>
+(e.g., Gower, k‑prototypes).</li>
+</ul>
+<hr />
+<h2 id="selecting-features-to-describe-market-the-clusters">3  Selecting
+features <strong>to describe / market the clusters</strong></h2>
+<blockquote>
+<p>The explanatory set can (and often should) be different from the
+clustering set.</p>
+</blockquote>
+<ol type="1">
+<li><strong>Profile every candidate feature vs. cluster ID</strong>
+<ul>
+<li>Numeric → one‑way ANOVA or Kruskal‑Wallis; capture <em>p</em> and
+<strong>η²</strong> (effect size).</li>
+<li>Binary / categorical → χ² plus <strong>lift</strong> =
+P(feature | cluster) / P(feature | overall).</li>
+</ul></li>
+<li><strong>Rank by effect size, not just significance</strong> (you’ll
+have huge <em>n</em>).</li>
+<li><strong>Tree‑based surrogate model</strong>
+<ul>
+<li>Train a shallow Gradient‑Boosted Tree or RandomForest to
+<em>predict</em> the cluster label.</li>
+<li>Pull top 10–15 <code>feature_importances_</code>; use SHAP for
+individual contribution plots if you need more nuance.</li>
+</ul></li>
+<li><strong>Choose 5–7 “headline” attributes per cluster</strong>
+<ul>
+<li>Mix of <strong>demographic</strong>, <strong>behavioral</strong>,
+and <strong>psychographic/propensity</strong> makes the narrative
+richer.</li>
+<li>Avoid features that are merely mathematical transforms of ones you
+already called out.</li>
+</ul></li>
+<li><strong>Write the story</strong>
+<ul>
+<li>Give each segment a memorable name + key stat bullets (“27 % of
+base, average spend $420/mo, 3× more likely to use mobile app”).</li>
+<li>One simple visual per cluster: side‑by‑side bar, radar, or persona
+card. High‑level managers rarely want a 15‑column table.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="example-code-outline">4  Example code outline</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># -- 1. PREP ------------------------------------------------</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> VarianceThreshold</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd, numpy <span class="im">as</span> np</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>num_cols <span class="op">=</span> [...]              <span class="co"># numeric features</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>cat_cols <span class="op">=</span> [...]              <span class="co"># categorical features</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pre <span class="op">=</span> ColumnTransformer([</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;num&#39;</span>, StandardScaler(), num_cols),</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;cat&#39;</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">&#39;ignore&#39;</span>), cat_cols)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># -- 2. FEATURE FILTERS ------------------------------------</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>flt <span class="op">=</span> VarianceThreshold(threshold<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> Pipeline([</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;prep&#39;</span>, pre),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;var&#39;</span>, flt),</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;kmeans&#39;</span>, KMeans(n_clusters<span class="op">=</span>K, random_state<span class="op">=</span><span class="dv">42</span>))</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>pipe.fit(df)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> pipe[<span class="st">&#39;kmeans&#39;</span>].labels_</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Silhouette:&quot;</span>, silhouette_score(pipe[<span class="st">&#39;var&#39;</span>].transform(pipe[<span class="st">&#39;prep&#39;</span>].fit_transform(df)), labels))</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># -- 3. EXPLANATORY SCORING -------------------------------</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> labels</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>profile <span class="op">=</span> (df.groupby(<span class="st">&#39;cluster&#39;</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>             .agg(mean_age<span class="op">=</span>(<span class="st">&#39;age&#39;</span>,<span class="st">&#39;mean&#39;</span>),</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                  lift_mobile<span class="op">=</span>(<span class="st">&#39;mobile_flag&#39;</span>,<span class="st">&#39;mean&#39;</span>),</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>                  ...)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>             .reset_index())</span></code></pre></div>
+<p><em>(Swap in your own fancy selectors, distance metrics, or cluster
+validity indices as needed.)</em></p>
+<hr />
+<h2 id="common-pitfalls-to-avoid">5  Common pitfalls to avoid</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr>
+<th>Pitfall</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Propensity scores drown out real behavior</strong></td>
+<td>Scale everything; consider weighting propensities &lt; 1.</td>
+</tr>
+<tr>
+<td><strong>Clusters differ only on “place” variables</strong></td>
+<td>Run clustering once with and once without place fields; see which
+tells the better story.</td>
+</tr>
+<tr>
+<td><strong>You pick features solely by p‑value</strong></td>
+<td>Rank by both <em>p</em> <strong>and</strong> effect size (η², lift,
+SHAP value).</td>
+</tr>
+<tr>
+<td><strong>Management gets lost in jargon</strong></td>
+<td>Lead with personas, volume, and business opportunity; tuck stats
+into an appendix.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="tldr">TL;DR</h3>
+<ul>
+<li><strong>For clustering</strong> – trim redundancy, keep domain
+must‑haves, optionally use an unsupervised selector or dimensionality
+reducer, and iterate until silhouette / interpretability
+stabilizes.</li>
+<li><strong>For storytelling</strong> – after clusters settle, run
+significance + effect‑size tests or a surrogate model to surface the 5–7
+variables that truly differentiate each segment, then craft
+plain‑language personas.</li>
+</ul>
+<p>Good luck with the segmentation—once you have those concise,
+high‑impact descriptors, execs will latch on to the segments
+instantly.</p>
+<h1 id="section-1">2</h1>
+<p>In that rule of thumb</p>
+<ul>
+<li><strong>n</strong> = the number of rows in your modeling matrix –
+one row per entity you’re clustering (people, households, places,
+etc.).</li>
+<li><strong>p</strong> = the number of columns actually fed into the
+K‑means algorithm – i.e., the dimensionality of the space in which the
+centroids are found (after one‑hot‑encoding, scaling, etc.).</li>
+</ul>
+<p>So <strong>n / p</strong> is simply “how many observations do I have
+for every dimension I let the algorithm consider?”</p>
+<hr />
+<h3 id="why-insist-on-n-p-10">Why insist on n / p ≥ 10?</h3>
+<ol type="1">
+<li><p><strong>Distance concentration</strong><br />
+In very high‑dimensional spaces, Euclidean distances between points tend
+to converge toward the same value. When that happens, the notion of
+“nearest centroid” becomes fuzzy and K‑means struggles to find
+meaningful separation.</p></li>
+<li><p><strong>Stability of centroids</strong><br />
+With too few observations per feature, small perturbations or random
+restarts can move centroids a lot, giving you fragile clusters.</p></li>
+<li><p><strong>Overfitting noise</strong><br />
+Each extra dimension gives K‑means another axis on which to split the
+data—even when that axis is mostly random variation. A decent surplus of
+rows anchors the centroids in genuine structure instead of
+noise.</p></li>
+</ol>
+<hr />
+<h3 id="what-if-your-ratio-is-lower">What if your ratio is lower?</h3>
+<ul>
+<li><strong>Trim features</strong>: drop near‑zero‑variance and highly
+collinear columns first.</li>
+<li><strong>Compress</strong>: apply PCA or an autoencoder to project
+the data down to, say, the top 20–50 principal components that still
+capture most variance, then run K‑means.</li>
+<li><strong>Try a different algorithm</strong>: density‑based methods
+(DBSCAN, HDBSCAN) or model‑based clustering (Gaussian Mixture Models)
+can perform better than vanilla K‑means in very wide data.</li>
+</ul>
+<p>As a quick mental check: if you have 5 000 customers
+(<strong>n</strong>) and 400 encoded variables (<strong>p</strong>),
+n / p = 12.5—comfortably above 10. But if you kept all 1 200 one‑hot
+dummy columns from a big categorical, n / p drops to 4.2; you’ll usually
+get mushy, hard‑to‑explain clusters unless you reduce dimensionality
+first.</p>
+<h1 id="section-2">3</h1>
+<h3 id="where-pca-fits-in-a-clustering-workflow">Where PCA fits in a
+clustering workflow</h3>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 57%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Stage</th>
+<th>How PCA helps</th>
+<th>Practical tips</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1  Pre‑processing / dimensionality reduction</strong></td>
+<td>Projects the data onto a smaller set of <strong>orthogonal</strong>
+axes that capture most of the variance. <br>• Mitigates the <em>curse of
+dimensionality</em>—distances are more meaningful in a lower‑D
+space.<br>• Deals with multicollinearity: the PCs are uncorrelated, so
+redundant features no longer distort Euclidean distance.</td>
+<td><em>Standard‑scale before PCA (mean 0, σ 1).</em><br>Pick the
+<strong>fewest</strong> PCs that explain a target variance (often
+80‑95 %). Scree or cumulative‑variance plots make this decision
+transparent.</td>
+</tr>
+<tr>
+<td><strong>2  Running the clustering algorithm</strong></td>
+<td>Feed K‑means (or GMM, DBSCAN, …) the PCA scores instead of the raw
+variables. Fewer dimensions ⇒ faster runtime and more stable
+centroids.</td>
+<td>Don’t include <em>too many</em> PCs “just in case.” A handy rule is
+<em>n / p ≥ 10</em> <strong>after</strong> PCA.</td>
+</tr>
+<tr>
+<td><strong>3  Validating / tuning <code>k</code></strong></td>
+<td>Internal metrics (silhouette, Calinski‑Harabasz) computed in the PC
+space are less noisy, so your elbow plot is clearer.</td>
+<td>Tune <code>k</code> <strong>after</strong> settling on the PCA
+dimensionality; otherwise you’re optimising two things at once.</td>
+</tr>
+<tr>
+<td><strong>4  Explaining the clusters</strong></td>
+<td>PC <strong>loadings</strong> tell you which original variables drive
+separation along each axis; you can map those back into
+business‑friendly language.<br><br>Plotting the first two PCs with
+points coloured by cluster gives a simple 2‑D picture executives grasp
+quickly.</td>
+<td>Show a biplot or scatter + centroids; highlight which PCs matter for
+each segment. If interpretability of loadings is crucial, stick to
+linear PCA (vs. kernel PCA).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="typical-workflow-in-code-sketched">Typical workflow in code
+(sketched)</h4>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Prep</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[model_cols].copy()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> StandardScaler().fit_transform(X)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. PCA</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="fl">0.90</span>,   <span class="co"># keep 90 % of variance</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>          random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>X_pca <span class="op">=</span> pca.fit_transform(X_scaled)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Components retained:&quot;</span>, pca.n_components_)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. K‑means on PC scores</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">6</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>km <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> km.fit_predict(X_pca)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Silhouette:&quot;</span>, silhouette_score(X_pca, labels))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Inspect loadings</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>loadings <span class="op">=</span> (pd.DataFrame(pca.components_.T,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                         index<span class="op">=</span>model_cols,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                         columns<span class="op">=</span>[<span class="ss">f&quot;PC</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(pca.n_components_)]))</span></code></pre></div>
+<hr />
+<h3 id="when-pca-is-and-isnt-a-good-idea">When PCA is (and isn’t) a good
+idea</h3>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr>
+<th>Good fit</th>
+<th>Think twice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>• Many numeric variables, lots of overlap/correlation.<br>• You need
+speed and stability.</td>
+<td>• Categorical‑heavy data (PCA handles only numeric; you’d need FAMD,
+MCA, or k‑prototypes instead).<br>• Segments must be explained
+<strong>directly</strong> with original variables and mathy loadings
+won’t fly.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="key-takeaways">Key take‑aways</h3>
+<ul>
+<li><strong>PCA = feature <em>extraction</em></strong>, not feature
+<em>selection</em>; you trade some interpretability for cleaner
+geometry.</li>
+<li>Fit the PCA <strong>once on the full training set</strong>, then
+transform future data with the same model before scoring clusters.</li>
+<li>Use loadings, biplots, and cluster‑wise PC means to translate the
+abstract PCs back into an executive story.</li>
+</ul>
+    
+</body>
+</html>
