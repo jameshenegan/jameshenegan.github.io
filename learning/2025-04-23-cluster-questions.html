@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="question-1">Question 1</h1>
+<p>i’m working on a customer segmentation project at work. we are doing
+a cluster analysis using k means. i have a dataset with about 1.5
+million rows and abotu 20 variables. for the purposes of communication,
+we have been told to try to keep our number of clusters down to
+something like 8 or less. some of the variables are continuous and some
+are binary. i have been scaling things down so that everything is on
+[0,1]. i’ve noticed that even when i do a small amount of clusters (say
+5), some clusters have the property that one of the binary variables is
+‘constant’ for nearly every member of the cluster. for example, i have a
+binary variable called ‘married’ where 0 indicates that someone is not
+married and 1 indicates that they are married. and in my experimentation
+there tends to be a cluster where everyone is not married and then there
+tends to be a cluster where everyone is married. i’m curious why this is
+happening. because it seems like the binary variable is taking precedent
+over the other variables in the dataset. doe that make sense?</p>
+<h2 id="response">Response</h2>
+<p>Yeah—that “all-married” vs “all-not-married” split is exactly the
+sort of thing vanilla k-means likes to do when it sees a binary column
+that still has a lot of variance left in it after scaling.</p>
+<h3 id="why-k-means-gravitates-toward-pure-0-pure-1-clusters">Why
+k-means gravitates toward pure-0 / pure-1 clusters</h3>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 92%" />
+</colgroup>
+<thead>
+<tr>
+<th>ingredient</th>
+<th>what’s going on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Distance metric</strong></td>
+<td>k-means tries to minimize <strong>squared Euclidean
+distance</strong>. For one variable that lives only at 0 or 1, the
+distance between the two possible values is 1. If you mix 0s and 1s in
+the same cluster, every “odd man out” observation contributes a squared
+error of ( (1-x)^2 ) or ( (0-x)^2 ) which is ≈ 0.25 whenever the
+centroid is around 0.5. Splitting them so one centroid sits at 0 and the
+other at 1 instantly drives that error to 0 for the binary
+dimension.</td>
+</tr>
+<tr>
+<td><strong>Relative variance after min-max scaling</strong></td>
+<td>For a binary variable with (p), the variance is (p(1-p)=0.25). After
+min-max scaling every continuous feature to ([0,1]) you often end up
+<strong>compressing</strong> the real spread of the continuous columns
+(because most points never sit right at the min or max). Their sample
+variances might fall to 0.02, 0.03, …—an order of magnitude smaller than
+the binary column. K-means therefore gets a bigger objective-function
+payoff from partitioning on the binary feature than from shaving a few
+hundredths off the continuous ones.</td>
+</tr>
+<tr>
+<td><strong>Centroid interpretability</strong></td>
+<td>With a continuous feature, pulling 8–10 % of the points out of a
+cluster moves the centroid by just a little. With a binary feature,
+moving a modest fraction of rows can flip the centroid from 0.48 to
+0.00—again a bigger drop in SSE.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="things-you-can-try-so-the-binary-field-doesnt-dominate">Things
+you can try so the binary field doesn’t dominate</h3>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 38%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>tweak</th>
+<th>how to do it</th>
+<th>trade-off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Standardize to unit variance instead of
+min-max</strong></td>
+<td><code>StandardScaler()</code> after one-hot/0-1 encoding; or
+manually scale each column by its sample <em>σ</em></td>
+<td>Makes all features contribute equally <em>in expectation</em>; still
+keeps binary influence if it truly explains behaviour</td>
+</tr>
+<tr>
+<td><strong>Give binary columns lower weights</strong></td>
+<td>Multiply the 0/1 column by, say, 0.3 before fitting</td>
+<td>Puts the decision in your hands; pick weight via grid-search on
+silhouette/Davies-Bouldin</td>
+</tr>
+<tr>
+<td><strong>Use k-prototypes or Gower distance</strong></td>
+<td>Packages: <code>kmodes</code> (Python), <code>clustMixType</code>
+(R)</td>
+<td>Designed for mixed numeric + categorical data; avoids forcing
+categories onto a numeric axis</td>
+</tr>
+<tr>
+<td><strong>Do preliminary PCA / factor analysis</strong></td>
+<td>Reduce continuous block to a few orthogonal components, then feed
+<em>components + binary</em> into clustering</td>
+<td>Lets structure in continuous space speak more loudly</td>
+</tr>
+<tr>
+<td><strong>Try model-based clustering</strong></td>
+<td>Gaussian-mixture for continuous part + latent class for
+binaries</td>
+<td>More work, but gives soft clusters and richer diagnostics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="quick-gut-check-you-can-run">Quick gut-check you can run</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_samples, silhouette_score</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.copy()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># try: 1) min-max, 2) z-score, 3) z-score + married*0.3</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># compare silhouette scores or SSE</span></span></code></pre></div>
+<p>If you watch the within-cluster SSE <em>per feature</em>, you should
+see the married column’s share drop sharply once you stop min-maxing it
+at full weight.</p>
+<hr />
+<p><strong>Bottom line:</strong> nothing is “wrong” with your data—the
+algorithm is just taking the cheapest path to reduce error, and a
+high-variance 0/1 column is a big, cheap target. Give that column less
+leverage (or use a method meant for mixed data) and you’ll get clusters
+defined by a more balanced blend of features.</p>
+<h1 id="question-2">Question 2</h1>
+<p>but i’ve also heard that it’s hard to use other algorithms such as
+gower’s distance when you have 1.5 millions rows.</p>
+<h2 id="response-1">Response</h2>
+<p>You’re right — <strong>anything that needs the full pair-wise Gower
+(or any) distance matrix becomes brutal at 1.5 M rows</strong>:</p>
+<ul>
+<li>(^{12}) distances.<br />
+Even stored as <code>float32</code>, that’s &gt; 4 TB of RAM. The
+quadratic time alone is weeks on a single core. citeturn0search0</li>
+</ul>
+<p>Below are the main ways practitioners cope and what you can do
+instead.</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 30%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>How it scales</th>
+<th>Tools / notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 – Sample-then-assign (CLARA-style)</strong></td>
+<td>Build the expensive model on a series of ~10 k-row samples, keep the
+best, then <strong>assign every remaining point to its nearest
+medoid/centroid in a single pass</strong> (linear time).</td>
+<td><code>clara</code> in <em>pyclustering</em> / <em>R</em>’s
+<strong>cluster::clara</strong> lets you plug in Gower or Hamming. Good
+first cut when you need exact Gower on a taste of the data.</td>
+</tr>
+<tr>
+<td><strong>2 – Algorithms that <em>never</em> need the full distance
+matrix</strong></td>
+<td>(O(nk p)) per epoch (same big-O as k-means), can be run mini-batch
+or distributed.</td>
+<td><strong>k-prototypes</strong> blends k-means (numeric) + k-modes
+(categorical) and is implemented in the <code>kmodes</code> Python
+package; users report 100× speed-ups after the Cython rewrite —
+practical into the millions. citeturn1search3 A Map-Reduce version
+has clustered 1–4 M mixed-type records on a small Spark cluster.
+citeturn1search2</td>
+</tr>
+<tr>
+<td><strong>3 – Mini-batch / streaming k-means on a re-weighted feature
+set</strong></td>
+<td>Linear in batch size, constant memory; runs fine on a laptop or
+GPU.</td>
+<td>Scikit-learn’s <code>MiniBatchKMeans</code> finishes 1.5 M × 20 in
+minutes; just down-weight the binary columns (e.g., multiply them by
+0.3) so they don’t dominate. citeturn0search1</td>
+</tr>
+<tr>
+<td><strong>4 – Approximate or blockwise Gower</strong></td>
+<td>Compute distances only between each point and <strong>k small
+reference sets</strong> (anchors, centroids or random projections).
+Total cost (O(nk_p)).</td>
+<td>Works with any distance, including Gower. See discussions on
+“approximate Gower” that fit comfortably in memory by chunking the data.
+citeturn0search2</td>
+</tr>
+<tr>
+<td><strong>5 – Distributed / GPU frameworks</strong></td>
+<td>Near-linear scale-out; you pay mostly for I/O.</td>
+<td>Spark MLlib (CPU) or RAPIDS cuML (GPU) give you k-means-family
+algorithms that ingest Parquet/ORC straight from object storage—great
+when the data already lives in the lake.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="a-pragmatic-recipe-for-1.5-m-mixed-type-rows">A pragmatic recipe
+for 1.5 M mixed-type rows</h3>
+<ol type="1">
+<li><p><strong>Pre-process</strong></p>
+<ul>
+<li>One-hot or leave binaries as 0/1.</li>
+<li>Standardize continuous columns to unit variance (not min–max) so
+they contribute the same expected SSE as the binaries.</li>
+<li>Optionally multiply binary block by a weight (&lt;1).</li>
+</ul></li>
+<li><p><strong>Prototype on a 100 k sample</strong></p>
+<ul>
+<li>Run <strong>k-prototypes</strong> for (k).</li>
+<li>Use total within-cluster dissimilarity or silhouette to choose the
+weight ().</li>
+</ul></li>
+<li><p><strong>Full-data assignment</strong></p>
+<ul>
+<li>Feed the 1.4 M hold-out rows through
+<code>kprototypes.predict()</code> (vectorised; linear time).</li>
+<li>If memory is tight, stream in 100 k chunks.</li>
+</ul></li>
+<li><p><strong>Stress-test</strong></p>
+<ul>
+<li>Compare cluster proportions, centroids and intra-cluster SSE between
+sample vs. full assignment.</li>
+<li>If drift is large, re-sample and iterate; otherwise you’re
+done.</li>
+</ul></li>
+<li><p><strong>Optional refinement</strong></p>
+<ul>
+<li>Run a single epoch of <strong>MiniBatchKMeans</strong> starting from
+those centroids for a numeric fine-tune.</li>
+</ul></li>
+</ol>
+<p>Total wall time on a modern 16-core box is usually well under an
+hour; in Spark or on a single GPU you can cut that by another order of
+magnitude.</p>
+<hr />
+<h3 id="take-aways">Take-aways</h3>
+<ul>
+<li>Full Gower is infeasible at this scale, but <strong>you don’t
+actually need it</strong> to get business-ready segments.</li>
+<li><strong>k-prototypes or weighted mini-batch k-means</strong> give
+you nearly the same interpretability (categorical purity + numeric
+centroids) with k-means-like scalability.</li>
+<li>Sampling-then-assign (CLARA) is a good middle ground if you
+absolutely must use a distance like Gower that handles missingness or
+ordinals “for free.”</li>
+</ul>
+<p>With these tricks you can stay under your “max 8 clusters” mandate
+<em>and</em> keep the binary features from hijacking the
+solution—without melting your RAM.</p>
+<h1 id="question-3">Question 3</h1>
+<p>also, is there any scientific way to approach giving weights to
+columns or is it purely arbitrary or perhaps based on subject matter
+expertise</p>
+<h2 id="response-2">Response</h2>
+<p>There <em>are</em> principled ways to decide how much influence each
+column should get in a k-means–style objective; they range from simple
+heuristics to fully-automatic optimisation schemes. Think of them as
+four families, ordered from “quick sanity-check” to
+“research-level”.</p>
+<hr />
+<h2 id="baseline-heuristics-minutes">1. Baseline heuristics
+(minutes)</h2>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 47%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>Idea</th>
+<th>How it works</th>
+<th>When it helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Z-score every column</strong></td>
+<td>Divide by each variable’s sample σ so that the <em>expected</em>
+squared change from moving a point is 1 in <em>every</em>
+dimension.</td>
+<td>Good default when the only problem is min–max scaling has squashed
+the real spread of continuous variables.</td>
+</tr>
+<tr>
+<td><strong>Down-weight binaries by a fixed factor γ</strong></td>
+<td>Multiply each 0/1 column by γ ∈ (0, 1). Pick γ so that its sample
+variance matches the median variance of the z-scored continuous
+block.</td>
+<td>Fast, transparent, reproducible; fine when you have just a handful
+of binaries (e.g., <em>married</em>).</td>
+</tr>
+<tr>
+<td><strong>Subject-matter scaling</strong></td>
+<td>Let the business tell you “a 10-point change in credit score matters
+about as much as marital status changing from 0→1,” then solve for
+γ.</td>
+<td>Works when you already have a sense of economic value attached to
+each field.</td>
+</tr>
+</tbody>
+</table>
+<p>These are not arbitrary—<em>they tie the weight to either statistical
+dispersion or business value</em>—but they do require you to pick γ
+manually.</p>
+<hr />
+<h2 id="grid-search-weights-with-a-cluster-validity-metric-hours">2.
+Grid-search weights with a <strong>cluster-validity metric</strong>
+(hours)</h2>
+<ol type="1">
+<li>Choose a grid for γ (or separate γ_j for each feature).</li>
+<li>For every γ-vector, run (mini-batch) k-means and record a validity
+score:<br />
+  silhouette, Calinski–Harabasz, Davies–Bouldin, or stability between
+bootstrap samples.</li>
+<li>Select the γ that maximises the score.</li>
+</ol>
+<p>Because each k-means run is (O(nkp)) and you can reuse mini-batch
+updates, this still scales to 1.5 M rows.</p>
+<hr />
+<h2
+id="algorithms-that-learn-the-weights-during-clustering-same-big-o-as-k-means">3.
+Algorithms that <em>learn</em> the weights during clustering (same big-O
+as k-means)</h2>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 58%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>Weight update rule</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>W-k-means (Huang et al.)</strong></td>
+<td>After each assignment step, set (w<em>j
+((x</em>{ij}-_{cj})<sup>2)</sup>{-}), then renormalise so (w_j=1). β ≥ 1
+controls sparsity.</td>
+<td>Implemented in the R package <strong>wskm</strong>; converges almost
+as fast as vanilla k-means. citeturn0search7</td>
+</tr>
+<tr>
+<td><strong>Entropy-Weighted Power k-means (EWP)</strong></td>
+<td>Adds an entropy regulariser that automatically pushes uninformative
+features’ weights toward zero.</td>
+<td>Scales to millions of points; open-source code in PyTorch and Spark.
+citeturn0search4</td>
+</tr>
+<tr>
+<td><strong>Sparse k-means</strong></td>
+<td>Places an L1 penalty on the weight vector, solving “which columns
+should matter at all?”</td>
+<td>Gives true feature <em>selection</em> plus clustering; see Witten
+&amp; Tibshirani framework. citeturn0search11</td>
+</tr>
+</tbody>
+</table>
+<p>These methods keep the computational complexity linear in <em>n</em>
+because weights are updated from <em>cluster totals</em>, not pair-wise
+distances.</p>
+<hr />
+<h2
+id="model-based-soft-approaches-longer-but-most-statistically-grounded">4.
+Model-based “soft” approaches (longer, but most statistically
+grounded)</h2>
+<ul>
+<li><strong>Mixture of Gaussians + latent class for binaries</strong>:
+EM algorithm yields posterior probabilities <em>and</em> relative
+scaling of each block.</li>
+<li><strong>Dirichlet-process mixtures with automatic relevance
+determination (ARD)</strong>: Bayesian view that shrinks
+irrelevant-feature precisions toward zero.</li>
+</ul>
+<p>You’d reach for these when you also need uncertainty estimates or
+when cluster shapes are clearly non-spherical.</p>
+<hr />
+<h3 id="practical-recipe-you-can-run-tomorrow">Practical recipe you can
+run tomorrow</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kmodes.kprototypes <span class="im">import</span> KPrototypes   <span class="co"># fast Cython impl.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> wskm <span class="im">import</span> twkm                        <span class="co"># weighted k-means</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. split numeric / binary</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>num, bin_ <span class="op">=</span> df[num_cols].values, df[bin_cols].values</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. z-score numeric block</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> StandardScaler().fit_transform(num)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. quick γ calibrator: match variances</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> np.median(np.var(num, axis<span class="op">=</span><span class="dv">0</span>)) <span class="op">/</span> np.mean(bin_, axis<span class="op">=</span><span class="dv">0</span>).var()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>bin_ <span class="op">=</span> bin_ <span class="op">*</span> np.sqrt(gamma)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.hstack([num, bin_])</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. weighted clustering</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> twkm.TwKm(n_clusters<span class="op">=</span><span class="dv">5</span>, beta<span class="op">=</span><span class="fl">1.5</span>, max_iter<span class="op">=</span><span class="dv">20</span>).fit(X)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> model.weights_</span></code></pre></div>
+<p><em>Inspect</em> <code>weights</code>: if <em>married</em> is still
+&gt; 2× any other feature, tighten β or drop γ.</p>
+<hr />
+<h2 id="take-aways-1">Take-aways</h2>
+<ol type="1">
+<li><strong>Weights are not guess-work</strong>: you can tie them to
+variance, business value, or optimise them against a formal
+cluster-quality criterion.</li>
+<li><strong>Automatic feature-weighting variants of k-means cost
+essentially the same as k-means</strong>, so they remain feasible at 1.5
+M rows.</li>
+<li>Starting with a quick variance-matching γ and moving to W-k-means or
+EWP usually gives you balanced clusters <em>and</em> clear stories for
+stakeholders about which features truly define each segment.</li>
+</ol>
+    
+</body>
+</html>

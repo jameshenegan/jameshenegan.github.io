@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a practical playbook you can walk through before you file
+your “150-column” request. Everything works with nothing more exotic
+than Python/​pandas/​scikit-learn, so you can prototype on the 500 K-row
+sample and be confident it will scale to 1.5 M rows later.</p>
+<hr />
+<h3 id="start-with-the-easy-wins">1. Start with the easy wins</h3>
+<table>
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 34%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th>Why it helps</th>
+<th>How to do it (Python-ish)</th>
+<th>Typical cut</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Near-zero variance</strong> columns carry almost no
+signal.</td>
+<td><code>VarianceThreshold(threshold=1e-4)</code></td>
+<td>Often 5-10 % of raw columns</td>
+</tr>
+<tr>
+<td><strong>Too-many-missing</strong> columns will just add noise after
+imputation.</td>
+<td><code>df.isna().mean() &gt; 0.4</code> → drop</td>
+<td>Domain-dependent, 20–40 % is common</td>
+</tr>
+<tr>
+<td><strong>Constants disguised as categoricals</strong> (e.g., 99 %
+“N/A”) also go.</td>
+<td><code>df[col].value_counts(normalize=True).iloc[0] &gt; 0.98</code></td>
+<td>1-5 %</td>
+</tr>
+</tbody>
+</table>
+<p>By the time you finish this hygiene pass you may already be close to
+150 variables.</p>
+<hr />
+<h3 id="redundancy-detection-variables-that-say-the-same-thing">2.
+Redundancy detection (variables that “say the same thing”)</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 16%" />
+<col style="width: 41%" />
+<col style="width: 2%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>If variables are…</th>
+<th>Measure</th>
+<th>Rule of thumb</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Numeric ↔︎ numeric</strong></td>
+<td>Pearson/​Spearman ρ</td>
+<td></td>
+<td>ρ</td>
+<td>&gt; 0.90 ⇒ drop one</td>
+</tr>
+<tr>
+<td><strong>Categorical ↔︎ categorical</strong></td>
+<td>Cramér’s V</td>
+<td>V &gt; 0.85</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Mixed types</strong></td>
+<td>Mutual information</td>
+<td>Normalise MI by min(H(X), H(Y)); &gt; 0.80 is strong</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Workflow</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> spearmanr</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># quick sketch for numeric</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> df[num_cols].corr(method<span class="op">=</span><span class="st">&#39;spearman&#39;</span>).<span class="bu">abs</span>()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>upper <span class="op">=</span> corr.where(np.triu(np.ones(corr.shape), k<span class="op">=</span><span class="dv">1</span>).astype(<span class="bu">bool</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> upper.columns <span class="cf">if</span> <span class="bu">any</span>(upper[col] <span class="op">&gt;</span> <span class="fl">0.9</span>)]</span></code></pre></div>
+<p>For categorical/mixed columns use
+<code>sklearn.metrics.normalized_mutual_info_score</code> or the
+<strong>minepy</strong> implementation of MIC/GMIC.</p>
+<blockquote>
+<p><strong>Tip:</strong> After identifying a high-correlation pair, pick
+the keeper by (a) domain intuition, (b) fewer missing values, (c) lower
+cardinality (cheaper downstream), or (d) higher univariate variance.</p>
+</blockquote>
+<hr />
+<h3 id="group-wise-screening-cluster-the-features-themselves">3.
+Group-wise screening: cluster the <strong>features
+themselves</strong></h3>
+<ol type="1">
+<li>Compute a distance matrix between columns<br />
+ • For numeric: <code>1 – |correlation|</code><br />
+ • For categorical: <code>1 – Cramér’s V</code></li>
+<li>Run hierarchical clustering
+(<code>scipy.cluster.hierarchy.linkage</code>).</li>
+<li>Pick a cut-height (say 0.2 → roughly 0.8 correlation) and choose
+<strong>one medoid feature per
+cluster</strong>—<code>sklearn_extra.cluster.KMedoids</code> or simply
+<code>idxmax</code> of absolute correlation to centroid.</li>
+</ol>
+<p>This approach is fast (O(p²) for p = 200) and keeps features
+interpretable—no linear combinations like PCA.</p>
+<hr />
+<h3 id="mrmr-minimum-redundancy-maximum-relevance-without-labels">4.
+mRMR (minimum-Redundancy-maximum-Relevance) without labels</h3>
+<p>mRMR is usually supervised, but in clustering you can:</p>
+<ol type="1">
+<li>Generate <strong>proxy labels</strong>—e.g., K-means (k ≈ sqrt(n/2))
+on the <em>full</em> 200-D data.</li>
+<li>Run mRMR with those pseudo-labels (<code>pymrmr</code> or
+<code>skfeature</code>).</li>
+<li>Keep the top 150 features.</li>
+<li>Toss the labels and proceed with your real clustering.</li>
+</ol>
+<p>Because k-means is only creating rough groupings, you’re selecting
+variables that separate the densest regions of the data while avoiding
+redundancy.</p>
+<hr />
+<h3
+id="reconstruction-based-ranking-autoencoders-or-pca-leave-one-out">5.
+Reconstruction-based ranking (autoencoders or PCA leave-one-out)</h3>
+<p><strong>Autoencoder</strong><br />
+1-2 hidden layers, bottleneck ≈ 50. For each feature, measure the
+increase in reconstruction error when you mask it at inference time.
+Rank by Δerror.</p>
+<p><strong>Principal Feature Analysis (PFA)</strong></p>
+<ol type="1">
+<li>Fit PCA, keep enough PCs for 95 % variance.</li>
+<li>For each original variable j, compute its loading across retained
+PCs: ‖loading‖₂.</li>
+<li>Rank descending; drop the lowest 50.</li>
+</ol>
+<p>Both let you ask, <em>“If this column vanished, how much structure
+would the model lose?”</em></p>
+<hr />
+<h3 id="sanity-check-with-downstream-clustering-stability">6. Sanity
+check with downstream clustering stability</h3>
+<p>Before you sign off on the reduced set, test whether the
+<strong>cluster solution itself changes</strong>:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> adjusted_rand_score</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>full_labels  <span class="op">=</span> KMeans(k).fit_predict(X_full)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sub_labels   <span class="op">=</span> KMeans(k).fit_predict(X_subset)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(adjusted_rand_score(full_labels, sub_labels))</span></code></pre></div>
+<p>If ARI &gt; 0.9 (or NMI &gt; 0.9) you’re usually safe—dropping those
+variables didn’t distort the macro picture.</p>
+<hr />
+<h2 id="putting-it-all-together-minimal-recipe">Putting it all together
+(minimal recipe)</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. hygiene pass</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> basic_clean(df)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. redundancy</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> drop_high_corr(df, thresh<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. feature-cluster medoids to target count</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> df.shape[<span class="dv">1</span>] <span class="op">&gt;</span> <span class="dv">150</span>:</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pick_feature_medoids(df, target<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) 4. sanity check</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>cluster_stability(df_full, df)</span></code></pre></div>
+<hr />
+<h3 id="final-advice">Final advice</h3>
+<ul>
+<li><strong>Document</strong> the decision rules—you’ll need them when
+reviewers ask, “Why these 150?”.</li>
+<li><strong>Stratify</strong> any sampling you do (the 500 K rows) so
+rare categories remain visible.</li>
+<li><strong>Keep the ID of every dropped column</strong> in case the
+business comes back and says “We really need X”.</li>
+</ul>
+<p>Good luck on the request, and feel free to ping me if you hit
+implementation snags!</p>
+    
+</body>
+</html>
