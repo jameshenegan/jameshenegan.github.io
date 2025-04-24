@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="section">1</h1>
+<p>Below is a practical, end-to-end recipe that shows <strong>where and
+why PCA fits into a clustering workflow in Python</strong>. Feel free to
+lift the code into a notebook and swap in your own data.</p>
+<hr />
+<h2 id="why-combine-pca-and-clustering">1. Why combine PCA and
+clustering?</h2>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr>
+<th>Goal</th>
+<th>How PCA Helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reduce noise &amp; redundancy</strong></td>
+<td>Projects data onto directions of maximum variance, filtering out
+collinear or low-signal features.</td>
+</tr>
+<tr>
+<td><strong>Speed up clustering</strong></td>
+<td>Algorithms like k-means or DBSCAN scale poorly with dimension; PCA
+shrinks the feature space first.</td>
+</tr>
+<tr>
+<td><strong>Make results interpretable</strong></td>
+<td>The first two or three principal components often give a clear
+2-D/3-D view of cluster separation.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="typical-pipeline">2. Typical pipeline</h2>
+<ol type="1">
+<li><p><strong>Clean &amp; scale</strong></p>
+<ul>
+<li>Handle missing values, one-hot encode categoricals.</li>
+<li><code>StandardScaler()</code> (or <code>MinMaxScaler()</code> for
+DBSCAN) to give PCA equal footing across features.</li>
+</ul></li>
+<li><p><strong>Run PCA</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="fl">0.90</span>, svd_solver<span class="op">=</span><span class="st">&quot;full&quot;</span>)   <span class="co"># keep components explaining 90 % variance</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>X_pca <span class="op">=</span> pca.fit_transform(X_scaled)</span></code></pre></div></li>
+<li><p><strong>Choose number of clusters</strong> (if needed)</p>
+<ul>
+<li>Elbow or silhouette on PCA space.</li>
+<li>For hierarchical clustering you may cut the dendrogram in PCA
+space.</li>
+</ul></li>
+<li><p><strong>Cluster in PCA space</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> kmeans.fit_predict(X_pca)</span></code></pre></div></li>
+<li><p><strong>Evaluate</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>silhouette_score(X_pca, labels)</span></code></pre></div></li>
+<li><p><strong>Interpret</strong></p>
+<ul>
+<li>Map cluster centroids back:
+<code>centroids_orig = pca.inverse_transform(kmeans.cluster_centers_)</code>.</li>
+<li>Examine PCA loadings (columns of <code>pca.components_.T</code>) to
+see which original variables drive each principal axis.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="minimal-working-example-iris">3. Minimal working example
+(Iris)</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 — data</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2 — scale</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> StandardScaler().fit_transform(X)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 — PCA (keep 2 PCs for visual clarity here)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>X_pca <span class="op">=</span> pca.fit_transform(X_scaled)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 4 — cluster</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">3</span>, n_init<span class="op">=</span><span class="st">&quot;auto&quot;</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> kmeans.fit_predict(X_pca)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Silhouette:&quot;</span>, silhouette_score(X_pca, labels).<span class="bu">round</span>(<span class="dv">3</span>))</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 5 — plot</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_pca[:,<span class="dv">0</span>], X_pca[:,<span class="dv">1</span>], c<span class="op">=</span>labels, s<span class="op">=</span><span class="dv">40</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="ss">f&quot;PC1 (</span><span class="sc">{</span>pca<span class="sc">.</span>explained_variance_ratio_[<span class="dv">0</span>]<span class="sc">:.1%}</span><span class="ss">)&quot;</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="ss">f&quot;PC2 (</span><span class="sc">{</span>pca<span class="sc">.</span>explained_variance_ratio_[<span class="dv">1</span>]<span class="sc">:.1%}</span><span class="ss">)&quot;</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Clusters on PCA-reduced Iris data&quot;</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<hr />
+<h2 id="tips-cautions">4. Tips &amp; cautions</h2>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 85%" />
+</colgroup>
+<thead>
+<tr>
+<th>Tip</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scale first</strong></td>
+<td>PCA is variance-based; raw units distort loadings.</td>
+</tr>
+<tr>
+<td><strong>Pick <em>n_components</em></strong></td>
+<td>Common rules: cumulative variance ≥ 80-95 %, scree-plot elbow, or
+downstream clustering quality.</td>
+</tr>
+<tr>
+<td><strong>Non-linear structure</strong></td>
+<td>If clusters are curved/manifold-shaped, consider <em>t-SNE</em> or
+<em>UMAP</em> instead of PCA.</td>
+</tr>
+<tr>
+<td><strong>Don’t over-compress</strong></td>
+<td>Too few PCs can merge distinct clusters; compare silhouette
+before/after PCA.</td>
+</tr>
+<tr>
+<td><strong>Pipeline it</strong></td>
+<td>Use
+<code>sklearn.pipeline.Pipeline([("scale", StandardScaler()), ("pca", PCA(..)), ("cluster", KMeans(..))])</code>
+to avoid leakage during CV / grid search.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="when-not-to-use-pca">When NOT to use PCA</h3>
+<ul>
+<li>If your features are categorical and sparsely one-hot encoded
+(variance isn’t meaningful).</li>
+<li>When cluster shapes are highly non-convex (DBSCAN/OPTICS on original
+space may work better).</li>
+<li>If interpretability of original feature space is critical and
+dimensionality is already low.</li>
+</ul>
+<hr />
+<h3 id="next-steps">Next steps</h3>
+<ul>
+<li>Grid-search both <code>n_components</code> and clustering
+hyper-parameters together.</li>
+<li>Try <strong>incremental PCA</strong> for very large datasets.</li>
+<li>Examine <strong>PCA loadings heatmap</strong> to relate clusters
+back to business variables.</li>
+</ul>
+<p>That’s it—plug PCA into your clustering workflow and you’ll typically
+see faster, cleaner, more interpretable results. Happy clustering!</p>
+<h1 id="section-1">2</h1>
+<h3 id="how-mixed-feature-types-affect-a-pca-clustering-pipeline">How
+mixed feature types affect a “PCA → clustering” pipeline</h3>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 17%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature type</th>
+<th>What PCA <em>sees</em></th>
+<th>Typical pitfalls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Continuous</strong> (age, income…)</td>
+<td>Real-valued, roughly bell-shaped after scaling</td>
+<td>OK after <code>StandardScaler()</code></td>
+</tr>
+<tr>
+<td><strong>Binary indicators</strong> (0/1 flags)</td>
+<td>Two-point distributions with variance =
+<em>p</em>(1-<em>p</em>)</td>
+<td>• Very low variance if flags are rare → almost ignored by PCA<br>•
+PCs become linear <em>combinations</em> of 0/1’s → interpretation is
+odd<br>• Treating them like numeric can overweight/underweight
+clusters</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="practical-options">Practical options</h2>
+<ol type="1">
+<li><strong>Keep a single numeric space, but be careful</strong></li>
+</ol>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>num_cols   <span class="op">=</span> [<span class="st">&quot;age&quot;</span>, <span class="st">&quot;income&quot;</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>bin_cols   <span class="op">=</span> [<span class="st">&quot;owns_home&quot;</span>, <span class="st">&quot;is_student&quot;</span>, ...]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ct <span class="op">=</span> ColumnTransformer([</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;num&quot;</span>, StandardScaler(), num_cols),        <span class="co"># z-score</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&quot;bin&quot;</span>, <span class="st">&quot;passthrough&quot;</span>,      bin_cols)       <span class="co"># leave 0/1 as-is</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>X_proc <span class="op">=</span> ct.fit_transform(df)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="fl">0.9</span>, svd_solver<span class="op">=</span><span class="st">&quot;full&quot;</span>).fit_transform(X_proc)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> KMeans(<span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">42</span>).fit_predict(pca)</span></code></pre></div>
+<p><strong>When this is OK</strong></p>
+<ul>
+<li>Flags are reasonably balanced (not all ~0 % or ~99 %)</li>
+<li>You mainly want dimensionality reduction speed &amp;
+visualization</li>
+<li>Cluster interpretation can tolerate a bit of numeric + binary
+mixing</li>
+</ul>
+<ol start="2" type="1">
+<li><strong>Weight the binary features</strong></li>
+</ol>
+<p>Sometimes rare flags carry huge business value and you don’t want
+them buried. You can multiply the binary columns by a factor &gt;1
+before PCA, or give column-specific weights in a custom transformer:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BinaryWeight:</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, weight<span class="op">=</span><span class="fl">3.0</span>): <span class="va">self</span>.w <span class="op">=</span> weight</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fit(<span class="va">self</span>, X, y<span class="op">=</span><span class="va">None</span>): <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> transform(<span class="va">self</span>, X):   <span class="cf">return</span> X <span class="op">*</span> <span class="va">self</span>.w</span></code></pre></div>
+<p>Add <code>("bin", BinaryWeight(3.0), bin_cols)</code> in the pipeline
+instead of passthrough.</p>
+<ol start="3" type="1">
+<li><strong>Use methods built for mixed data</strong></li>
+</ol>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 14%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>Library (Python)</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>FAMD</strong> (Factor Analysis of Mixed Data)</td>
+<td><code>prince.FAMD</code></td>
+<td>Combines PCA for numeric + MCA for categorical/binary, keeps both in
+latent space</td>
+</tr>
+<tr>
+<td><strong>Gower distance + HDBSCAN</strong></td>
+<td><code>gower</code>, <code>hdbscan</code></td>
+<td>Gower handles mixed types; cluster directly on the distance matrix
+(no PCA)</td>
+</tr>
+<tr>
+<td><strong>k-Prototypes</strong></td>
+<td><code>kmodes.KPrototypes</code></td>
+<td>Extends k-means to numeric + categorical (treat 0/1 as
+categorical)</td>
+</tr>
+</tbody>
+</table>
+<p>These bypass the “binary-as-numeric” issue altogether and often give
+cleaner clusters.</p>
+<ol start="4" type="1">
+<li><strong>Separate reductions, then concatenate</strong></li>
+</ol>
+<ul>
+<li>Run PCA on continuous block → <em>C</em> PCs</li>
+<li>Run MCA (or just keep raw) on binary block → <em>B</em> dims</li>
+<li>Concatenate <code>[PCA_components | MCA_components]</code> and
+cluster<br />
+Gives each sub-space a chance to express its own structure.</li>
+</ul>
+<hr />
+<h2 id="quick-decision-flow">Quick decision flow</h2>
+<ol type="1">
+<li><strong>Mixed types but you want a fast baseline</strong> → Build a
+<code>ColumnTransformer</code> and try PCA+clustering (Option 1).</li>
+<li><strong>Binary flags are rare or mission-critical</strong> →
+Re-weight or treat separately (Options 2 or 4).</li>
+<li><strong>Interpretability matters or categories are many</strong> →
+FAMD / Gower / k-Prototypes (Option 3).</li>
+</ol>
+<hr />
+<h3 id="extra-tips">Extra tips</h3>
+<ul>
+<li><strong>Don’t center binary flags</strong> when passing through;
+subtracting the mean turns them into −<em>p</em>, 1−<em>p</em> and
+muddies interpretation.<br />
+(<code>StandardScaler(with_mean=False)</code> or the passthrough trick
+avoids that.)</li>
+<li><strong>Check variance explained per column</strong> before PCA—if a
+flag’s variance &lt; 1 % of the average continuous variance, it will
+scarcely influence any PC.</li>
+<li><strong>Validate downstream</strong>: compare silhouette or another
+cluster metric between the vanilla PCA route and a mixed-data-aware
+method; choose what actually groups your domain labels best.</li>
+</ul>
+<p>With these strategies you can fold numeric and binary variables into
+a clustering project without letting one swamp the other—or losing the
+interpretability of your clusters.</p>
+    
+</body>
+</html>
