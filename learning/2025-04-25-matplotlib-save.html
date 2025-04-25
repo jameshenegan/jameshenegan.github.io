@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Here are the essentials you need 90 % of the time:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pathlib   <span class="co"># optional but handy</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1️⃣  build the plot</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>ax.hist(data, bins<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Value&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Count&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;My histogram&quot;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2️⃣  choose an output path</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>out_dir  <span class="op">=</span> pathlib.Path(<span class="st">&quot;figures&quot;</span>)      <span class="co"># guarantees cross-platform slashes</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>out_dir.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>outfile  <span class="op">=</span> out_dir <span class="op">/</span> <span class="st">&quot;histogram.png&quot;</span>    <span class="co"># or .pdf / .svg / .eps / .jpg …</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3️⃣  save it</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>fig.savefig(</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    outfile,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    dpi<span class="op">=</span><span class="dv">300</span>,            <span class="co"># ⬅️  pixel density (ignored for vector formats)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    bbox_inches<span class="op">=</span><span class="st">&quot;tight&quot;</span> <span class="co"># ⬅️  trims extra whitespace</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>plt.close(fig)          <span class="co"># optional: frees memory in scripts / loops</span></span></code></pre></div>
+<h3 id="key-parameters-of-figure.savefig">Key parameters of
+<code>Figure.savefig</code></h3>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 34%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Typical values</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fname</code></td>
+<td><code>'plot.png'</code>, <code>Path("plots/plot.pdf")</code>,
+<code>BytesIO()</code></td>
+<td>Path-like, URL, or file-like object to write to.</td>
+</tr>
+<tr>
+<td><code>dpi</code></td>
+<td><code>72–100</code> for screen, <code>150–300</code> for slides,
+<code>300–600</code> for print</td>
+<td>Affects raster formats (<code>png</code>, <code>jpg</code>,
+<code>tiff</code>). Has no effect on vector (<code>pdf</code>,
+<code>svg</code>, <code>eps</code>).</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td><code>'png'</code>, <code>'pdf'</code>, <code>'svg'</code>,
+<code>'jpg'</code>, <code>'tiff'</code></td>
+<td>Rarely needed—Matplotlib infers it from the file extension.</td>
+</tr>
+<tr>
+<td><code>bbox_inches</code></td>
+<td><code>'tight'</code> or <code>None</code></td>
+<td><code>'tight'</code> reduces whitespace padding; can slightly change
+canvas size.</td>
+</tr>
+<tr>
+<td><code>transparent</code></td>
+<td><code>True</code> / <code>False</code></td>
+<td>PNG &amp; PDF only. Makes background fully transparent—handy for
+slides.</td>
+</tr>
+<tr>
+<td><code>facecolor</code> / <code>edgecolor</code></td>
+<td>color spec</td>
+<td>Override the default figure face/background.</td>
+</tr>
+<tr>
+<td><code>pad_inches</code></td>
+<td>float (inches)</td>
+<td>Extra padding when using <code>'tight'</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="raster-vs.-vector">Raster vs. vector</h3>
+<ul>
+<li><strong>Raster (PNG, JPG, TIFF):</strong> fixed pixels. Large
+datasets <strong>render fast</strong>, but text/lines can blur when
+zoomed. Control sharpness with <code>dpi</code>.</li>
+<li><strong>Vector (PDF, SVG, EPS):</strong> based on geometric
+primitives. <strong>Infinitely sharp</strong> when zoomed or printed,
+but huge scatterplots can bloat file size.</li>
+</ul>
+<h3 id="common-patterns">Common patterns</h3>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr>
+<th>Goal</th>
+<th>One-liner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quick save to current directory</td>
+<td><code>plt.savefig("plot.png")</code></td>
+</tr>
+<tr>
+<td>High-DPI PNG for print</td>
+<td><code>fig.savefig("plot.png", dpi=600, bbox_inches="tight")</code></td>
+</tr>
+<tr>
+<td>Transparent background for slides</td>
+<td><code>fig.savefig("plot.pdf", transparent=True)</code></td>
+</tr>
+<tr>
+<td>SVG for the web</td>
+<td><code>fig.savefig("plot.svg")</code></td>
+</tr>
+<tr>
+<td>Auto-numbered files inside a loop</td>
+<td><code>fig.savefig(f"plots/hist_{i:02d}.png")</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="pro-tips">Pro tips</h3>
+<ol type="1">
+<li><strong>Create the directory once</strong>
+(<code>pathlib.Path.mkdir(exist_ok=True)</code>), so your script never
+fails on a fresh machine.</li>
+<li><strong>Close figures</strong> (<code>plt.close(fig)</code>) when
+batch-producing many images to avoid a memory leak or slowdowns.</li>
+<li><strong>In notebooks</strong>, prefer <code>fig.savefig(...)</code>
+over <code>plt.savefig(...)</code>—it’s clearer which figure you’re
+saving.</li>
+<li><strong>Vector first</strong>: when unsure, export PDF/SVG for
+archival and down-convert to PNG/JPG later.</li>
+</ol>
+<p>That’s it—you now have the “save to file” workflow that scales from
+quick notebook snapshots to publication-quality figures.</p>
+    
+</body>
+</html>

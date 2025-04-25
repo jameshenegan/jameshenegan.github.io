@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a <strong>template you can drop into any notebook or
+script</strong>.<br />
+Replace the mock DataFrame with your own and you’re done.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1.  point to the “0/1” columns you care about -----------------------</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>indicator_cols <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> df.columns <span class="cf">if</span> df[c].dropna().isin([<span class="dv">0</span>, <span class="dv">1</span>]).<span class="bu">all</span>()]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2.  compute prevalence and sort descending --------------------------</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> df[indicator_cols].mean().sort_values(ascending<span class="op">=</span><span class="va">False</span>)   <span class="co"># Series</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3.  make a horizontal lollipop plot --------------------------------</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>n          <span class="op">=</span> <span class="bu">len</span>(means)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>fig_height <span class="op">=</span> <span class="fl">0.45</span> <span class="op">*</span> n <span class="op">+</span> <span class="dv">1</span>          <span class="co"># auto-size so labels never feel cramped</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>fig, ax    <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, fig_height))</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.arange(n)                                   <span class="co"># 0 … n-1</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>ax.hlines(y, <span class="dv">0</span>, means.values, lw<span class="op">=</span><span class="dv">2</span>)                <span class="co"># stems</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>ax.scatter(means.values, y, s<span class="op">=</span><span class="dv">50</span>)                  <span class="co"># “heads”</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># y-axis: column names</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(y)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>ax.set_yticklabels(means.index)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># annotate with the mean (here shown as %)</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> yi, m <span class="kw">in</span> <span class="bu">zip</span>(y, means.values):</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    ax.text(m <span class="op">+</span> <span class="fl">0.01</span>, yi, <span class="ss">f&quot;</span><span class="sc">{</span>m<span class="sc">:.1%}</span><span class="ss">&quot;</span>, va<span class="op">=</span><span class="st">&quot;center&quot;</span>, fontsize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Proportion (column mean)&quot;</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="dv">0</span>, means.values.<span class="bu">max</span>()<span class="op">*</span><span class="fl">1.1</span>)             <span class="co"># a little right margin</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>ax.invert_yaxis()                                  <span class="co"># largest on top</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="how-it-works">How it works 📌</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compute <code>df.mean()</code></strong></td>
+<td>For 0/1 columns the mean <em>is</em> the proportion of 1’s.</td>
+</tr>
+<tr>
+<td><strong><code>sort_values(ascending=False)</code></strong></td>
+<td>Gives you the ranking you want; we flip the y-axis later so the
+biggest sits on top.</td>
+</tr>
+<tr>
+<td><strong>Lollipop mechanics</strong></td>
+<td>A horizontal line (<code>hlines</code>) from 0 → mean plus a marker
+(<code>scatter</code>) at the right end.</td>
+</tr>
+<tr>
+<td><strong>Dynamic figure height</strong></td>
+<td><code>0.45 in × n</code> keeps labels readable whether you have 5 or
+50 features.</td>
+</tr>
+<tr>
+<td><strong><code>invert_yaxis()</code></strong></td>
+<td>Makes the plot read “highest at the top.”</td>
+</tr>
+<tr>
+<td><strong>Inline text</strong></td>
+<td><code>ax.text()</code> places the percentage just beyond each
+marker. Tweak the <code>0.01</code> offset if your values are tiny.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="styling-tweaks-you-might-want">Styling tweaks you might
+want</h3>
+<ul>
+<li>Change marker shape/size:
+<code>ax.scatter(..., marker="o", s=80)</code>.</li>
+<li>Color by value (e.g., red ↔︎ low, green ↔︎ high): loop and pick colors
+from a colormap.</li>
+<li>Drop the stems (<code>hlines</code>) for a dot-plot look—just
+comment that line out.</li>
+<li>Save to file:
+<code>fig.savefig("lollipop.pdf", bbox_inches="tight", dpi=300)</code>.</li>
+</ul>
+<p>That’s the whole pattern—scales from a handful to dozens of
+indicators while keeping both the variable names and their prevalences
+visible at a glance.</p>
+<h3 id="why-cramming-50-items-is-tricky">Why cramming 50 items is
+tricky</h3>
+<ol type="1">
+<li><strong>Physical real-estate</strong> – a notebook cell is ~6–7 in
+wide.<br />
+With 50 y-tick labels you need at least 50 × 0.30 in ≈ <strong>15 in of
+height</strong> just to keep 9- pt text from colliding.</li>
+<li><strong>Export medium</strong> – if it will live inside a PDF, you
+can let the canvas be tall and trust the viewer’s scroll bar; in a slide
+you can’t.</li>
+<li><strong>Legibility vs. density</strong> – shrinking fonts and
+markers buys space, but below ~7 pt users start zooming.</li>
+</ol>
+<hr />
+<h2 id="three-practical-ways-to-fit-50-lollipops">Three practical ways
+to “fit” 50 lollipops</h2>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 15%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>When to use</th>
+<th>How to do it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Make the figure very tall</strong></td>
+<td>Notebook, report, web page where scrolling is OK</td>
+<td>Scale height with <em>n</em>:
+<code>fig, ax = plt.subplots(figsize=(6, 0.30*n + 1))</code>, drop
+marker size (<code>s=25</code>), use <code>fontsize=7</code>. Save as
+<strong>PDF/SVG</strong> so vector text stays sharp even when readers
+zoom.</td>
+</tr>
+<tr>
+<td><strong>Split into columns / panels</strong></td>
+<td>Slide decks, printed pages</td>
+<td>Use two or three axes laid out with <code>matplotlib.gridspec</code>
+or <code>subplots(ncols=2)</code>. Slice the sorted series:
+<code>left = means.iloc[:25]</code>,
+<code>right = means.iloc[25:]</code>. Each panel now has 25 items, so a
+~10 in tall slide is enough.</td>
+</tr>
+<tr>
+<td><strong>Go interactive</strong></td>
+<td>Dashboards, exploratory work</td>
+<td>With Plotly/Altair: make a vertical bar or lollipop, set
+<code>height=800</code>, and let the chart’s own scroll bar handle
+overflow—no need to squeeze anything. Tooltips replace the inline text
+labels, further reducing clutter.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="minimal-matplotlib-pattern-auto-height">Minimal Matplotlib
+pattern (auto-height)</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>means <span class="op">=</span> df[indicator_cols].mean().sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>n          <span class="op">=</span> <span class="bu">len</span>(means)                     <span class="co"># e.g. 50</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>fig_height <span class="op">=</span> <span class="fl">0.30</span> <span class="op">*</span> n <span class="op">+</span> <span class="dv">1</span>                  <span class="co"># tweak the 0.30 ″ coefficient</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fig, ax    <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, fig_height))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.arange(n)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>ax.hlines(y, <span class="dv">0</span>, means.values, lw<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>ax.scatter(means.values, y, s<span class="op">=</span><span class="dv">25</span>)          <span class="co"># small markers</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(y)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>ax.set_yticklabels(means.index, fontsize<span class="op">=</span><span class="dv">7</span>)  <span class="co"># small font</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> yi, m <span class="kw">in</span> <span class="bu">zip</span>(y, means.values):</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    ax.text(m <span class="op">+</span> <span class="fl">0.005</span>, yi, <span class="ss">f&quot;</span><span class="sc">{</span>m<span class="sc">:.1%}</span><span class="ss">&quot;</span>, va<span class="op">=</span><span class="st">&quot;center&quot;</span>, fontsize<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;Proportion&quot;</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>ax.invert_yaxis()</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">&quot;lollipop_50.pdf&quot;</span>, bbox_inches<span class="op">=</span><span class="st">&quot;tight&quot;</span>)  <span class="co"># vector!</span></span></code></pre></div>
+<p><em>Result</em>: a ~16 inch-tall PDF that scrolls gracefully in a
+notebook and prints cleanly.</p>
+<hr />
+<h3 id="extra-space-savers">Extra space-savers</h3>
+<table>
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 56%" />
+</colgroup>
+<thead>
+<tr>
+<th>Trick</th>
+<th>Space gained</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Drop the stems</strong> → dot plot only</td>
+<td>~20 % height (marker &amp; text can overlap the “stem” zone)</td>
+</tr>
+<tr>
+<td><strong>Wrap long variable names</strong> with
+<code>textwrap.fill()</code></td>
+<td>avoids wide left margin</td>
+</tr>
+<tr>
+<td><strong>Abbreviate the percentages</strong> (<code>6.54 %</code> →
+<code>6.5 %</code>)</td>
+<td>shortens text block so the plot doesn’t need as much right
+padding</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="bottom-line">Bottom line</h3>
+<ul>
+<li><strong>Scrolling report</strong> ➜ Just let the canvas grow and
+export vector.</li>
+<li><strong>Slide / poster</strong> ➜ Break into two (or three) stacked
+or side-by-side panels.</li>
+<li><strong>Dashboard</strong> ➜ Use an interactive library and give
+users a scroll bar or hover tooltips.</li>
+</ul>
+<p>Pick the route that matches where the figure will ultimately live;
+the code above covers the “one-tall-figure” case, and you can adapt it
+to multi-panel layouts by slicing the sorted series before plotting.</p>
+    
+</body>
+</html>
