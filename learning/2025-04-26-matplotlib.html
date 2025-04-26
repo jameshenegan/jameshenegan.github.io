@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Absolutely makes sense—what you’re describing is often called a
+<strong>variable-width (a k a value-based) histogram</strong>. Each
+“bar” still represents the frequency of one permissible value, but its
+width is proportional to the numeric distance to its neighbours, so the
+visual real-estate tracks the underlying metric scale instead of an
+arbitrary, equally spaced category axis.</p>
+<p>Below is a small, self-contained helper that will:</p>
+<ul>
+<li>accept <strong>any</strong> 1-D array-like (Pandas Series, NumPy
+array, Python list…),</li>
+<li>discover the unique sorted permissible values,</li>
+<li>count how many observations fall in each,</li>
+<li>compute the correct left edge and width for every bar,</li>
+<li>choose a concise set of x-tick labels so the axis never looks
+overcrowded, and</li>
+<li>draw the plot with a single call.</li>
+</ul>
+<p>Feel free to drop it into a utils module and reuse it for every
+“ordinal-but-not-equally-spaced” variable you have.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.ticker <span class="im">import</span> FuncFormatter</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> variable_width_hist(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    data,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    unit<span class="op">=</span><span class="st">&quot;&quot;</span>,                <span class="co"># e.g. &quot;$&quot; or &quot;kg&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    max_xticks<span class="op">=</span><span class="dv">8</span>,           <span class="co"># upper bound on how many tick labels appear</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    bar_kw<span class="op">=</span><span class="va">None</span>,            <span class="co"># forwarded to plt.bar</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>):</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">    Plot a variable-width histogram for an ordinal numeric feature whose</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">    permissible values are not equally spaced (e.g. net-worth class,</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">    Likert score with unequal gaps, …).</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">    data : 1-D array-like</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">        Observations of the feature.</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">    ax : matplotlib.axes.Axes | None</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">        Existing axes to plot on; a new one is created if None.</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">    unit : str</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">        Prefix/suffix you want on tick labels (e.g. &quot;$&quot; or &quot;m²&quot;).</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">    max_xticks : int</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">        Max number of x-tick labels to attempt; labels are thinned evenly</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">        if unique values exceed this.</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">    bar_kw : dict | None</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">        Extra keyword args forwarded to `ax.bar`.</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">    title : str | None</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">        Optional plot title.</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ax <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        _, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    bar_kw <span class="op">=</span> bar_kw <span class="kw">or</span> {}</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ── 1. Unique permissible values and their counts ──────────────────────────</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    values, counts <span class="op">=</span> np.unique(np.asarray(data, dtype<span class="op">=</span><span class="bu">float</span>), return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(values)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ── 2. Compute bar edges so widths reflect the numeric gaps ────────────────</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Edges halfway between successive values, with the outer edges extrapolated</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    edges <span class="op">=</span> np.empty(n <span class="op">+</span> <span class="dv">1</span>, dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    edges[<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>] <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> (values[:<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> values[<span class="dv">1</span>:])</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    edges[<span class="dv">0</span>] <span class="op">=</span> values[<span class="dv">0</span>] <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> (values[<span class="dv">1</span>] <span class="op">-</span> values[<span class="dv">0</span>])</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    edges[<span class="op">-</span><span class="dv">1</span>] <span class="op">=</span> values[<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> (values[<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> values[<span class="op">-</span><span class="dv">2</span>])</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    widths <span class="op">=</span> np.diff(edges)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ── 3. Plot ────────────────────────────────────────────────────────────────</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    ax.bar(edges[:<span class="op">-</span><span class="dv">1</span>], counts, width<span class="op">=</span>widths, align<span class="op">=</span><span class="st">&quot;edge&quot;</span>, <span class="op">**</span>bar_kw)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ── 4. Tidy the axis ───────────────────────────────────────────────────────</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tick thinning</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    step <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, <span class="bu">int</span>(np.ceil(n <span class="op">/</span> max_xticks)))</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    show_idx <span class="op">=</span> np.arange(<span class="dv">0</span>, n, step)</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _fmt(x, pos):</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Show a tick only if its left edge coincides with one we picked</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>            i <span class="op">=</span> np.where(edges[:<span class="op">-</span><span class="dv">1</span>] <span class="op">==</span> x)[<span class="dv">0</span>][<span class="dv">0</span>]</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">IndexError</span>:</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f&quot;</span><span class="sc">{</span>unit<span class="sc">}{</span><span class="bu">int</span>(values[i])<span class="sc">:,}</span><span class="ss">&quot;</span>  <span class="co"># comma thousands</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    ax.xaxis.set_major_locator(plt.FixedLocator(edges[show_idx]))</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    ax.xaxis.set_major_formatter(FuncFormatter(_fmt))</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">&quot;Count&quot;</span>)</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> title:</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>        ax.set_title(title)</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(edges[<span class="dv">0</span>], edges[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    ax.spines[<span class="st">&quot;right&quot;</span>].set_visible(<span class="va">False</span>)</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    ax.spines[<span class="st">&quot;top&quot;</span>].set_visible(<span class="va">False</span>)</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span></code></pre></div>
+<hr />
+<h3 id="how-it-works-in-a-nutshell">How it works, in a nutshell</h3>
+<ol type="1">
+<li><p><strong>Counts</strong><br />
+<code>np.unique(..., return_counts=True)</code> gives us both the
+distinct permissible values and how many observations each has.</p></li>
+<li><p><strong>Edges &amp; widths</strong><br />
+The left edge of the first bar is half the gap before the second
+permissible value; every interior edge is the mid-point between
+neighbouring permissible values. <code>np.diff(edges)</code> then yields
+the exact width for each bar.</p></li>
+<li><p><strong>Labelling</strong><br />
+We cap the number of tick labels (<code>max_xticks</code>) and thin them
+evenly (every 2nd, 3rd, … value). A custom formatter only prints the
+ticks we selected, so there’s no messy overlap even if you have dozens
+of permissible values.</p></li>
+</ol>
+<hr />
+<h3 id="example">Example</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate your net-worth example</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>net_worth <span class="op">=</span> np.array([<span class="dv">5_000</span>, <span class="dv">5_000</span>, <span class="dv">10_000</span>, <span class="dv">25_000</span>, <span class="dv">25_000</span>, <span class="dv">25_000</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                      <span class="dv">50_000</span>, <span class="dv">50_000</span>, <span class="dv">250_000</span>, <span class="dv">250_000</span>, <span class="dv">250_000</span>, <span class="dv">250_000</span>])</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>variable_width_hist(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    net_worth,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    unit<span class="op">=</span><span class="st">&quot;$&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">&quot;Household Net Worth&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    bar_kw<span class="op">=</span><span class="bu">dict</span>(edgecolor<span class="op">=</span><span class="st">&quot;black&quot;</span>, alpha<span class="op">=</span><span class="fl">0.8</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<hr />
+<h3 id="is-there-a-better-visual">Is there a “better” visual?</h3>
+<ul>
+<li><strong>Cumulative distribution plot</strong> (step-style
+<code>plt.ecdf</code> or <code>np.cumsum</code> on sorted values) nicely
+reveals percentiles and avoids the variable-width geometry.</li>
+<li><strong>Dot-plots / beeswarm</strong> can work when the sample size
+is modest.</li>
+<li>If the underlying variable is truly ordinal but <em>not meant to be
+interpreted on a ratio scale</em> (e.g. survey agreement levels that
+happen to use 1, 2, 4, 8 as codes), you may prefer a traditional
+bar-chart with equal spacing—because the physical width would otherwise
+imply quantitative distance that is not meaningful.</li>
+</ul>
+<p>For genuine metric quantities that only come in specific buckets
+(such as your net-worth bands), though, the variable-width histogram is
+a defensible and easily generalised choice—especially when you must
+repeat it across many variables programmatically.</p>
+    
+</body>
+</html>
