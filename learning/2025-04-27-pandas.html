@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Totally makes sense—you want a <em>compression</em> of the numeric
+column that (1) leaves you with ~50 distinct, nicely-spread “canonical”
+values but (2) still lets a scatter-plot look plausibly continuous.</p>
+<p>Below are two common, production-friendly ways to do that. Both
+return a new column whose values are the 50 representatives.</p>
+<hr />
+<h3 id="quantile-based-micro-histogram">1. Quantile-based
+“micro-histogram”</h3>
+<p><em>Idea:</em> Slice the series into 50 equally populated buckets (so
+every bucket has ≈ N/50 rows).<br />
+<em>Representative value:</em> the <strong>median</strong> (or mean) of
+the values that fell into that bucket.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> quantile_buckets(s: pd.Series, n_buckets: <span class="bu">int</span> <span class="op">=</span> <span class="dv">50</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                     agg: <span class="bu">str</span> <span class="op">=</span> <span class="st">&quot;median&quot;</span>) <span class="op">-&gt;</span> pd.Series:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Replace each value in `s` by the representative of its quantile bucket.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. assign each row to a quantile bucket (0 … n_buckets-1)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    q_idx <span class="op">=</span> pd.qcut(s, q<span class="op">=</span>n_buckets, labels<span class="op">=</span><span class="va">False</span>, duplicates<span class="op">=</span><span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. compute representative per bucket</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> agg <span class="op">==</span> <span class="st">&quot;median&quot;</span>:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        reps <span class="op">=</span> s.groupby(q_idx).median()</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> agg <span class="op">==</span> <span class="st">&quot;mean&quot;</span>:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        reps <span class="op">=</span> s.groupby(q_idx).mean()</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">&quot;agg must be &#39;median&#39; or &#39;mean&#39;&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. map every row to its representative value</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> q_idx.<span class="bu">map</span>(reps)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;x_bucketed&quot;</span>] <span class="op">=</span> quantile_buckets(df[<span class="st">&quot;x&quot;</span>], n_buckets<span class="op">=</span><span class="dv">50</span>)</span></code></pre></div>
+<p><strong>Pros</strong></p>
+<ul>
+<li>Keeps the empirical CDF almost unchanged (great for percentiles,
+ranking models, etc.).</li>
+<li>Very fast—pure pandas.</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Inside each bucket every row gets <em>exactly</em> the same value,
+so small local variation disappears.</li>
+</ul>
+<hr />
+<h3 id="d-k-means-clustering-a.k.a.-vector-quantization">2. 1-D k-means
+clustering (a.k.a. <em>vector quantization</em>)</h3>
+<p><em>Idea:</em> Treat the column as a 1-D point cloud and run k-means
+with <code>k=50</code>.<br />
+The 50 cluster <strong>centroids</strong> become your representatives;
+each original value is replaced by its nearest centroid.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> kmeans_buckets(s: pd.Series, n_buckets: <span class="bu">int</span> <span class="op">=</span> <span class="dv">50</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                   random_state: <span class="bu">int</span> <span class="op">=</span> <span class="dv">42</span>) <span class="op">-&gt;</span> pd.Series:</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Replace each value in `s` with the centroid of its 1-D k-means cluster.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># reshape to (n_samples, 1) for sklearn</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> s.values.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    km <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>n_buckets, n_init<span class="op">=</span><span class="st">&quot;auto&quot;</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                random_state<span class="op">=</span>random_state)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> km.fit_predict(X)          <span class="co"># cluster index per row</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    centroids <span class="op">=</span> km.cluster_centers_.ravel()   <span class="co"># shape (k,)</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># map each row to its centroid</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.Series(centroids[labels], index<span class="op">=</span>s.index)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;x_bucketed&quot;</span>] <span class="op">=</span> kmeans_buckets(df[<span class="st">&quot;x&quot;</span>], n_buckets<span class="op">=</span><span class="dv">50</span>)</span></code></pre></div>
+<p><strong>Pros</strong></p>
+<ul>
+<li>Minimizes mean-squared error between original and bucketed values →
+often produces <em>very</em> representative centers, especially if the
+data are multimodal.</li>
+<li>Buckets adapt to density: more centroids where data are dense, fewer
+in sparse tails.</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Requires scikit-learn, and mildly slower (though still milliseconds
+for ≤ 1 M rows).</li>
+<li>Resulting bucket sizes are <strong>unequal</strong>, so if you need
+exactly balanced buckets use quantile instead.</li>
+</ul>
+<hr />
+<h3 id="when-to-choose-which">When to choose which?</h3>
+<table>
+<thead>
+<tr>
+<th>If you want…</th>
+<th>Pick…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Preserve distribution / percentiles exactly</td>
+<td><strong>Quantile buckets</strong></td>
+</tr>
+<tr>
+<td>Minimize numeric distortion (MSE)</td>
+<td><strong>k-means buckets</strong></td>
+</tr>
+<tr>
+<td>Deterministic, no extra dependency</td>
+<td>Quantile</td>
+</tr>
+<tr>
+<td>Adaptive resolution where data are dense</td>
+<td>k-means</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="a-couple-of-practical-tips">A couple of practical tips</h3>
+<ul>
+<li><strong>Missing values (<code>NaN</code>)</strong> – handle before
+bucketing, e.g. <code>s.dropna()</code> or fill with a sentinel outside
+the data range.</li>
+<li><strong>Number of buckets</strong> – 50 works if
+<code>len(df)</code> is comfortably larger (≥ 5 000 is a good rule of
+thumb). For very small data sets consider fewer buckets to avoid
+single-row clusters.</li>
+<li><strong>Reproducibility</strong> – fix <code>random_state</code> for
+k-means; quantile is deterministic.</li>
+<li><strong>Downstream ML</strong> – If you’ll feed the bucketed column
+into tree models, you can convert the 50 representatives back into
+categorical codes; if feeding into linear models keep the numeric
+centroids.</li>
+</ul>
+<p>Feel free to drop your specific Series shape or constraints if you’d
+like a tweak (e.g. enforcing min/max per bucket, custom rounding,
+etc.).</p>
+    
+</body>
+</html>
