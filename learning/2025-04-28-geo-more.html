@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Here are four hassle-free places you can grab a ready-made
+<strong>GeoJSON of North Carolina’s 100 county polygons</strong>—pick
+whichever fits your workflow or licensing needs:</p>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 27%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr>
+<th>Source</th>
+<th>What you get</th>
+<th>How to download</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>U.S. Census Bureau – TIGERweb REST service</strong></td>
+<td>Official 2024 county boundaries straight from the Census
+database.</td>
+<td>Paste this in a browser or
+<code>curl</code>:<br><code>https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0/query?where=STATE='37'&amp;outFields=NAME,STATE,COUNTY&amp;outSR=4326&amp;f=pgeojson</code>
+— it returns a GeoJSON payload you can save as
+<code>nc_counties.geojson</code>. (<a
+href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0?f=pjson">Internal
+Error</a>)</td>
+</tr>
+<tr>
+<td><strong>NC OneMap Open Data portal</strong></td>
+<td>The state’s own authoritative county layer (same geometry used by
+state agencies).</td>
+<td>Visit the “North Carolina State and County Boundary Polygons” item,
+click <strong>Download → GeoJSON</strong>. (<a
+href="https://www.nconemap.gov/datasets/NCEM-GIS%3A%3Anorth-carolina-state-and-county-boundary-polygons">North
+Carolina State and County Boundary Polygons</a>)</td>
+</tr>
+<tr>
+<td><strong>GitHub – “TopoJSON” collection</strong></td>
+<td>Community-converted file
+<code>NC-37-north-carolina-counties.json</code> (TopoJSON format;
+convert to GeoJSON with <a href="https://mapshaper.org"
+class="uri">https://mapshaper.org</a> in two clicks). Good for quick
+demos.</td>
+<td>Browse to the repo and download the file listed under <em>United
+States → State Level → North Carolina → Counties</em>. (<a
+href="https://github.com/subyfly/topojson">GitHub -
+subyfly/topojson</a>)</td>
+</tr>
+<tr>
+<td><strong>GitHub – “Click That Hood” game data</strong></td>
+<td>A lean ~200 KB GeoJSON already in WGS 84, used for an online quiz.
+Handy when you just need the shapes and no extra attributes.</td>
+<td>Raw file URL:
+<code>https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/north-carolina-counties.geojson</code>
+— save it with your browser or <code>wget</code>. (<a
+href="https://github.com/codeforgermany/click_that_hood/blob/main/public/data/north-carolina-counties.geojson">Failed</a>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="if-you-only-see-shapefiles">If you only see Shapefiles…</h3>
+<p>The Census TIGER/Line download page gives you ZIPs
+(<code>tl_2024_37_county.zip</code>) that are Shapefiles, not GeoJSON.
+You can still turn them into GeoJSON without extra libraries:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># one-line conversion with the mapshaper CLI</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> mapshaper</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">mapshaper</span> tl_2024_37_county.zip <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">-simplify</span> 5% <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">-o</span> format=geojson nc_counties.geojson</span></code></pre></div>
+<h3 id="quick-test-in-pure-matplotlib">Quick test in
+pure-Matplotlib</h3>
+<p>Once you have the GeoJSON file:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json, matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Polygon</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;nc_counties.geojson&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    gj <span class="op">=</span> json.load(f)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">7</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> feat <span class="kw">in</span> gj[<span class="st">&quot;features&quot;</span>]:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># GeoJSON rings are [lon, lat]</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ring <span class="kw">in</span> feat[<span class="st">&quot;geometry&quot;</span>][<span class="st">&quot;coordinates&quot;</span>][<span class="dv">0</span>]:</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># build one patch per county exterior ring</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        poly <span class="op">=</span> Polygon(ring, closed<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                       facecolor<span class="op">=</span><span class="st">&quot;none&quot;</span>, edgecolor<span class="op">=</span><span class="st">&quot;gray&quot;</span>, linewidth<span class="op">=</span><span class="fl">.4</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        ax.add_patch(poly)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">&quot;equal&quot;</span>)<span class="op">;</span> ax.set_axis_off()</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>Add your own point layer with
+<code>ax.scatter(lons, lats, zorder=3)</code> and you’re done.</p>
+<p>Pick whichever source you trust most; they all line up in WGS 84 so
+the plotting code above will work out-of-the-box.</p>
+    
+</body>
+</html>

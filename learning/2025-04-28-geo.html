@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Totally doable—you just have to work a little closer to the
+metal.</p>
+<p>Below is a <strong>pure-Matplotlib</strong> recipe that uses only the
+Python stdlib (<code>json</code> + <code>urllib.request</code>) plus
+Matplotlib itself—no GeoPandas, Shapely, pyshp, etc.</p>
+<hr />
+<h2 id="grab-some-plain-text-geojson">1. Grab some plain-text
+GeoJSON</h2>
+<ul>
+<li><p><strong>Counties</strong> – any GeoJSON for North-Carolina
+counties will work. Example (GitHub):<br />
+<code>https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/north-carolina-counties.geojson</code>
+(<a
+href="https://github.com/glynnbird/usstatesgeojson/blob/master/north%20carolina.geojson?utm_source=chatgpt.com">usstatesgeojson/north
+carolina.geojson at master - GitHub</a>)</p></li>
+<li><p><strong>State outline</strong> – a GeoJSON of US states, then
+filter for “North Carolina.” Example:<br />
+<code>https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json</code>
+(<a
+href="https://github.com/PublicaMundi/MappingAPI/blob/master/data/geojson/us-states.json?utm_source=chatgpt.com">MappingAPI/data/geojson/us-states.json
+at master - GitHub</a>)</p></li>
+</ul>
+<p>(If your network blocks GitHub raw files, download them once and keep
+a local copy.)</p>
+<hr />
+<h2 id="minimal-dependency-free-code">2. Minimal, dependency-free
+code</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json, urllib.request</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Polygon</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_geojson(url_or_path):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Fetch (or open) a GeoJSON file and return its parsed dict.&quot;&quot;&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> url_or_path.startswith((<span class="st">&quot;http://&quot;</span>, <span class="st">&quot;https://&quot;</span>)):</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> urllib.request.urlopen(url_or_path) <span class="im">as</span> resp:</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> json.load(resp)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(url_or_path, <span class="st">&quot;r&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.load(f)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rings_from_feature(feature):</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Yield exterior rings (lists of [lon, lat]) from a GeoJSON feature.&quot;&quot;&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    geom <span class="op">=</span> feature[<span class="st">&quot;geometry&quot;</span>]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> geom[<span class="st">&quot;type&quot;</span>] <span class="op">==</span> <span class="st">&quot;Polygon&quot;</span>:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> ring <span class="kw">in</span> geom[<span class="st">&quot;coordinates&quot;</span>]:</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> ring</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> geom[<span class="st">&quot;type&quot;</span>] <span class="op">==</span> <span class="st">&quot;MultiPolygon&quot;</span>:</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> poly <span class="kw">in</span> geom[<span class="st">&quot;coordinates&quot;</span>]:</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> ring <span class="kw">in</span> poly:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                <span class="cf">yield</span> ring</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------------</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) load geometry</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------------------------------------------------------------------</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>state_gj   <span class="op">=</span> load_geojson(<span class="st">&quot;us-states.json&quot;</span>)           <span class="co"># or the raw URL</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>county_gj  <span class="op">=</span> load_geojson(<span class="st">&quot;north-carolina-counties.geojson&quot;</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) pick out NC features</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>state_feat <span class="op">=</span> <span class="bu">next</span>(f <span class="cf">for</span> f <span class="kw">in</span> state_gj[<span class="st">&quot;features&quot;</span>]</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">if</span> f[<span class="st">&quot;properties&quot;</span>][<span class="st">&quot;name&quot;</span>] <span class="op">==</span> <span class="st">&quot;North Carolina&quot;</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>county_feats <span class="op">=</span> county_gj[<span class="st">&quot;features&quot;</span>]        <span class="co"># already only NC counties</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) draw --------------------------------------------------------------</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">7</span>))</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># -- thick state outline ----------------------------------------------</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ring <span class="kw">in</span> rings_from_feature(state_feat):</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    poly <span class="op">=</span> Polygon(ring, closed<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>                   fill<span class="op">=</span><span class="va">False</span>, edgecolor<span class="op">=</span><span class="st">&quot;black&quot;</span>, linewidth<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(poly)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># -- county boundaries -------------------------------------------------</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> feat <span class="kw">in</span> county_feats:</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ring <span class="kw">in</span> rings_from_feature(feat):</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>        poly <span class="op">=</span> Polygon(ring, closed<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>                       fill<span class="op">=</span><span class="va">False</span>, edgecolor<span class="op">=</span><span class="st">&quot;gray&quot;</span>, linewidth<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        ax.add_patch(poly)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">&quot;equal&quot;</span>)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>ax.set_axis_off()</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;North Carolina and its 100 Counties&quot;</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="whats-happening">What’s happening?</h3>
+<ul>
+<li><strong>Reading</strong> – <code>urllib.request</code> pulls the
+GeoJSON over HTTP; <code>json.load</code> turns it into Python
+dicts/lists.</li>
+<li><strong>Un-nesting the geometry</strong> – GeoJSON polygons are just
+lists of <code>[lon, lat]</code> pairs; we loop over each “ring.”</li>
+<li><strong>Matplotlib polygons</strong> – every ring becomes a
+<code>matplotlib.patches.Polygon</code>.
+<ul>
+<li><code>fill=False</code> keeps it an outline.</li>
+<li>Draw state first (thicker black line), then counties (thin
+gray).</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="tips-when-you-want-more">3. Tips when you want more</h2>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 88%" />
+</colgroup>
+<thead>
+<tr>
+<th>Need</th>
+<th>Trick (still zero extra deps)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Different state</strong></td>
+<td>Change the <code>name</code> filter (“Texas”) and a new county
+GeoJSON.</td>
+</tr>
+<tr>
+<td><strong>Zoom / crop</strong></td>
+<td>Matplotlib autoscaling does the job; for manual limits call
+<code>ax.set_xlim</code> / <code>set_ylim</code>.</td>
+</tr>
+<tr>
+<td><strong>Projection</strong></td>
+<td>With only Matplotlib you’re drawing in raw lon/lat (EPSG 4326). Good
+enough for state-scale sketches; just remember east-west distances look
+a tad stretched in mid-latitudes.</td>
+</tr>
+<tr>
+<td><strong>Fill counties</strong></td>
+<td>Add <code>facecolor</code> or a scalar mapped color (choropleth)
+before <code>ax.add_patch(poly)</code>.</td>
+</tr>
+<tr>
+<td><strong>Avoid network hits</strong></td>
+<td>Save the two small GeoJSON files (~300 KB total) next to your script
+and pass the file paths.</td>
+</tr>
+</tbody>
+</table>
+<p>That’s the entire stack: stdlib for the download/parse step and
+Matplotlib for the draw step—no other dependencies needed. Have fun
+sketching!</p>
+<p>Absolutely. Because the county and state outlines are being drawn
+directly in <strong>longitude / latitude degrees</strong>, you can plot
+any points that are in the <strong>same coordinate system</strong> just
+by calling <code>ax.scatter()</code> (or <code>ax.plot()</code>) on the
+very same Axes object.</p>
+<p>Here’s a minimal pattern that extends the pure-Matplotlib example I
+gave earlier:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json, urllib.request</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Polygon</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------- helper to load geojson &amp; unpack rings (same as before) -----</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_geojson(src):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> (urllib.request.urlopen(src) <span class="cf">if</span> src.startswith(<span class="st">&quot;http&quot;</span>) <span class="cf">else</span> <span class="bu">open</span>(src, <span class="st">&quot;r&quot;</span>)) <span class="im">as</span> f:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> json.load(f)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rings(feature):</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> feature[<span class="st">&quot;geometry&quot;</span>]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> g[<span class="st">&quot;type&quot;</span>] <span class="op">==</span> <span class="st">&quot;Polygon&quot;</span>:</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> <span class="cf">from</span> g[<span class="st">&quot;coordinates&quot;</span>]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> g[<span class="st">&quot;type&quot;</span>] <span class="op">==</span> <span class="st">&quot;MultiPolygon&quot;</span>:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> poly <span class="kw">in</span> g[<span class="st">&quot;coordinates&quot;</span>]:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> <span class="cf">from</span> poly</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------- 1) draw NC + counties (identical to previous snippet) -----</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> load_geojson(<span class="st">&quot;us-states.json&quot;</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>nc    <span class="op">=</span> <span class="bu">next</span>(f <span class="cf">for</span> f <span class="kw">in</span> state[<span class="st">&quot;features&quot;</span>] <span class="cf">if</span> f[<span class="st">&quot;properties&quot;</span>][<span class="st">&quot;name&quot;</span>] <span class="op">==</span> <span class="st">&quot;North Carolina&quot;</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>counties <span class="op">=</span> load_geojson(<span class="st">&quot;north-carolina-counties.geojson&quot;</span>)[<span class="st">&quot;features&quot;</span>]</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">7</span>))</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ring <span class="kw">in</span> rings(nc):</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    ax.add_patch(Polygon(ring, closed<span class="op">=</span><span class="va">True</span>, fill<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                         edgecolor<span class="op">=</span><span class="st">&quot;black&quot;</span>, linewidth<span class="op">=</span><span class="fl">1.5</span>, zorder<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> feat <span class="kw">in</span> counties:</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ring <span class="kw">in</span> rings(feat):</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        ax.add_patch(Polygon(ring, closed<span class="op">=</span><span class="va">True</span>, fill<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                             edgecolor<span class="op">=</span><span class="st">&quot;gray&quot;</span>, linewidth<span class="op">=</span><span class="fl">0.4</span>, zorder<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">&quot;equal&quot;</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>ax.set_axis_off()</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># ---------- 2) overlay your own point data ----------------------------</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># EXAMPLE: three sample (lon, lat) pairs:</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> [<span class="op">-</span><span class="fl">78.6382</span>, <span class="op">-</span><span class="fl">80.8431</span>, <span class="op">-</span><span class="fl">76.8867</span>]   <span class="co"># longitudes</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>ys <span class="op">=</span> [<span class="fl">35.7796</span>,  <span class="fl">35.2271</span>,  <span class="fl">36.0999</span>]    <span class="co"># latitudes</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>ax.scatter(xs, ys,</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>           marker<span class="op">=</span><span class="st">&quot;o&quot;</span>,          <span class="co"># or &quot;^&quot;, &quot;s&quot;, etc.</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>           s<span class="op">=</span><span class="dv">30</span>,                <span class="co"># marker size (points^2)</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>           edgecolor<span class="op">=</span><span class="st">&quot;white&quot;</span>,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>           linewidth<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>           zorder<span class="op">=</span><span class="dv">3</span>)            <span class="co"># keep on top of outlines</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;NC counties with custom point data&quot;</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="key-points">Key points</h3>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 92%" />
+</colgroup>
+<thead>
+<tr>
+<th>What</th>
+<th>How / why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Coordinate match</strong></td>
+<td>Because the polygons (rings) are plotted in raw (lon, lat), your
+<code>xs</code> and <code>ys</code> must be the same. If you
+pre-projected them into, say, Albers meters, you’d first need to project
+the polygons the same way—without extra libraries that’s non-trivial, so
+keep everything in degrees.</td>
+</tr>
+<tr>
+<td><strong>Keep points on top</strong></td>
+<td>Give the scatter a higher <code>zorder</code> than the polygon
+patches (<code>zorder=3</code> vs 1) so markers aren’t hidden by county
+lines.</td>
+</tr>
+<tr>
+<td><strong>Styling</strong></td>
+<td><code>s</code> controls marker area, <code>marker</code> chooses the
+glyph, <code>edgecolor/linewidth</code> add a white outline so dots pop
+against dark county borders.</td>
+</tr>
+<tr>
+<td><strong>Labels / tooltips</strong></td>
+<td>Use <code>ax.text(x, y, "label", fontsize=8, ha="center")</code> for
+static labels. Interactive hover needs an event handler; even that can
+be done without extra deps if you wish.</td>
+</tr>
+</tbody>
+</table>
+<p>That’s all that’s required—load outlines, draw them, then call
+<code>ax.scatter()</code> (or <code>ax.plot(xs, ys, ".")</code>) on the
+same Axes.</p>
+    
+</body>
+</html>
