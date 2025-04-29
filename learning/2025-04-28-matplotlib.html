@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a minimal-to-flexible recipe that sticks to the
+<strong>Figure / Axes</strong> workflow you prefer. Everything happens
+through the <code>Axes</code> object, which keeps the code clean and
+makes it easy to add more artists later (titles, grids, insets,
+etc.).</p>
+<hr />
+<h3 id="import-and-create-the-figure-axes">1. Import and create the
+Figure &amp; Axes</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np   <span class="co"># only for fake data in this example</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>), dpi<span class="op">=</span><span class="dv">110</span>)   <span class="co"># returns one Figure and one Axes</span></span></code></pre></div>
+<ul>
+<li><code>figsize</code> controls the canvas size in inches.</li>
+<li><code>dpi</code> sets resolution; handy when you want crisp
+PNGs.</li>
+</ul>
+<hr />
+<h3 id="prepare-or-receive-your-data">2. Prepare (or receive) your
+data</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">0</span>, scale<span class="op">=</span><span class="dv">1</span>, size<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="dv">5</span>, scale<span class="op">=</span><span class="dv">2</span>, size<span class="op">=</span><span class="dv">100</span>)</span></code></pre></div>
+<p><code>x</code> and <code>y</code> can be any 1-D sequences (NumPy
+array, list, Pandas Series, PyTorch tensor, …) of equal length.</p>
+<hr />
+<h3 id="draw-the-scatter">3. Draw the scatter</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ax.scatter(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    x, y,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    s<span class="op">=</span><span class="dv">60</span>,                 <span class="co"># marker size in points²</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">&#39;o&#39;</span>,           <span class="co"># shape: &#39;o&#39;, &#39;^&#39;, &#39;s&#39;, &#39;x&#39;, etc.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.8</span>,            <span class="co"># transparency (0–1)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    edgecolors<span class="op">=</span><span class="st">&#39;k&#39;</span>,       <span class="co"># marker border color</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    linewidths<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">&#39;Samples A&#39;</span>     <span class="co"># will appear in legend</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><em>Tip:</em> For many points use <code>alpha≤0.6</code> or very
+small <code>s</code> to reduce over-plotting.</p>
+<hr />
+<h3 id="polish-the-axes">4. Polish the axes</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;Example Scatter Plot&quot;</span>, pad<span class="op">=</span><span class="dv">12</span>, fontsize<span class="op">=</span><span class="dv">14</span>, weight<span class="op">=</span><span class="st">&#39;bold&#39;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;X-Value&quot;</span>, labelpad<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;Y-Value&quot;</span>, labelpad<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">True</span>, linestyle<span class="op">=</span><span class="st">&#39;--&#39;</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()        <span class="co"># avoid clipped labels</span></span></code></pre></div>
+<hr />
+<h3 id="show-or-save">5. Show or save</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.show()                <span class="co"># in a Jupyter cell this displays automatically</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fig.savefig(&quot;scatter.png&quot;, bbox_inches=&quot;tight&quot;, dpi=300)</span></span></code></pre></div>
+<hr />
+<h2 id="going-further">Going further</h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr>
+<th>Need</th>
+<th>Tweak</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Categorical coloring</strong></td>
+<td>Pass a colormap &amp; third array:
+<code>ax.scatter(x, y, c=category_ids, cmap='viridis')</code> then add
+<code>cbar = fig.colorbar(scatter)</code></td>
+</tr>
+<tr>
+<td><strong>Multiple datasets</strong></td>
+<td>Call <code>ax.scatter(...)</code> repeatedly with different labels,
+then <code>ax.legend()</code></td>
+</tr>
+<tr>
+<td><strong>Annotations</strong></td>
+<td><code>for xi, yi, txt in zip(x, y, labels): ax.annotate(txt, (xi, yi), textcoords="offset points", xytext=(5,5))</code></td>
+</tr>
+<tr>
+<td><strong>Interactive zoom / pan</strong></td>
+<td>In JupyterLab or VS Code, use the <code>%matplotlib widget</code>
+backend at the top of your notebook</td>
+</tr>
+</tbody>
+</table>
+<p>That’s all you need for a solid, reusable scatterplot pattern based
+on the Figure–Axes API. Happy plotting!</p>
+    
+</body>
+</html>
