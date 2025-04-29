@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3 id="why-the-straight-silhouette-doesnt-scale">Why the “straight”
+silhouette doesn’t scale</h3>
+<p><code>silhouette_score</code> has to look at the distance between
+<strong>every pair of points</strong> to decide how far each sample is
+from its own and the next-closest cluster.<br />
+With <em>n</em> points that means an <em>n × n</em> distance matrix
+(time and memory ∝ <em>n²</em>). For 1.5 million rows that is 2.25 *
+10¹² distances – hundreds of GB just for the matrix, which is why you
+hit a wall (<a
+href="https://stackoverflow.com/questions/47702750/memoryerror-from-sklearn-metrics-silhouette-samples?utm_source=chatgpt.com">MemoryError
+from sklearn.metrics.silhouette_samples - Stack Overflow</a>).</p>
+<hr />
+<h3 id="three-practical-ways-to-keep-it-workable">Three practical ways
+to keep it workable</h3>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 12%" />
+<col style="width: 18%" />
+<col style="width: 58%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>When to use it</th>
+<th>How it helps</th>
+<th>Code sketch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Random sub-sampling</strong> (built-in)</td>
+<td>First thing to try; good when clusters are reasonably well
+separated</td>
+<td>Pass <code>sample_size</code> so scikit-learn computes the score on
+a <em>random</em> subset instead of the full data</td>
+<td><code>python from sklearn.metrics import silhouette_score score = silhouette_score(X, labels, sample_size=20_000, random_state=42)</code>
+<code>sample_size</code> has been part of the API for years (<a
+href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html">silhouette_score
+— scikit-learn 1.6.1 documentation</a>)</td>
+</tr>
+<tr>
+<td><strong>Mini-Batch K-Means + sample silhouette</strong></td>
+<td>When fitting full K-Means is slow as well</td>
+<td><code>MiniBatchKMeans</code> uses streaming mini-batches; you then
+evaluate with the sampled silhouette like above</td>
+<td><code>python from sklearn.cluster import MiniBatchKMeans km = MiniBatchKMeans(n_clusters=k, batch_size=10_000, n_init="auto").fit(X) score = silhouette_score(X, km.labels_, sample_size=20_000, random_state=0)</code></td>
+</tr>
+<tr>
+<td><strong>Dimensionality reduction first (e.g. PCA → 20–50
+dims)</strong></td>
+<td>Very wide feature tables or noisy columns</td>
+<td>Smaller pairwise-distance computations and often clearer
+structure</td>
+<td><code>python from sklearn.decomposition import PCA X_pca = PCA(n_components=30, random_state=0).fit_transform(X)</code>
+then cluster and score</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Sampling rule-of-thumb</strong><br />
+• 10 000–50 000 points is usually enough to stabilise the average
+silhouette.<br />
+• If you want a heuristic: start at <code>min( √n , 20 000 )</code> and
+double it only if the resulting curve over <em>k</em> is too noisy.</p>
+</blockquote>
+<hr />
+<h3
+id="putting-it-together-a-full-search-k-loop-that-runs-on-a-laptop">Putting
+it together – a full “search k” loop that runs on a laptop</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> MiniBatchKMeans</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> silhouette_grid_search(X, k_range<span class="op">=</span><span class="bu">range</span>(<span class="dv">2</span>, <span class="dv">16</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                           pca_dims<span class="op">=</span><span class="dv">30</span>, sample_size<span class="op">=</span><span class="dv">20000</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                           batch<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    X_small <span class="op">=</span> PCA(n_components<span class="op">=</span>pca_dims,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                  random_state<span class="op">=</span>random_state).fit_transform(X)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> []</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> k_range:</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        km <span class="op">=</span> MiniBatchKMeans(n_clusters<span class="op">=</span>k,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                             batch_size<span class="op">=</span>batch,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                             n_init<span class="op">=</span><span class="st">&quot;auto&quot;</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                             random_state<span class="op">=</span>random_state)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        labels <span class="op">=</span> km.fit_predict(X_small)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> silhouette_score(X_small, labels,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                             sample_size<span class="op">=</span>sample_size,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                             random_state<span class="op">=</span>random_state,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                             n_jobs<span class="op">=-</span><span class="dv">1</span>)      <span class="co"># parallel</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        scores.append(s)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;k=</span><span class="sc">{</span>k<span class="sc">:2d}</span><span class="ss">  silhouette=</span><span class="sc">{</span>s<span class="sc">:0.4f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(scores)</span></code></pre></div>
+<p><em>Typical runtime</em>:<br />
+– PCA (30 dims) on 1.5 M × 500 features ≈ a few minutes
+(multi-core).<br />
+– Each MiniBatchKMeans fit on 30-D ≈ seconds.<br />
+– Silhouette on 20 k sample ≈ a few hundred ms.</p>
+<hr />
+<h3 id="faster-or-larger-still">Faster or larger still?</h3>
+<ul>
+<li><strong>GPU</strong> – RAPIDS cuML has GPU K-Means <em>and</em> an
+accelerated silhouette implementation; with a modern card you can
+evaluate the <strong>whole</strong> dataset in memory in minutes.</li>
+<li><strong>Approximate neighbours</strong> – libraries such as
+<code>pynndescent</code> can be used to build an approximate k-NN graph
+and compute silhouette in <em>O(n log n)</em> instead of
+<em>n²</em>.</li>
+<li><strong>Alternative indices</strong> – Calinski-Harabasz and
+Davies-Bouldin depend only on cluster centroids/dispersion, so they run
+in <em>O(n · d)</em> and scale linearly; many teams use them to prune
+the search space and then confirm the finalists with the (sampled)
+silhouette.</li>
+</ul>
+<hr />
+<h3 id="take-aways">Take-aways</h3>
+<ol type="1">
+<li><strong>Always sample</strong> when <code>n</code> is in the
+hundreds of thousands or more.</li>
+<li>Couple that with <strong>MiniBatchKMeans</strong> (or GPU K-Means)
+to keep the overall pipeline light.</li>
+<li>10 k–50 k subsample points deliver a stable curve for deciding the
+best <em>k</em> in practice.</li>
+<li>If memory or time is still tight, fall back on centroid-based
+indices or upgrade to a GPU solution.</li>
+</ol>
+    
+</body>
+</html>
