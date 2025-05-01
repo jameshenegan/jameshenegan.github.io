@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="question-1">Question 1</h1>
+<p>is it common for people to do pca before clustering? in other words,
+if you have a lot of variables, can you do pca on the variables and then
+cluster the primary components?</p>
+<h2 id="response">Response</h2>
+<p><strong>Short answer: yes—running PCA (or another
+dimensionality-reduction step) <em>before</em> a clustering algorithm is
+very common when you start with many, possibly correlated
+variables.</strong></p>
+<hr />
+<h3 id="why-practitioners-like-this-two-step-pipeline">Why practitioners
+like this two-step pipeline</h3>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 89%" />
+</colgroup>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>How it helps clustering</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Noise filtering</strong></td>
+<td>PCA pushes low-variance “noise” dimensions to later components, so
+keeping only the first <em>k</em> PCs can improve the signal-to-noise
+ratio.</td>
+</tr>
+<tr>
+<td><strong>Collinearity removal</strong></td>
+<td>Many clustering algorithms assume variables are roughly independent
+or at least not perfectly collinear. PCA’s orthogonal components break
+collinearity.</td>
+</tr>
+<tr>
+<td><strong>Dimensionality reduction</strong></td>
+<td>Distance-based methods (k-means, hierarchical with Euclidean
+metrics, DBSCAN, …) suffer in very high-dimensional space (“curse of
+dimensionality”). Reducing to 2–50 PCs often restores meaningful
+distance structure and speeds the algorithm.</td>
+</tr>
+<tr>
+<td><strong>Visualization</strong></td>
+<td>You can plot data in 2- or 3-D PC space to sanity-check whether
+clusters look separable.</td>
+</tr>
+<tr>
+<td><strong>Computational efficiency</strong></td>
+<td>Clustering on, say, 10 PCs is dramatically faster than on thousands
+of raw variables, especially for algorithms with <em>O(n²)</em> or worse
+complexity.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="typical-workflow">Typical workflow</h3>
+<ol type="1">
+<li><p><strong>Pre-process</strong></p>
+<ul>
+<li>Standardize or whiten variables (PCA assumes features on comparable
+scales).</li>
+<li>Handle missing values first (impute or remove).</li>
+</ul></li>
+<li><p><strong>Compute PCA</strong></p>
+<ul>
+<li>Keep enough PCs to explain a target proportion of variance (e.g.,
+80-95 %) <strong>or</strong></li>
+<li>Use an “elbow” in the scree plot.</li>
+</ul></li>
+<li><p><strong>Run clustering</strong> on the retained PC scores</p>
+<ul>
+<li>Choose algorithm (k-means, Gaussian Mixture, agglomerative, DBSCAN,
+etc.).</li>
+<li>Decide <em>k</em> (elbow, silhouette, gap statistic, BIC for
+mixtures, …).</li>
+</ul></li>
+<li><p><strong>Validate</strong></p>
+<ul>
+<li>Internal indices (silhouette, Davies–Bouldin) on the PC space.</li>
+<li>External / domain labels if you have them.</li>
+<li>Re-project cluster labels back to original variables to interpret
+drivers.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="caveats-best-practices">Caveats &amp; best practices</h3>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 89%" />
+</colgroup>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Mitigation / comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Potential loss of cluster structure</strong></td>
+<td>PCA is <em>linear</em> and optimized for variance, not for
+preserving pairwise distances or cluster separability. If clusters lie
+in low-variance directions, truncating PCs could merge them. Always
+compare clustering results with and without PCA, or consider non-linear
+embeddings (t-SNE, UMAP, autoencoders) if shape matters.</td>
+</tr>
+<tr>
+<td><strong>Interpretability</strong></td>
+<td>Clustering on PCs is mathematically fine, but PCs are linear
+combinations of original variables, so explaining clusters to
+stakeholders may require mapping components back to the original
+features and inspecting loadings.</td>
+</tr>
+<tr>
+<td><strong>Scaling choices</strong></td>
+<td>Standardizing (zero-mean, unit-variance) vs. using the correlation
+matrix can change PCs dramatically, which in turn affects clustering
+outcomes.</td>
+</tr>
+<tr>
+<td><strong>Number of PCs</strong></td>
+<td>Keeping too few may discard important structure; keeping too many
+reduces the benefit. A quick rule of thumb is to keep PCs whose
+eigenvalues ≥ 1 (Kaiser criterion) or until marginal gain in explained
+variance flattens.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="when-you-might-not-need-pca-first">When you <strong>might
+not</strong> need PCA first</h3>
+<ul>
+<li><strong>Low-dimensional data</strong> (≤ 10–15 variables) where
+interpretability in original space is crucial.</li>
+<li><strong>Categorical‐heavy data</strong> where MCA or other
+techniques are more appropriate.</li>
+<li>Algorithms that intrinsically handle high dimensionality or variable
+selection (e.g., sparse k-means, model-based clustering with
+regularization).</li>
+</ul>
+<hr />
+<h3 id="takeaway">Takeaway</h3>
+<p>PCA-then-clustering is a proven, widely used recipe—especially with
+large, numeric, correlated feature sets. Just remember the step isn’t
+mandatory, and always validate that the reduced representation still
+preserves the structure you care about.</p>
+<h1 id="question-2">Question 2</h1>
+<p>i have a question about doing pca and then clustering on the primary
+components . my understanding is that the first primary component tends
+to explain a lot of the variance, the second explains less, and so on.
+if that is the case, then should I “weight” the first pirmary component
+more in the the clustering?</p>
+<h2 id="response-1">Response</h2>
+<p>Not unless you have a specific, domain-driven reason to do so.</p>
+<h3 id="how-weighting-works-by-default">How “weighting” works by
+default</h3>
+<ol type="1">
+<li><p><strong>PC scores are already scaled in units of their own
+variance.</strong></p>
+<ul>
+<li>If you feed the raw PC scores to a distance-based algorithm such as
+k-means or hierarchical clustering with Euclidean distance, the first PC
+automatically contributes more to every distance calculation simply
+because its coordinate values have the largest spread.</li>
+<li>In other words, <em>using the PCs as-is already gives the early
+components the greatest influence</em>—you don’t have to do anything
+extra.</li>
+</ul></li>
+<li><p><strong>Equalising instead of emphasizing is more
+common.</strong></p>
+<ul>
+<li>Some practitioners <em>standardise</em> the retained PC scores
+(divide each component by its standard deviation / √eigenvalue) before
+clustering.</li>
+<li>That converts Euclidean distance in PCA space into the Mahalanobis
+distance in the original space, giving every retained axis equal
+weight.</li>
+<li>This is desirable when you believe low-variance directions may still
+contain cluster structure that would be drowned out by sheer
+variance.</li>
+</ul></li>
+</ol>
+<h3 id="when-you-might-re-weight-on-purpose">When you
+<strong>might</strong> re-weight on purpose</h3>
+<table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 28%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th>Situation</th>
+<th>What you’d do</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>You know the first PC captures the key latent trait you care about
+(e.g., overall “size” in morphometrics)</td>
+<td>Keep raw PC scores (or even use just the first few PCs)</td>
+<td>Allows your clustering to focus almost entirely on that dominant
+trait.</td>
+</tr>
+<tr>
+<td>You want the early PCs to matter <em>less</em> so subtler structure
+emerges</td>
+<td>Standardise all retained PCs so they each have unit variance</td>
+<td>Prevents the first PC from swamping distance calculations.</td>
+</tr>
+<tr>
+<td>You need an intermediate compromise</td>
+<td>Multiply each PC by a chosen weight (e.g., √eigenvalue^γ with 0 &lt;
+γ &lt; 1)</td>
+<td>Lets you taper, rather than equalise or exaggerate.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="practical-advice">Practical advice</h3>
+<ol type="1">
+<li><p><strong>Try both approaches quickly.</strong></p>
+<ul>
+<li>Run clustering on raw PC scores → check silhouette/gap
+statistic/labels.</li>
+<li>Standardise the same PCs → re-cluster → compare objective metrics
+and interpretability.</li>
+</ul></li>
+<li><p><strong>Keep only the PCs you trust.</strong></p>
+<ul>
+<li>If you retain 10 PCs but the last three are mostly noise, neither
+weighted nor unweighted distances will rescue the clustering. Pick the
+dimensionality first, then worry about scaling.</li>
+</ul></li>
+<li><p><strong>Document the choice.</strong></p>
+<ul>
+<li>Whether you use raw PCs (implicit variance weighting) or scaled PCs
+(equal weighting), note it in your methodology so results are
+reproducible.</li>
+</ul></li>
+</ol>
+<hr />
+<p><strong>Bottom line:</strong><br />
+Feeding raw PC scores into a clustering algorithm already “weights” the
+first component the most. In practice, analysts more often
+<em>down-weight</em> that dominance by standardising the PCs, not
+amplify it further—unless domain knowledge says the leading component
+truly deserves the spotlight.</p>
+<h1 id="question-3">Question 3</h1>
+<p>now suppose that i have a dataframe with 4 “groups” of variables. one
+is continous observed data. one is binary observed data. one is
+continuous modeled data. one is binary modeled data. my plan is to do
+pca on each of the four groups. so i end up with four groups of
+principal components. then i combine the four groups of principal
+components into a single dataframe. then i run CLUSTERING on that single
+dataframe. is that a good idea? or a bad idea?</p>
+<h2 id="response-2">Response</h2>
+<h3 id="tldr">TL;DR</h3>
+<p>Doing <strong>“block-wise PCA ➜ concatenate PCs ➜ cluster”</strong>
+is a defensible pipeline that many people use—but it comes with hidden
+choices about <strong>how many PCs per block</strong> and <strong>how
+much weight each block gets</strong>. If you’re comfortable making (and
+documenting) those choices, the plan is fine. If you’d prefer something
+purpose-built that handles group balance automatically, look at
+<strong>Multiple-Factor Analysis (MFA) / FAMD</strong> or clustering
+methods that work directly on mixed data (e.g., Gower distance +
+hierarchical, k-prototypes).</p>
+<hr />
+<h2 id="what-works-well-in-your-plan">What works well in your plan</h2>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strength</th>
+<th>Why it helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dimensionality reduction inside each block</strong></td>
+<td>Binary blocks often have hundreds of dummies, continuous blocks can
+be collinear. Compressing them first speeds clustering and improves
+distance metrics.</td>
+</tr>
+<tr>
+<td><strong>Noise filtering</strong></td>
+<td>Retaining only the “signal” PCs (e.g., first few that explain ≥ 80 %
+variance) can sharpen the clusters.</td>
+</tr>
+<tr>
+<td><strong>Interpretability by source</strong></td>
+<td>You can still tell colleagues “these clusters are driven mainly by
+PC1 of the <em>observed-continuous</em> block.”</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-caveats-to-watch">Key caveats to watch</h2>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 49%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>Caveat</th>
+<th>Why it matters</th>
+<th>Practical fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>How many PCs per block?</strong></td>
+<td>If you keep too few from, say, the binary-modeled block, any
+structure that needs those later PCs is gone forever.</td>
+<td>Use cumulative-variance <em>and</em> scree/elbow + domain sense. Err
+on the generous side (keep a bit more, you can drop later).</td>
+</tr>
+<tr>
+<td><strong>Block-size &amp; variance dominance</strong></td>
+<td>Continuous PCs generally have larger variances; binary PCs tend to
+be low-variance. Euclidean-based clustering will let the big-variance
+blocks speak loudest.</td>
+<td>Before concatenation, <em>standardise each retained PC</em> (divide
+by its SD) <strong>or</strong> scale each block so its total variance =
+1.</td>
+</tr>
+<tr>
+<td><strong>Loss of cross-block correlations</strong></td>
+<td>A correlation that only appears when a continuous feature meets a
+binary one could hide in PCs you’ve discarded.</td>
+<td>Keep enough PCs; or use MFA/FAMD which keeps cross-block info by
+design.</td>
+</tr>
+<tr>
+<td><strong>Metric choice after concatenation</strong></td>
+<td>K-means, Ward’s linkage, DBSCAN, etc. all assume Euclidean geometry
+on your concatenated PC space. That’s fine once you’ve standardised, but
+be explicit.</td>
+<td>If you need other metrics (e.g., cosine), compute them in the PC
+space.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="workflow-checklist">Workflow checklist</h2>
+<ol type="1">
+<li><strong>Pre-process inside each block</strong>
+<ul>
+<li><em>Continuous</em>: centre &amp; scale.</li>
+<li><em>Binary</em>: leave 0/1 or centre to 0 mean; optional
+MCA/logistic PCA instead of ordinary PCA.</li>
+</ul></li>
+<li><strong>Run PCA per block</strong>
+<ul>
+<li>Keep PCs by variance explained, eigenvalue ≥ 1, or domain
+criteria.</li>
+<li>Record how much variance each retained set still carries.</li>
+</ul></li>
+<li><strong>Scale before concatenating</strong> (crucial!)
+<ul>
+<li><strong>Option A (recommended)</strong>: z-score each retained PC →
+every PC has unit variance.</li>
+<li><strong>Option B</strong>: divide every PC in block <em>g</em> by
+√(Σ eigenvalues kept in g) so each block contributes equally
+overall.</li>
+</ul></li>
+<li><strong>Concatenate</strong> the scaled PCs into one matrix.</li>
+<li><strong>Choose clustering algorithm &amp; k</strong>
+<ul>
+<li>K-means / Gaussian-mixture if you expect convex clusters.</li>
+<li>Hierarchical with Ward or complete linkage if you want a
+dendrogram.</li>
+<li>DBSCAN/HDBSCAN for arbitrary shapes.</li>
+<li>Pick <em>k</em> with silhouette, gap, or BIC.</li>
+</ul></li>
+<li><strong>Validate &amp; interpret</strong>
+<ul>
+<li>Silhouette, Davies–Bouldin, or stability via bootstrapping.</li>
+<li>Map cluster labels back to original variables or PC loadings to
+understand drivers.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="alternative-one-shot-options">Alternative “one-shot”
+options</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 74%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>What it buys you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MFA (Multiple-Factor Analysis)</strong></td>
+<td>Treats each block as a group, automatically normalises block
+inertia, then gives one set of global factors you can cluster on. Avoids
+manual scaling decisions.</td>
+</tr>
+<tr>
+<td><strong>FAMD</strong> (if blocks are just “numeric
+vs. categorical”)</td>
+<td>Same idea for mixed data; in many software packages
+(<code>FactoMineR::FAMD</code>, Python <code>prince</code>).</td>
+</tr>
+<tr>
+<td><strong>Gower distance → hierarchical or PAM</strong></td>
+<td>Computes a similarity that mixes numeric &amp; binary directly, no
+PCA needed. Scales well to ≈ 10⁴ rows.</td>
+</tr>
+<tr>
+<td><strong>k-prototypes</strong></td>
+<td>Extends k-means with separate numeric &amp; categorical distance
+terms; useful when binary blocks dominate.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="verdict">Verdict</h3>
+<p>Your two-step plan is <strong>perfectly acceptable</strong>
+<em>provided you standardise the PCs (or blocks) so no single group
+dominates</em> and you keep enough PCs to preserve cross-group signals.
+Just document the thresholds you pick and test sensitivity. If you’d
+rather skip the manual weighting debate, MFA/FAMD gives the same
+outcome—global components ready for clustering—without the extra moving
+parts.</p>
+<p>Let me know if you’d like a code snippet (Python/R) showing both
+approaches side by side!</p>
+<h1 id="question-4">Question 4</h1>
+<p>when you say “Scale before concatenating (crucial!)” — is that the
+same as using standard scaler?</p>
+<h2 id="response-3">Response</h2>
+<p>Pretty much—<strong>StandardScaler in scikit-learn is exactly the
+tool most people use for this</strong>, but there are two slightly
+different targets you might have in mind:</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 31%" />
+<col style="width: 56%" />
+</colgroup>
+<thead>
+<tr>
+<th>Goal</th>
+<th>What you want to equalise</th>
+<th>How to do it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Give <em>every PC column</em> equal weight</strong></td>
+<td>Each retained principal component should have variance = 1.</td>
+<td>Fit a <code>StandardScaler</code> (or just divide each PC by its own
+SD = √eigenvalue). Do this block-by-block <em>before</em> you stack the
+PCs <strong>or</strong> on the full concatenated matrix afterward—both
+yield the same result.</td>
+</tr>
+<tr>
+<td><strong>Give <em>every block</em> equal total weight</strong></td>
+<td>The <em>sum</em> of variances inside each block should be 1, but
+large-variance PCs can still dominate inside that block.</td>
+<td>Compute the block’s total retained variance (Σ eigenvalues) and
+divide <strong>all</strong> its PCs by √(that sum). A plain
+<code>StandardScaler</code> won’t do this for you—you need one manual
+line of code.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="typical-simple-safe-recipe">Typical “simple &amp; safe”
+recipe</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you already have four data frames:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># X_cont_obs, X_bin_obs, X_cont_mod, X_bin_mod</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. PCA per block ----------------------------------------------------------</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pca_block(X, n_components<span class="op">=</span><span class="va">None</span>, var_cut<span class="op">=</span><span class="fl">0.9</span>):</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    pca <span class="op">=</span> PCA(n_components<span class="op">=</span>n_components).fit(X)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># choose number of PCs to reach var_cut cumulative variance</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n_components <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> np.searchsorted(np.cumsum(pca.explained_variance_ratio_), var_cut) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        pca <span class="op">=</span> PCA(n_components<span class="op">=</span>k).fit(X)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    Z <span class="op">=</span> pca.transform(X)          <span class="co"># PC scores</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    ev <span class="op">=</span> pca.explained_variance_  <span class="co"># eigenvalues</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(Z), ev</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>Z1, ev1 <span class="op">=</span> pca_block(X_cont_obs)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>Z2, ev2 <span class="op">=</span> pca_block(X_bin_obs)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>Z3, ev3 <span class="op">=</span> pca_block(X_cont_mod)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>Z4, ev4 <span class="op">=</span> pca_block(X_bin_mod)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Standardise each PC column (unit variance) -----------------------------</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>scalers <span class="op">=</span> []</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>Z_blocks_scaled <span class="op">=</span> []</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> Z <span class="kw">in</span> (Z1, Z2, Z3, Z4):</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    sc <span class="op">=</span> StandardScaler(with_mean<span class="op">=</span><span class="va">False</span>)   <span class="co"># PCs are already mean-0</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    Z_blocks_scaled.append(pd.DataFrame(sc.fit_transform(Z), index<span class="op">=</span>Z.index))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    scalers.append(sc)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Concatenate ------------------------------------------------------------</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Z_all <span class="op">=</span> pd.concat(Z_blocks_scaled, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Cluster on Z_all -------------------------------------------------------</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">0</span>).fit_predict(Z_all)</span></code></pre></div>
+<p><em>Step 2 with <code>with_mean=False</code></em> keeps the PCs
+centred at 0 and divides by their standard deviations, so every PC
+contributes equally in Euclidean distance.</p>
+<hr />
+<h3 id="when-standardscaler-is-not-enough">When <strong>StandardScaler
+is <em>not</em> enough</strong></h3>
+<p>If you prefer <em>equal total weight per block</em> (second row in
+the table), replace step 2 with:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> Z, ev <span class="kw">in</span> ((Z1, ev1), (Z2, ev2), (Z3, ev3), (Z4, ev4)):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    block_weight <span class="op">=</span> np.sqrt(ev.<span class="bu">sum</span>())     <span class="co"># √(total retained variance)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Z_blocks_scaled.append(Z <span class="op">/</span> block_weight)</span></code></pre></div>
+<p>After this you can still run a vanilla StandardScaler on the full
+concatenated matrix if you want every <em>column</em> mean-0 (not
+strictly necessary for k-means).</p>
+<hr />
+<h3 id="bottom-line">Bottom line</h3>
+<ul>
+<li><strong>Yes</strong>—a regular <code>StandardScaler</code> (or the
+equivalent in R, Julia, etc.) is the normal way to implement “scale
+before concatenating,” <strong>provided you really do want each PC
+column to have the same variance.</strong></li>
+<li>If your goal is <em>equal influence of blocks</em>, you need a tiny
+extra scaling step, because StandardScaler treats columns independently
+and knows nothing about group structure.</li>
+</ul>
+<p>Pick the weighting logic that matches your analytic intent, and
+you’re good to cluster.</p>
+<h1 id="question-5">Question 5</h1>
+<p>i guess i’m confused. according to your last answer, it seem like it
+would be defensible just to apply standard scaler to the concateneated
+pca blocks. but if i do that, then it seems like the first primary
+components of each block would be on the same “scale” as the last
+primary components of each block. in my mind, that makes it seem like
+the last primary components of each block would have the same amount of
+“weight” as the first. am i misunderstanding something?</p>
+<h2 id="reponse">Reponse</h2>
+<h3 id="why-your-intuition-feels-conflicted">Why your intuition feels
+conflicted</h3>
+<ul>
+<li><p><strong>Inside a single block</strong></p>
+<ul>
+<li>PC-1 really <strong>does</strong> carry more of that block’s
+variance than PC-10.</li>
+<li>If you drop them into a distance-based algorithm <em>unchanged</em>,
+PC-1 will naturally count more because its coordinate values spread out
+further.</li>
+</ul></li>
+<li><p><strong>Across <em>all</em> blocks together</strong></p>
+<ul>
+<li>Continuous-observed PCs may have huge variances, binary-modeled PCs
+tiny ones.</li>
+<li>If you leave every PC at its raw scale, the <em>entire</em>
+clustering result can be driven almost exclusively by the
+highest-variance block/PC—even if you kept 30 other PCs “just in
+case.”</li>
+<li>Standardising every PC to unit variance fixes that cross-block
+imbalance, <strong>but</strong> it also puts PC-10 of a block on the
+same footing as PC-1 of that same block.</li>
+</ul></li>
+</ul>
+<p>So you’re not misunderstanding; it’s a genuine trade-off:</p>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 23%" />
+<col style="width: 20%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Scaling choice</th>
+<th>Within-block effect</th>
+<th>Across-block effect</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>No scaling</strong> (keep raw PC scores)</td>
+<td>Earlier PCs dominate later ones.</td>
+<td>Blocks with larger total variance dominate blocks with smaller
+variance.</td>
+<td>You <em>want</em> dominance to follow raw variance (rare in mixed
+data).</td>
+</tr>
+<tr>
+<td><strong><code>StandardScaler</code> on <em>each
+column</em></strong></td>
+<td>Earlier and later PCs have equal weight.</td>
+<td>All blocks automatically balanced because every column SD = 1.</td>
+<td>You <em>don’t</em> trust variance magnitude as a proxy for cluster
+signal and prefer not to pre-judge which PCs matter.</td>
+</tr>
+<tr>
+<td><strong>Equal-weight <em>per block</em></strong> (divide all PCs of
+block <em>g</em> by √Σ eigenvalues_g)</td>
+<td>Earlier PCs still dominate within their block.</td>
+<td>Every block contributes the same total weight.</td>
+<td>You want blocks balanced but still favour higher-variance PCs inside
+each block.</td>
+</tr>
+<tr>
+<td><strong>Custom taper</strong> (e.g., divide each PC by eigenvalue^γ,
+0 &lt; γ &lt; 1)</td>
+<td>Gives a smooth gradient—PC-1 weighted more, PC-10 less, but not as
+extreme as raw.</td>
+<td>Block influence depends on both size and chosen γ.</td>
+<td>Fine-tune dominance when domain knowledge says “some taper is
+good.”</td>
+</tr>
+</tbody>
+</table>
+<h3 id="what-most-practitioners-do-with-mixed-blocks">What most
+practitioners do with mixed blocks</h3>
+<ol type="1">
+<li><strong>Pick how many PCs per block</strong> — keep those that
+explain, say, ≥ 85 % of that block’s variance (erring high to avoid
+losing signal).</li>
+<li><strong>Rescale <em>per block</em></strong> so each block has the
+same total weight, <em>or</em> standardise every PC column.</li>
+<li><strong>Cluster</strong> and <strong>run a sensitivity
+check</strong>: repeat with the other scaling option.<br />
+<em>If your clusters move all over the place, the result depends heavily
+on those weights—you need to justify one scheme or try MFA/FAMD
+instead.</em></li>
+</ol>
+<h3 id="intuition-check">Intuition check</h3>
+<p><em>Equalising column variances</em> does <strong>not</strong> say
+“PC-10 is just as <em>important</em> as PC-1.”<br />
+It says “Given that I decided to <em>keep</em> PC-10, I won’t prejudice
+the algorithm against hearing it.”<br />
+If PC-10 is mostly noise, it still contains very little
+<strong>information</strong>—its (standardised) coordinate values are
+largely random, so it rarely tips a distance enough to reassign an
+observation. In practice, PC-1 still shapes the clusters more because
+its pattern is coherent, not because its raw variance is largest.</p>
+<h3 id="practical-takeaway">Practical takeaway</h3>
+<ul>
+<li><strong>If you believe variance magnitude is a good proxy for
+clustering signal</strong>, keep PCs raw (or at most equalise by
+block).</li>
+<li><strong>If you’d rather let the clustering algorithm discover signal
+on an equal playing field</strong>, standardise every retained PC
+column.</li>
+<li>There’s no universal “correct” here—just different assumptions. Try
+both, compare silhouette/gap statistics, and choose the one that yields
+clusters that make sense in your domain.</li>
+</ul>
+<p>Let me know if you’d like code snippets showing both scaling paths
+side-by-side or diagnostics to help decide!</p>
+<h1 id="question-6">Question 6</h1>
+<p>can you give a detailed tutorial on Equal-weight per block (divide
+all PCs of block g by √Σ eigenvalues_g)</p>
+<h2 id="response-4">Response</h2>
+<p>Below is a <strong>self-contained “cookbook”</strong> for the
+<em>equal-weight-per-block</em> scaling you asked about.<br />
+You can copy–paste the code and adapt it to your own data.<br />
+The walk-through is split into:</p>
+<ol type="1">
+<li><strong>Why this scaling exists</strong> – intuition &amp;
+maths</li>
+<li><strong>Algorithm in words</strong></li>
+<li><strong>Hands-on Python (scikit-learn / pandas)</strong></li>
+<li>Quick <strong>R recipe (FactoMineR)</strong></li>
+<li><strong>Diagnostics &amp; tips</strong></li>
+</ol>
+<hr />
+<h2 id="why-give-every-block-the-same-total-weight">1 Why give every
+block the same total weight?</h2>
+<ul>
+<li><p>After a block-wise PCA you have four <em>sets</em> of PC
+scores:</p>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 11%" />
+<col style="width: 17%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>block</th>
+<th>notation</th>
+<th>retained PCs</th>
+<th>per-PC variance = eigenvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>continuous observed</td>
+<td><strong>Z¹</strong></td>
+<td><code>k₁</code> PCs</td>
+<td>λ¹₁ … λ¹_k₁</td>
+</tr>
+<tr>
+<td>binary observed</td>
+<td><strong>Z²</strong></td>
+<td><code>k₂</code> PCs</td>
+<td>λ²₁ … λ²_k₂</td>
+</tr>
+<tr>
+<td>continuous modelled</td>
+<td><strong>Z³</strong></td>
+<td><code>k₃</code> PCs</td>
+<td>λ³₁ … λ³_k₃</td>
+</tr>
+<tr>
+<td>binary modelled</td>
+<td><strong>Z⁴</strong></td>
+<td><code>k₄</code> PCs</td>
+<td>λ⁴₁ … λ⁴_k₄</td>
+</tr>
+</tbody>
+</table></li>
+<li><p>Raw PC variances differ wildly across blocks (continuous &gt;&gt;
+binary).<br />
+If you concatenate without adjustment, Euclidean distance is dominated
+by the largest-variance block(s).</p></li>
+<li><p><strong>Goal:</strong></p>
+<p>[ (g)=_{j=1}<sup>{k_g}</sup>{(g)}_j ; ]</p>
+<p>That keeps blocks balanced <strong>while still letting PC-1 outrank
+PC-10 <em>within</em> its own block</strong>.</p></li>
+<li><p>Scaling rule:</p>
+<p>[ Z^{(g)}_{;j}= (g) ]</p>
+<p>After scaling,<br />
+((Z^{(g)})==1).</p></li>
+</ul>
+<hr />
+<h2 id="algorithm-verbose-language-agnostic">2 Algorithm (verbose,
+language-agnostic)</h2>
+<ol type="1">
+<li><p><strong>Split</strong> the original dataframe into four
+blocks.</p></li>
+<li><p>For <strong>each block g</strong></p>
+<ol type="1">
+<li><p>Standardise raw variables (mean 0, SD 1).</p></li>
+<li><p>Run PCA → keep <code>k_g</code> PCs (decide via cumulative
+variance or scree).<br />
+<em>Store</em> the vector of eigenvalues λ.</p></li>
+<li><p>Build the <strong>scale factor</strong></p>
+<p>[ s*g= ]</p></li>
+<li><p><strong>Divide every retained PC column by
+(s_g).</strong></p></li>
+</ol></li>
+<li><p><strong>Concatenate</strong> the four scaled PC matrices
+horizontally.</p></li>
+<li><p>Feed the result to <em>any</em> clustering method (k-means, GMM,
+HDBSCAN, …).</p></li>
+</ol>
+<p>Optional: z-score every column afterwards if your chosen algorithm
+prefers unit‐variance features; it does <strong>not</strong> undo the
+block balance.</p>
+<hr />
+<h2 id="python-walk-through">3 Python walk-through</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans           <span class="co"># pick your favourite</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> OrderedDict</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 0.  Build a dict {block_name: dataframe}</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>blocks <span class="op">=</span> OrderedDict({</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cont_obs&quot;</span> : X_cont_obs,     <span class="co"># continuous observed</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;bin_obs&quot;</span>  : X_bin_obs,      <span class="co"># binary observed (0/1)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cont_mod&quot;</span> : X_cont_mod,     <span class="co"># continuous modelled</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;bin_mod&quot;</span>  : X_bin_mod       <span class="co"># binary modelled</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 1.  PCA per block  -&gt;  retain PCs that explain &gt;= 90% variance</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>retained <span class="op">=</span> {}           <span class="co"># PC-score dataframes keyed by block</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>tot_var  <span class="op">=</span> {}           <span class="co"># total retained variance per block</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, X <span class="kw">in</span> blocks.items():</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1a. centre &amp; scale original variables</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    Z <span class="op">=</span> StandardScaler().fit_transform(X)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1b. pick #PCs automatically</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    pca <span class="op">=</span> PCA().fit(Z)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> np.searchsorted(np.cumsum(pca.explained_variance_ratio_), <span class="fl">0.90</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    pca <span class="op">=</span> PCA(n_components<span class="op">=</span>k).fit(Z)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> pca.transform(Z)                     <span class="co"># shape (n_samples, k)</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    retained[name] <span class="op">=</span> pd.DataFrame(scores, index<span class="op">=</span>X.index,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                                  columns<span class="op">=</span>[<span class="ss">f&quot;</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">_PC</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(k)])</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    tot_var[name]  <span class="op">=</span> pca.explained_variance_.<span class="bu">sum</span>()</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># 2.  Equalise total weight  -&gt;  divide by sqrt(total retained var)</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>balanced <span class="op">=</span> []</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, df <span class="kw">in</span> retained.items():</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    scale <span class="op">=</span> np.sqrt(tot_var[name])</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    balanced.append(df <span class="op">/</span> scale)</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>Z_balanced <span class="op">=</span> pd.concat(balanced, axis<span class="op">=</span><span class="dv">1</span>)          <span class="co"># final feature matrix</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># 3.  Optional global z-score (keeps block balance intact)</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>Z_final <span class="op">=</span> pd.DataFrame(StandardScaler().fit_transform(Z_balanced),</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>                       index<span class="op">=</span>Z_balanced.index, columns<span class="op">=</span>Z_balanced.columns)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co"># 4.  Cluster</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co">####################################################################</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">0</span>).fit(Z_final)</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>cluster_labels <span class="op">=</span> kmeans.labels_</span></code></pre></div>
+<p><strong>What to tweak</strong></p>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 83%" />
+</colgroup>
+<thead>
+<tr>
+<th>Knob</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0.90</code> (variance cut)</td>
+<td>Keep more/less detail inside each block.</td>
+</tr>
+<tr>
+<td><code>tot_var[name]</code> formula</td>
+<td>If you prefer equalising by <strong>number of PCs</strong> instead
+of total variance, use
+<code>scale = np.sqrt(len(df.columns))</code>.</td>
+</tr>
+<tr>
+<td>Final <code>StandardScaler</code></td>
+<td>Remove it if your clustering algorithm is distance-scale-invariant
+(e.g., Gaussian Mixture with full covariance).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="r-one-liner-using-factominer-multiple-factor-analysis">4 R
+one-liner using <strong>FactoMineR</strong> (Multiple-Factor
+Analysis)</h2>
+<p>If you’re happy to swap the entire two-stage approach for MFA—which
+<em>internally</em> does exactly the block normalisation you just
+implemented—then:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">MFA</span>(<span class="fu">data.frame</span>(X_cont_obs, X_bin_obs, X_cont_mod, X_bin_mod),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">group =</span> <span class="fu">c</span>(<span class="fu">ncol</span>(X_cont_obs), <span class="fu">ncol</span>(X_bin_obs),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">ncol</span>(X_cont_mod), <span class="fu">ncol</span>(X_bin_mod)),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">type  =</span> <span class="fu">c</span>(<span class="st">&quot;s&quot;</span>,        <span class="st">&quot;n&quot;</span>,        <span class="st">&quot;s&quot;</span>,        <span class="st">&quot;n&quot;</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">ncp   =</span> <span class="dv">20</span>)   <span class="co"># number of global components to keep</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> res<span class="sc">$</span>ind<span class="sc">$</span>coord      <span class="co"># ready for clustering</span></span></code></pre></div>
+<ul>
+<li><code>type = "s"</code> = scale quantitative vars; <code>"n"</code>
+= nominal (dummy-coded for you).</li>
+<li>MFA automatically rescales each group so its <strong>first singular
+value = 1</strong>, which is equivalent to the block-variance
+normalisation above.</li>
+</ul>
+<hr />
+<h2 id="diagnostics-sanity-checks-pitfalls">5 Diagnostics, sanity
+checks, pitfalls</h2>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr>
+<th>Check</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Block variance after scaling</strong></td>
+<td><code>Z_balanced.groupby(block).var().sum(axis=1)</code> – should be
+~1 for every block.</td>
+</tr>
+<tr>
+<td><strong>Sensitivity</strong></td>
+<td>Repeat clustering with (a) raw PCs, (b) column-standardised PCs. If
+the <em>same</em> clusters survive, results are robust.</td>
+</tr>
+<tr>
+<td><strong>Over-truncation risk</strong></td>
+<td>If the binary blocks are tiny, keeping only 90 % variance may leave
+you with <strong>1 PC</strong>. Bump the threshold or set a minimum
+<code>k</code>.</td>
+</tr>
+<tr>
+<td><strong>Interpretation</strong></td>
+<td>Project cluster labels back:
+e.g. <code>blocks['cont_obs'].groupby(cluster_labels).mean()</code> to
+see which original variables drive which cluster.</td>
+</tr>
+<tr>
+<td><strong>Distance metric</strong></td>
+<td>K-means &amp; Ward’s hierarchical use Euclidean; DBSCAN can use it
+too. For cosine or Mahalanobis, compute the metric directly on
+<code>Z_final</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="take-home">Take-home</h3>
+<p><em>Dividing every PC in block </em>g* by* () <strong>balances the
+influence of the four data sources without flattening the variance
+structure inside each source.</strong><br />
+It’s a transparent, one-line operation that gives you the same
+“fair-play” principle MFA implements under the hood—while letting you
+keep granular control over how many PCs to retain per block.</p>
+<h1 id="question-7">Question 7</h1>
+<p>i thought i didn’t have to scale the binary variables. is that true?
+also, i’m only interested in python.</p>
+<h2 id="response-5">Response</h2>
+<h3 id="do-i-have-to-scale-the-binary-columns">1 Do I <em>have</em> to
+scale the binary columns?</h3>
+<p><strong>No—centering is mandatory, but scaling is a modelling
+choice.</strong></p>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr>
+<th>What PCA needs</th>
+<th>How scikit-learn handles it</th>
+<th>Implication for <em>0 / 1</em> columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mean-centering</strong> (subtract each column’s mean)</td>
+<td><code>sklearn.decomposition.PCA</code> does this automatically, even
+if you pass the raw data.</td>
+<td>You can feed a binary matrix straight into <code>PCA()</code> and it
+will be centred to −𝑝 and 1−𝑝.</td>
+</tr>
+<tr>
+<td><strong>Unit variance</strong> (divide by SD)</td>
+<td>Optional. If you <em>also</em> run <code>StandardScaler</code>, or
+set <code>PCA(whiten=True)</code>, each column is scaled to variance
+1.</td>
+<td>• If a level is <em>rare</em> (𝑝→0), its SD ≈√𝑝; scaling inflates
+that column and may over-emphasise rare dummies.<br>• If you skip
+scaling, columns with prevalence ≈ 0.5 carry the most variance.</td>
+</tr>
+</tbody>
+</table>
+<p>So:</p>
+<ul>
+<li><p><strong>Typical practice for binary-only blocks</strong><br />
+<em>Center only</em> (rely on PCA’s built-in centring, no extra
+scaling).<br />
+This avoids giving tiny prevalence dummies enormous leverage.</p></li>
+<li><p><strong>When you <em>might</em> standardise the
+dummies</strong></p>
+<ul>
+<li>If the block mixes binary with non-binary numeric variables and you
+want every <em>variable</em> (not just every <em>PC</em>) on the same
+footing;</li>
+<li>If you believe rare flags should be just as influential as common
+ones.</li>
+</ul></li>
+</ul>
+<p>Either way the later <em>equal-weight-per-block</em> step (divide by
+√ Σ eigenvalues) still works—it rescales <strong>after</strong> PCA, so
+the block contributes exactly “1 unit” of variance to the concatenated
+matrix.</p>
+<hr />
+<h3 id="updated-python-template-no-extra-scaling-for-binary-blocks">2
+Updated Python template (no extra scaling for binary blocks)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> OrderedDict</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 0. Assemble the four blocks</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>blocks <span class="op">=</span> OrderedDict({</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cont_obs&quot;</span> : X_cont_obs,   <span class="co"># continuous observed  (scale!)</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;bin_obs&quot;</span>  : X_bin_obs,    <span class="co"># binary observed     (centre only)</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cont_mod&quot;</span> : X_cont_mod,   <span class="co"># continuous modelled (scale!)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;bin_mod&quot;</span>  : X_bin_mod     <span class="co"># binary modelled     (centre only)</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>retained, tot_var <span class="op">=</span> {}, {}</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, X <span class="kw">in</span> blocks.items():</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ----------------------------------------------------------------</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Pre-process</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ----------------------------------------------------------------</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> name.startswith(<span class="st">&#39;cont&#39;</span>):                    <span class="co"># scale continuous</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        X_std <span class="op">=</span> StandardScaler().fit_transform(X)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:                                          <span class="co"># binary: leave 0/1</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        X_std <span class="op">=</span> X.values                           <span class="co"># PCA will centre</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ----------------------------------------------------------------</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. PCA  – retain ≥90 % variance from this block</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ----------------------------------------------------------------</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    pca_full <span class="op">=</span> PCA().fit(X_std)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> np.searchsorted(np.cumsum(pca_full.explained_variance_ratio_),</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>                        <span class="fl">0.90</span>) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    pca <span class="op">=</span> PCA(n_components<span class="op">=</span>k).fit(X_std)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    scores <span class="op">=</span> pca.transform(X_std)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    retained[name] <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        scores, index<span class="op">=</span>X.index,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        columns<span class="op">=</span>[<span class="ss">f&quot;</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">_PC</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(k)]</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    tot_var[name] <span class="op">=</span> pca.explained_variance_.<span class="bu">sum</span>()  <span class="co"># Σ eigenvalues_g</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Equal-weight per block: divide by √Σ eigenvalues_g</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>balanced <span class="op">=</span> []</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, df <span class="kw">in</span> retained.items():</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    block_scale <span class="op">=</span> np.sqrt(tot_var[name])</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    balanced.append(df <span class="op">/</span> block_scale)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>Z_concat <span class="op">=</span> pd.concat(balanced, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Optional: global StandardScaler (unit variance per column)</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="co">#     – keeps block balance intact</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>Z_final <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    StandardScaler(with_mean<span class="op">=</span><span class="va">False</span>).fit_transform(Z_concat),</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>Z_concat.index, columns<span class="op">=</span>Z_concat.columns</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Clustering (example: k-means)</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">0</span>).fit_predict(Z_final)</span></code></pre></div>
+<p><em>Key points in the code</em></p>
+<ol type="1">
+<li><strong>Continuous blocks</strong> are z-scored <em>before</em>
+PCA.</li>
+<li><strong>Binary blocks</strong> are passed to PCA untouched—only
+centring happens.</li>
+<li><strong><code>block_scale = √Σ eigenvalues</code></strong> balances
+blocks after PCA.</li>
+<li>The last optional <code>StandardScaler(with_mean=False)</code>
+simply equalises column variances; it does <strong>not</strong> disturb
+the 1-per-block balance.</li>
+</ol>
+<hr />
+<h3 id="sanity-checks">3 Sanity checks</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify each block now has total variance ≈ 1</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, df <span class="kw">in</span> <span class="bu">zip</span>(blocks, balanced):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(name, np.var(df, ddof<span class="op">=</span><span class="dv">0</span>).<span class="bu">sum</span>().<span class="bu">round</span>(<span class="dv">3</span>))</span></code></pre></div>
+<p>All four lines should print ~1.00.</p>
+<p><em>If one block ends up with <strong>0 PCs</strong> because it never
+reached 90 % cumulative variance, lower the cut-off or set a minimum
+<code>k</code> (e.g. <code>max(k, 2)</code>).</em></p>
+<hr />
+<h3 id="bottom-line-1">4 Bottom line</h3>
+<ul>
+<li>You do <strong>not</strong> have to standardise binary columns
+before PCA—centring suffices.</li>
+<li>Whether or not you scale them <strong>changes</strong> which
+variables drive the early PCs, so try both if cluster validity is
+crucial.</li>
+<li>The <em>equal-weight-per-block</em> step is unaffected; its job is
+to stop any <em>block</em> from dwarfing the others.</li>
+</ul>
+    
+</body>
+</html>
