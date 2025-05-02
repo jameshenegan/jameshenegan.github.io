@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p><strong>Exploring PowerPoint automation alternatives</strong></p>
+<p>The user can’t use external libraries, and they were asked to use
+libraries like python-pptx and pillow, which are now off the table.
+Options for automating PowerPoint without external libraries are tricky,
+as tools like win32com (pywin32) and LibreOffice UNO are also external.
+A solution could involve manually creating a PPTX file since it’s just a
+zipped XML structure, using built-in libraries like zipfile and
+xml.etree. However, this would require more code and effort, so an
+alternate route could be using PowerPoint macros/VBA.</p>
+<p><strong>Designing PowerPoint PowerShell / Python
+solution</strong></p>
+<p>The user wants to automate PowerPoint without external libraries. A
+python-pptx solution is out due to the restrictions, so we could suggest
+using VBA macros or PowerShell scripts. Alternatively, constructing a
+PPTX manually with the built-in Python libraries (like zipfile, uuid,
+etc.) seems viable. This involves creating a template for slides,
+embedding images in a zip structure, and automating it with a script.
+We’ll also show how to collect images and write the PPTX file from
+scratch, without relying on external libraries.</p>
+<p>Thought for 19 seconds</p>
+<p>Below are three ways to get <em>one‑image‑per‑slide, edge‑to‑edge on
+a white background</em> <strong>without installing any third‑party
+Python packages</strong>. Pick whichever best fits your workflow.</p>
+<hr />
+<h2 id="the-oneclick-builtin-way-no-code-at-all">1. The “one‑click”
+built‑in way (no code at all)</h2>
+<ol type="1">
+<li><strong>PowerPoint ▸ Insert ▸ Photo Album ▸ New Photo
+Album…</strong></li>
+<li>Browse to the folder that holds your PNGs and
+<strong>Select All</strong>.</li>
+<li>Under <strong>Picture Layout</strong> choose <strong>“Fit to
+Slide.”</strong></li>
+<li>Click <strong>Create</strong>.</li>
+</ol>
+<p>PowerPoint builds a deck with each picture filling the slide. If you
+already have a deck open, use <strong>Insert ▸ Photo Album ▸ Insert
+Pictures from: File/Disk…</strong> and the new slides drop into the
+current file.</p>
+<p><em>Pros:</em> zero code, honors transparency automatically (white
+background if the PNG has none). <em>Cons:</em> a manual step each
+time.</p>
+<hr />
+<h2 id="a-tiny-vba-macro-runs-right-inside-powerpoint">2. A tiny VBA
+macro (runs right inside PowerPoint)</h2>
+<p>If you want a reusable button <em>inside</em> PowerPoint but still no
+external Python:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode vb"><code class="sourceCode monobasic"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">Sub </span>ImportPNGsFillSlide()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Const</span> FOLDER = <span class="st">&quot;C:\path</span><span class="sc">\t</span><span class="st">o</span><span class="sc">\f</span><span class="st">igures</span><span class="sc">\&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Dim</span> fso <span class="kw">As</span> <span class="dt">Object</span>, f <span class="kw">As</span> <span class="dt">Object</span>, pngs <span class="kw">As</span> <span class="dt">Object</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Dim</span> s <span class="kw">As</span> Slide, sh <span class="kw">As</span> Shape</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Set </span>fso = CreateObject(<span class="st">&quot;Scripting.FileSystemObject&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Set </span>pngs = fso.GetFolder(FOLDER).Files</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">For </span>Each f In pngs</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">If </span>LCase(fso.GetExtensionName(f.Name)) = <span class="st">&quot;png&quot;</span> <span class="kw">Then</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="kw">Set </span>s = ActivePresentation.Slides.Add(ActivePresentation.Slides.Count + 1, ppLayoutBlank)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            <span class="co">&#39;--- white background -------------</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>            s.FollowMasterBackground = msoFalse</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            s.Background.Fill.ForeColor.RGB = RGB(255, 255, 255)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            <span class="co">&#39;--- add and stretch the picture --</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            <span class="kw">Set </span>sh = s.Shapes.AddPicture(f.Path, msoFalse, msoTrue, 0, 0)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            sh.LockAspectRatio = msoFalse</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            sh.Left = 0</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            sh.Top = 0</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            sh.Width = ActivePresentation.PageSetup.SlideWidth</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            sh.Height = ActivePresentation.PageSetup.SlideHeight</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">End If</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Next </span>f</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="kw">End Sub</span></span></code></pre></div>
+<p><em>How to use:</em> <strong>Alt + F11 ▸ Insert ▸ Module ▸ paste the
+code ▸ change the <code>FOLDER</code> constant ▸ run.</strong></p>
+<hr />
+<h2
+id="purestandardlibrary-python-that-builds-the-pptx-file-from-scratch">3.
+Pure‑standard‑library Python that <strong>builds the PPTX file from
+scratch</strong></h2>
+<p>A PPTX file is just a ZIP of XML files. Using only
+<code>zipfile</code>, <code>uuid</code>, <code>pathlib</code>, and
+<code>xml.etree</code>, you can generate a minimal deck:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">make_deck.py  –  build a PPTX with one PNG per slide</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">NO external libs required (only Python ≥3.8 std‑lib)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> zipfile <span class="im">import</span> ZipFile, ZIP_DEFLATED</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> xml.etree <span class="im">import</span> ElementTree <span class="im">as</span> ET</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> uuid <span class="im">import</span> uuid4</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>IMG_DIR   <span class="op">=</span> Path(<span class="st">&quot;figures&quot;</span>)              <span class="co"># folder with your *.png</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>DECK_NAME <span class="op">=</span> <span class="st">&quot;auto_deck.pptx&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>SLIDE_W   <span class="op">=</span> <span class="dv">9144000</span>                      <span class="co"># 10 in  in EMUs</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>SLIDE_H   <span class="op">=</span> <span class="dv">6858000</span>                      <span class="co"># 7.5 in in EMUs</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>pngs <span class="op">=</span> <span class="bu">sorted</span>(IMG_DIR.glob(<span class="st">&quot;*.png&quot;</span>))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> pngs:</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">SystemExit</span>(<span class="st">&quot;No PNGs found in&quot;</span>, IMG_DIR)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ct_tag(ns, tag):  <span class="co"># helper to add [Content_Types].xml &lt;Override/&gt;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f&#39;&lt;Override PartName=&quot;</span><span class="sc">{</span>ns<span class="sc">}</span><span class="ss">&quot; ContentType=&quot;</span><span class="sc">{</span>tag<span class="sc">}</span><span class="ss">&quot;/&gt;&#39;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> ZipFile(DECK_NAME, <span class="st">&quot;w&quot;</span>, ZIP_DEFLATED) <span class="im">as</span> z:</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- 1. [Content_Types].xml ----------</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    overrides <span class="op">=</span> [</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        ct_tag(<span class="st">&quot;/ppt/presentation.xml&quot;</span>, <span class="st">&quot;application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml&quot;</span>),</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        ct_tag(<span class="st">&quot;/ppt/theme/theme1.xml&quot;</span>, <span class="st">&quot;application/vnd.openxmlformats-officedocument.theme+xml&quot;</span>),</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(pngs) <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        overrides <span class="op">+=</span> [</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            ct_tag(<span class="ss">f&quot;/ppt/slides/slide</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">.xml&quot;</span>, <span class="st">&quot;application/vnd.openxmlformats-officedocument.presentationml.slide+xml&quot;</span>),</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            ct_tag(<span class="ss">f&quot;/ppt/media/image</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">.png&quot;</span>,  <span class="st">&quot;image/png&quot;</span>),</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    ct_xml <span class="op">=</span> (</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="ch">\n</span><span class="st">&#39;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;Types xmlns=&quot;http://schemas.openxmlformats.org/package/2006/content-types&quot;&gt;&#39;</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> <span class="st">&quot;&quot;</span>.join(overrides) <span class="op">+</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;/Types&gt;&#39;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    z.writestr(<span class="st">&quot;[Content_Types].xml&quot;</span>, ct_xml)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- 2. _rels/.rels ----------</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    z.writestr(<span class="st">&quot;_rels/.rels&quot;</span>,</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="ch">\n</span><span class="st">&#39;</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;Relationships xmlns=&quot;http://schemas.openxmlformats.org/package/2006/relationships&quot;&gt;&#39;</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;  &lt;Relationship Id=&quot;R1&quot; Type=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument&quot; Target=&quot;ppt/presentation.xml&quot;/&gt;&#39;</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;/Relationships&gt;&#39;</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- 3. ppt/_rels/presentation.xml.rels ----------</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    rels <span class="op">=</span> []</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(pngs) <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        rels.append(<span class="ss">f&#39;&lt;Relationship Id=&quot;rId</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">&quot; Type=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide&quot; Target=&quot;slides/slide</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">.xml&quot;/&gt;&#39;</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    z.writestr(<span class="st">&quot;ppt/_rels/presentation.xml.rels&quot;</span>,</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="ch">\n</span><span class="st">&#39;</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;Relationships xmlns=&quot;http://schemas.openxmlformats.org/package/2006/relationships&quot;&gt;&#39;</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> <span class="st">&quot;&quot;</span>.join(rels) <span class="op">+</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;/Relationships&gt;&#39;</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- 4. ppt/presentation.xml ----------</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    sldIdLst <span class="op">=</span> [<span class="ss">f&#39;&lt;p:sldId id=&quot;</span><span class="sc">{</span><span class="dv">256</span><span class="op">+</span>i<span class="sc">}</span><span class="ss">&quot; r:id=&quot;rId</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">&quot;/&gt;&#39;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(pngs)<span class="op">+</span><span class="dv">1</span>)]</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    pres_xml <span class="op">=</span> (</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;&#39;</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;p:presentation xmlns:a=&quot;http://schemas.openxmlformats.org/drawingml/2006/main&quot; &#39;</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;xmlns:r=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships&quot; &#39;</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;xmlns:p=&quot;http://schemas.openxmlformats.org/presentationml/2006/main&quot; &#39;</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&#39;sldSz type=&quot;screen4x3&quot; cx=&quot;</span><span class="sc">{</span>SLIDE_W<span class="sc">}</span><span class="ss">&quot; cy=&quot;</span><span class="sc">{</span>SLIDE_H<span class="sc">}</span><span class="ss">&quot;&gt;&#39;</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;  &lt;p:sldMasterIdLst&gt;&lt;p:sldMasterId id=&quot;2147483648&quot; r:id=&quot;rId999&quot;/&gt;&lt;/p:sldMasterIdLst&gt;&#39;</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f&#39;  &lt;p:sldIdLst&gt;</span><span class="sc">{</span><span class="st">&quot;&quot;</span><span class="sc">.</span>join(sldIdLst)<span class="sc">}</span><span class="ss">&lt;/p:sldIdLst&gt;&#39;</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;/p:presentation&gt;&#39;</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    z.writestr(<span class="st">&quot;ppt/presentation.xml&quot;</span>, pres_xml)</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- 5. A single minimal theme ----------</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    z.writestr(<span class="st">&quot;ppt/theme/theme1.xml&quot;</span>,</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#39;</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;a:theme xmlns:a=&quot;http://schemas.openxmlformats.org/drawingml/2006/main&quot; name=&quot;Blank&quot;&gt;&#39;</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;  &lt;a:themeElements/&gt;&#39;</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;&lt;/a:theme&gt;&#39;</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------- 6. Slides and relationships ----------</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> idx, img <span class="kw">in</span> <span class="bu">enumerate</span>(pngs, <span class="dv">1</span>):</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        <span class="co"># -- ppt/media/imageX.png</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>        z.write(img, <span class="ss">f&quot;ppt/media/image</span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">.png&quot;</span>)</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>        <span class="co"># -- ppt/slides/_rels/slideX.xml.rels</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>        z.writestr(<span class="ss">f&quot;ppt/slides/_rels/slide</span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">.xml.rels&quot;</span>,</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#39;</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;&lt;Relationships xmlns=&quot;http://schemas.openxmlformats.org/package/2006/relationships&quot;&gt;&#39;</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f&#39;  &lt;Relationship Id=&quot;rId1&quot; Type=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships/image&quot; Target=&quot;../media/image</span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">.png&quot;/&gt;&#39;</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;&lt;/Relationships&gt;&#39;</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>        <span class="co"># -- ppt/slides/slideX.xml</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>        uid <span class="op">=</span> uuid4().<span class="bu">hex</span>  <span class="co"># every slide needs a unique id for the picture</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>        slide_xml <span class="op">=</span> <span class="ss">f&#39;&#39;&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;p:sld xmlns:a=&quot;http://schemas.openxmlformats.org/drawingml/2006/main&quot;</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a><span class="ss">       xmlns:r=&quot;http://schemas.openxmlformats.org/officeDocument/2006/relationships&quot;</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a><span class="ss">       xmlns:p=&quot;http://schemas.openxmlformats.org/presentationml/2006/main&quot;&gt;</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="ss">  &lt;p:cSld&gt;</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;p:bg&gt;</span></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a><span class="ss">      &lt;p:bgPr&gt;&lt;a:solidFill&gt;&lt;a:srgbClr val=&quot;FFFFFF&quot;/&gt;&lt;/a:solidFill&gt;&lt;/p:bgPr&gt;</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;/p:bg&gt;</span></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;p:spTree&gt;</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a><span class="ss">      &lt;p:nvGrpSpPr/&gt;</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a><span class="ss">      &lt;p:grpSpPr/&gt;</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a><span class="ss">      &lt;p:pic&gt;</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;p:nvPicPr&gt;</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;p:cNvPr id=&quot;1&quot; name=&quot;Picture </span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">&quot;/&gt;</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;p:cNvPicPr/&gt;</span></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;p:nvPr/&gt;</span></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/p:nvPicPr&gt;</span></span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;p:blipFill&gt;</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;a:blip r:embed=&quot;rId1&quot;/&gt;</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;a:stretch&gt;&lt;a:fillRect/&gt;&lt;/a:stretch&gt;</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/p:blipFill&gt;</span></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;p:spPr&gt;</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;a:xfrm&gt;</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;a:off x=&quot;0&quot; y=&quot;0&quot;/&gt;</span></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;a:ext cx=&quot;</span><span class="sc">{</span>SLIDE_W<span class="sc">}</span><span class="ss">&quot; cy=&quot;</span><span class="sc">{</span>SLIDE_H<span class="sc">}</span><span class="ss">&quot;/&gt;</span></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;/a:xfrm&gt;</span></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a><span class="ss">          &lt;a:prstGeom prst=&quot;rect&quot;&gt;&lt;a:avLst/&gt;&lt;/a:prstGeom&gt;</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/p:spPr&gt;</span></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a><span class="ss">      &lt;/p:pic&gt;</span></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;/p:spTree&gt;</span></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="ss">  &lt;/p:cSld&gt;</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a><span class="ss">  &lt;p:clrMapOvr&gt;&lt;a:masterClrMapping/&gt;&lt;/p:clrMapOvr&gt;</span></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/p:sld&gt;&#39;&#39;&#39;</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>        z.writestr(<span class="ss">f&quot;ppt/slides/slide</span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">.xml&quot;</span>, slide_xml)</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Created </span><span class="sc">{</span>DECK_NAME<span class="sc">}</span><span class="ss"> with </span><span class="sc">{</span><span class="bu">len</span>(pngs)<span class="sc">}</span><span class="ss"> slides&quot;</span>)</span></code></pre></div>
+<p><em>Run it in the folder with your <strong>figures/</strong>
+directory; you’ll get <code>auto_deck.pptx</code> ready to open.</em> It
+writes <strong>white</strong> slide backgrounds and stretches each PNG
+to fill the slide area. If you ever need a different slide size, change
+<code>SLIDE_W</code> / <code>SLIDE_H</code> (values are in
+<strong>EMUs</strong>: 1 inch = 914 400 EMU).</p>
+<hr />
+<h3 id="which-path-should-you-take">Which path should you take?</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 21%" />
+<col style="width: 17%" />
+<col style="width: 26%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>Effort now</th>
+<th>Effort next time</th>
+<th>Can be version‑controlled</th>
+<th>Needs Office GUI?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Photo Album</strong></td>
+<td>none</td>
+<td>manual repeat</td>
+<td>n/a</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><strong>VBA macro</strong></td>
+<td>copy‑paste once</td>
+<td>one click</td>
+<td>macro-enabled deck</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><strong>Pure‑Python</strong></td>
+<td>longest (write code)</td>
+<td>just rerun</td>
+<td>yes (Python script)</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>If you have to stay 100 % strictly “no extra packages,” the VBA or
+the pure‑zip Python script are the fully automated routes.</p>
+    
+</body>
+</html>
