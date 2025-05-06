@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p><strong>Providing hexbin plot solution</strong></p>
+<p>The user wants to create a 2D hexbin plot that’s normalized to ensure
+consistent intensity, independent of dataset size. I should show them
+how to use Matplotlib’s <code>hexbin</code> or Seaborn’s
+<code>kdeplot</code>, with a <code>gridsize</code> parameter, and a
+normalization technique (e.g., using <code>Normalize</code> from
+Matplotlib). I’ll also prepare a code snippet demonstrating this with an
+example dataset. This approach will guarantee that the
+brightness/contrast is consistent regardless of the number of points in
+different plots.</p>
+<p><strong>Normalizing hexbin plot</strong></p>
+<p>For dataset normalization, I could compute densities by dividing
+point counts by the total number of points. Matplotlib’s
+<code>hexbin</code> supports a density argument to scale the colors by
+density, not raw counts. Using <code>np.mean</code> or
+<code>np.log</code> could help by adjusting values. Alternatively,
+calculating fractions (counts divided by total points) could provide a
+normalized view. Another option is to use <code>seaborn.histplot</code>
+with the <code>stat="probability"</code> parameter, but Matplotlib’s
+<code>hexbin</code> is well-suited for hexagonal grids.</p>
+<p><strong>Providing hexbin plot example</strong></p>
+<p>I’ll guide the user through creating a normalized hexbin plot. For a
+Matplotlib solution, I’ll show them a code snippet where the weights are
+set to ensure that the sum of weights equals 1. I’ll also use
+<code>LogNorm()</code> for larger datasets, and <code>Normalize()</code>
+for smaller ones. Alternatively, I’ll mention Seaborn’s
+<code>histplot</code> with <code>stat='density'</code> for
+normalization. Finally, I’ll confirm if Matplotlib 3.8 includes an
+updated <code>density</code> parameter for <code>hexbin</code>.</p>
+<p>Thought for 47 seconds</p>
+<p>Below is a compact pattern I use whenever I need a
+<em>size‑independent</em> hex‑binned density plot. The key idea is to
+give every point the weight <strong>1 / N</strong> (so the weights sum
+to 1) and to aggregate those weights
+with <code>reduce_C_function=np.sum</code>. That turns the colour scale
+from “raw counts” into “probability mass per hex”, which automatically
+falls in <span class="math inline">0, 1</span> no matter how many points
+you pass in.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.colors <span class="im">as</span> mcolors</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hexbin_density(df, x<span class="op">=</span><span class="st">&#39;x&#39;</span>, y<span class="op">=</span><span class="st">&#39;y&#39;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                   gridsize<span class="op">=</span><span class="dv">50</span>,                <span class="co"># ~number of hexes across the shorter axis</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                   ax<span class="op">=</span><span class="va">None</span>, cmap<span class="op">=</span><span class="st">&#39;viridis&#39;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                   log_scale<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Normalised hex‑density plot:</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">    colour = share of the total sample that falls in each hex.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ax <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- 1) make weights add up to 1 -----------------------------------------</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> np.full(<span class="bu">len</span>(df), <span class="fl">1.0</span> <span class="op">/</span> <span class="bu">len</span>(df))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- 2) build the hexbin --------------------------------------------------</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    hb <span class="op">=</span> ax.hexbin(df[x], df[y],</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                   C<span class="op">=</span>weights,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                   reduce_C_function<span class="op">=</span>np.<span class="bu">sum</span>,        <span class="co"># sum the weights in each hex</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                   gridsize<span class="op">=</span>gridsize,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                   cmap<span class="op">=</span>cmap,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># optional: log‐scale the colour map</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                   norm<span class="op">=</span>mcolors.LogNorm(vmin<span class="op">=</span><span class="dv">1</span><span class="er">e</span>‑<span class="dv">4</span>, vmax<span class="op">=</span><span class="dv">1</span>) <span class="cf">if</span> log_scale <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- 3) cosmetics ---------------------------------------------------------</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    cb <span class="op">=</span> plt.colorbar(hb, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">&#39;probability mass per hex&#39;</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(x)<span class="op">;</span> ax.set_ylabel(y)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f&#39;Normalised hex‑density (n=</span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">)&#39;</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax</span></code></pre></div>
+<h3 id="how-it-works">How it works</h3>
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 13%" />
+<col style="width: 79%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>What happens</th>
+<th>Why it fixes the “10 000 vs 100 000” problem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Weights</strong></td>
+<td><code>weights = 1/N</code> for every row</td>
+<td>Each hex accumulates a <em>fraction</em> of the whole sample instead
+of a raw count.</td>
+</tr>
+<tr>
+<td><strong>Aggregate</strong></td>
+<td><code>reduce_C_function=np.sum</code></td>
+<td>Adds those fractions inside each hex (≤ 1).</td>
+</tr>
+<tr>
+<td><strong>Colour map</strong></td>
+<td><code>Norm()</code> is optional</td>
+<td>Because the data already lie in 0–1, you can reuse the same colour
+limits (<code>vmin=0</code>, <code>vmax=1</code>) for every plot. A
+<code>LogNorm</code> is handy when most hexes are almost empty.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage example</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># toy data: two clouds with different sample sizes</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n1, n2 <span class="op">=</span> <span class="dv">10_000</span>, <span class="dv">100_000</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (pd.DataFrame({<span class="st">&#39;x&#39;</span>: np.r_[np.random.normal( <span class="dv">0</span>, <span class="dv">1</span>, n1),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                               np.random.normal( <span class="dv">5</span>, <span class="dv">1</span>, n2)],</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&#39;y&#39;</span>: np.r_[np.random.normal( <span class="dv">0</span>, <span class="dv">1</span>, n1),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                               np.random.normal( <span class="dv">5</span>, <span class="dv">1</span>, n2)]}))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>hexbin_density(df, gridsize<span class="op">=</span><span class="dv">60</span>, log_scale<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<h3 id="alternative-in-seaborn-square-bins">Alternative in Seaborn
+(square bins)</h3>
+<p>If you’re fine with rectangular bins, <code>seaborn.histplot</code>
+already exposes normalised statistics:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sns.histplot(df, x<span class="op">=</span><span class="st">&#39;x&#39;</span>, y<span class="op">=</span><span class="st">&#39;y&#39;</span>, bins<span class="op">=</span><span class="dv">60</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>             stat<span class="op">=</span><span class="st">&#39;proportion&#39;</span>,  <span class="co"># or &#39;frequency&#39;, &#39;density&#39;, ...</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>             cbar<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">&#39;rocket&#39;</span>)</span></code></pre></div>
+<p>But for true hexagons, Matplotlib’s <code>hexbin</code> plus the
+<em>weights trick</em> above is the most direct route.</p>
+<hr />
+<p><strong>Tip:</strong> If you need plots to share exactly the same
+colour bar when shown side‑by‑side, explicitly pass
+<code>norm=mcolors.Normalize(vmin=0, vmax=vmax)</code> with
+<code>vmax</code> set to the <em>largest</em> density you observe across
+all your datasets.</p>
+    
+</body>
+</html>
