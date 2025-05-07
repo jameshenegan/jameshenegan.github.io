@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p><strong>Planning logistic regression tutorial</strong></p>
+<p>The user wants a clear tutorial on multivariable logistic regression
+in Python using statsmodels, with two cases: one for multiple predictors
+and another for a single continuous predictor along with a plot. I’ll
+show an example dataset, generate synthetic data, fit the model using
+the statsmodels formula API, and provide a summary. For the single
+predictor case, I’ll also include a plot and explain how to interpret
+the coefficients and diagnostics. I’ll make sure the plot is visible for
+the user.</p>
+<p><strong>Deciding on the tutorial structure</strong></p>
+<p>I’m planning to create the tutorial with code snippets in markdown
+and execute only the necessary parts, like showing the plot for single
+predictor logistic regression. The concept is to separate the
+multivariable example and only showcase the plot for the single
+predictor case within the tool’s visual output. I’ll provide the
+explanation and code in the main tutorial and use the tool for
+displaying the plot, avoiding excessive output in the commentary
+channel. Just enough code for the user to follow along.</p>
+<p>Thought for 26 seconds</p>
+<p>Below is a step‑by‑step mini‑workshop you can adapt to your own data.
+Everything uses <strong>statsmodels</strong>, which is great because it
+gives you both the familiar R‑style formula interface
+<strong>and</strong> rich statistical output.</p>
+<hr />
+<h2 id="installation-setup">1⃣ Installation &amp; setup</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pandas numpy statsmodels matplotlib</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code></pre></div>
+<hr />
+<h2 id="your-data-layout">2⃣ Your data layout</h2>
+<p>Create a tidy <strong>DataFrame</strong> where each column is a
+variable and each row is a case. Assume the outcome is <code>y</code>
+(0 / 1). Predictors:</p>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 63%" />
+</colgroup>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Example code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Multivariable</strong> (≥2 predictors)</td>
+<td><code>model = smf.logit('y ~ age + bmi + C(smoker)', data=df)</code></td>
+</tr>
+<tr>
+<td><strong>Single continuous predictor</strong></td>
+<td><code>model = smf.logit('y ~ x', data=df)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>C(smoker)</code> tells statsmodels that <em>smoker</em> is
+categorical; it automatically handles dummies.</p>
+<hr />
+<h2 id="fit-the-model">3⃣ Fit the model</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> model.fit()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result.summary())         <span class="co"># full table</span></span></code></pre></div>
+<p>Key fields to report:</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 19%" />
+<col style="width: 36%" />
+<col style="width: 5%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>What</th>
+<th>Where in summary</th>
+<th>Interpretation</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>coef</code></td>
+<td>under “coef”</td>
+<td>log‑odds change per 1‑unit predictor change</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>`P&gt;</td>
+<td>z</td>
+<td>`</td>
+<td>p‑value</td>
+<td>&lt; 0.05 ⇒ evidence predictor ≠ 0</td>
+</tr>
+<tr>
+<td><code>LLR p-value</code></td>
+<td>top block</td>
+<td>overall model test (vs. intercept‑only)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Odds ratio</strong></td>
+<td><code>np.exp(result.params)</code></td>
+<td>multiplicative change in odds</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="diagnostics-effect-sizes">4⃣ Diagnostics &amp; effect sizes</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Odds ratios with 95 % CI</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>params  <span class="op">=</span> result.params</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>conf    <span class="op">=</span> result.conf_int()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>or_ci   <span class="op">=</span> np.exp(pd.concat([params, conf], axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>or_ci.columns <span class="op">=</span> [<span class="st">&#39;OR&#39;</span>, <span class="st">&#39;2.5%&#39;</span>, <span class="st">&#39;97.5%&#39;</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudo‑R², AUC, etc.</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;McFadden R²:&quot;</span>, result.prsquared)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ROC curve</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score, RocCurveDisplay</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>pred_prob <span class="op">=</span> result.predict(df)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="op">=</span> roc_auc_score(df[<span class="st">&#39;y&#39;</span>], pred_prob)</span></code></pre></div>
+<hr />
+<h2 id="plotting-a-singlepredictor-fit">5⃣ Plotting a
+<strong>single‑predictor</strong> fit</h2>
+<p>The code you just saw run live (see the figure above) is the generic
+pattern:</p>
+<ol type="1">
+<li>Fit <code>logit('y ~ x')</code>.</li>
+<li>Build a grid of <code>x</code> values.</li>
+<li><code>predict()</code> to get model probabilities.</li>
+<li>Plot the smooth curve <strong>and</strong> raw points for
+context.</li>
+</ol>
+<p>You can drop that snippet into your own notebook; just swap in your
+real variable names.</p>
+<hr />
+<h2 id="multivariable-example-synthetic">6⃣ Multivariable example
+(synthetic)</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n  <span class="op">=</span> <span class="dv">500</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;age&#39;</span>   : np.random.uniform(<span class="dv">18</span>, <span class="dv">80</span>, n),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;bmi&#39;</span>   : np.random.normal(<span class="dv">27</span>, <span class="dv">4</span>, n),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;smoker&#39;</span>: np.random.choice([<span class="st">&#39;yes&#39;</span>,<span class="st">&#39;no&#39;</span>], n, p<span class="op">=</span>[<span class="fl">.3</span>,<span class="fl">.7</span>])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>logit_p <span class="op">=</span> <span class="op">-</span><span class="dv">6</span> <span class="op">+</span> <span class="fl">0.05</span><span class="op">*</span>df[<span class="st">&#39;age&#39;</span>] <span class="op">+</span> <span class="fl">0.15</span><span class="op">*</span>df[<span class="st">&#39;bmi&#39;</span>] <span class="op">+</span> <span class="fl">0.8</span><span class="op">*</span>(df[<span class="st">&#39;smoker&#39;</span>]<span class="op">==</span><span class="st">&#39;yes&#39;</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;y&#39;</span>] <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>np.exp(<span class="op">-</span>logit_p)))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> smf.logit(<span class="st">&#39;y ~ age + bmi + C(smoker)&#39;</span>, data<span class="op">=</span>df).fit()</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result.summary())</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">Odds ratios</span><span class="ch">\n</span><span class="st">&quot;</span>, np.exp(result.params))</span></code></pre></div>
+<blockquote>
+<p><strong>Tip:</strong> To visualize a single predictor’s effect
+<em>while holding others constant</em>, use
+<code>statsmodels.graphics.factorplots</code> or manually build
+predicted probabilities with a design matrix where you fix covariates at
+meaningful values (e.g., their means).</p>
+</blockquote>
+<hr />
+<h3 id="quick-checklist-for-your-own-study">Quick checklist for your own
+study</h3>
+<ol type="1">
+<li><strong>Understand your sample size</strong> (events‑per‑parameter
+≥ 10 is a common rule of thumb).</li>
+<li><strong>Check multicollinearity</strong>
+(<code>variance_inflation_factor</code> in
+<code>statsmodels.stats.outliers_influence</code>).</li>
+<li><strong>Inspect influential points</strong> (Cook’s distance,
+dfbeta).</li>
+<li><strong>Report odds ratios + CI</strong>, not just p‑values.</li>
+<li><strong>Validate</strong>: confusion matrix, ROC‑AUC, calibration
+curve, k‑fold cross‑validation if feasible.</li>
+</ol>
+<hr />
+<p>That’s it! Drop your real <code>DataFrame</code> in place of the
+synthetic one, and you’re ready for both multivariable and
+single‑predictor logistic regression—complete with a clean probability
+curve. If any piece of code needs tailoring (e.g., categorical levels,
+interaction terms, or plotting multiple curves), just let me know and
+we’ll tweak it together.</p>
+    
+</body>
+</html>
