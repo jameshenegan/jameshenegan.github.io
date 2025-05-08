@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Thought for 5 seconds</p>
+<h3 id="short-answer">Short answer</h3>
+<p>Yes — it’s perfectly legitimate to ask <strong>“Do clusters differ
+once we correct for consumer‑prominence missingness?”</strong> You just
+need to extend the same adjustment idea so that it works <em>within</em>
+(or <em>across</em>) clusters. Two common ways:</p>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 56%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>approach</th>
+<th>how it handles cluster</th>
+<th>when to prefer it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stratified standardisation</strong></td>
+<td>Fit a separate prominence→outcome model <strong>inside each
+cluster</strong> and compute that cluster’s adjusted prevalence.</td>
+<td>You don’t want to assume the prominence–outcome curve is the same
+shape for every cluster.</td>
+</tr>
+<tr>
+<td><strong>Pooled model with interaction</strong></td>
+<td>Fit one model that contains both <code>cluster_label</code> and its
+interaction with prominence
+(e.g. <code>Y ~ bs(P, df=4)*C(cluster_label)</code>). Predict prevalence
+at <code>P = 10</code> for every row; then average predictions
+<em>by</em> cluster.</td>
+<td>Makes sense when clusters share roughly the same curve shape, or
+when some clusters are small and you’d like to borrow strength.</td>
+</tr>
+</tbody>
+</table>
+<p>Below is fully‑worked Python code for each route, plus notes on
+inference and assumptions.</p>
+<hr />
+<h2 id="setup-onetime">1 Set‑up (one‑time)</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> patsy <span class="im">import</span> bs</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># core column names</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>outcome <span class="op">=</span> <span class="st">&#39;owns_house&#39;</span>            <span class="co"># binary field of interest</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>prom    <span class="op">=</span> <span class="st">&#39;consumer_prominence&#39;</span>   <span class="co"># 1–10</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>cluster <span class="op">=</span> <span class="st">&#39;cluster_label&#39;</span>         <span class="co"># any hashable type</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>full_P  <span class="op">=</span> <span class="dv">10</span>                      <span class="co"># &quot;fully documented&quot; level</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>spline_df <span class="op">=</span> <span class="dv">4</span>                     <span class="co"># change if you prefer</span></span></code></pre></div>
+<hr />
+<h2 id="stratified-gcomputation">2 Stratified G‑computation</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stratified_adjusted(df, outcome, prom, cluster, full_level<span class="op">=</span><span class="dv">10</span>, df_spline<span class="op">=</span><span class="dv">4</span>):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> g, sub <span class="kw">in</span> df.groupby(cluster):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        mod  <span class="op">=</span> smf.glm(<span class="ss">f&quot;</span><span class="sc">{</span>outcome<span class="sc">}</span><span class="ss"> ~ bs(</span><span class="sc">{</span>prom<span class="sc">}</span><span class="ss">, df=</span><span class="sc">{</span>df_spline<span class="sc">}</span><span class="ss">)&quot;</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                       data<span class="op">=</span>sub, family<span class="op">=</span><span class="st">&#39;binomial&#39;</span>).fit()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        pfull <span class="op">=</span> mod.predict(sub.assign(<span class="op">**</span>{prom: full_level}))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        rows.append({<span class="st">&#39;cluster&#39;</span>: g,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&#39;raw_prop&#39;</span>:  sub[outcome].mean(),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&#39;adj_prop&#39;</span>:  pfull.mean(),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&#39;n&#39;</span>: <span class="bu">len</span>(sub)})</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(rows)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>strat_res <span class="op">=</span> stratified_adjusted(df, outcome, prom, cluster)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(strat_res)</span></code></pre></div>
+<p><em>What you get</em> – a table with each cluster’s unadjusted and
+adjusted prevalence. If you want a formal test, run a <strong>weighted
+χ² or logistic regression</strong> on the adjusted predictions:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wald test: do clusters differ in their adjusted means?</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.anova <span class="im">import</span> anova_lm</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fit <span class="op">=</span> smf.ols(<span class="st">&quot;adj_prop ~ C(cluster)&quot;</span>, strat_res).fit()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(anova_lm(fit))</span></code></pre></div>
+<hr />
+<h2 id="pooled-model-with-interaction">3 Pooled model with
+interaction</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>formula <span class="op">=</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f&quot;</span><span class="sc">{</span>outcome<span class="sc">}</span><span class="ss"> ~ bs(</span><span class="sc">{</span>prom<span class="sc">}</span><span class="ss">, df=</span><span class="sc">{</span>spline_df<span class="sc">}</span><span class="ss">)&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f&quot; * C(</span><span class="sc">{</span>cluster<span class="sc">}</span><span class="ss">)&quot;</span>             <span class="co"># full interaction</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>pooled <span class="op">=</span> smf.glm(formula, data<span class="op">=</span>df, family<span class="op">=</span><span class="st">&#39;binomial&#39;</span>).fit()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># counter‑factual predictions at P = full_P</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;p_if_full&#39;</span>] <span class="op">=</span> pooled.predict(df.assign(<span class="op">**</span>{prom: full_P}))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>adj_by_clust <span class="op">=</span> (</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    df.groupby(cluster)[<span class="st">&#39;p_if_full&#39;</span>]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      .mean()</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      .rename(<span class="st">&#39;adj_prop&#39;</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      .reset_index()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># attach raw proportions</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>adj_by_clust <span class="op">=</span> adj_by_clust.merge(</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    df.groupby(cluster)[outcome].mean().rename(<span class="st">&#39;raw_prop&#39;</span>),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span>cluster</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(adj_by_clust)</span></code></pre></div>
+<p>A <strong>likelihood‑ratio or Wald test</strong> on the interaction
+terms (<code>bs(P)*C(cluster)</code>) will tell you whether clusters
+differ after adjustment:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.contrast <span class="im">import</span> ContrastResults</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># drop interaction to make the reduced model</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>red_formula <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>outcome<span class="sc">}</span><span class="ss"> ~ bs(</span><span class="sc">{</span>prom<span class="sc">}</span><span class="ss">, df=</span><span class="sc">{</span>spline_df<span class="sc">}</span><span class="ss">) + C(</span><span class="sc">{</span>cluster<span class="sc">}</span><span class="ss">)&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>reduced     <span class="op">=</span> smf.glm(red_formula, data<span class="op">=</span>df, family<span class="op">=</span><span class="st">&#39;binomial&#39;</span>).fit()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># LR test</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>lr_stat <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (pooled.llf <span class="op">-</span> reduced.llf)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>df_diff <span class="op">=</span> pooled.df_model <span class="op">-</span> reduced.df_model</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> chi2</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>pval <span class="op">=</span> chi2.sf(lr_stat, df_diff)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;LR χ² = </span><span class="sc">{</span>lr_stat<span class="sc">:.2f}</span><span class="ss"> (df=</span><span class="sc">{</span>df_diff<span class="sc">}</span><span class="ss">),  p = </span><span class="sc">{</span>pval<span class="sc">:.4g}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h2 id="assumptions-caveats">4 Assumptions &amp; caveats</h2>
+<ol type="1">
+<li><p><strong>Missing at random within cluster &amp;
+prominence</strong> The stratified version assumes that, inside each
+cluster, rows with the same <code>P</code> have the same chance of
+missingness regardless of the unobserved true answer.</p></li>
+<li><p><strong>Model fit</strong></p>
+<ul>
+<li>Check plots of observed proportion vs prominence for each
+cluster.</li>
+<li>Try linear, spline, and perhaps random‑slope mixed models if
+clusters are many.</li>
+</ul></li>
+<li><p><strong>Small clusters</strong> If some clusters are tiny, the
+stratified fit can be unstable. <em>Borrowing strength</em> with the
+pooled‑interaction model or a multilevel (mixed‑effects) model
+helps.</p></li>
+<li><p><strong>Inference</strong></p>
+<ul>
+<li>For the stratified table, non‑overlapping 95 % CIs around
+<code>adj_prop</code> are fine for eye‑balling.</li>
+<li>To compare clusters formally, rely on the pooled model’s LR/Wald
+tests or bootstrap the stratified estimates.</li>
+</ul></li>
+<li><p><strong>Interpretation</strong> Remember: the adjusted prevalence
+answers <em>“What would each cluster’s proportion of 1’s be <strong>if
+all its rows were fully documented (P = 10)</strong>?”</em></p></li>
+</ol>
+<hr />
+<h3 id="takeaway">Take‑away</h3>
+<p><em>Adjusting first, then comparing</em> is entirely reasonable. Just
+pick the model structure (stratified vs. pooled‑interaction) that
+matches how you believe <strong>prominence, missingness, and cluster
+identity</strong> really interplay in your data.</p>
+    
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a “grab-bag” of <strong>ready-to-paste code
+snippets</strong> for each algorithm you asked about, together with
+quick notes on how well each one scales to ≈ 700 000 points that
+represent geographic coordinates in Texas.</p>
+<blockquote>
+<p><strong>Setup (used by all snippets)</strong></p>
+</blockquote>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler   <span class="co"># optional but handy</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># df already exists with columns &#39;x&#39; and &#39;y&#39;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[[<span class="st">&#39;x&#39;</span>, <span class="st">&#39;y&#39;</span>]].to_numpy(dtype<span class="op">=</span>np.float32)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># (Optional) If x/y are lon/lat, project them to a planar CRS (e.g. EPSG:3081 for Texas)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># so that euclidean distances make sense in metres.  If they’re already projected, skip this.</span></span></code></pre></div>
+<hr />
+<h2 id="dbscan-scikit-learn">1. DBSCAN (scikit-learn)</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> DBSCAN</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># eps is in the same units as X (metres after projection, or degrees if you skipped projection)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>db <span class="op">=</span> DBSCAN(eps<span class="op">=</span><span class="dv">500</span>,      <span class="co"># tweak; ≈ cluster radius</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            min_samples<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            algorithm<span class="op">=</span><span class="st">&#39;ball_tree&#39;</span>,   <span class="co"># ‘ball_tree’ or ‘kd_tree’ scales ∼ n log n</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>            n_jobs<span class="op">=-</span><span class="dv">1</span>).fit(X)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> db.labels_          <span class="co"># −1 means “noise”</span></span></code></pre></div>
+<ul>
+<li><strong>Feasibility</strong>: With a ball/k-d tree and
+<code>n_jobs=-1</code>, DBSCAN will finish in minutes to tens of minutes
+on 700 k points on a modern laptop/workstation.</li>
+<li>Good for discovering arbitrarily shaped clusters; sensitive to
+<code>eps</code>.</li>
+</ul>
+<hr />
+<h2 id="hdbscan-external-package">2. HDBSCAN (external package)</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install hdbscan</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hdbscan</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>hdb <span class="op">=</span> hdbscan.HDBSCAN(min_cluster_size<span class="op">=</span><span class="dv">50</span>,   <span class="co"># ≥ density threshold</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                      min_samples<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                      metric<span class="op">=</span><span class="st">&#39;euclidean&#39;</span>,    <span class="co"># after projection</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                      core_dist_n_jobs<span class="op">=-</span><span class="dv">1</span>).fit(X)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> hdb.labels_                 <span class="co"># −1 = noise</span></span></code></pre></div>
+<ul>
+<li><strong>Feasibility</strong>: Pure-Python but C-ythonised; handles
+700 k fine (runtime similar to DBSCAN but needs ≳ 16 GB RAM).</li>
+<li>Produces a cluster hierarchy &amp; “probabilities”
+(<code>hdb.probabilities_</code>) you can map if you like.</li>
+</ul>
+<hr />
+<h2 id="spectral-clustering-sample-propagate">3. Spectral Clustering
+(sample + propagate)</h2>
+<p>Full spectral clustering on 700 k is impossible (needs an n×n
+affinity matrix). Work-around: <strong>sample → cluster → assign rest
+with 1-NN</strong>.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> SpectralClustering</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1️⃣  sample (stratified or random)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> np.random.choice(<span class="bu">len</span>(X), size<span class="op">=</span><span class="dv">10_000</span>, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>X_sample <span class="op">=</span> X[idx]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2️⃣  spectral on the sample</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>spec <span class="op">=</span> SpectralClustering(n_clusters<span class="op">=</span><span class="dv">8</span>,    <span class="co"># pick k</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                          affinity<span class="op">=</span><span class="st">&#39;nearest_neighbors&#39;</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                          n_neighbors<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                          assign_labels<span class="op">=</span><span class="st">&#39;kmeans&#39;</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                          n_jobs<span class="op">=-</span><span class="dv">1</span>).fit(X_sample)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3️⃣  propagate labels to the full set via 1-nearest-neighbor</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="dv">1</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>knn.fit(X_sample, spec.labels_)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>labels_full <span class="op">=</span> knn.predict(X)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> labels_full</span></code></pre></div>
+<ul>
+<li><strong>Feasibility</strong>: Sample size ~10 k keeps memory sane;
+final 1-NN pass is O(n).</li>
+<li>Works if clusters are well separated in the sampled subspace.</li>
+</ul>
+<hr />
+<h2 id="gaussian-mixture-a.k.a.-model-based-clustering">4. Gaussian
+Mixture (a.k.a. model-based clustering)</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.mixture <span class="im">import</span> GaussianMixture</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>gm <span class="op">=</span> GaussianMixture(n_components<span class="op">=</span><span class="dv">10</span>,      <span class="co"># decide k via BIC or domain knowledge</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                     covariance_type<span class="op">=</span><span class="st">&#39;full&#39;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                     max_iter<span class="op">=</span><span class="dv">200</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                     random_state<span class="op">=</span><span class="dv">0</span>).fit(X)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> gm.predict(X)</span></code></pre></div>
+<ul>
+<li><strong>Feasibility</strong>: Linear in n but quadratic in dimension
+(d=2 is tiny) and in k.</li>
+<li>Works well for ellipsoidal clusters; choose small k to keep runtime
+&lt; 10 min.</li>
+</ul>
+<hr />
+<h2 id="mean-shift-with-bin-seeding-or-sample">5. Mean-Shift (with bin
+seeding or sample)</h2>
+<p>Mean-Shift’s complexity is <strong>O(n²)</strong>; full run on 700 k
+not realistic. Options:</p>
+<ol type="1">
+<li><strong>Bin-seeding</strong> (coarse grid) – still heavy if
+bandwidth small.</li>
+<li><strong>Subsample</strong> then label rest via 1-NN (similar trick
+as in spectral).</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> MeanShift, estimate_bandwidth</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sample first</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> np.random.choice(<span class="bu">len</span>(X), size<span class="op">=</span><span class="dv">50_000</span>, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>X_sample <span class="op">=</span> X[idx]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>bandwidth <span class="op">=</span> estimate_bandwidth(X_sample, quantile<span class="op">=</span><span class="fl">0.2</span>, n_samples<span class="op">=</span><span class="dv">10_000</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ms <span class="op">=</span> MeanShift(bandwidth<span class="op">=</span>bandwidth, bin_seeding<span class="op">=</span><span class="va">True</span>).fit(X_sample)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># propagate</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsClassifier</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="dv">1</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>knn.fit(X_sample, ms.labels_)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> knn.predict(X)</span></code></pre></div>
+<hr />
+<h2 id="hierarchical-agglomerative-clustering">6. Hierarchical /
+Agglomerative Clustering</h2>
+<p>Agglomerative linkage needs the full distance matrix → <strong>O(n²)
+memory &amp; time</strong>; hopeless for 700 k.</p>
+<p>Alternative strategies:</p>
+<ul>
+<li><strong>FeatureAgglomeration</strong> on a <strong>pre-computed
+spatial grid</strong> (e.g., aggregate into 1 km hexbins first).</li>
+<li>Use <strong>SciPy’s linkage</strong> on a 1–2 % sample + propagate
+as above.</li>
+<li>Or jump straight to <strong>OPTICS</strong> (supported in
+scikit-learn) which is a “reachability-plot” hierarchical density
+algorithm that scales similarly to DBSCAN:</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> OPTICS</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> OPTICS(min_samples<span class="op">=</span><span class="dv">20</span>, xi<span class="op">=</span><span class="fl">0.05</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>).fit(X)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> opt.labels_</span></code></pre></div>
+<hr />
+<h3 id="extra-scalable-options-you-may-like">Extra scalable options you
+may like</h3>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 10%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Library</th>
+<th>Why it’s handy at 700 k</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MiniBatch K-Means</strong></td>
+<td><code>sklearn.cluster</code></td>
+<td>True online k-means; runs in seconds even for k ≈ 100.</td>
+</tr>
+<tr>
+<td><strong>cuML DBSCAN / HDBSCAN</strong></td>
+<td>RAPIDS on GPU</td>
+<td>Same APIs, 10–50 × faster if you have a GPU.</td>
+</tr>
+<tr>
+<td><strong>Bisecting K-Means</strong> (sklearn 1.4)</td>
+<td><code>sklearn.cluster</code></td>
+<td>Hierarchical variant that scales linearly.</td>
+</tr>
+<tr>
+<td><strong>Geographically Weighted K-Means (GWKM)</strong></td>
+<td><code>mgwr</code> or custom</td>
+<td>Lets centroids drift but penalises distance from geographic centre –
+nice for regional clustering.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="putting-it-all-together">Putting it all together</h2>
+<p>Each snippet finishes with</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> labels   <span class="co"># or db.labels_, hdb.labels_, …</span></span></code></pre></div>
+<p>so your plotting pipeline can stay exactly as it is—just colour/facet
+by <code>cluster</code>.</p>
+<blockquote>
+<p><strong>Tip for parameter sweeps</strong> Wrap the fit/predict part
+in a function and iterate over parameter grids, writing each label set
+to a new column (<code>cluster_dbscan_eps500</code>,
+<code>cluster_hdbscan_50</code>, …). Then you can toggle layers in your
+map and visually compare which method best captures the “natural”
+regions you’re after.</p>
+</blockquote>
+<p>Happy clustering—and enjoy seeing how Texas carves itself up under
+each algorithm!</p>
+    
+</body>
+</html>
