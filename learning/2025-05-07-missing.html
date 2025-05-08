@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="why-an-adjustment-makes-sense">1 Why an adjustment makes
+sense</h2>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 48%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th>symbol</th>
+<th>meaning (per row <em>i</em>)</th>
+<th>observed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Y*_i</code></td>
+<td>the <strong>true</strong> 0/1 answer you wish you had</td>
+<td><strong>no</strong></td>
+</tr>
+<tr>
+<td><code>O_i</code></td>
+<td>1 = the value is recorded, 0 = missing</td>
+<td><strong>no</strong> (0’s mingle “no” &amp; “missing”)</td>
+</tr>
+<tr>
+<td><code>Y_i</code></td>
+<td>what you see (1 or 0)</td>
+<td><strong>yes</strong></td>
+</tr>
+<tr>
+<td><code>P_i</code></td>
+<td>consumer prominence (1–10)</td>
+<td><strong>yes</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Think of the data-collection process in two steps:</p>
+<ol type="1">
+<li><strong>Missingness step</strong> – Higher prominence ⇒ higher
+chance the field is recorded.</li>
+<li><strong>Outcome step</strong> – People have their real 0/1 answer
+independent of the data-quality issue.</li>
+</ol>
+<h3 id="key-assumption-mar-given-p">Key assumption (MAR given
+<code>P</code>)</h3>
+<blockquote>
+<p>Once you control for consumer prominence, whether a value is recorded
+<strong>does not depend on the unobserved true answer</strong>.</p>
+</blockquote>
+<p>If that sounds reasonable in your setting (e.g., low-prominence rows
+are just sparser, not systematically “no”), prominence can undo the
+distortion.</p>
+<hr />
+<h2 id="model-based-standardisation-g-computation">2 Model-based
+standardisation (G-computation)</h2>
+<ol type="1">
+<li><p><strong>Fit a logistic model</strong> of the observed 0/1 value
+on consumer prominence.</p>
+<pre><code>logit[ Pr(Y_i = 1 | P_i) ] = α + f(P_i)</code></pre>
+<p><code>f()</code> can be a straight line, quadratic, cubic spline,
+etc.</p></li>
+<li><p><strong>Predict</strong> what <em>each row’s</em> probability
+would look like if <code>P_i</code> were set to 10 (full
+information).</p></li>
+<li><p><strong>Average</strong> those counter-factual probabilities →
+the “adjusted” proportion of 1’s.</p></li>
+</ol>
+<h3 id="bare-bones-python">Bare-bones Python</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> patsy <span class="im">import</span> dmatrices         <span class="co"># only if you want splines</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">&#39;owns_house&#39;</span>               <span class="co"># 0/1 column you care about</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>prom   <span class="op">=</span> <span class="st">&#39;consumer_prominence&#39;</span>      <span class="co"># the 1-to-10 column</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. logistic regression (spline with 4 dfs; change as desired)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.glm(<span class="ss">f&quot;</span><span class="sc">{</span>target<span class="sc">}</span><span class="ss"> ~ bs(</span><span class="sc">{</span>prom<span class="sc">}</span><span class="ss">, df=4)&quot;</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                data<span class="op">=</span>df,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                family<span class="op">=</span><span class="st">&#39;binomial&#39;</span>).fit()</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. predict as if everyone had P = 10</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;p_if_full&#39;</span>] <span class="op">=</span> model.predict(df.assign(<span class="op">**</span>{prom: <span class="dv">10</span>}))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. raw vs. adjusted proportions</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>raw     <span class="op">=</span> df[target].mean()</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>adjusted <span class="op">=</span> df[<span class="st">&#39;p_if_full&#39;</span>].mean()</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Raw   proportion = </span><span class="sc">{</span>raw<span class="sc">:6.3%}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Adjusted (P=10)  = </span><span class="sc">{</span>adjusted<span class="sc">:6.3%}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h2 id="scaling-up-loop-over-many-binary-columns">3 Scaling up: loop
+over many binary columns</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> patsy <span class="im">import</span> bs</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adjusted_prevalence(df, binary_cols, prom<span class="op">=</span><span class="st">&#39;consumer_prominence&#39;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                        spline_df<span class="op">=</span><span class="dv">4</span>, full_level<span class="op">=</span><span class="dv">10</span>):</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns a DataFrame with raw and P=full_level-adjusted prevalences</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    for each 0/1 column in *binary_cols*.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> binary_cols:</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        formula <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>col<span class="sc">}</span><span class="ss"> ~ bs(</span><span class="sc">{</span>prom<span class="sc">}</span><span class="ss">, df=</span><span class="sc">{</span>spline_df<span class="sc">}</span><span class="ss">)&quot;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        mod     <span class="op">=</span> smf.glm(formula, data<span class="op">=</span>df, family<span class="op">=</span><span class="st">&#39;binomial&#39;</span>).fit()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        p_full  <span class="op">=</span> mod.predict(df.assign(<span class="op">**</span>{prom: full_level}))</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        results.append({</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;variable&#39;</span> : col,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;raw_prop&#39;</span> : df[col].mean(),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;adj_prop&#39;</span> : p_full.mean()</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>binary_list <span class="op">=</span> [<span class="st">&#39;owns_house&#39;</span>, <span class="st">&#39;has_auto_loan&#39;</span>, <span class="st">&#39;subscribed_email&#39;</span>, ...]</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> adjusted_prevalence(df, binary_list)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(summary)</span></code></pre></div>
+<p><em>Tip</em>: Sort <code>summary</code> by the gap between
+<code>adj_prop</code> and <code>raw_prop</code> to see which items are
+most skewed by missingness.</p>
+<hr />
+<h2
+id="inverse-probability-weighting-ipw-alternative-route">4 Inverse-Probability
+Weighting (IPW) — alternative route</h2>
+<p>If you can <em>construct</em> or <em>approximate</em> an “observed
+vs. missing” flag <code>O_i</code> for each 0/1 field (for instance,
+treat any row with at least one 1 across related variables as
+“observed”), you can:</p>
+<ol type="1">
+<li>Model <code>Pr(O_i = 1 | P_i)</code> (again, logistic).</li>
+<li>Assign weight <code>w_i = 1 / predicted_prob</code>.</li>
+<li>Estimate a weighted mean of the 0/1 column.</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: treat &quot;observed&quot; as row has a non-zero in the target column</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;O&#39;</span>] <span class="op">=</span> (df[target] <span class="op">==</span> <span class="dv">1</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>obs_mod <span class="op">=</span> smf.glm(<span class="st">&quot;O ~ bs(consumer_prominence, df=3)&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                  data<span class="op">=</span>df, family<span class="op">=</span><span class="st">&#39;binomial&#39;</span>).fit()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;w&#39;</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> obs_mod.predict(df)       <span class="co"># Horvitz-Thompson weight</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>ipw_prop <span class="op">=</span> (df[target] <span class="op">*</span> df[<span class="st">&#39;w&#39;</span>]).<span class="bu">sum</span>() <span class="op">/</span> df[<span class="st">&#39;w&#39;</span>].<span class="bu">sum</span>()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;IPW estimate = </span><span class="sc">{</span>ipw_prop<span class="sc">:6.3%}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h2 id="diagnostics-sensitivity">5 Diagnostics &amp; sensitivity</h2>
+<ul>
+<li>Plot the observed proportion of 1’s by prominence bucket—does it
+trend upward smoothly?</li>
+<li>Experiment with linear vs. spline models; include extra covariates
+that might influence the real answer.</li>
+<li>Cite a range (“Three plausible models give 42 – 47 %”) so
+stakeholders see the uncertainty tied to assumptions.</li>
+</ul>
+<hr />
+<h3 id="bottom-line">Bottom line</h3>
+<ul>
+<li><strong>Yes</strong>, consumer prominence can anchor an “adjusted
+proportion of 1’s,” provided you believe the MAR-given-<code>P</code>
+assumption.</li>
+<li>Logistic-regression-based <em>marginal standardisation</em> is
+usually the cleanest workflow; IPW is a sound cross-check.</li>
+<li>Package both the code and the assumption checks in your report so
+users grasp where the adjustment comes from.</li>
+</ul>
+    
+</body>
+</html>
