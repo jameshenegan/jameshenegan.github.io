@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a workflow that analysts usually follow when they want to
+say things like</p>
+<p>*“People in <strong>cluster 0</strong> tend to be in <strong>region
+f*</strong>” or *“People in <strong>region a</strong> tend to come from
+<strong>cluster 5*</strong>.”</p>
+<p>All of the steps work in R, Python, Excel, or even SQL; I show
+Python/pandas so you have something you can paste-and-run.</p>
+<hr />
+<h2 id="build-the-basic-contingency-table">1 Build the basic contingency
+table</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>tab <span class="op">=</span> pd.crosstab(df[<span class="st">&quot;cluster&quot;</span>], df[<span class="st">&quot;region&quot;</span>])          <span class="co"># rows = clusters, cols = regions</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>grand_total <span class="op">=</span> tab.values.<span class="bu">sum</span>()</span></code></pre></div>
+<p>This raw table already shows the raw counts for every <em>cluster ×
+region</em> combination.</p>
+<hr />
+<h2 id="convert-to-conditional-percentages">2 Convert to conditional
+percentages</h2>
+<h3 id="region-cluster-row-wise">“Region | Cluster” (row-wise)</h3>
+<blockquote>
+<p><em>Among people in <strong>cluster k</strong>, what % live in each
+region?</em></p>
+</blockquote>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>row_pct <span class="op">=</span> (tab.T <span class="op">/</span> tab.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T                  <span class="co"># divides each row by its row total</span></span></code></pre></div>
+<h3 id="cluster-region-column-wise">“Cluster | Region”
+(column-wise)</h3>
+<blockquote>
+<p><em>Among people in <strong>region r</strong>, what % belong to each
+cluster?</em></p>
+</blockquote>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>col_pct <span class="op">=</span> tab <span class="op">/</span> tab.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)                        <span class="co"># divides each column by its col total</span></span></code></pre></div>
+<p>Use whichever table matches the statement you want to make.</p>
+<hr />
+<h2 id="account-for-unequal-sizes-compare-observed-to-expected">3
+Account for unequal sizes: compare <strong>observed</strong> to
+<strong>expected</strong></h2>
+<p>The expected count under independence is</p>
+<p><span class="math display">$$
+E_{ij}= \dfrac{(\text{row total})_i \,(\text{col total})_j}{\text{grand
+total}}
+$$</span></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>expected <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    np.outer(tab.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>), tab.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)) <span class="op">/</span> grand_total,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>tab.index, columns<span class="op">=</span>tab.columns)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> (tab <span class="op">-</span> expected) <span class="op">/</span> np.sqrt(expected)        <span class="co"># std. Pearson residuals</span></span></code></pre></div>
+<ul>
+<li><strong>Residual &gt; ≈ 2</strong> → that cell occurs
+<strong>more</strong> often than chance would predict.</li>
+<li><strong>Residual &lt; ≈ –2</strong> → that cell occurs
+<strong>less</strong> often than chance.</li>
+</ul>
+<p>These residuals are what mosaic plots and correspondence analysis use
+to colour their boxes.</p>
+<hr />
+<h2 id="statistical-tests-and-effect-sizes">4 Statistical tests and
+effect sizes</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr>
+<th>Goal</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Is there <em>any</em> association?”</td>
+<td><strong>χ² test of independence</strong>
+(<code>scipy.stats.chi2_contingency</code>).</td>
+</tr>
+<tr>
+<td>“How strong is the association?”</td>
+<td><strong>Cramér’s V</strong> or <strong>Tschuprow’s T</strong>.</td>
+</tr>
+<tr>
+<td>“Which cells drive the association?”</td>
+<td><strong>Standardised residuals</strong> (step 3).</td>
+</tr>
+<tr>
+<td>“How big is the over-representation?”</td>
+<td><strong>Lift</strong> or <strong>ratio</strong>: <span
+class="math inline">row pct<sub><em>i</em><em>j</em></sub> / overall
+pct<sub><em>j</em></sub></span>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="turn-numbers-into-sentences">5 Turn numbers into sentences</h2>
+<ol type="1">
+<li><p><strong>Pick the right conditional view.</strong> <em>For “people
+in cluster 0 → region”, read the <strong>row-wise</strong>
+table.</em></p></li>
+<li><p><strong>Find the largest row-wise percentages</strong> (or
+largest positive residuals). Example pseudo-output:</p>
+<table>
+<thead>
+<tr>
+<th>cluster</th>
+<th>region</th>
+<th>row %</th>
+<th>lift</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>f</td>
+<td>41 %</td>
+<td>2.8×</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table></li>
+<li><p><strong>Phrase it plainly</strong>, including a rough effect
+size:</p>
+<blockquote>
+<p>“41 % of people in <strong>cluster 0</strong> live in <strong>region
+f</strong>, vs. only 15 % overall (≈ 2.8 × the baseline).”</p>
+</blockquote></li>
+<li><p>For the reverse statement, repeat using the
+<strong>column-wise</strong> table.</p></li>
+</ol>
+<hr />
+<h2 id="optional-but-persuasive-visualise-it">6 Optional, but
+persuasive: visualise it</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns, matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sns.heatmap(row_pct, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">&quot;.1%&quot;</span>, cbar<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Region distribution *within* each cluster&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<ul>
+<li>Heat-maps of <strong>row_pct</strong> (or <strong>col_pct</strong>)
+let stakeholders spot the darkest squares instantly.</li>
+<li>Mosaic plots colour squares by residuals.</li>
+<li>Correspondence analysis plots both clusters and regions in the same
+2-D space, revealing affinities at a glance.</li>
+</ul>
+<hr />
+<h3 id="one-liner-cheat-sheet">One-liner cheat sheet</h3>
+<pre class="text"><code>“If the conditional % for (cluster i, region j) is high **and**
+ the lift (observed / expected) &gt; 1 – 1.5×,
+ say: ‘People in cluster i tend to be in region j.’”</code></pre>
+<p>Follow the same template swapping “cluster” and “region” to write the
+inverse statement.</p>
+    
+</body>
+</html>
