@@ -320,6 +320,170 @@ let stakeholders spot the darkest squares instantly.</li>
  say: ‘People in cluster i tend to be in region j.’”</code></pre>
 <p>Follow the same template swapping “cluster” and “region” to write the
 inverse statement.</p>
+<h1 id="details">Details</h1>
+<p>Below is a step-by-step look at what’s happening mathematically
+<strong>and</strong> how that maps to the code you just saw rendered as
+three interactive tables (“Observed counts”, “Expected counts”, “Pearson
+residuals”). Feel free to poke around the numbers as you read.</p>
+<hr />
+<h2 id="notation-the-null-hypothesis">1 Notation &amp; the null
+hypothesis</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning (for any cell <em>i, j</em>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span
+class="math inline"><em>O</em><sub><em>i</em><em>j</em></sub></span></td>
+<td>observed count (from your crosstab)</td>
+</tr>
+<tr>
+<td><span
+class="math inline"><em>R</em><sub><em>i</em></sub></span></td>
+<td>row total = <span
+class="math inline">∑<sub><em>j</em></sub><em>O</em><sub><em>i</em><em>j</em></sub></span></td>
+</tr>
+<tr>
+<td><span
+class="math inline"><em>C</em><sub><em>j</em></sub></span></td>
+<td>column total = <span
+class="math inline">∑<sub><em>i</em></sub><em>O</em><sub><em>i</em><em>j</em></sub></span></td>
+</tr>
+<tr>
+<td><span class="math inline"><em>N</em></span></td>
+<td>grand total = <span
+class="math inline">∑<sub><em>i</em>, <em>j</em></sub><em>O</em><sub><em>i</em><em>j</em></sub></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Null hypothesis (independence)</strong></p>
+<p><span class="math display">$$
+P(\text{cluster}=i,\;\text{region}=j)
+      =P(\text{cluster}=i)\;P(\text{region}=j)
+      =\frac{R_i}{N}\;\frac{C_j}{N}.
+$$</span></p>
+<p>Multiply by <span class="math inline"><em>N</em></span> to get the
+<strong>expected count</strong> under independence:</p>
+<p><span class="math display">$$
+E_{ij}=N\;P(i,j)=\frac{R_i C_j}{N}.
+$$</span></p>
+<p>That’s exactly the formula in the prompt.</p>
+<hr />
+<h2 id="why-standardise-the-residuals">2 Why standardise the
+residuals?</h2>
+<p>The raw difference <span
+class="math inline"><em>O</em><sub><em>i</em><em>j</em></sub> − <em>E</em><sub><em>i</em><em>j</em></sub></span>
+doesn’t tell you whether an 8-person surplus is “big”—it depends on the
+scale of <span
+class="math inline"><em>E</em><sub><em>i</em><em>j</em></sub></span>. So
+we scale by its theoretical standard deviation, <span
+class="math inline">$\sqrt{E_{ij}}$</span>, giving the <strong>Pearson
+standardised residual</strong></p>
+<p><span class="math display">$$
+r_{ij}=\frac{O_{ij}-E_{ij}}{\sqrt{E_{ij}}}.
+$$</span></p>
+<ul>
+<li>Under the null, each <span
+class="math inline"><em>r</em><sub><em>i</em><em>j</em></sub></span> is
+<em>approximately</em> <span
+class="math inline"><em>N</em>(0, 1)</span>.</li>
+<li>The global <strong>χ² statistic</strong> is simply the <em>sum of
+squares</em> <span
+class="math inline"><em>χ</em><sup>2</sup> = ∑<sub><em>i</em>, <em>j</em></sub><em>r</em><sub><em>i</em><em>j</em></sub><sup> 2</sup></span>.</li>
+</ul>
+<p>Hence:</p>
+<ul>
+<li><span
+class="math inline"><em>r</em><sub><em>i</em><em>j</em></sub> ≳ 2</span>
+→ over-represented (≈ upper 2.5 % tail).</li>
+<li><span
+class="math inline"><em>r</em><sub><em>i</em><em>j</em></sub> ≲ −2</span>
+→ under-represented.</li>
+</ul>
+<p>These Z-scores are what colour the tiles in a mosaic plot or position
+points in correspondence analysis.</p>
+<hr />
+<h2 id="line-by-line-code-walk-through">3 Line-by-line code
+walk-through</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tab <span class="op">=</span> pd.crosstab(df[<span class="st">&#39;cluster&#39;</span>], df[<span class="st">&#39;region&#39;</span>])</span></code></pre></div>
+<p><code>tab</code> is your <strong>O</strong> matrix.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>row_tot <span class="op">=</span> tab.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)          <span class="co"># R_i  (vector, length r)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>col_tot <span class="op">=</span> tab.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)          <span class="co"># C_j  (vector, length c)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>grand_total <span class="op">=</span> tab.values.<span class="bu">sum</span>()     <span class="co"># N    (scalar)</span></span></code></pre></div>
+<h3 id="computing-e-efficiently">Computing E efficiently</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>expected <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    np.outer(row_tot, col_tot) <span class="op">/</span> grand_total,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span>tab.index, columns<span class="op">=</span>tab.columns)</span></code></pre></div>
+<ul>
+<li><code>np.outer(row_tot, col_tot)</code> → every pairwise product
+<span
+class="math inline"><em>R</em><sub><em>i</em></sub><em>C</em><sub><em>j</em></sub></span>,
+giving an r × c array.</li>
+<li>Divide once by <code>grand_total</code> to get <span
+class="math inline"><em>E</em><sub><em>i</em><em>j</em></sub></span>.</li>
+<li>Wrap in a DataFrame so labels match <code>tab</code>.</li>
+</ul>
+<h3 id="standardised-residuals">Standardised residuals</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>residual <span class="op">=</span> (tab <span class="op">-</span> expected) <span class="op">/</span> np.sqrt(expected)</span></code></pre></div>
+<ul>
+<li><code>tab - expected</code> broadcasts cellwise <span
+class="math inline"><em>O</em><sub><em>i</em><em>j</em></sub> − <em>E</em><sub><em>i</em><em>j</em></sub></span>.</li>
+<li><code>np.sqrt(expected)</code> is the denominator <span
+class="math inline">$\sqrt{E_{ij}}$</span>.</li>
+<li>The result is another r × c DataFrame of Z-scores.</li>
+</ul>
+<h3 id="example-numbers-from-the-tables">Example numbers (from the
+tables)</h3>
+<p>For the cell <strong>cluster 0 × region c</strong> in the toy
+data:</p>
+<ul>
+<li><span class="math inline"><em>O</em> = 30</span></li>
+<li><span class="math inline"><em>E</em> = 14.42</span></li>
+<li><span
+class="math inline"><em>r</em> = (30 − 14.42)/√14.42 ≈ 2.94</span> →
+dark positive shading in a mosaic plot.</li>
+</ul>
+<hr />
+<h2 id="connecting-back-to-your-original-goal">4 Connecting back to your
+original goal</h2>
+<ul>
+<li><p><strong>Want a verbal statement?</strong></p>
+<blockquote>
+<p>“Cluster 0 is ≈ 3 SD above expectation in Region c → clearly
+over-represented.”</p>
+</blockquote></li>
+<li><p><strong>Need a formal test?</strong> Use
+<code>scipy.stats.chi2_contingency(tab)</code> or
+<code>statsmodels.stats.contingency</code>.</p></li>
+<li><p><strong>Want a visual?</strong>
+<code>statsmodels.graphics.mosaicplot</code> or
+<code>seaborn.heatmap(residual)</code> shades by those <span
+class="math inline"><em>r</em><sub><em>i</em><em>j</em></sub></span>
+values.</p></li>
+</ul>
+<hr />
+<h3 id="key-take-aways">Key take-aways</h3>
+<ol type="1">
+<li><strong>Expected counts</strong> assume independence; compute with
+an outer product.</li>
+<li><strong>Standardised residuals</strong> tell you which cells drive
+any association (think Z-scores).</li>
+<li>Squaring and summing those residuals <em>is</em> the χ² test.</li>
+<li>Thresholds of ±2 (sometimes ±1.96) are a quick rule of thumb for
+“significant” cells.</li>
+</ol>
+<p>With these pieces you can rigorously justify phrases like
+<em>“Segment A avoids Region G”</em> or <em>“Region F is a hot-spot for
+Cluster 3”</em>—and show exactly <em>how much</em> and <em>how sure</em>
+you are.</p>
     
 </body>
 </html>
