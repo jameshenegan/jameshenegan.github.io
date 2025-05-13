@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a practical play-book you can adapt to almost any
+customer–segmentation dataset that contains “first-touch” dates. I’ve
+ordered the steps so you can stop when you already have the insight you
+need, or push on to something more sophisticated.</p>
+<hr />
+<h3
+id="pick-a-single-first-relationship-timestamp-for-every-customer">1.
+Pick a single “first relationship” timestamp for every customer</h3>
+<pre class="text"><code>first_start_date = MIN(auto_start_date, life_start_date)   # row-wise</code></pre>
+<p><em>Why?</em> You want one, and only one, event date per person so
+that every customer appears exactly once in later counts or curves. If a
+segment’s definition requires treating auto and life separately,
+duplicate each customer into two rows (one per line of business) so each
+<em>row</em> still has one start date.</p>
+<hr />
+<h3 id="basic-descriptive-stats-by-segment">2. Basic descriptive stats
+by segment</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 42%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>metric</th>
+<th>what it tells you</th>
+<th>SQL / pandas sketch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNT(*)</code></td>
+<td>segment size</td>
+<td><code>GROUP BY segment</code></td>
+</tr>
+<tr>
+<td><code>MIN/MAX(first_start_date)</code></td>
+<td>“oldest” vs “newest” cohorts in each segment</td>
+<td></td>
+</tr>
+<tr>
+<td><code>MEDIAN(first_start_date)</code></td>
+<td>central tendency; useful when there are outliers</td>
+<td></td>
+</tr>
+<tr>
+<td><code>DATEDIFF(today, first_start_date)</code> avg/median</td>
+<td>average tenure per segment</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>You’ll often see patterns just looking at the medians: <em>“Segment
+B’s median join date is 2023-04, whereas Segment C’s is
+2021-09.”</em></p>
+<hr />
+<h3 id="cohort-table-or-heat-map">3. Cohort table (or heat-map)</h3>
+<ol type="1">
+<li>Bucket <code>first_start_date</code> into months (or weeks/quarters
+if volume is small or large).</li>
+<li>Pivot: rows = period, columns = segment, values = number of new
+customers.</li>
+</ol>
+<p>Look for rows where one segment spikes relative to the others—that
+indicates a hiring campaign, a new product feature, etc.</p>
+<hr />
+<h3 id="cumulative-acquisition-curves-growth-curves">4. Cumulative
+acquisition curves (“growth curves”)</h3>
+<p>For each segment, create</p>
+<pre class="text"><code>cum_customers_t = cumulative sum of new customers up to t</code></pre>
+<p>Plot the curves on the same axes. The steeper the slope, the faster
+that segment is growing.</p>
+<p><em>Quantify it:</em> fit a simple linear regression to each
+cumulative curve over an identical recent window (say the last 12
+months) and compare the estimated slopes. A steeper slope = “joining at
+a quicker pace.”</p>
+<hr />
+<h3
+id="formal-statistical-tests-optional-but-nice-for-dashboards-write-ups">5.
+Formal statistical tests (optional, but nice for dashboards &amp;
+write-ups)</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 46%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Question</th>
+<th>Test</th>
+<th>R/Python package note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Are the distributions of join dates different?</td>
+<td><strong>Kolmogorov–Smirnov</strong> two-sample test between
+segments</td>
+<td><code>scipy.stats.ks_2samp</code></td>
+</tr>
+<tr>
+<td>Are the monthly join counts different?</td>
+<td><strong>Chi-square</strong> on a contingency table (months ×
+segments)</td>
+<td><code>scipy.stats.chi2_contingency</code></td>
+</tr>
+<tr>
+<td>Does segment membership predict <em>time</em> to join?</td>
+<td><strong>Cox proportional hazards</strong> or <strong>accelerated
+failure-time</strong> model</td>
+<td><code>lifelines</code> or <code>survival</code></td>
+</tr>
+</tbody>
+</table>
+<p>The survival-model approach is handy when some prospects are still
+“open leads” (i.e., you have censoring), but if everyone in the file has
+already joined, steps 3 &amp; 4 are usually enough.</p>
+<hr />
+<h3 id="visual-storyboarding-tips">6. Visual storyboarding tips</h3>
+<ul>
+<li>Use <strong>line charts</strong> for cumulative curves, stacked
+<strong>area charts</strong> for monthly joins, and a
+<strong>heat-map</strong> (period × segment) if you need a dense
+overview.</li>
+<li>Sort segments consistently across visuals.</li>
+<li>Annotate obvious inflection points: “Product launch,” “New marketing
+channel,” etc.</li>
+</ul>
+<hr />
+<h3 id="putting-it-together-example-pythonpandas">7. Putting it
+together: example (Python/pandas)</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;first_start_date&#39;</span>] <span class="op">=</span> df[[<span class="st">&#39;auto_start_date&#39;</span>, <span class="st">&#39;life_start_date&#39;</span>]].<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># monthly cohort counts</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;month&#39;</span>] <span class="op">=</span> df[<span class="st">&#39;first_start_date&#39;</span>].dt.to_period(<span class="st">&#39;M&#39;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>cohort <span class="op">=</span> (</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    df.groupby([<span class="st">&#39;month&#39;</span>, <span class="st">&#39;segment&#39;</span>])</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      .size()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      .unstack(fill_value<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      .sort_index()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># cumulative curves</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>cum <span class="op">=</span> cohort.cumsum()</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>cum.plot(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&#39;Cumulative customer acquisitions by segment&#39;</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;Join month&#39;</span>)<span class="op">;</span> plt.ylabel(<span class="st">&#39;Total customers&#39;</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p>(If you like, use a linear regression on <code>cum.tail(12)</code>
+rows per segment to quantify growth rates.)</p>
+<hr />
+<h3 id="quick-interpretation-phrases-you-can-use">Quick interpretation
+phrases you can use</h3>
+<ul>
+<li><strong>“Customers in Segment B have a 30 % newer median join date
+than Segment C, indicating faster recent growth.”</strong></li>
+<li><strong>“Over the last 12 months, Segment B added ≈ 1 350 customers
+versus 820 in Segment C (p &lt; 0.01, χ² test).”</strong></li>
+<li><strong>“The slope of Segment B’s cumulative curve is 1.65× steeper
+than Segment C’s, so B is acquiring customers more
+rapidly.”</strong></li>
+</ul>
+<hr />
+<h4 id="final-checklist">Final checklist</h4>
+<ul class="task-list">
+<li><label><input type="checkbox" />One start-date per customer (or
+row).</label></li>
+<li><label><input type="checkbox" />Cohort table built.</label></li>
+<li><label><input type="checkbox" />Cumulative curves plotted &amp;
+slopes compared.</label></li>
+<li><label><input type="checkbox" />Optional statistical test to back up
+the visual.</label></li>
+<li><label><input type="checkbox" />Interpretations phrased in plain
+language.</label></li>
+</ul>
+<p>Follow those steps and you’ll have a clear, defensible answer to
+“which segments are joining faster.” Happy analyzing!</p>
+    
+</body>
+</html>
