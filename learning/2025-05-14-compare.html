@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a step-by-step workflow you can adapt. I’ll show (1) how to
+frame the hypothesis, (2) code to generate both statistical tests and
+visuals, and (3) language you might use in a report.</p>
+<hr />
+<h3 id="frame-the-hypothesis-clearly">1. Frame the hypothesis
+clearly</h3>
+<table>
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 75%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning</th>
+<th>Example for your case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>p₀</strong></td>
+<td>historical (“long-run”) proportion of all members who belong to
+<em>Group 7</em></td>
+<td>≈ 0.30</td>
+</tr>
+<tr>
+<td><strong>p₁</strong></td>
+<td>recent proportion of people who joined in the last <em>N</em> years
+that are in <em>Group 7</em></td>
+<td>≈ 0.27</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Null H₀</strong>: p₁ = p₀ (the share of joiners from Group 7
+has not changed). <strong>Alt H₁</strong>: p₁ &lt; p₀ (Group 7’s share
+of new joiners has fallen).</p>
+</blockquote>
+<p>Because the two samples are independent (all historical joiners
+vs. only recent joiners), use either</p>
+<ul>
+<li>a <strong>two-sample z-test for proportions</strong> (quick, good
+for “is the drop significant?”), or</li>
+<li>a <strong>χ² test of independence</strong> on a 2 × 2 contingency
+table (equivalent here, but generalises when you keep all 6
+groups).</li>
+</ul>
+<p>If you want to quantify a <em>trend</em> year-by-year, fit a
+<strong>logistic or Poisson regression</strong> with time as the
+predictor.</p>
+<hr />
+<h3 id="code-template">2. Code template</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.stats.proportion <span class="im">import</span> proportions_ztest</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns               <span class="co"># optional, for nicer plots</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume df has columns: id, join_date (datetime), group_number</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;join_date&#39;</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">&#39;join_date&#39;</span>])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># A. Pick “recent” window (e.g. last 2 calendar years)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>cutoff <span class="op">=</span> pd.Timestamp(<span class="st">&#39;today&#39;</span>).normalize() <span class="op">-</span> pd.DateOffset(years<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>recent <span class="op">=</span> df[df[<span class="st">&#39;join_date&#39;</span>] <span class="op">&gt;=</span> cutoff]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>historic <span class="op">=</span> df[df[<span class="st">&#39;join_date&#39;</span>] <span class="op">&lt;</span>  cutoff]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on one group, say group 7</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> <span class="dv">7</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>count_recent     <span class="op">=</span> (recent[<span class="st">&#39;group_number&#39;</span>] <span class="op">==</span> g).<span class="bu">sum</span>()</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>n_recent         <span class="op">=</span> <span class="bu">len</span>(recent)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>count_historic   <span class="op">=</span> (historic[<span class="st">&#39;group_number&#39;</span>] <span class="op">==</span> g).<span class="bu">sum</span>()</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>n_historic       <span class="op">=</span> <span class="bu">len</span>(historic)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># B. 2-sample z-test (one-sided)</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>stat, pval <span class="op">=</span> proportions_ztest([count_recent, count_historic],</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                               [n_recent,   n_historic],</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                               alternative<span class="op">=</span><span class="st">&#39;smaller&#39;</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;z = </span><span class="sc">{</span>stat<span class="sc">:.2f}</span><span class="ss">, one-sided p = </span><span class="sc">{</span>pval<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># C. Visual: yearly share of new joiners in each group</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>yearly <span class="op">=</span> (df</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>          .assign(year<span class="op">=</span>df[<span class="st">&#39;join_date&#39;</span>].dt.year)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>          .groupby([<span class="st">&#39;year&#39;</span>, <span class="st">&#39;group_number&#39;</span>])</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>          .size()</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>          .groupby(level<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>          .<span class="bu">apply</span>(<span class="kw">lambda</span> x: x <span class="op">/</span> x.<span class="bu">sum</span>())     <span class="co"># converts to proportions</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>          .reset_index(name<span class="op">=</span><span class="st">&#39;prop&#39;</span>))</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>))</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>yearly[yearly[<span class="st">&#39;group_number&#39;</span>] <span class="op">==</span> g],</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>             x<span class="op">=</span><span class="st">&#39;year&#39;</span>, y<span class="op">=</span><span class="st">&#39;prop&#39;</span>, marker<span class="op">=</span><span class="st">&#39;o&#39;</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>plt.axvline(cutoff.year<span class="op">-</span><span class="fl">0.5</span>, ls<span class="op">=</span><span class="st">&#39;--&#39;</span>, alpha<span class="op">=</span><span class="fl">0.4</span>)  <span class="co"># marks window start</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Share of yearly joiners&#39;</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f&#39;Group </span><span class="sc">{</span>g<span class="sc">}</span><span class="ss"> share of new joiners by year&#39;</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------------</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co"># D. Trend model (optional)</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;is_g&#39;</span>] <span class="op">=</span> (df[<span class="st">&#39;group_number&#39;</span>] <span class="op">==</span> g).astype(<span class="bu">int</span>)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;year_signed&#39;</span>] <span class="op">=</span> df[<span class="st">&#39;join_date&#39;</span>].dt.year</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.glm(<span class="st">&#39;is_g ~ year_signed&#39;</span>, data<span class="op">=</span>df,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>                family<span class="op">=</span>sm.families.Binomial()).fit()</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary())</span></code></pre></div>
+<p><strong>Interpreting outputs</strong></p>
+<ul>
+<li><strong>z-test / χ²</strong> – If <em>p</em> &lt; 0.05 (or your
+chosen α), reject H₀: the decline from 30 % to 27 % is statistically
+significant.</li>
+<li><strong>Plot</strong> – A downward slope that stays below the
+long-run average (dotted line or shaded band) is a visual cue the
+audience will grasp instantly.</li>
+<li><strong>Regression</strong> – A negative and significant coefficient
+on <code>year_signed</code> means the log-odds (≈ rate) of someone
+belonging to Group 7 is falling each year.</li>
+</ul>
+<hr />
+<h3 id="wording-for-a-report-or-slide">3. Wording for a report or
+slide</h3>
+<blockquote>
+<p>“Historically, 30 % of all members have belonged to <em>Group 7</em>.
+In the 24-month period from <strong>May 2023 – April 2025</strong>, only
+<strong>27 %</strong> of new joiners were in that group. A two-sample
+z-test confirms the decline is statistically significant (<em>z</em> =
+-3.1, <em>p</em> = 0.001). Year-by-year trends (see chart) show a
+consistent drop since 2019, and a logistic-regression slope of –0.06
+log-odds per year (95 % CI –0.09 to –0.03), reinforcing that Group 7’s
+relative recruitment rate is slowing.”</p>
+</blockquote>
+<p>That phrasing ties the descriptive numbers to formal evidence, and
+citing both a test statistic and a graphic makes the conclusion hard to
+dispute.</p>
+<hr />
+<h3 id="tips-variations">Tips &amp; variations</h3>
+<ul>
+<li><strong>Multiple groups</strong>: run a χ² test on the full 6 × 2
+table (six groups × two periods).</li>
+<li><strong>Rolling window</strong>: compute a 12-month rolling
+proportion to smooth out noise.</li>
+<li><strong>Absolute counts</strong>: if membership sizes differ greatly
+between groups, supplement proportions with counts so readers see
+whether other groups are growing faster or Group 7 is merely flat.</li>
+<li><strong>Confidence bands on the plot</strong>: use
+<code>statsmodels.stats.proportion.proportion_confint</code> to add
+error bars around yearly proportions.</li>
+</ul>
+<p>Feel free to drop your actual dataframe (anonymised) if you’d like me
+to run the code and return the exact numbers or plots!</p>
+    
+</body>
+</html>
