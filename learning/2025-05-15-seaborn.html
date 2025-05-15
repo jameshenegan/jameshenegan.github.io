@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a compact “-from-zero-to-useful” walkthrough that hits each
+of the six points you asked about. Every code cell is self-contained, so
+you can copy-paste into a fresh notebook or script and run it in
+order.</p>
+<hr />
+<h3 id="imports-sample-data">0 Imports &amp; sample data</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># sample data frame with three series</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="fl">10.5</span>, <span class="fl">0.5</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sin&quot;</span>:   np.sin(x),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;cos&quot;</span>:   np.cos(x),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tan&quot;</span>:   np.tan(x) <span class="op">/</span> <span class="dv">10</span>       <span class="co"># scale to keep it on–screen</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}, index<span class="op">=</span>x).reset_index(names<span class="op">=</span><span class="st">&quot;x&quot;</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>data.head()</span></code></pre></div>
+<hr />
+<h3 id="setting-a-theme-a.k.a.-style-palette">1 Setting a theme (a.k.a.
+style palette)</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sns.set_theme(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">&quot;whitegrid&quot;</span>,     <span class="co"># grid -on-white background</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">&quot;colorblind&quot;</span>,  <span class="co"># colour set</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    font_scale<span class="op">=</span><span class="fl">1.1</span>,        <span class="co"># scale all text</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    rc<span class="op">=</span>{                   <span class="co"># any raw Matplotlib rcParams</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;figure.dpi&quot;</span>: <span class="dv">110</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;axes.spines.top&quot;</span>: <span class="va">False</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;axes.spines.right&quot;</span>: <span class="va">False</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><code>set_theme()</code> is a convenience wrapper that calls the
+older <code>set_style()</code>, <code>set_context()</code>, and
+<code>set_palette()</code> under the hood, plus it can override any
+Matplotlib <code>rcParams</code> through the <code>rc=</code> dict. Call
+it <strong>once at the top</strong> of a notebook/script; everything
+that follows inherits the look-and-feel.</p>
+<hr />
+<h3 id="what-is-a-lineplot">2 What <em>is</em> a
+<code>lineplot</code>?</h3>
+<p><code>seaborn.lineplot()</code> draws one or more <strong>continuous
+trends</strong> where <em>x</em> is numeric and <em>y</em> is numeric.
+Under the hood it:</p>
+<ul>
+<li>adds a single Matplotlib <strong>Axes</strong> to the current
+<strong>Figure</strong> (unless you tell it otherwise)</li>
+<li>optionally estimates and plots confidence intervals</li>
+<li>groups data by <code>hue=</code>, <code>style=</code>,
+<code>size=</code> categories automatically if you give it a
+<em>long-form</em> dataframe</li>
+</ul>
+<p>Example with the sample data in <em>long</em> form:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># melt to long form: one column for metric names, one for values</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">long</span> <span class="op">=</span> data.melt(id_vars<span class="op">=</span><span class="st">&quot;x&quot;</span>, var_name<span class="op">=</span><span class="st">&quot;metric&quot;</span>, value_name<span class="op">=</span><span class="st">&quot;value&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">&quot;x&quot;</span>, y<span class="op">=</span><span class="st">&quot;value&quot;</span>, hue<span class="op">=</span><span class="st">&quot;metric&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Three trigonometric functions&quot;</span>)<span class="op">;</span></span></code></pre></div>
+<hr />
+<h3 id="multiple-lines-in-a-loop-controlling-the-legend">3 Multiple
+lines in a loop &amp; controlling the legend</h3>
+<p>When you loop yourself, you’re bypassing seaborn’s automatic
+grouping, so you need to manage colours <strong>and</strong> the
+legend:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> [<span class="st">&quot;sin&quot;</span>, <span class="st">&quot;cos&quot;</span>, <span class="st">&quot;tan&quot;</span>]:</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    sns.lineplot(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        ax<span class="op">=</span>ax,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">&quot;x&quot;</span>, y<span class="op">=</span>metric, data<span class="op">=</span>data,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span>metric.upper(),             <span class="co"># label shows in legend</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        marker<span class="op">=</span><span class="st">&quot;o&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Legend positioning</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>ax.legend(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">&quot;Function&quot;</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    loc<span class="op">=</span><span class="st">&quot;upper left&quot;</span>,        <span class="co"># any Matplotlib loc string or tuple of (x, y)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    bbox_to_anchor<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>)    <span class="co"># push outside the axes if you like</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">&quot;x (radians)&quot;</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">&quot;value&quot;</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;Functions drawn in a loop&quot;</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code></pre></div>
+<p><strong>Key points</strong></p>
+<ul>
+<li><p><code>sns.lineplot()</code> returns the Matplotlib
+<strong>Axes</strong> it drew on – use that object (<code>ax</code>) for
+further tweaks.</p></li>
+<li><p>Legend placement is 100 % a Matplotlib task:
+<code>ax.legend()</code> or <code>plt.legend()</code> accepts all the
+usual <code>loc=</code>, <code>bbox_to_anchor=</code>,
+<code>ncol=</code>, etc.</p></li>
+<li><p>If you find the default auto-colours clash, supply your own list
+up-front:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>custom <span class="op">=</span> sns.color_palette(<span class="st">&quot;Set2&quot;</span>, <span class="dv">3</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sns.set_palette(custom)</span></code></pre></div></li>
+</ul>
+<hr />
+<h3 id="seaborn-matplotlib-how-do-they-fit-together">4 Seaborn ×
+Matplotlib – how do they fit together?</h3>
+<ul>
+<li><p><strong>Matplotlib</strong> is the <em>drawing
+engine</em>.</p></li>
+<li><p><strong>Seaborn</strong> is a <em>helper library</em> that:</p>
+<ul>
+<li>calculates additional statistics (confidence intervals, kernel
+densities, regression lines, …)</li>
+<li>chooses sensible defaults for colours, gridlines, tick formatting,
+etc.</li>
+<li>still delegates the final rendering to Matplotlib.</li>
+</ul></li>
+</ul>
+<p>Every seaborn function:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.lineplot(...)</span></code></pre></div>
+<p><em>creates</em> (or re-uses) a Matplotlib <strong>Axes</strong>
+object and returns it. Therefore anything you could do in pure
+Matplotlib (<code>ax.set_xlim()</code>, <code>ax.axhline()</code>, …)
+works exactly the same on that object.</p>
+<hr />
+<h3 id="using-fig-ax-plt.subplots-with-seaborn-object-oriented-style">5
+Using <code>fig, ax = plt.subplots()</code> with seaborn
+(object-oriented style)</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># left pane – automatic grouping via long form</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">&quot;x&quot;</span>, y<span class="op">=</span><span class="st">&quot;value&quot;</span>, hue<span class="op">=</span><span class="st">&quot;metric&quot;</span>, ax<span class="op">=</span>ax1)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">&quot;Grouped automatically&quot;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># right pane – explicit loop</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metric <span class="kw">in</span> [<span class="st">&quot;sin&quot;</span>, <span class="st">&quot;cos&quot;</span>, <span class="st">&quot;tan&quot;</span>]:</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    sns.lineplot(x<span class="op">=</span><span class="st">&quot;x&quot;</span>, y<span class="op">=</span>metric, data<span class="op">=</span>data, ax<span class="op">=</span>ax2, label<span class="op">=</span>metric)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>ax2.set_title(<span class="st">&quot;Looped manually&quot;</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&quot;Two seaborn plots, one figure&quot;</span>, y<span class="op">=</span><span class="fl">1.05</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span></code></pre></div>
+<p>Why bother?</p>
+<ul>
+<li>State-<strong>ful</strong> style (<code>plt.plot(...)</code>)
+<em>implicitly</em> draws on the current Axes, which can get confusing
+in multi-plot layouts.</li>
+<li>Object-<strong>oriented</strong> style (<code>ax.plot(...)</code>)
+is explicit: you always know which subplot you’re modifying.</li>
+<li>Seaborn plays nicely with either style – just pass the target
+<code>ax=</code>.</li>
+</ul>
+<hr />
+<h3 id="plt.figure-plt.subplots-figure-and-axes-at-a-glance">6
+<code>plt.figure</code>, <code>plt.subplots</code>, <code>Figure</code>,
+and <code>Axes</code> at a glance</h3>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 35%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Quick definition</th>
+<th>Typical use-case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>plt.figure()</code></td>
+<td>Creates a <em>Figure</em> object and makes it the
+<strong>current</strong> figure.</td>
+<td>One big canvas; you’ll add Axes later with
+<code>fig.add_subplot()</code> or <code>plt.subplot()</code>; rarer in
+seaborn workflows.</td>
+</tr>
+<tr>
+<td><code>plt.subplots()</code></td>
+<td><strong>Factory</strong> that creates a Figure <strong>and</strong>
+an array of Axes in one call.</td>
+<td>Most convenient way to start an object-oriented layout; returns
+<code>fig, ax</code> (or array of axes).</td>
+</tr>
+<tr>
+<td><code>Figure</code> (object)</td>
+<td>The entire canvas – holds metadata (size, dpi) and one or more
+Axes.</td>
+<td>Global title, shared legend, tight_layout, saving
+(<code>fig.savefig(...)</code>).</td>
+</tr>
+<tr>
+<td><code>Axes</code> (object)</td>
+<td>A single set of x/y (or x/y/z) coordinates – where the data
+live.</td>
+<td>Labels, ticks, spines, grids, every seaborn call attaches to an
+Axes.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule of thumb:</strong> use <code>plt.subplots()</code> →
+work with the returned <code>Axes</code> objects → pass them to seaborn.
+You gain clarity and avoid the <em>“why did that line end up on the
+wrong subplot?”</em> headaches.</p>
+<hr />
+<h2 id="tldr-cheat-sheet">TL;DR cheat-sheet</h2>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns, matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">&quot;whitegrid&quot;</span>, palette<span class="op">=</span><span class="st">&quot;colorblind&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">&quot;x&quot;</span>, y<span class="op">=</span><span class="st">&quot;y&quot;</span>, hue<span class="op">=</span><span class="st">&quot;category&quot;</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">&quot;upper right&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<ul>
+<li><code>set_theme()</code> once → all plots match.</li>
+<li>Every seaborn call returns a Matplotlib <strong>Axes</strong> → use
+it.</li>
+<li>Control the legend <strong>with Matplotlib methods</strong>.</li>
+<li>Prefer <code>plt.subplots()</code> (<code>fig, ax</code>) over the
+state-machine when you have &gt;1 plot or want fine-grained
+control.</li>
+</ul>
+<p>That should give you a solid footing to build and style seaborn line
+plots while understanding exactly how the pieces plug into Matplotlib’s
+object-oriented core. Happy plotting!</p>
+    
+</body>
+</html>
