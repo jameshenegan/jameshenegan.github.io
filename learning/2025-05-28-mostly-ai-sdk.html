@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="mostly-ai-python-sdk-in-google-colab">Mostly AI Python SDK in
+Google Colab</h1>
+<h3
+id="yesmostly-ais-open-source-python-sdk-works-great-in-local-mode-inside-a-colab-notebook">Yes—MOSTLY
+AI’s open-source <strong>Python SDK</strong> works great in “local” mode
+inside a Colab notebook</h3>
+<p>Below is a quick primer plus a fully-worked Colab code cell that
+trains a generator on the classic <strong>Titanic</strong> data set and
+produces synthetic rows you can explore or download.</p>
+<hr />
+<h2 id="install-the-sdk-in-colab">1. Install the SDK in Colab</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Colab: first cell</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>U <span class="st">&quot;mostlyai[local]&quot;</span>   <span class="co"># add [local-gpu] if you enabled a GPU runtime</span></span></code></pre></div>
+<ul>
+<li><code>mostlyai[local]</code> bundles the lightweight local engine;
+no external platform is needed.</li>
+<li>GPU acceleration is available on Linux (which Colab uses) if you
+switch the runtime to “GPU”. (<a
+href="https://mostly.ai/docs/generators/evaluate-quality"
+title="mostly.ai">MOSTLY AI</a>)</li>
+</ul>
+<hr />
+<h2 id="initialize-a-local-client">2. Initialize a local client</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mostlyai.sdk <span class="im">import</span> MostlyAI</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mostly <span class="op">=</span> MostlyAI(local<span class="op">=</span><span class="va">True</span>)       <span class="co"># ← this spins up the local REST service in-process</span></span></code></pre></div>
+<p>The API surface is the same as when you connect to a remote MOSTLY AI
+platform; only the instantiation flag changes. (<a
+href="https://mostly.ai/blog/synthetic-data-quality-evaluation"
+title="Evaluate synthetic data quality using downstream ML - MOSTLY AI">MOSTLY
+AI</a>)</p>
+<hr />
+<h2 id="load-an-open-titanic-data-set">3. Load an open Titanic data
+set</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns, pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> sns.load_dataset(<span class="st">&quot;titanic&quot;</span>)    <span class="co"># ~891 rows, 15 columns</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div>
+<p><em>The seaborn copy is CC-BY. If you prefer Kaggle’s CSV, replace
+this line with
+<code>pd.read_csv("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")</code>.</em></p>
+<hr />
+<h2 id="train-a-generator-one-line">4. Train a generator (one
+line!)</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> mostly.train(data<span class="op">=</span>df)           <span class="co"># accepts a pandas DataFrame</span></span></code></pre></div>
+<p>For a small single-table data set like Titanic, training finishes in
+~1–2 minutes on a Colab CPU and seconds on a GPU.</p>
+<hr />
+<h2 id="explore-generate-synthetic-data">5. Explore &amp; generate
+synthetic data</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Live-probe a handful of rows</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mostly.probe(g, size<span class="op">=</span><span class="dv">5</span>).data()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a full synthetic data set matching Titanic’s row count</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>sd <span class="op">=</span> mostly.generate(g, size<span class="op">=</span><span class="bu">len</span>(df))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>synth_df <span class="op">=</span> sd.data()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>synth_df.head()</span></code></pre></div>
+<hr />
+<h2 id="optional-persist-or-download">6. (Optional) Persist or
+download</h2>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>synth_df.to_csv(<span class="st">&quot;titanic_synthetic.csv&quot;</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> files<span class="op">;</span> files.download(<span class="st">&quot;titanic_synthetic.csv&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 id="tips-gotchas">Tips &amp; gotchas</h3>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 85%" />
+</colgroup>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Data types</strong></td>
+<td>The SDK infers types from <code>dtype</code>s. If seaborn marks a
+string column as <code>object</code>, you’re fine. Use
+<code>df[col] = df[col].astype("category")</code> to force categorical
+treatment when needed.</td>
+</tr>
+<tr>
+<td><strong>Training options</strong></td>
+<td><code>mostly.train</code> accepts kwargs like
+<code>max_epochs</code>, <code>privacy={"k_anonymity":5}</code> and
+<code>model="tabularargn"</code>. The defaults are usually sufficient
+for Titanic.</td>
+</tr>
+<tr>
+<td><strong>GPU memory</strong></td>
+<td>Local GPU mode compiles a small CUDA kernel on first run; expect a
+10–15 s overhead in Colab.</td>
+</tr>
+<tr>
+<td><strong>Quality checks</strong></td>
+<td>Call <code>g.evaluate()</code> to get utility &amp; privacy scores,
+or use <code>mostly.compare(real=df, synthetic=synth_df)</code> for
+quick sanity plots.</td>
+</tr>
+<tr>
+<td><strong>Moving to the SaaS platform</strong></td>
+<td>After <code>g.export_to_file("generator.zip")</code> you can upload
+the exact same generator to a hosted MOSTLY AI instance for sharing. (<a
+href="https://mostly.ai/blog/synthetic-data-quality-evaluation"
+title="Evaluate synthetic data quality using downstream ML - MOSTLY AI">MOSTLY
+AI</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>That’s it—copy the code blocks into a fresh Colab notebook and you’ll
+have a synthetic Titanic data set in a few minutes. If you bump into any
+configuration quirks, let me know and we can tweak the settings
+together!</p>
+<h1 id="more">More</h1>
+<p>Below are the “next-level” moves that MOSTLY AI’s Python SDK gives
+you once you’ve trained a generator, focusing on <strong>quality,
+sufficiency, and similarity</strong> checks—but I’ll also sprinkle in a
+few other power-user tricks you might like.</p>
+<hr />
+<h2 id="dig-into-the-built-in-quality-metrics">1 Dig into the built-in
+quality metrics</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> mostly.train(data<span class="op">=</span>df)             <span class="co"># or mostly.generators.get(id)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> g.tables[<span class="dv">0</span>].tabular_model_metrics   <span class="co"># first table’s model</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(m[<span class="st">&quot;accuracy&quot;</span>])      <span class="co"># → overall, univariate, bivariate, coherence</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(m[<span class="st">&quot;distances&quot;</span>])     <span class="co"># → DCR to training vs hold-out</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(m[<span class="st">&quot;similarity&quot;</span>])    <span class="co"># → cosine sim &amp; discriminator AUC</span></span></code></pre></div>
+<ul>
+<li><strong>Accuracy ≥ 0.90</strong> usually means the model captured
+most relevant patterns; an abrupt drop (&lt; 0.80) flags either too
+little data or mis-typed columns.</li>
+<li><strong><code>dcr_training</code> vs
+<code>dcr_holdout</code></strong> should be almost identical. A much
+smaller training distance hints at over-fitting; a much larger value
+hints at under-training.</li>
+<li><strong>Discriminator AUC ≈ 0.5</strong> means a classifier can’t
+tell real from synthetic—exactly what you want. (<a
+href="https://mostly.ai/docs/generators/evaluate-quality"
+title="mostly.ai">MOSTLY AI</a>)</li>
+</ul>
+<hr />
+<h2 id="was-there-enough-data">2 Was there <strong>enough
+data</strong>?</h2>
+<p>A fast heuristic is simply row count × cardinality:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(g.tables[<span class="dv">0</span>].row_stats)       <span class="co"># rows, uniques, missing, etc.</span></span></code></pre></div>
+<p><em>For Titanic (≈ 891 rows, 15 cols) you’re fine, but once any
+<strong>categorical column</strong> has dozens of sparse labels you want
+at least hundreds of records per label.</em> If the SDK reports low
+accuracy on high-cardinality columns, try:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> mostly.train(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>df,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        max_epochs<span class="op">=</span><span class="dv">128</span>,             <span class="co"># more passes</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        oversample<span class="op">=</span><span class="va">True</span>,            <span class="co"># upsample rare categories</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        model<span class="op">=</span><span class="st">&quot;tabularargn_big&quot;</span>     <span class="co"># larger network</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<hr />
+<h2 id="side-by-side-statistical-comparisons">3 Side-by-side
+<strong>statistical comparisons</strong></h2>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>real, synth <span class="op">=</span> df, mostly.generate(g, size<span class="op">=</span><span class="bu">len</span>(df)).data()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Kolmogorov–Smirnov for every numeric feature</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> ks_2samp</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ks <span class="op">=</span> {c: ks_2samp(real[c], synth[c]).statistic <span class="cf">for</span> c <span class="kw">in</span> real.select_dtypes(<span class="st">&quot;number&quot;</span>)}</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sorted</span>(ks.items(), key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">1</span>]))</span></code></pre></div>
+<p>Lower KS-statistics (&lt; 0.05) indicate the synthetic column matches
+its real counterpart very closely.</p>
+<p>For a quick visual check you can also let the SDK draw an automated
+<em>Data report</em> (univariate &amp; bivariate plots) by calling:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>synth_df <span class="op">=</span> mostly.generate(g, size<span class="op">=</span><span class="bu">len</span>(df), report<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>synth_df.open_report()     <span class="co"># opens in Colab</span></span></code></pre></div>
+<p>The same diagnostics can be accessed later through
+<code>sd.tables[0].tabular_model_metrics</code>. (<a
+href="https://mostly.ai/docs/generators/evaluate-quality"
+title="mostly.ai">MOSTLY AI</a>)</p>
+<hr />
+<h2 id="utility-first-evaluation-with-tstr">4 Utility-first evaluation
+with <strong>TSTR</strong></h2>
+<p>The Train-Synthetic-Test-Real workflow is a reliable “does it work in
+practice?” yard-stick:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>X_tr, X_hol <span class="op">=</span> train_test_split(df, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> mostly.train(data<span class="op">=</span>X_tr)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>X_syn <span class="op">=</span> mostly.generate(g, size<span class="op">=</span><span class="bu">len</span>(X_tr)).data()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Train identical models</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>clf_real <span class="op">=</span> RandomForestClassifier().fit(X_tr.drop(<span class="st">&quot;survived&quot;</span>,<span class="dv">1</span>), X_tr[<span class="st">&quot;survived&quot;</span>])</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>clf_syn  <span class="op">=</span> RandomForestClassifier().fit(X_syn.drop(<span class="st">&quot;survived&quot;</span>,<span class="dv">1</span>), X_syn[<span class="st">&quot;survived&quot;</span>])</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;AUC real  :&quot;</span>, roc_auc_score(X_hol[<span class="st">&quot;survived&quot;</span>], clf_real.predict_proba(X_hol.drop(<span class="st">&quot;survived&quot;</span>,<span class="dv">1</span>))[:,<span class="dv">1</span>]))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;AUC syn   :&quot;</span>, roc_auc_score(X_hol[<span class="st">&quot;survived&quot;</span>], clf_syn .predict_proba(X_hol.drop(<span class="st">&quot;survived&quot;</span>,<span class="dv">1</span>))[:,<span class="dv">1</span>]))</span></code></pre></div>
+<p>If the two scores are within a few points, your synthetic data
+retains downstream signal. A complete walk-through is in MOSTLY AI’s
+TSTR tutorial. (<a
+href="https://mostly.ai/blog/synthetic-data-quality-evaluation"
+title="Evaluate synthetic data quality using downstream ML - MOSTLY AI">MOSTLY
+AI</a>)</p>
+<hr />
+<h2 id="more-sdk-super-powers-you-might-explore-next">5 More SDK
+super-powers you might explore next</h2>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 40%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>One-liner</th>
+<th>What it gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Live probe</strong></td>
+<td><code>mostly.probe(g, size=10)</code></td>
+<td>Inspect synthetic rows without writing to disk</td>
+</tr>
+<tr>
+<td><strong>Generator re-use</strong></td>
+<td><code>g.export_to_file("generator.zip")</code></td>
+<td>Move a local model to the SaaS platform (or vice-versa)</td>
+</tr>
+<tr>
+<td><strong>Rebalancing / augmentation</strong></td>
+<td><code>mostly.generate(g, temperature=1.2, top_p=0.9)</code></td>
+<td>Oversample tail values, smooth rare categories</td>
+</tr>
+<tr>
+<td><strong>Fairness tweaks</strong></td>
+<td><code>mostly.generate(g, fairness={"gender":"parity"})</code></td>
+<td>Force equal representation in the output</td>
+</tr>
+<tr>
+<td><strong>Database connectors</strong></td>
+<td><code>mostly.connect("postgres://user@host/db")</code></td>
+<td>Train straight from / write back to SQL &amp; cloud warehouses</td>
+</tr>
+<tr>
+<td><strong>Differential privacy</strong></td>
+<td><code>mostly.train(data=df, privacy={"epsilon":1.0})</code></td>
+<td>Formal DP guarantee with only one flag</td>
+</tr>
+<tr>
+<td><strong>Assist-style analysis</strong> (SaaS)</td>
+<td>Natural-language chat on your synthetic data, powered by LLMs</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="tldr">TL;DR</h3>
+<ul>
+<li><strong><code>tabular_model_metrics</code></strong> is your gateway
+to fidelity, privacy and over-/under-fit signals.</li>
+<li>Use <strong>distances and discriminator AUC</strong> to sniff out
+memorisation vs data scarcity.</li>
+<li>Back it up with a simple <strong>TSTR</strong> benchmark to prove
+the data’s utility on a real task.</li>
+<li>Once you’re happy, the same SDK lets you export, rebalance, add DP,
+or pump the data straight into BigQuery—all without leaving Colab.</li>
+</ul>
+<p>Happy synthesising! If you hit any odd metric values, ping me with
+the numbers and we’ll debug them together.</p>
+    
+</body>
+</html>
