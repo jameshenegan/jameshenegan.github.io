@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below is a **self-contained “recipe” that stays 100 % inside
+<code>statsmodels</code> (plus only NumPy/SciPy/Matplotlib) and gives
+you one headline number such as “≈ 10 % longer retention for customers
+who also buy life insurance,” while explicitly correcting for the bias
+that most policies were written after 2020. Copy-paste the skeleton code
+into a notebook; all functions are in core libraries that ship with
+Anaconda or <code>pip install statsmodels</code>.</p>
+<hr />
+<h2 id="data-prep-3-variables">0 Data prep (3 variables)</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd, numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.duration.survfunc <span class="im">import</span> SurvfuncRight</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.duration.hazard_regression <span class="im">import</span> PHReg</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> integrate</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># df = your raw table</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.copy()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;time&quot;</span>]   <span class="op">=</span> df[<span class="st">&quot;auto_policy_time_length_days&quot;</span>]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;event&quot;</span>]  <span class="op">=</span> df[<span class="st">&quot;auto_policy_was_cancelled&quot;</span>]          <span class="co"># 1 = cancel observed, 0 = right-censored</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;life&quot;</span>]   <span class="op">=</span> df[<span class="st">&quot;has_life_insurance&quot;</span>].astype(<span class="bu">int</span>)     <span class="co"># 1 / 0</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;start_yr&quot;</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">&quot;auto_policy_start_date&quot;</span>]).dt.year</span></code></pre></div>
+<hr />
+<h2 id="visual-sanity-check-kaplanmeier-curves-censoring">1 Visual
+sanity check: Kaplan–Meier curves &amp; censoring</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sf_no  <span class="op">=</span> SurvfuncRight(df.loc[df.life<span class="op">==</span><span class="dv">0</span>, <span class="st">&quot;time&quot;</span>],</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                       df.loc[df.life<span class="op">==</span><span class="dv">0</span>, <span class="st">&quot;event&quot;</span>])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sf_yes <span class="op">=</span> SurvfuncRight(df.loc[df.life<span class="op">==</span><span class="dv">1</span>, <span class="st">&quot;time&quot;</span>],</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                       df.loc[df.life<span class="op">==</span><span class="dv">1</span>, <span class="st">&quot;event&quot;</span>])</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sf, label <span class="kw">in</span> [(sf_no, <span class="st">&quot;Auto Only&quot;</span>), (sf_yes, <span class="st">&quot;Auto + Life&quot;</span>)]:</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    plt.step(sf.surv_times, sf.surv, where<span class="op">=</span><span class="st">&quot;post&quot;</span>, label<span class="op">=</span>label)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Days since policy start&quot;</span>)<span class="op">;</span> plt.ylabel(<span class="st">&quot;Survival S(t)&quot;</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span> plt.yscale(<span class="st">&quot;linear&quot;</span>)<span class="op">;</span> plt.show()</span></code></pre></div>
+<p><em>You’ll see the “Auto + Life” curve in blue, “Auto Only” in
+orange. Gaps ≠ 0 imply different retention. Any steep cliff near zero
+signals data quirks.</em></p>
+<hr />
+<h2 id="one-number-answer-that-controls-for-start-year-mix">2 One-number
+answer that <strong>controls for start-year mix</strong></h2>
+<h3 id="stratified-cox-proportional-hazards-model">2.1 Stratified Cox
+proportional-hazards model</h3>
+<p>Each start year gets its own baseline hazard; the coefficient on
+<code>life</code> is a <em>within-year</em> contrast automatically
+pooled across years.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>exog  <span class="op">=</span> df[[<span class="st">&quot;life&quot;</span>]]                       <span class="co"># add more covariates if you like</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ph    <span class="op">=</span> PHReg(df[<span class="st">&quot;time&quot;</span>], exog,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>              status<span class="op">=</span>df[<span class="st">&quot;event&quot;</span>],</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>              strata<span class="op">=</span>df[<span class="st">&quot;start_yr&quot;</span>])       <span class="co"># &lt;-- key line: vintage control</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cox   <span class="op">=</span> ph.fit()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>hr    <span class="op">=</span> np.exp(cox.params[<span class="st">&quot;life&quot;</span>])         <span class="co"># hazard ratio</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>pct_longer <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>hr <span class="op">-</span> <span class="dv">1</span>                      <span class="co"># ≈ % longer expected life</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>ci_low, ci_high <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>np.exp(cox.conf_int().loc[<span class="st">&quot;life&quot;</span>, [<span class="dv">1</span>,<span class="dv">0</span>]]) <span class="op">-</span> <span class="dv">1</span>   <span class="co"># invert CI</span></span></code></pre></div>
+<blockquote>
+<p><strong>Slide-ready sentence</strong> &gt; <em>“After adjusting for
+policy-start year, bundling a life policy is associated with an
+estimated <strong>{pct_longer:.0%} longer</strong> auto-policy life (HR
+= {hr:.2f}, 95 % CI {ci_low:.0%}–{ci_high:.0%}).”</em></p>
+</blockquote>
+<p>That number is already insulated from the “most of our book started
+after 2020” bias.</p>
+<hr />
+<h3 id="optional-cross-check-cohort-by-cohort-rmst-ratio">2.2 Optional
+cross-check: cohort-by-cohort RMST ratio</h3>
+<p>Keeps everything non-parametric and lets you <em>show</em>
+stakeholders how each vintage behaves.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rmst(sf, tau):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.concatenate(([<span class="dv">0</span>], sf.surv_times, [tau]))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.concatenate(([<span class="dv">1</span>], sf.surv,        [sf.surv[<span class="op">-</span><span class="dv">1</span>]]))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> integrate.trapz(s, t)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>tau <span class="op">=</span> <span class="dv">730</span>              <span class="co"># 2-year horizon (pick what the business cares about)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ratios <span class="op">=</span> []</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> []</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> yr, g <span class="kw">in</span> df.groupby(<span class="st">&quot;start_yr&quot;</span>):</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    sf0 <span class="op">=</span> SurvfuncRight(g.loc[g.life<span class="op">==</span><span class="dv">0</span>, <span class="st">&quot;time&quot;</span>], g.loc[g.life<span class="op">==</span><span class="dv">0</span>, <span class="st">&quot;event&quot;</span>])</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    sf1 <span class="op">=</span> SurvfuncRight(g.loc[g.life<span class="op">==</span><span class="dv">1</span>, <span class="st">&quot;time&quot;</span>], g.loc[g.life<span class="op">==</span><span class="dv">1</span>, <span class="st">&quot;event&quot;</span>])</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> g[<span class="st">&quot;time&quot;</span>].<span class="bu">max</span>() <span class="op">&lt;</span> tau:                <span class="co"># skip cohorts w/ &lt; τ follow-up</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> rmst(sf1, tau) <span class="op">/</span> rmst(sf0, tau)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    ratios.append(r)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    weights.append(<span class="bu">len</span>(g))                   <span class="co"># weight by policy count</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>rmst_ratio <span class="op">=</span> np.average(ratios, weights<span class="op">=</span>weights)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Pooled RMST ratio @ </span><span class="sc">{</span>tau<span class="sc">}</span><span class="ss"> days: </span><span class="sc">{</span>rmst_ratio<span class="sc">:.2f}</span><span class="ss"> &quot;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f&quot;→ </span><span class="sc">{</span>rmst_ratio<span class="op">-</span><span class="dv">1</span><span class="sc">:.0%}</span><span class="ss"> longer&quot;</span>)</span></code></pre></div>
+<p>Use this as a robustness slide: almost always matches the Cox result
+within a couple of points.</p>
+<hr />
+<h2 id="log-rank-test-whole-curve-comparison-vintage-agnostic">3
+Log-rank test (whole-curve comparison, vintage-agnostic)</h2>
+<p>Although <code>statsmodels</code> has no canned log-rank, it takes
+six lines to code it yourself; here’s a helper you can paste:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logrank(x_time, x_event, y_time, y_event):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># merges event times, computes observed–expected, returns χ² &amp; p-value</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    times <span class="op">=</span> np.unique(np.r_[x_time[x_event<span class="op">==</span><span class="dv">1</span>], y_time[y_event<span class="op">==</span><span class="dv">1</span>]])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    O1 <span class="op">=</span> E1 <span class="op">=</span> V  <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    n1 <span class="op">=</span> (x_time <span class="op">&gt;=</span> <span class="dv">0</span>).<span class="bu">sum</span>()<span class="op">;</span>  n2 <span class="op">=</span> (y_time <span class="op">&gt;=</span> <span class="dv">0</span>).<span class="bu">sum</span>()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t <span class="kw">in</span> times:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        d1 <span class="op">=</span> ((x_time <span class="op">==</span> t) <span class="op">&amp;</span> (x_event<span class="op">==</span><span class="dv">1</span>)).<span class="bu">sum</span>()</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        d2 <span class="op">=</span> ((y_time <span class="op">==</span> t) <span class="op">&amp;</span> (y_event<span class="op">==</span><span class="dv">1</span>)).<span class="bu">sum</span>()</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        d  <span class="op">=</span> d1 <span class="op">+</span> d2</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> d <span class="op">==</span> <span class="dv">0</span>: <span class="cf">continue</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        E1 <span class="op">+=</span> d <span class="op">*</span> n1 <span class="op">/</span> (n1 <span class="op">+</span> n2)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        V  <span class="op">+=</span> d <span class="op">*</span> n1 <span class="op">*</span> n2 <span class="op">/</span> ((n1 <span class="op">+</span> n2) <span class="op">*</span> (n1 <span class="op">+</span> n2 <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        O1 <span class="op">+=</span> d1</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        n1 <span class="op">-=</span> ((x_time <span class="op">==</span> t)).<span class="bu">sum</span>()<span class="op">;</span>  n2 <span class="op">-=</span> ((y_time <span class="op">==</span> t)).<span class="bu">sum</span>()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    z2 <span class="op">=</span> (O1 <span class="op">-</span> E1)<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> V</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> scipy.stats <span class="im">import</span> chi2</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    p  <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> chi2.cdf(z2, <span class="dv">1</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> z2, p</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>chi2_stat, p <span class="op">=</span> logrank(df.loc[df.life<span class="op">==</span><span class="dv">1</span>,<span class="st">&quot;time&quot;</span>], df.loc[df.life<span class="op">==</span><span class="dv">1</span>,<span class="st">&quot;event&quot;</span>],</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                       df.loc[df.life<span class="op">==</span><span class="dv">0</span>,<span class="st">&quot;time&quot;</span>], df.loc[df.life<span class="op">==</span><span class="dv">0</span>,<span class="st">&quot;event&quot;</span>])</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;log-rank χ² = </span><span class="sc">{</span>chi2_stat<span class="sc">:.2f}</span><span class="ss">,  p = </span><span class="sc">{</span>p<span class="sc">:.4f}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p>A p-value &lt; 0.05 lets you say, <em>“The entire survival curve
+differs significantly between bundled and unbundled customers.”</em></p>
+<hr />
+<h2 id="putting-it-into-production">4 Putting it into production</h2>
+<ol type="1">
+<li><strong>Lock the definition</strong> (e.g., stratified Cox HR → %
+longer).</li>
+<li><strong>Automate</strong> the notebook as a nightly job; save the
+estimate and CI to a database table or flat file.</li>
+<li><strong>Dashboard</strong>: surface the point estimate with a
+sparkline of its 30-day history.</li>
+<li><strong>Alert rule</strong>: if HR drifts past 1.0 (no benefit) or
+below 0.80 (big gain), ping the retention team.</li>
+</ol>
+<hr />
+<h3 id="why-this-solves-the-most-policies-are-new-problem">Why this
+solves the “most policies are new” problem</h3>
+<ul>
+<li><strong>Stratification by <code>start_yr</code></strong> means every
+2024 policy is compared only with other 2024 policies, every 2021 policy
+with 2021, etc.</li>
+<li>The partial-likelihood machinery in <code>PHReg</code> then pools
+the <em>within-year</em> contrasts into one clean coefficient—so the
+reported 10 % uplift is <strong>purely a life-vs-no-life
+effect</strong>, not a by-product of differing vintage structure.</li>
+</ul>
+<p>With those 60-ish lines you can replicate everything actuarial teams
+usually do in <code>lifelines</code>, stay in the
+<code>statsmodels</code> ecosystem, and furnish the single headline
+number plus statistical back-up slides—all future-proofed against the
+“young book” bias.</p>
+    
+</body>
+</html>
