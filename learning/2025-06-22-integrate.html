@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Here’s a compact utility you can drop into your notebook to turn a
+<strong><code>SurvfuncRight</code></strong> result into the
+area-under-the-curve (expected policy-years). It works directly on the
+two core attributes exposed by <code>SurvfuncRight</code> —
+<code>surv_times</code> and <code>surv_prob</code> (<a
+href="https://www.statsmodels.org/dev/generated/statsmodels.duration.survfunc.SurvfuncRight.html"
+title="statsmodels.duration.survfunc.SurvfuncRight - statsmodels 0.15.0 (+661)">statsmodels.org</a>).</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> integrate_survival(surv, horizon<span class="op">=</span><span class="va">None</span>, discount_rate<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Integrate a statsmodels SurvfuncRight survival curve.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    surv : statsmodels.duration.survfunc.SurvfuncRight</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">        A fitted Kaplan–Meier (or other) survival curve.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    horizon : float or None, optional</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">        Upper limit of integration (same units as your `time` variable).</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">        If None, integrate over the full curve.</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">    discount_rate : float or None, optional</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Annual discount rate (e.g. 0.05 for 5 %).  If provided, the</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">        integrand is S(t)/(1+r)^t.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">    -------</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">    float</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">        Expected policy-years (or present value of policy-years if</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">        `discount_rate` is given).</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pull raw times and survival probabilities -----------------------------</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> surv.surv_times           <span class="co"># 1-D NumPy array</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> surv.surv_prob</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prepend t=0, S(0)=1 so the integral starts at the origin -------------</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.insert(t, <span class="dv">0</span>, <span class="fl">0.0</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.insert(s, <span class="dv">0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optionally truncate at a finite horizon ------------------------------</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> horizon <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        keep <span class="op">=</span> t <span class="op">&lt;=</span> horizon</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make sure the curve ends exactly at `horizon`</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> np.isclose(t[keep][<span class="op">-</span><span class="dv">1</span>], horizon):</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Linear interpolation for S(horizon)</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            s_h <span class="op">=</span> np.interp(horizon, t, s)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            t <span class="op">=</span> np.append(t[keep], horizon)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>            s <span class="op">=</span> np.append(s[keep], s_h)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>            t, s <span class="op">=</span> t[keep], s[keep]</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optional present-value discounting -----------------------------------</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> discount_rate <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> s <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> discount_rate) <span class="op">**</span> t</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trapezoidal integration ---------------------------------------------</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.trapz(s, t)</span></code></pre></div>
+<h3 id="how-you-might-use-it">How you might use it</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.duration.survfunc <span class="im">import</span> SurvfuncRight</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the KM curve for a single group</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>km <span class="op">=</span> SurvfuncRight(time, status)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Expected policy-years over the observed 12-year window</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>epy_12 <span class="op">=</span> integrate_survival(km, horizon<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Expected policy-years over the full curve</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>epy_full <span class="op">=</span> integrate_survival(km)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Present value of those policy-years at 5 % discount</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>pv_epy <span class="op">=</span> integrate_survival(km, discount_rate<span class="op">=</span><span class="fl">0.05</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;E[policy-years] to 12 y  = </span><span class="sc">{</span>epy_12<span class="sc">:0.2f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;E[policy-years] total    = </span><span class="sc">{</span>epy_full<span class="sc">:0.2f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Present-value (r=5 %)    = </span><span class="sc">{</span>pv_epy<span class="sc">:0.2f}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="why-it-works">Why it works</h3>
+<ul>
+<li><code>SurvfuncRight</code> stores the <strong>step points</strong>
+(<code>surv_times</code>) and the <strong>step heights</strong>
+(<code>surv_prob</code>) of the Kaplan–Meier estimator (<a
+href="https://www.statsmodels.org/dev/generated/statsmodels.duration.survfunc.SurvfuncRight.html"
+title="statsmodels.duration.survfunc.SurvfuncRight - statsmodels 0.15.0 (+661)">statsmodels.org</a>).</li>
+<li>Prepending <code>t = 0, S = 1</code> anchors the curve so the
+trapezoidal rule captures the very first segment.</li>
+<li>Discounting is applied by dividing <span
+class="math inline"><em>S</em>(<em>t</em>)</span> by <span
+class="math inline">(1 + <em>r</em>)<sup><em>t</em></sup></span> before
+integration.</li>
+<li>Linear interpolation lets you cap the horizon cleanly anywhere you
+like (e.g. exactly 12 years).</li>
+</ul>
+<p>Swap in your Group A and Group B objects, multiply the resulting
+expected policy-years by average premium, and the scenario arithmetic
+from the earlier message will drop right in.</p>
+<h3 id="slide-title">Slide Title</h3>
+<p><strong>Bundling Auto + Life Policies Extends Retention and Lifts
+Revenue</strong></p>
+<hr />
+<h4 id="key-take-aways">Key Take-aways</h4>
+<ul>
+<li><p><strong>Longer retention:</strong> Customers who carry both auto
+<strong>and</strong> life insurance keep their auto policy about
+<strong>18 % longer</strong> than auto-only customers (Kaplan–Meier
+analysis, 12-year window).</p></li>
+<li><p><strong>Higher premiums:</strong> The auto + life group pays
+<strong>≈ 12 % higher annual auto premiums</strong> on average.</p></li>
+<li><p><strong>Revenue upside from cross-sell:</strong></p>
+<ul>
+<li>If we convince <strong>10 % of the 8 000 auto-only customers (≈ 800
+policies)</strong> to add life, the <strong>incremental auto
+premium</strong> is projected at <strong>$1.4 M</strong> over 12
+years.</li>
+<li>Adding the life premiums raises the <strong>total uplift to ≈ $4.7
+M</strong> (undiscounted).</li>
+</ul></li>
+</ul>
+<hr />
+<h4 id="whats-behind-the-numbers">What’s Behind the Numbers</h4>
+<ul>
+<li><p><strong>Retention curves</strong> (right): auto + life curve sits
+to the right of auto-only → higher area under the curve (= more
+policy-years).</p></li>
+<li><p><strong>Customer-lifetime value (CLV)</strong> calculated as</p>
+<p><span class="math display">CLV = [Area under
+<em>S</em>(<em>t</em>)] × Avg. premium.</span></p></li>
+<li><p>Scenario assumes observed premium levels and no change in other
+behavior; results are <strong>correlational</strong>, not strictly
+causal.</p></li>
+</ul>
+<hr />
+<h5 id="fine-print">Fine Print</h5>
+<ul>
+<li>Based on 10/12-year Kaplan–Meier survival estimates; right-censoring
+handled with parametric extrapolation.</li>
+<li>No discounting or claims costs included (finance can apply a 5 %
+discount rate to convert to NPV).</li>
+<li>Profile differences (age, income, vehicle mix) partially adjusted
+via covariates; residual selection bias may remain.</li>
+</ul>
+<p><em>(Replace bold numbers with your actual estimates before
+presenting.)</em></p>
+    
+</body>
+</html>
