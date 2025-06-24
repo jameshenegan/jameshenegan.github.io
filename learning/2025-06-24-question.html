@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h2 id="question">Question</h2>
+<p>I recently performed a survival anaysis using python with
+statsmodels. the main thing i produced was a plot showing two survival
+curves: one for group a (people who just had auto insurance), one for
+group b (people who had auto insurance and life insurance). these curves
+represent automobile insurance policy duration. in general, the one for
+group b was to the right of group a. so the main thing that was
+communicated in the plot is that people who have auto+life have longer
+auto policies than people who just have auto. the data covers about 12
+years. a lot of people still had their auto policies at the end of that
+time. so the survival probabilities are about 0.35 and 0.42 at the end
+of the twelve years. i also have some data on how much people were
+paying for their auto premiums. it looks like people in group b pay
+higher auto premiums than people in group a. suppose that there were
+about 8000 people in group a and 2000 people in group b. someone asked
+this question: what would happen if 10% of the people in group a also
+had llife? how much extra money would that have generated for the
+company? do you have any thoughts on how to approach this question? is
+it a question that can be answered?</p>
+<h2 id="response">Response</h2>
+<h3 id="can-the-question-be-answered">Can the question be answered?</h3>
+<p>Yes — with some assumptions. What you really need is each group’s
+<strong>expected customer-lifetime value (CLV)</strong> for the auto
+line (and, if desired, the life line). Once you can express
+CLV<sub>A</sub> and CLV<sub>B</sub> in dollars per policy, the “what-if”
+is just:</p>
+<pre><code>Incremental revenue
+    = (CLV_B – CLV_A) × (10 % of 8 000)          ← 800 policies
+    +   CLV_Life × (10 % of 8 000)               ← if you want to include the life premium stream</code></pre>
+<p>So the problem reduces to estimating CLV for each product bundle.</p>
+<hr />
+<h3 id="a-step-by-step-way-to-do-it">A step-by-step way to do it</h3>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 83%" />
+<col style="width: 0%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>What to calculate</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Estimate retention</strong></td>
+<td>Kaplan–Meier S<sub>A</sub>(t) and S<sub>B</sub>(t) (you already have
+them). If you want a smoother curve or need to extrapolate, fit a
+parametric survival model (Weibull, log-logistic, etc.) to each
+group.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>2. Convert retention to expected policy-years</strong></td>
+<td>The area under S(t) from 0 to <strong>T</strong> (your 12-year
+window, or longer if you extrapolate) is the expected number of years
+the policy stays in force:<br/> E[Policy-years] =
+∫<sub>0</sub><sup>T</sup> S(t) dt.<br/>With discrete annual KM
+estimates, a trapezoidal sum is fine.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>3. Add money</strong></td>
+<td>Compute the average annual auto premium P<sub>A</sub> and
+P<sub>B</sub> (mean, median, or a regression-adjusted mean if you need
+case-mix control).<br/> Expected auto revenue per policy = P ×
+E[Policy-years].</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>4. Discount (optional but common)</strong></td>
+<td>Multiply each year’s expected premium by a discount factor
+d(t)=1/(1+r)<sup>t</sup> and integrate/sum again to get a present
+value.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>5. For life premiums</strong></td>
+<td>Repeat steps 1–4 (using life-policy retention, which is usually very
+high) or, if you are comfortable assuming life retention ≈1 and a flat
+premium, just add P<sub>Life</sub> × Number of years (discounted).</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>6. Put it together</strong></td>
+<td>CLV<sub>A</sub>, CLV<sub>B</sub>, CLV<sub>Life</sub> → incremental
+revenue equation above.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="a-toy-numeric-illustration-just-to-make-it-concrete">A toy
+numeric illustration (just to make it concrete)</h3>
+<table>
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 56%" />
+</colgroup>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Example value (illustrative only)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>∫S<sub>A</sub>(t) dt over 12 yrs</td>
+<td>5.1 policy-years</td>
+</tr>
+<tr>
+<td>∫S<sub>B</sub>(t) dt over 12 yrs</td>
+<td>6.0 policy-years</td>
+</tr>
+<tr>
+<td>Avg. annual auto premium</td>
+<td>P<sub>A</sub>=$1 050; P<sub>B</sub>=$1 180</td>
+</tr>
+<tr>
+<td>CLV<sub>A</sub> (undiscounted)</td>
+<td>5.1 × $1 050 ≈ $5 355</td>
+</tr>
+<tr>
+<td>CLV<sub>B</sub> (undiscounted)</td>
+<td>6.0 × $1 180 ≈ $7 080</td>
+</tr>
+<tr>
+<td><strong>Increment per converted policy</strong></td>
+<td>$1 725</td>
+</tr>
+<tr>
+<td>10 % of 8 000 converts (800 policies)</td>
+<td>$1 725 × 800 ≈ <strong>$1.38 million</strong> extra auto
+premium</td>
+</tr>
+<tr>
+<td>Add life premiums (say $350 yr × 12 yrs)</td>
+<td>+ $3.36 million</td>
+</tr>
+<tr>
+<td><strong>Total incremental revenue</strong></td>
+<td>≈ <strong>$4.7 million</strong> over 12 yrs</td>
+</tr>
+</tbody>
+</table>
+<p>Again, those dollar figures come entirely from the assumed inputs;
+swap in your own retention integrals, premiums, and discount rate to get
+real numbers.</p>
+<hr />
+<h3 id="things-to-watch-out-for">Things to watch out for</h3>
+<ol type="1">
+<li><p><strong>Causality vs. correlation</strong> Your groups weren’t
+randomised. The people who choose (or are sold) life insurance may
+differ in income, age, credit score, etc. If that selection drives both
+higher premiums and longer retention, simply “moving” 10 % of Group A
+into Group B may not reproduce Group B behaviour. You can:</p>
+<ul>
+<li>Add covariates to a <strong>Cox PH</strong> or parametric model for
+retention and to a regression for premium to control observable
+differences.</li>
+<li>Use a <strong>causal-inference design</strong>
+(e.g. inverse-probability weighting or doubly robust methods) if you
+really need a causal estimate.</li>
+</ul></li>
+<li><p><strong>Right-censoring at 12 years</strong> Your KM curves still
+show 35 %–42 % in force at 12 years. If you care about value beyond year
+12, you must extrapolate retention (parametric model) or cap the
+horizon.</p></li>
+<li><p><strong>Discounting and inflation</strong> Finance teams often
+insist on present-value numbers. Agree on a discount rate and whether
+premium inflation should be projected.</p></li>
+<li><p><strong>Premium changes over time</strong> If auto premiums
+inflate or the customer’s car ages and drops to cheaper coverage, model
+P(t) as a function of tenure.</p></li>
+<li><p><strong>Life-policy profit vs. premium</strong> Premiums are easy
+to count, but if you want profit you must subtract expected claims,
+commissions, etc.</p></li>
+</ol>
+<hr />
+<h3 id="implementation-tips-in-python">Implementation tips in
+Python</h3>
+<ul>
+<li><strong>Calculate area under S(t):</strong></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>years <span class="op">=</span> np.arange(<span class="bu">len</span>(km))  <span class="co"># km = yearly KM survival estimates</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>expected_years <span class="op">=</span> np.trapz(km, years)</span></code></pre></div>
+<ul>
+<li><strong>Discounted cash flow:</strong></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="fl">0.05</span>         <span class="co"># annual discount rate</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>discount <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> r) <span class="op">**</span> years</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dcf <span class="op">=</span> np.trapz(km <span class="op">*</span> premium <span class="op">*</span> discount, years)</span></code></pre></div>
+<ul>
+<li><p><strong>Scenario engine</strong>: Wrap the logic in a function
+that accepts:</p>
+<ul>
+<li>survival curve array,</li>
+<li>premium schedule,</li>
+<li>discount rate,</li>
+<li>number of policies to convert,</li>
+<li>include_life flag, etc.</li>
+</ul></li>
+</ul>
+<p>That makes it trivial to rerun with different “10 %”, “15 %”, or
+premium assumptions.</p>
+<hr />
+<h3 id="bottom-line">Bottom line</h3>
+<p>The question is answerable as long as you:</p>
+<ul>
+<li>Translate retention curves into <strong>expected
+policy-years</strong>,</li>
+<li>Multiply by <strong>per-policy premium streams</strong> (and
+discount if needed),</li>
+<li>Make clear what causal assumptions you’re willing to live with.</li>
+</ul>
+<p>From there, it’s just arithmetic.</p>
+<h2 id="question-1">Question</h2>
+<p>a lot of the latex didn’t render properly in your previous response.
+can you try again</p>
+<h2 id="response-1">Response</h2>
+<p>Below is the same reasoning as before, but with the key math written
+in proper LaTeX so it should display cleanly.</p>
+<hr />
+<h2 id="can-the-question-be-answered-1">1 Can the question be
+answered?</h2>
+<p>Yes—if you’re willing to <strong>estimate each bundle’s
+customer-lifetime value (CLV)</strong> for auto (and optionally life)
+insurance. Once you have per-policy CLVs, the “10 % of Group A converts”
+scenario is just</p>
+<p><span class="math display">$$
+\boxed{%
+\Delta \text{Auto Revenue}
+  = \bigl(\text{CLV}_B - \text{CLV}_A\bigr)\;
+    \times 0.10 \times 8{,}000
+}
+$$</span></p>
+<p>and, if you want to count the life policies as well,</p>
+<p><span class="math display"><em>Δ</em>Total Revenue = <em>Δ</em>Auto
+Revenue + CLV<sub>Life</sub>  × 0.10 × 8, 000.</span></p>
+<hr />
+<h2 id="how-to-compute-those-clvs">2 How to compute those CLVs</h2>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 86%" />
+<col style="width: 1%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>What you need</th>
+<th>Math</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Retention curves</strong></td>
+<td>Kaplan–Meier <span
+class="math inline"><em>S</em><sub><em>A</em></sub>(<em>t</em>)</span>
+and <span
+class="math inline"><em>S</em><sub><em>B</em></sub>(<em>t</em>)</span>
+(you already have them). If you want to extrapolate beyond 12 years, fit
+a parametric model (Weibull, log-logistic, …).</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>2. Expected policy-years</strong></td>
+<td>The <strong>area under the survival curve</strong>: <span
+class="math inline"><em>E</em>[Policy-years] = ∫<sub>0</sub><sup><em>T</em></sup><em>S</em>(<em>t</em>) <em>d</em><em>t</em>.</span>
+With yearly KM points, a trapezoidal sum is fine.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>3. Add dollars</strong></td>
+<td>Let <span class="math inline"><em>P</em><sub><em>A</em></sub></span>
+and <span class="math inline"><em>P</em><sub><em>B</em></sub></span> be
+the average annual auto premiums. Then <span
+class="math inline">CLV<sub><em>A</em></sub><sup>auto</sup> = <em>P</em><sub><em>A</em></sub> <em>E</em> [Policy-years<sub><em>A</em></sub>],   CLV<sub><em>B</em></sub><sup>auto</sup> = <em>P</em><sub><em>B</em></sub> <em>E</em> [Policy-years<sub><em>B</em></sub>].</span></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>4. Discount (optional)</strong></td>
+<td>If finance wants present value, multiply each year’s premium by
+<span class="math inline">$d(t)=\tfrac{1}{(1+r)^t}$</span> before
+integrating.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>5. Life premiums</strong></td>
+<td>Either do the same for life-policy retention or (common in practice)
+assume near-100 % retention and add <span
+class="math inline"><em>P</em><sub>Life</sub>×</span> years
+(discounted).</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>6. Scenario math</strong></td>
+<td>Plug the CLVs into the boxed formulas above.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="concrete-illustrative-numbers">3 Concrete (illustrative)
+numbers</h2>
+<p><em>(Swap these placeholders for your own estimates.)</em></p>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span
+class="math inline">∫<em>S</em><sub><em>A</em></sub>(<em>t</em>) <em>d</em><em>t</em></span>
+(to 12 y)</td>
+<td>5.1 policy-years</td>
+</tr>
+<tr>
+<td><span
+class="math inline">∫<em>S</em><sub><em>B</em></sub>(<em>t</em>) <em>d</em><em>t</em></span>
+(to 12 y)</td>
+<td>6.0 policy-years</td>
+</tr>
+<tr>
+<td>Avg. annual auto premium</td>
+<td><span
+class="math display"><em>P</em><sub><em>A</em></sub> = $1, 050, <em>P</em><sub><em>B</em></sub> = $1, 180</span></td>
+</tr>
+<tr>
+<td><span class="math inline">CLV<sub><em>A</em></sub></span></td>
+<td><span class="math display">5.1 × $1, 050 ≈ $5, 355</span></td>
+</tr>
+<tr>
+<td><span class="math inline">CLV<sub><em>B</em></sub></span></td>
+<td><span class="math display">6.0 × $1, 180 ≈ $7, 080</span></td>
+</tr>
+<tr>
+<td>Increment per converted policy</td>
+<td><span class="math display">$7, 080 − $5, 355 = $1, 725</span></td>
+</tr>
+<tr>
+<td>800 conversions (10 % of 8 000)</td>
+<td><span class="math display">800 × $1, 725 ≈ $1.38 M</span> extra auto
+premium</td>
+</tr>
+<tr>
+<td>Add life premiums ($350 yr × 12 y)</td>
+<td><span class="math display">800 × $4, 200 ≈ $3.36 M</span></td>
+</tr>
+<tr>
+<td><strong>Total incremental revenue</strong></td>
+<td><span class="math display"> ≈ $4.7 M</span> over 12 years</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="caveats-to-keep-in-mind">4 Caveats to keep in mind</h2>
+<ul>
+<li><strong>Selection bias</strong> – People who buy life may differ in
+age, income, etc. Control for covariates (Cox PH with covariates,
+regression on premiums, inverse-probability weighting, …) if you want a
+causal estimate.</li>
+<li><strong>Right-censoring</strong> – 35–42 % of policies are still in
+force at 12 years; decide whether to extrapolate or cap the
+horizon.</li>
+<li><strong>Discounting &amp; inflation</strong> – Agree on a discount
+rate and whether to project premium inflation.</li>
+<li><strong>Premium drift</strong> – Premiums can change with tenure
+(vehicle age, rate filings); model <span
+class="math inline"><em>P</em>(<em>t</em>)</span> if that matters.</li>
+<li><strong>Profit vs. revenue</strong> – If you care about profit,
+subtract expected claims, commissions, etc.</li>
+</ul>
+<hr />
+<h2 id="python-snippets">5 Python snippets</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Area under KM curve (yearly points in `km`)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>years <span class="op">=</span> np.arange(<span class="bu">len</span>(km))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>expected_years <span class="op">=</span> np.trapz(km, years)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Discounted cash flow</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="fl">0.05</span>                          <span class="co"># discount rate</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>discount <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> r) <span class="op">**</span> years</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>dcf <span class="op">=</span> np.trapz(km <span class="op">*</span> premium <span class="op">*</span> discount, years)</span></code></pre></div>
+<p>Wrap this logic in a function so you can change the “10 %”, premiums,
+or discount rate and instantly see the new number.</p>
+<hr />
+<p><strong>Bottom line:</strong> estimate retention → expected
+policy-years → multiply by premium → apply the scenario math. With clear
+assumptions, the question is very much answerable.</p>
+<h2 id="question-2">Question</h2>
+<p>can you generate some python code that will let me integreate the
+survival curve. i am using statsmodels with survfunction right</p>
+<h2 id="response-2">Response</h2>
+<p>Here’s a compact utility you can drop into your notebook to turn a
+<strong><code>SurvfuncRight</code></strong> result into the
+area-under-the-curve (expected policy-years). It works directly on the
+two core attributes exposed by <code>SurvfuncRight</code> —
+<code>surv_times</code> and <code>surv_prob</code> (<a
+href="https://www.statsmodels.org/dev/generated/statsmodels.duration.survfunc.SurvfuncRight.html"
+title="statsmodels.duration.survfunc.SurvfuncRight - statsmodels 0.15.0 (+661)">statsmodels.org</a>).</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> integrate_survival(surv, horizon<span class="op">=</span><span class="va">None</span>, discount_rate<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Integrate a statsmodels SurvfuncRight survival curve.</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">    surv : statsmodels.duration.survfunc.SurvfuncRight</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">        A fitted Kaplan–Meier (or other) survival curve.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">    horizon : float or None, optional</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">        Upper limit of integration (same units as your `time` variable).</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">        If None, integrate over the full curve.</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">    discount_rate : float or None, optional</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">        Annual discount rate (e.g. 0.05 for 5 %).  If provided, the</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">        integrand is S(t)/(1+r)^t.</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">    -------</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">    float</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">        Expected policy-years (or present value of policy-years if</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">        `discount_rate` is given).</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pull raw times and survival probabilities -----------------------------</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> surv.surv_times           <span class="co"># 1-D NumPy array</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> surv.surv_prob</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prepend t=0, S(0)=1 so the integral starts at the origin -------------</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> np.insert(t, <span class="dv">0</span>, <span class="fl">0.0</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.insert(s, <span class="dv">0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optionally truncate at a finite horizon ------------------------------</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> horizon <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>        keep <span class="op">=</span> t <span class="op">&lt;=</span> horizon</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make sure the curve ends exactly at `horizon`</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> np.isclose(t[keep][<span class="op">-</span><span class="dv">1</span>], horizon):</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Linear interpolation for S(horizon)</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>            s_h <span class="op">=</span> np.interp(horizon, t, s)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>            t <span class="op">=</span> np.append(t[keep], horizon)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>            s <span class="op">=</span> np.append(s[keep], s_h)</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>            t, s <span class="op">=</span> t[keep], s[keep]</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Optional present-value discounting -----------------------------------</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> discount_rate <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> s <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> discount_rate) <span class="op">**</span> t</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trapezoidal integration ---------------------------------------------</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.trapz(s, t)</span></code></pre></div>
+<h3 id="how-you-might-use-it">How you might use it</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.duration.survfunc <span class="im">import</span> SurvfuncRight</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the KM curve for a single group</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>km <span class="op">=</span> SurvfuncRight(time, status)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Expected policy-years over the observed 12-year window</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>epy_12 <span class="op">=</span> integrate_survival(km, horizon<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Expected policy-years over the full curve</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>epy_full <span class="op">=</span> integrate_survival(km)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Present value of those policy-years at 5 % discount</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>pv_epy <span class="op">=</span> integrate_survival(km, discount_rate<span class="op">=</span><span class="fl">0.05</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;E[policy-years] to 12 y  = </span><span class="sc">{</span>epy_12<span class="sc">:0.2f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;E[policy-years] total    = </span><span class="sc">{</span>epy_full<span class="sc">:0.2f}</span><span class="ss">&quot;</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Present-value (r=5 %)    = </span><span class="sc">{</span>pv_epy<span class="sc">:0.2f}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="why-it-works">Why it works</h3>
+<ul>
+<li><code>SurvfuncRight</code> stores the <strong>step points</strong>
+(<code>surv_times</code>) and the <strong>step heights</strong>
+(<code>surv_prob</code>) of the Kaplan–Meier estimator (<a
+href="https://www.statsmodels.org/dev/generated/statsmodels.duration.survfunc.SurvfuncRight.html"
+title="statsmodels.duration.survfunc.SurvfuncRight - statsmodels 0.15.0 (+661)">statsmodels.org</a>).</li>
+<li>Prepending <code>t = 0, S = 1</code> anchors the curve so the
+trapezoidal rule captures the very first segment.</li>
+<li>Discounting is applied by dividing <span
+class="math inline"><em>S</em>(<em>t</em>)</span> by <span
+class="math inline">(1 + <em>r</em>)<sup><em>t</em></sup></span> before
+integration.</li>
+<li>Linear interpolation lets you cap the horizon cleanly anywhere you
+like (e.g. exactly 12 years).</li>
+</ul>
+<p>Swap in your Group A and Group B objects, multiply the resulting
+expected policy-years by average premium, and the scenario arithmetic
+from the earlier message will drop right in.</p>
+<h2 id="question-3">Question</h2>
+<p>finally, can you give an example of how i can word these results if i
+have to put them on a powerpoint slide</p>
+<h2 id="response-3">Response</h2>
+<h3 id="slide-title">Slide Title</h3>
+<p><strong>Bundling Auto + Life Policies Extends Retention and Lifts
+Revenue</strong></p>
+<hr />
+<h4 id="key-take-aways">Key Take-aways</h4>
+<ul>
+<li><p><strong>Longer retention:</strong> Customers who carry both auto
+<strong>and</strong> life insurance keep their auto policy about
+<strong>18 % longer</strong> than auto-only customers (Kaplan–Meier
+analysis, 12-year window).</p></li>
+<li><p><strong>Higher premiums:</strong> The auto + life group pays
+<strong>≈ 12 % higher annual auto premiums</strong> on average.</p></li>
+<li><p><strong>Revenue upside from cross-sell:</strong></p>
+<ul>
+<li>If we convince <strong>10 % of the 8 000 auto-only customers (≈ 800
+policies)</strong> to add life, the <strong>incremental auto
+premium</strong> is projected at <strong>$1.4 M</strong> over 12
+years.</li>
+<li>Adding the life premiums raises the <strong>total uplift to ≈ $4.7
+M</strong> (undiscounted).</li>
+</ul></li>
+</ul>
+<hr />
+<h4 id="whats-behind-the-numbers">What’s Behind the Numbers</h4>
+<ul>
+<li><p><strong>Retention curves</strong> (right): auto + life curve sits
+to the right of auto-only → higher area under the curve (= more
+policy-years).</p></li>
+<li><p><strong>Customer-lifetime value (CLV)</strong> calculated as</p>
+<p><span class="math display">CLV = [Area under
+<em>S</em>(<em>t</em>)] × Avg. premium.</span></p></li>
+<li><p>Scenario assumes observed premium levels and no change in other
+behavior; results are <strong>correlational</strong>, not strictly
+causal.</p></li>
+</ul>
+<hr />
+<h5 id="fine-print">Fine Print</h5>
+<ul>
+<li>Based on 10/12-year Kaplan–Meier survival estimates; right-censoring
+handled with parametric extrapolation.</li>
+<li>No discounting or claims costs included (finance can apply a 5 %
+discount rate to convert to NPV).</li>
+<li>Profile differences (age, income, vehicle mix) partially adjusted
+via covariates; residual selection bias may remain.</li>
+</ul>
+<p><em>(Replace bold numbers with your actual estimates before
+presenting.)</em></p>
+<h2 id="question-4">Question</h2>
+<p>would it be possible to use estimates for median policy duration
+instead of RMST for policy duration</p>
+<h2 id="response-4">Response</h2>
+<p><strong>Short answer:</strong> you <em>can</em> quote the
+<strong>median policy duration</strong>, but for anything that involves
+money (expected premium, CLV, incremental-revenue scenarios) you’ll
+still want the <strong>mean / RMST</strong> underneath, because revenue
+is proportional to <em>total</em> time in force, not to the point where
+50 % of policies have lapsed.</p>
+<hr />
+<h2 id="how-the-two-statistics-differ">How the two statistics
+differ</h2>
+<table>
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 26%" />
+<col style="width: 58%" />
+</colgroup>
+<thead>
+<tr>
+<th>Statistic</th>
+<th>What it is</th>
+<th>Pros</th>
+<th>Cons for this use-case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Median survival time</strong></td>
+<td>Smallest time <em>t</em> where <span
+class="math inline"><em>S</em>(<em>t</em>) ≤ 0.5</span>.</td>
+<td>• Intuitive “typical” tenure. <br>• Unaffected by a few extreme
+long-stayers.</td>
+<td>• If <span class="math inline"><em>S</em>(<em>t</em>)</span> never
+drops to 0.5 in your 12-year window (lots of censoring), the median is
+<strong>undefined</strong>. <br>• Gives no information about the
+<em>shape</em> of the tail—two groups can share the same median but have
+very different means. <br>• Dollars accumulate with <em>every</em> extra
+month, so median doesn’t map linearly to revenue.</td>
+</tr>
+<tr>
+<td><strong>Restricted mean survival time (RMST)</strong></td>
+<td>Area under <span class="math inline"><em>S</em>(<em>t</em>)</span>
+from 0 to a horizon <span class="math inline"><em>T</em></span>.</td>
+<td>• Directly equals expected policy-years up to <span
+class="math inline"><em>T</em></span>. <br>• Handles heavy censoring
+gracefully. <br>• Linearly scalable to premium → $$ revenue.</td>
+<td>• Slightly less intuitive to lay audiences (“area under the
+curve”).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="when-is-a-median-acceptable">When is a median acceptable?</h2>
+<ul>
+<li><strong>Communication-only</strong>: If you just need a headline
+like “typical tenure is 4.2 years vs 5.1 years,” median is great.</li>
+<li><strong>Low censoring</strong>: If &lt;50 % of each group is still
+in force by, say, Year 8, your medians are identifiable and reasonably
+stable.</li>
+</ul>
+<p>But the moment you need to translate tenure into <strong>expected
+premium</strong>, the arithmetic breaks:</p>
+<p><span
+class="math display">Premium ∝ ∫<sub>0</sub><sup><em>T</em></sup><em>S</em>(<em>t</em>) <em>d</em><em>t</em>  (RMST),</span></p>
+<p>not to the median. Even if Group B’s median exceeds Group A’s by 0.9
+years, the <em>mean</em> gap could be larger (or smaller) depending on
+that long-tail 35 – 42 % that survives past 12 years.</p>
+<hr />
+<h2 id="practical-workflow-if-you-still-want-medians">Practical workflow
+if you still want medians</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.duration.survfunc <span class="im">import</span> SurvfuncRight</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> median_survival(surv):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns the Kaplan–Meier median survival time or np.nan if undefined.</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    t, s <span class="op">=</span> surv.surv_times, surv.surv_prob</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    below_50 <span class="op">=</span> np.where(s <span class="op">&lt;=</span> <span class="fl">0.5</span>)[<span class="dv">0</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(below_50) <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.nan          <span class="co"># Median not observed within follow-up</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    idx <span class="op">=</span> below_50[<span class="dv">0</span>]</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> s[idx] <span class="op">==</span> <span class="fl">0.5</span> <span class="kw">or</span> idx <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> t[idx]</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Linear interpolation between the two KM steps that straddle 0.5</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    t1, t0 <span class="op">=</span> t[idx], t[idx<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    s1, s0 <span class="op">=</span> s[idx], s[idx<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t0 <span class="op">+</span> (<span class="fl">0.5</span> <span class="op">-</span> s0) <span class="op">*</span> (t1 <span class="op">-</span> t0) <span class="op">/</span> (s1 <span class="op">-</span> s0)</span></code></pre></div>
+<p>You can display:</p>
+<ul>
+<li><strong>Median tenure</strong> for narrative impact.</li>
+<li><strong>RMST-based expected premium</strong> for the financial
+math.</li>
+</ul>
+<hr />
+<h2 id="recommendation-for-the-slide">Recommendation for the slide</h2>
+<blockquote>
+<p><em>“Median auto-policy tenure is 5.1 years for bundled customers vs
+4.3 years for auto-only. When we look at the full tenure distribution
+(area under the curve), bundled customers generate <strong>0.9 extra
+policy-years</strong>, translating to $X higher lifetime auto
+premium.”</em></p>
+</blockquote>
+<p>That keeps the intuitive median while grounding the dollar figure in
+the correct statistic.</p>
+<p>Would you like help adding those median numbers to your existing code
+or deck?</p>
+<h2 id="question-5">Question</h2>
+<p>suppose i want to analyze some data. the data was collected by an
+insurance company. each row represents a policy that a customer had with
+the company. the earliest policy inception date is 2013-01-01. The study
+ended on 2026-06-04. each row has a policy inception date. some rows
+have a policy termination date. other rows do not have a policy
+termination date. there is a column called “policy_was_terminated”. if a
+row has a policy termination date, then that row has a value of 1 for
+policy_was_terminated. otherwise, it has a value of 0. there have been
+new policies each year. i have calculated a field called
+“policy_num_days” that represents the number of days that the policy was
+in force (for policies that have been cancelled) or the number of days
+from the inception date to 2026-06-04 (for policies that were not
+cancelled). i want to perform a survival analysis to answer a question
+that estimates the mean policy time. i am using statsmodels in python. i
+have been using survfunctionright. one thing i’m not clear on is whether
+i can just use the “time” and “status” arguments for survfunctionright
+or if i also need to use the “entry” argument.</p>
+<h2 id="response-5">Response</h2>
+<h3 id="when-entry-is-and-isnt-needed-in-survfuncright">When
+<em>entry</em> is (and isn’t) needed in <code>SurvfuncRight</code></h3>
+<p><code>statsmodels.duration.survfunc.SurvfuncRight</code> is a
+Kaplan-Meier estimator for <strong>right-censored</strong> data. Its
+three timing–related arguments mean:</p>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 48%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>argument</th>
+<th>what it represents</th>
+<th>when to supply it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>endog</code> (often called <code>time</code>)</td>
+<td>the observed follow-up time for each subject (event time if
+<code>status==1</code>, censoring time otherwise)</td>
+<td><strong>always</strong></td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>1 = event occurred, 0 = censored</td>
+<td><strong>always</strong></td>
+</tr>
+<tr>
+<td><code>entry</code></td>
+<td>the time <strong>each subject first becomes at risk</strong> <em>on
+the analysis time-scale</em> (left-truncation / delayed-entry)</td>
+<td><strong>only</strong> if some subjects enter the risk set
+<strong>after</strong> time 0 on the chosen time scale</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="your-current-data-structure">Your current data structure</h4>
+<ul>
+<li><code>policy_num_days</code> already measures the number of days
+<strong>from each policy’s own inception date</strong> to its
+termination (or to the censoring date 2026-06-04).</li>
+<li>Every policy is observed starting at time 0 on that scale (the day
+it incepts).</li>
+</ul>
+<p>Because the analysis time-scale is <em>“days since this policy
+began”</em>, there is <strong>no delayed entry</strong>: every row is in
+the risk set from <code>t = 0</code> for <em>that</em> policy. Therefore
+<strong>you can omit the <code>entry</code> argument</strong>:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.duration.survfunc <span class="im">import</span> SurvfuncRight</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>km <span class="op">=</span> SurvfuncRight(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        endog <span class="op">=</span> df[<span class="st">&quot;policy_num_days&quot;</span>],</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        status <span class="op">=</span> df[<span class="st">&quot;policy_was_terminated&quot;</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<hr />
+<h4 id="situations-where-you-would-need-entry">Situations where you
+<em>would</em> need <code>entry</code></h4>
+<p>Suppose instead you chose a <strong>calendar-time</strong> scale,
+with <code>t = 0</code> fixed at the earliest inception date
+(2013-01-01). A policy that incepted on 2020-07-15 would then:</p>
+<ul>
+<li>enter the risk set at
+<code>entry = (2020-07-15) − (2013-01-01) ≈ 2 388 days</code>,</li>
+<li>have <code>time = entry + policy_num_days</code>.</li>
+</ul>
+<p>In that framework you <strong>must</strong> pass <code>entry</code>
+so the Kaplan-Meier estimator correctly excludes that policy from the
+risk set before 2020-07-15. (The numerical results will differ from the
+“days-since-inception” analysis because the risk sets are
+different.)</p>
+<hr />
+<h4 id="estimating-the-mean-policy-duration">Estimating the mean policy
+duration</h4>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kaplan–Meier survival curve</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>surv_times, surv_prob <span class="op">=</span> km.surv_times, km.surv_prob</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Restricted mean duration up to the largest observed event time</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>mean_duration <span class="op">=</span> np.trapz(surv_prob, surv_times)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Restricted mean policy duration: </span><span class="sc">{</span>mean_duration<span class="sc">:.1f}</span><span class="ss"> days&quot;</span>)</span></code></pre></div>
+<p><em>If</em> the survival curve reaches zero (all policies eventually
+terminate) the integral gives the <strong>unrestricted</strong> mean;
+otherwise it is the <strong>restricted mean</strong> up to the last
+observed event.</p>
+<hr />
+<h3 id="take-away">Take-away</h3>
+<ul>
+<li><strong>Use only <code>time</code> and <code>status</code></strong>
+when every policy is observed from its own inception date.</li>
+<li><strong>Add <code>entry</code></strong> only if you measure time on
+a common calendar axis (or any axis where some policies join late).</li>
+</ul>
+<h2 id="question-6">Question</h2>
+<p>so, i have tried both methods. and the results look a little
+different. i’m not sure which method is correct.</p>
+<h2 id="response-6">Response</h2>
+<p>The two approaches are answering <strong>two subtly different
+questions</strong>, and that is why the estimates do not match. The
+“right one” is the one whose time-axis matches <em>your</em> substantive
+question.</p>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 17%" />
+<col style="width: 22%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr>
+<th>Analysis you ran</th>
+<th>What the <em>time</em> axis means</th>
+<th>Risk set a policy belongs to</th>
+<th>Question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. No <code>entry</code></strong><br>(only <code>time</code>
+&amp; <code>status</code>)</td>
+<td>Days <em>since each policy’s own inception</em></td>
+<td>Every policy is “at risk” from <strong>day 0 of its own
+life</strong></td>
+<td>“For a policy that has just begun, how long can I expect it to stay
+in force?”</td>
+</tr>
+<tr>
+<td><strong>B. With <code>entry</code></strong></td>
+<td>Days since a <strong>common calendar origin</strong>
+(e.g. 2013-01-01)</td>
+<td>A policy joins the risk set only after its inception date
+(left-truncation)</td>
+<td>“Looking across the whole book at any calendar time after
+2013-01-01, what is the survival experience of <em>policies that were
+already in force at that time</em>?”</td>
+</tr>
+</tbody>
+</table>
+<p>Because policies incept in different calendar years, analysis
+<strong>B</strong> conditions on having already survived long enough to
+enter the study window; that tends to <em>inflate</em> survival
+estimates compared with analysis A (a form of “late-entry or
+length-bias”). Analysis A, on the other hand, treats every policy
+identically from its own day 0 and therefore gives the survival pattern
+an individual policy would face from inception.</p>
+<hr />
+<h3 id="which-should-you-report">Which should you report?</h3>
+<table>
+<colgroup>
+<col style="width: 46%" />
+<col style="width: 8%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th>If you need to…</th>
+<th>Use…</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Price or reserve new business, project lifetime value, set lapse
+assumptions</td>
+<td><strong>A. No <code>entry</code></strong></td>
+<td>You care about the lifetime of a <em>new</em> policy starting
+today.</td>
+</tr>
+<tr>
+<td>Describe the current in-force block’s persistence, or estimate churn
+among <em>existing</em> live policies</td>
+<td><strong>B. With <code>entry</code></strong></td>
+<td>You want survival conditional on a policy having been in force long
+enough to appear in the book.</td>
+</tr>
+</tbody>
+</table>
+<p>It is perfectly valid to present <em>both</em> if your stakeholders
+care about both perspectives—just be explicit about the time-scale and
+conditioning.</p>
+<hr />
+<h3
+id="checklist-to-verify-you-implemented-each-version-correctly">Checklist
+to verify you implemented each version correctly</h3>
+<ol type="1">
+<li><p><strong>No <code>entry</code> analysis</strong></p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>km <span class="op">=</span> SurvfuncRight(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>        endog  <span class="op">=</span> df[<span class="st">&quot;policy_num_days&quot;</span>],</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        status <span class="op">=</span> df[<span class="st">&quot;policy_was_terminated&quot;</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div></li>
+<li><p><strong>With <code>entry</code> analysis (calendar origin =
+earliest inception)</strong></p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>origin <span class="op">=</span> pd.Timestamp(<span class="st">&quot;2013-01-01&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;entry&quot;</span>] <span class="op">=</span> (df[<span class="st">&quot;policy_inception_date&quot;</span>] <span class="op">-</span> origin).dt.days</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;exit&quot;</span>]  <span class="op">=</span> df[<span class="st">&quot;entry&quot;</span>] <span class="op">+</span> df[<span class="st">&quot;policy_num_days&quot;</span>]   <span class="co"># exit time on same axis</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>km_calendar <span class="op">=</span> SurvfuncRight(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        endog  <span class="op">=</span> df[<span class="st">&quot;exit&quot;</span>],    <span class="co"># NOT policy_num_days</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        status <span class="op">=</span> df[<span class="st">&quot;policy_was_terminated&quot;</span>],</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        entry  <span class="op">=</span> df[<span class="st">&quot;entry&quot;</span>]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><em>Common slips</em>:</p>
+<ul>
+<li>feeding <code>policy_num_days</code> to <code>endog</code> while
+also supplying <code>entry</code>;</li>
+<li>forgetting to recompute <code>exit</code> on the calendar
+scale.</li>
+</ul></li>
+<li><p><strong>Plot both curves</strong> to show the conditioning
+effect:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.step(km.surv_times, km.surv_prob, where<span class="op">=</span><span class="st">&quot;post&quot;</span>, label<span class="op">=</span><span class="st">&quot;Days since inception&quot;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.step(km_calendar.surv_times, km_calendar.surv_prob, where<span class="op">=</span><span class="st">&quot;post&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>         label<span class="op">=</span><span class="st">&quot;Calendar time (left-truncated)&quot;</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&quot;Time (days)&quot;</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&quot;Survival probability&quot;</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div></li>
+</ol>
+<hr />
+<h3 id="key-take-aways-1">Key take-aways</h3>
+<ul>
+<li>The choice of <code>entry</code> is not a technical tweak—it changes
+the <strong>estimand</strong>.</li>
+<li>Decide first what population and time-scale matter to your actuarial
+or business question; then choose the matching survival-analysis
+specification.</li>
+<li>When communicating results, always state the time origin (“days
+since policy inception” vs. “days since 2013-01-01”) so others can
+interpret the numbers correctly.</li>
+</ul>
+<p>Once your time-scale is aligned with your objective, the Kaplan-Meier
+mean (area under the survival curve) will be the appropriate estimate of
+mean policy duration for that question.</p>
+<h2 id="question-7">Question</h2>
+<p>one thing about the two plots. the plot i make without entry looks
+more like a step function where the probability curve dips around 6
+months, 1 year, 18 months, 2 years, etc. this makes sense to me because
+policies tend to last on 6 months intervals. after that, they can decide
+whether to renew or cancel the policy. meanwhile, the plot for the
+survival function that uses “entry” looks smooth. i’m confused as to why
+that happens</p>
+<h2 id="response-7">Response</h2>
+<p>The “blocky vs. smooth” look is really just an optical illusion
+caused by <strong>how many distinct event times fall on the plotting
+axis</strong>—nothing “wrong” is happening with either estimator.</p>
+<hr />
+<h2 id="why-the-days-since-inception-curve-has-big-obvious-steps">Why
+the <em>days-since-inception</em> curve has big, obvious steps</h2>
+<ul>
+<li>Every policy begins at its own <strong>time 0</strong>.</li>
+<li>Most policies run for an integer number of half-year periods (≈ 180
+days, 365 days, 545 days …).</li>
+<li>Because those durations are identical for thousands of policies, the
+Kaplan–Meier estimator sees <strong>huge clumps of events at the exact
+same times</strong>. → A big chunk of weight drops at 180, another at
+365, and so on, so the survival line looks like a staircase.</li>
+</ul>
+<hr />
+<h2 id="why-the-calendar-time-with-entry-curve-looks-almost-smooth">Why
+the <em>calendar-time (with <code>entry</code>)</em> curve looks almost
+smooth</h2>
+<p>When you add <code>entry</code>, the event time becomes</p>
+<pre><code>exit_time = (calendar date of termination) − (2013-01-01)
+          = (policy_inception + k·180 days) − 2013-01-01.</code></pre>
+<p>Because inception dates are scattered over 2013-2026, that
+subtraction <strong>shifts each policy’s 180-day multiples by a
+different offset</strong>:</p>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 13%" />
+<col style="width: 18%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Inception</th>
+<th>First renewal</th>
+<th>Calendar-scale exit (days since 2013-01-01)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>2013-01-01</td>
+<td>2013-06-30</td>
+<td><strong>≈ 180</strong></td>
+</tr>
+<tr>
+<td>B</td>
+<td>2014-07-15</td>
+<td>2015-01-11</td>
+<td><strong>≈ 927</strong></td>
+</tr>
+<tr>
+<td>C</td>
+<td>2019-03-02</td>
+<td>2019-08-29</td>
+<td><strong>≈ 2 430</strong></td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>The once-aligned events are now spread all over the x-axis. Instead
+of, say, <strong>5 000</strong> policies all terminating at day 180, you
+get just a handful at 180, a handful at 181, 182, … thousands of
+distinct event times.</p>
+<p>The Kaplan–Meier step function still drops only at event times, but
+each drop is now <strong>tiny</strong>—so the eye perceives a nearly
+continuous decline.</p>
+<p><em>(If you re-plot that calendar-scale curve with
+<code>plt.step(..., where="post")</code> and zoom way in, you’ll still
+see the tiny steps.)</em></p>
+<hr />
+<h2 id="take-aways">Take-aways</h2>
+<ul>
+<li>Both curves are correct—they simply live on different time
+axes.</li>
+<li>Large vertical drops (big steps) occur whenever <strong>many
+subjects share the same event time on that axis</strong>. Shifting the
+axis with <code>entry</code> desynchronises the events and spreads the
+drops out.</li>
+<li>Always label the time origin when you show the plot so others
+understand which perspective they’re seeing.</li>
+</ul>
+<p>If your audience needs to recognise the 6-month renewal pattern, use
+the “days-since-inception” axis. If they care about behaviour of
+policies that are already in force at some calendar date, the
+left-truncated (calendar) curve is the right view—even if it looks
+smoother.</p>
+<h2 id="question-8">Question</h2>
+<p>so the x axis on the plot that uses entry represents what? it’s not
+days since policy began? i’m confused. how are the probability curves
+calculated?</p>
+<h2 id="response-8">Response</h2>
+<h3 id="what-the-x-axis-is-when-you-pass-an-entry-vector">What the
+<strong>x-axis</strong> is when you pass an <code>entry</code>
+vector</h3>
+<p>When you call</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>km_calendar <span class="op">=</span> SurvfuncRight(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>        endog <span class="op">=</span> exit,      <span class="co"># exit time on a *common* time-scale</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        status <span class="op">=</span> policy_was_terminated,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        entry  <span class="op">=</span> entry     <span class="co"># same time-scale as `exit`</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>you have told <code>SurvfuncRight</code> that your analysis uses a
+<strong>single, global time-scale</strong>—let’s call its zero-point
+<em>T₀</em>. Every value in both <code>entry</code> and
+<code>exit</code> is <strong>measured in days after T₀</strong>.</p>
+<ul>
+<li><p>In the example I showed earlier we set</p>
+<p><code>T₀ = 2013-01-01</code> (the earliest inception date).</p></li>
+<li><p>A policy that incepted on 2019-03-02 therefore has</p>
+<p><code>entry = (2019-03-02 − 2013-01-01) = 2 252 days</code>.</p></li>
+<li><p>If that policy later terminated on 2020-08-29,</p>
+<p><code>exit  = (2020-08-29 − 2013-01-01) = 2 779 days</code>.</p></li>
+</ul>
+<p>So <strong>the x-axis on that plot is “days since
+2013-01-01”</strong> (or whatever origin you picked). It is
+<strong>not</strong> days-since-this-policy-began; it is
+<em>calendar</em> time measured from a common origin.</p>
+<hr />
+<h3
+id="how-the-kaplanmeier-curve-is-calculated-with-left-truncation">How
+the Kaplan–Meier curve is calculated with left-truncation</h3>
+<ol type="1">
+<li><p><strong>Sort all unique exit times</strong> (events and
+right-censorings) on the global scale.</p></li>
+<li><p>At each time <code>tᵢ</code></p>
+<ul>
+<li><strong>Risk set <code>nᵢ</code></strong> = number of policies with
+<code>entry ≤ tᵢ</code> <em>and</em> still in force just before
+<code>tᵢ</code>. (Policies that incept after <code>tᵢ</code> are <em>not
+yet at risk</em>.)</li>
+<li><strong>Events <code>dᵢ</code></strong> = number of terminated
+policies at <code>tᵢ</code>.</li>
+</ul></li>
+<li><p>The step in the survival curve at <code>tᵢ</code> is</p>
+<p><span class="math display">$$
+S(tᵢ) = S(tᵢ⁻) \left(1 - \frac{dᵢ}{nᵢ}\right).
+$$</span></p></li>
+</ol>
+<p>Because entry times scatter the policies all over the axis,
+<code>dᵢ</code> is usually 1 or 2, <code>nᵢ</code> is large, and each
+drop is tiny—so the curve looks smooth.</p>
+<p><em>(If you zoom far enough in you will still see infinitesimal
+steps; they’re just too small to notice at full scale.)</em></p>
+<hr />
+<h3 id="reconciling-the-two-views">Reconciling the two views</h3>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 25%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Time origin (x-axis)</th>
+<th>What one point on <span
+class="math inline"><em>S</em>(<em>t</em>)</span> means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>No <code>entry</code></strong></td>
+<td>0 = policy’s own inception</td>
+<td>Probability a <strong>newly-written</strong> policy is still in
+force <code>t</code> days later</td>
+</tr>
+<tr>
+<td><strong>With <code>entry</code></strong></td>
+<td>0 = chosen calendar origin (e.g. 2013-01-01)</td>
+<td>Probability that a <strong>policy which had already entered the
+portfolio</strong> by time <code>t</code> is still in force right after
+<code>t</code></td>
+</tr>
+</tbody>
+</table>
+<p>To convert a point on the calendar-time curve back into “age of a
+particular policy,” you would subtract its <code>entry</code> value,
+i.e.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>policy_age <span class="op">=</span> t_calendar <span class="op">-</span> entry</span></code></pre></div>
+<p>—but the survival you read off at <code>t_calendar</code> is
+<strong>conditional</strong> on that policy having survived long enough
+to reach <code>entry</code>.</p>
+<hr />
+<h3 id="practical-tips">Practical tips</h3>
+<ul>
+<li><p><strong>Always annotate your plots</strong> (e.g. “Time since
+2013-01-01 (days)”) so viewers know which definition of time you
+used.</p></li>
+<li><p>Pick the time origin that answers your business question:</p>
+<ul>
+<li><strong>New-business longevity</strong> → days since policy
+inception (omit <code>entry</code>).</li>
+<li><strong>Persistence of current in-force block</strong> → calendar
+time with <code>entry</code>.</li>
+</ul></li>
+</ul>
+<p>Once you keep the time axis straight, the apparent shape difference
+between the two curves makes sense: the “lumpy” one shows synchronised
+renewal dates; the “smooth” one disperses those same events across the
+calendar.</p>
+<h2 id="question-9">Question</h2>
+<p>what does the area under a kaplan meier curve represent? why?</p>
+<h2 id="response-9">Response</h2>
+<h3 id="short-answer">Short answer</h3>
+<p>The <strong>area under a Kaplan–Meier (KM) survival curve is an
+estimate of the mean (average) time-to-event</strong>, more precisely
+the <strong>restricted mean survival time (RMST)</strong> up to the
+largest time that the curve is observed. If follow-up is long enough
+that the survival curve reaches zero, that area equals the ordinary mean
+survival time; when there is still some survival probability at the end
+of follow-up, the area gives the mean time lived <strong>within the
+observed window</strong>.</p>
+<hr />
+<h3 id="why-that-is-true">Why that is true</h3>
+<p>Let <span class="math inline"><em>T</em> ≥ 0</span> be a subject’s
+time to the event of interest (death, relapse, etc.).</p>
+<ul>
+<li><p><strong>Survival function:</strong> <span
+class="math inline"><em>S</em>(<em>t</em>) = <em>P</em>(<em>T</em> &gt; <em>t</em>)</span>.</p></li>
+<li><p><strong>Mean of <span
+class="math inline"><em>T</em></span>:</strong> A basic identity from
+probability theory for any non-negative random variable is</p>
+<p><span
+class="math display"><em>E</em>[<em>T</em>] = ∫<sub>0</sub><sup>∞</sup><em>S</em>(<em>t</em>) <em>d</em><em>t</em>.</span></p>
+<p>(It comes from writing <span
+class="math inline"><em>T</em> = ∫<sub>0</sub><sup>∞</sup><strong>1</strong>{<em>T</em> &gt; <em>t</em>} <em>d</em><em>t</em></span>
+and then taking expectations.)</p></li>
+</ul>
+<p>The Kaplan–Meier curve is simply the empirical (step-wise) estimate
+<span class="math inline"><em>Ŝ</em>(<em>t</em>)</span> of the true
+survival function. Replacing <span
+class="math inline"><em>S</em>(<em>t</em>)</span> by <span
+class="math inline"><em>Ŝ</em>(<em>t</em>)</span> and integrating (or
+numerically summing the rectangles under the steps) therefore estimates
+the mean:</p>
+<p><span class="math display">$$
+\widehat{\text{RMST}}(t^{*})=\int_{0}^{t^{*}}\! \widehat S(t)\,dt,
+$$</span></p>
+<p>where <span class="math inline"><em>t</em><sup>*</sup></span> is the
+largest time for which <span
+class="math inline"><em>Ŝ</em>(<em>t</em>)</span> is known (usually the
+last event time). This quantity is called the <strong>restricted mean
+survival time</strong> because it is “restricted” to the follow-up
+window <span class="math inline">[0, <em>t</em><sup>*</sup>]</span>.</p>
+<ul>
+<li>If the KM curve has dropped all the way to 0 before <span
+class="math inline"><em>t</em><sup>*</sup></span> (i.e., everyone has
+experienced the event), the RMST equals the true mean survival
+time.</li>
+<li>If not, the integral still has the intuitive interpretation “average
+time survived within the period we could observe,” and the unobserved
+tail beyond <span class="math inline"><em>t</em><sup>*</sup></span>
+would need additional assumptions or data to estimate.</li>
+</ul>
+<hr />
+<h3 id="practical-implications">Practical implications</h3>
+<ul>
+<li><strong>Interpretability:</strong> Unlike the median (time until 50
+% experience the event), RMST gives an answer in the original time units
+(days, months, years) that directly answers “how long, on average, do
+patients live/event-free within X years?”</li>
+<li><strong>Comparison of groups:</strong> Differences in RMST between
+treatment arms provide an easily interpretable treatment effect, even
+when the proportional-hazards assumption is violated.</li>
+<li><strong>Censoring:</strong> The KM estimator already accounts for
+right-censoring, so the area under its step function properly weights
+each censored subject’s partial contribution to the mean.</li>
+</ul>
+<p>Hence, the “area under the curve” in survival analysis is not like
+the AUC of an ROC curve; it literally accumulates time-weighted survival
+probabilities to produce an expected (mean) time-to-event.</p>
+    
+</body>
+</html>
