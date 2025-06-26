@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h1 id="question-1">Question 1</h1>
+<p>Below is a menu of complementary approaches you can mix-and-match.
+They go from “quick sanity-check” to more formal statistical modeling,
+with Python libraries that make each path straightforward.</p>
+<hr />
+<h2 id="clarify-what-become-profitable-means">1. Clarify what
+<strong>“become profitable”</strong> means</h2>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 15%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>Definition</th>
+<th>Pros</th>
+<th>Cons / Caveats</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Year-level break-even</strong> – first <em>agent_year</em>
+in which <code>profit_for_year ≥ 0</code></td>
+<td>Simple, intuitive</td>
+<td>Ignores prior losses: an agent that was –$5k in Y0 and +$1 in Y1 is
+labeled “profitable.”</td>
+</tr>
+<tr>
+<td><strong>Cumulative break-even</strong> – first <em>agent_year</em>
+for which cumulative sum of <code>profit_for_year</code> turns
+non-negative</td>
+<td>Accounts for pay-back period</td>
+<td>Requires enough history; newer agents will be right-censored (they
+haven’t broken even <em>yet</em>).</td>
+</tr>
+<tr>
+<td><strong>Discounted pay-back (NPV ≥ 0)</strong> – same as above but
+discount cash flows (e.g., 8 % annually)</td>
+<td>Aligns with finance/actuarial practice</td>
+<td>Adds a discount-rate assumption; still censoring issues.</td>
+</tr>
+</tbody>
+</table>
+<p>Pick the one that matches your business question (or compute all
+three and compare).</p>
+<hr />
+<h2 id="quick-descriptive-exploration">2. Quick descriptive
+exploration</h2>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd, matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">&quot;agents.csv&quot;</span>)      <span class="co"># agent_code, agent_year, profit_for_year</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2-A. Mean &amp; median profit by year of tenure</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> df.groupby(<span class="st">&quot;agent_year&quot;</span>)[<span class="st">&quot;profit_for_year&quot;</span>]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> g.agg([<span class="st">&#39;count&#39;</span>, <span class="st">&#39;mean&#39;</span>, <span class="st">&#39;median&#39;</span>, <span class="st">&#39;std&#39;</span>]).reset_index()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2-B. Plot distribution</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>g.boxplot(ax<span class="op">=</span>ax)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">&quot;Profit per Agent Year&quot;</span>)<span class="op">;</span> ax.set_ylabel(<span class="st">&quot;$&quot;</span>)<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><em>Rapid tells:</em></p>
+<ul>
+<li>Does Y0 cluster below zero?</li>
+<li>Does the mean cross the horizontal axis around Y1 or Y2?</li>
+</ul>
+<hr />
+<h2
+id="time-to-event-survival-analysis-when-do-agents-break-even-cumulatively">3.
+Time-to-event (survival) analysis – “When do agents break even
+cumulatively?”</h2>
+<p>Why survival methods?</p>
+<ul>
+<li>They handle <strong>right-censoring</strong> (agents hired recently
+who have not broken even yet).</li>
+<li>Output is a curve: <em>P(agent still unprofitable at tenure t)</em>,
+plus a median pay-back time with confidence bands.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lifelines <span class="im">import</span> KaplanMeierFitter</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># build cumulative profit &amp; break-even indicator</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&#39;cum_profit&#39;</span>] <span class="op">=</span> df.sort_values([<span class="st">&#39;agent_code&#39;</span>,<span class="st">&#39;agent_year&#39;</span>]).groupby(<span class="st">&#39;agent_code&#39;</span>)[<span class="st">&#39;profit_for_year&#39;</span>].cumsum()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>first_pos <span class="op">=</span> df[df.cum_profit <span class="op">&gt;=</span> <span class="dv">0</span>].groupby(<span class="st">&#39;agent_code&#39;</span>)[<span class="st">&#39;agent_year&#39;</span>].<span class="bu">min</span>().rename(<span class="st">&#39;time_to_profit&#39;</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create event table</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>events <span class="op">=</span> (</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">&#39;agent_code&#39;</span>,<span class="st">&#39;agent_year&#39;</span>]]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      .groupby(<span class="st">&#39;agent_code&#39;</span>)[<span class="st">&#39;agent_year&#39;</span>].<span class="bu">max</span>()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      .to_frame(<span class="st">&#39;last_observed_year&#39;</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      .join(first_pos)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      .assign(event<span class="op">=</span><span class="kw">lambda</span> x: x.time_to_profit.notna(),</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>              duration<span class="op">=</span><span class="kw">lambda</span> x: x.time_to_profit.fillna(x.last_observed_year))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>kmf <span class="op">=</span> KaplanMeierFitter()</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>kmf.fit(durations<span class="op">=</span>events.duration, event_observed<span class="op">=</span>events.event, label<span class="op">=</span><span class="st">&quot;Break-even&quot;</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>kmf.plot(ci_show<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
+<p><strong>Read-out:</strong> <em>Look at the survival curve: when it
+drops below 0.5, that tenure is the median pay-back year.</em> Add
+stratification if you have covariates (region, channel, acquisition cost
+tier, etc.): <code>kmf.fit(..., label='Direct agents')</code>.</p>
+<hr />
+<h2
+id="model-drivers-with-a-cox-proportional-hazard-or-accelerated-failure-time-model">4.
+Model drivers with a <strong>Cox proportional-hazard</strong> or
+<strong>accelerated-failure-time</strong> model</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lifelines <span class="im">import</span> CoxPHFitter</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppose you have extra columns: &#39;training_hours&#39;, &#39;channel&#39;, &#39;hire_year&#39;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>events <span class="op">=</span> events.join(agent_attributes)   <span class="co"># 1-row-per-agent dataframe</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cph <span class="op">=</span> CoxPHFitter()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>cph.fit(events, duration_col<span class="op">=</span><span class="st">&#39;duration&#39;</span>, event_col<span class="op">=</span><span class="st">&#39;event&#39;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        formula<span class="op">=</span><span class="st">&quot;training_hours + C(channel) + hire_year&quot;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>cph.print_summary()</span></code></pre></div>
+<p><em>Interpretation:</em> Hazard ratios &gt; 1 accelerate break-even;
+&lt; 1 delay it. Plot partial effects to quantify “If we gave 10 extra
+training hours, median pay-back improves by 0.4 years.”</p>
+<hr />
+<h2 id="bayesian-or-hierarchical-extensions-optional">5. Bayesian or
+hierarchical extensions (optional)</h2>
+<p>If you expect heavy agent-to-agent heterogeneity:</p>
+<ul>
+<li><strong>Hierarchical partial pooling</strong> – shrink individual
+profit trajectories toward a global mean (PyMC, NumPyro).</li>
+<li><strong>Bayesian survival</strong> – posterior distribution of the
+entire survival function; better small-sample calibration.</li>
+</ul>
+<hr />
+<h2 id="robustness-validation-checklist">6. Robustness &amp; validation
+checklist</h2>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Check</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Left-truncation bias</strong> – agents who quit early may be
+missing</td>
+<td>Include a quit indicator; treat churn as a competing risk in
+survival framework.</td>
+</tr>
+<tr>
+<td><strong>Calendar cohort effects</strong> (e.g., COVID, new comp
+plan)</td>
+<td>Add <em>hire cohort</em> as a stratum or covariate.</td>
+</tr>
+<tr>
+<td><strong>Discount-rate sensitivity</strong></td>
+<td>Run scenario table (5 %, 8 %, 12 %) for discounted pay-back.</td>
+</tr>
+<tr>
+<td><strong>Data quality</strong></td>
+<td>Validate that every <code>(agent_code, agent_year)</code> pair is
+unique; investigate extreme outliers.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="next-steps">Next steps</h3>
+<ol type="1">
+<li><strong>Pick your definition</strong> of “profitable” (yearly
+vs. cumulative vs. discounted).</li>
+<li><strong>Prototype the Kaplan-Meier plot</strong>; that alone often
+answers the business question (“50 % of agents break even by year
+2”).</li>
+<li>Layer in <strong>covariates</strong> or <strong>scenario
+analysis</strong> if you need prescriptive insight (“Investing in
+onboarding cuts pay-back time by 20 %”).</li>
+<li>Package the code in a notebook or script—happy to help refine it
+once you drop a sample dataset.</li>
+</ol>
+<p>Feel free to share a snippet of your data schema or any specific
+hurdles (e.g., censored observations, discounting), and we can flesh out
+code or visualizations.</p>
+<h1 id="question-2">Question 2</h1>
+<p>Absolutely—it’s quite common to pair <strong>survival / pay-back
+analysis</strong> with an <strong>unsupervised “behavior
+segmentation”</strong> step so the business can tailor coaching,
+incentives, or retention spend by cluster. There’s more than one way to
+carve up the problem; below are three patterns that work well in Python,
+from simplest to most “time-series-native.”</p>
+<hr />
+<h2 id="clustering-on-engineered-summary-features-fast-interpretable">1 ️⃣
+Clustering on engineered summary features (fast, interpretable)</h2>
+<ol type="1">
+<li><p><strong>Build a 1-row-per-agent table</strong> with features you
+care about. Examples:</p>
+<table>
+<colgroup>
+<col style="width: 57%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Why it helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>break_even_year</code> (or <code>np.inf</code> if not
+yet)</td>
+<td>Captures speed to profitability</td>
+</tr>
+<tr>
+<td><code>cum_profit_Y1</code>, <code>cum_profit_Y2</code>, …</td>
+<td>Picks up early-life performance</td>
+</tr>
+<tr>
+<td><code>peak_yearly_loss</code>, <code>peak_yearly_profit</code></td>
+<td>Measures risk / reward</td>
+</tr>
+<tr>
+<td><code>profit_slope_first_3y</code> (OLS β)</td>
+<td>Trend direction</td>
+</tr>
+<tr>
+<td><code>years_on_books</code></td>
+<td>Controls for censoring</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd, numpy <span class="im">as</span> np</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>agent_feats <span class="op">=</span> (</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    df.sort_values([<span class="st">&#39;agent_code&#39;</span>,<span class="st">&#39;agent_year&#39;</span>])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      .assign(cum<span class="op">=</span><span class="kw">lambda</span> d: d.groupby(<span class="st">&#39;agent_code&#39;</span>)[<span class="st">&#39;profit_for_year&#39;</span>].cumsum())</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      .groupby(<span class="st">&#39;agent_code&#39;</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      .<span class="bu">apply</span>(<span class="kw">lambda</span> g: pd.Series({</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;break_even_year&#39;</span>: <span class="bu">next</span>((y <span class="cf">for</span> y,p <span class="kw">in</span> <span class="bu">zip</span>(g.agent_year, g.cum) <span class="cf">if</span> p<span class="op">&gt;=</span><span class="dv">0</span>), np.inf),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;cum_profit_Y1&#39;</span>: g.loc[g.agent_year<span class="op">&lt;=</span><span class="dv">1</span>,<span class="st">&#39;profit_for_year&#39;</span>].<span class="bu">sum</span>(),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;cum_profit_Y2&#39;</span>: g.loc[g.agent_year<span class="op">&lt;=</span><span class="dv">2</span>,<span class="st">&#39;profit_for_year&#39;</span>].<span class="bu">sum</span>(),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;profit_slope_3y&#39;</span>: np.polyfit(g.agent_year[:<span class="dv">3</span>], g.profit_for_year[:<span class="dv">3</span>], <span class="dv">1</span>)[<span class="dv">0</span>],</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>          <span class="st">&#39;years_on_books&#39;</span>: g.agent_year.<span class="bu">max</span>()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      }))</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> StandardScaler().fit_transform(agent_feats.replace(np.inf, agent_feats.break_even_year.<span class="bu">max</span>()<span class="op">+</span><span class="dv">1</span>))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>km <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">0</span>).fit(X)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>agent_feats[<span class="st">&#39;cluster&#39;</span>] <span class="op">=</span> km.labels_</span></code></pre></div></li>
+<li><p><strong>Profile clusters</strong> (mean break-even, churn, region
+mix, etc.) to give them names like “Instant Winners,” “Slow Burners,”
+“Never Profit.”</p></li>
+</ol>
+<p><em>Pros</em> – Simple, accepts censoring, features can be financial
+KPIs managers understand. <em>Cons</em> – Throws away the detailed shape
+of profit curves.</p>
+<hr />
+<h2 id="shape-based-time-series-clustering-keeps-the-trajectories">2 ️⃣
+Shape-based time-series clustering (keeps the trajectories)</h2>
+<p>If you want the <strong>entire profit path</strong> to drive the
+grouping, use libraries such as <strong>tslearn</strong>:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tslearn.clustering <span class="im">import</span> TimeSeriesKMeans, KShape</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tslearn.preprocessing <span class="im">import</span> TimeSeriesResampler</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Build equal-length sequences: e.g. first 5 years, pad with zeros or NaNs</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>max_horizon <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>seqs <span class="op">=</span> (df[df.agent_year <span class="op">&lt;</span> max_horizon]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>          .pivot_table(index<span class="op">=</span><span class="st">&#39;agent_code&#39;</span>, columns<span class="op">=</span><span class="st">&#39;agent_year&#39;</span>, values<span class="op">=</span><span class="st">&#39;profit_for_year&#39;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>          .reindex(columns<span class="op">=</span><span class="bu">range</span>(max_horizon))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>          .fillna(<span class="dv">0</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>          .values)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionally resample to same length or z-score per agent</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>seqs <span class="op">=</span> TimeSeriesResampler(sz<span class="op">=</span>max_horizon).fit_transform(seqs[..., <span class="va">None</span>])</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>km_ts <span class="op">=</span> TimeSeriesKMeans(n_clusters<span class="op">=</span><span class="dv">5</span>, metric<span class="op">=</span><span class="st">&quot;dtw&quot;</span>, random_state<span class="op">=</span><span class="dv">0</span>).fit(seqs)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> km_ts.labels_</span></code></pre></div>
+<p><em>Key choices</em></p>
+<ul>
+<li><strong>Metric</strong> – DTW (elastic) or Euclidean (rigid).</li>
+<li><strong>Length alignment</strong> – truncate, pad, or
+percentage-progress scaling.</li>
+<li><strong>Post-analysis</strong> – plot cluster centroids to tell the
+story.</li>
+</ul>
+<p><em>Pros</em> – Captures nuanced shapes (early dip then hockey-stick,
+steady risers, plunging trajectories). <em>Cons</em> – Requires equal
+horizon; tricky with agents of very different tenure lengths.</p>
+<hr />
+<h2
+id="model-based-clustering-of-growth-curves-mixture-of-regressions-hmm">3
+️⃣Model-based clustering of growth curves (mixture of regressions /
+HMM)</h2>
+<p>A compromise that handles <strong>unequal lengths</strong> and yields
+parsimonious patterns:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: latent-cluster random intercept + slope model</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> model:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    K <span class="op">=</span> <span class="dv">3</span>                          <span class="co"># number of latent classes</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    π <span class="op">=</span> pm.Dirichlet(<span class="st">&#39;π&#39;</span>, a<span class="op">=</span>np.ones(K))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    z <span class="op">=</span> pm.Categorical(<span class="st">&#39;z&#39;</span>, p<span class="op">=</span>π, shape<span class="op">=</span>n_agents)  <span class="co"># cluster assignment</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    μ_intercept <span class="op">=</span> pm.Normal(<span class="st">&#39;μ_int&#39;</span>, <span class="dv">0</span>, <span class="dv">50</span>, shape<span class="op">=</span>K)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    μ_slope     <span class="op">=</span> pm.Normal(<span class="st">&#39;μ_slope&#39;</span>, <span class="dv">0</span>, <span class="dv">20</span>, shape<span class="op">=</span>K)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    σ <span class="op">=</span> pm.Exponential(<span class="st">&#39;σ&#39;</span>, <span class="dv">1</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># agent-level linear mean</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    y_hat <span class="op">=</span> μ_intercept[z[agent_idx]] <span class="op">+</span> μ_slope[z[agent_idx]] <span class="op">*</span> df.agent_year.values</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> pm.Normal(<span class="st">&#39;y&#39;</span>, mu<span class="op">=</span>y_hat, sigma<span class="op">=</span>σ, observed<span class="op">=</span>df.profit_for_year.values)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    trace <span class="op">=</span> pm.sample(<span class="dv">2000</span>, target_accept<span class="op">=</span><span class="fl">.9</span>)</span></code></pre></div>
+<p>Posterior on <code>z</code> gives soft cluster membership;
+intercept-slope pairs reveal “Instant Profits” vs. “Gradual
+Growers.”</p>
+<p><em>Pros</em> – Deals naturally with censoring and varying tenure;
+uncertainty quantified. <em>Cons</em> – More coding &amp; compute;
+interpretation may be less intuitive for stakeholders unfamiliar with
+Bayesian mixtures.</p>
+<hr />
+<h2 id="practical-advice">Practical advice</h2>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr>
+<th>Tip</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Standardize</strong> features before K-means / GMM</td>
+<td>Profit ranges may dwarf slope metrics.</td>
+</tr>
+<tr>
+<td><strong>Treat right-censoring consistently</strong></td>
+<td>Include <code>years_on_books</code> or do survival-aware models so
+late hires don’t bias clusters toward “not yet profitable.”</td>
+</tr>
+<tr>
+<td><strong>Validate with business KPIs</strong></td>
+<td>After clustering, compare retention, premium growth, or compliance
+issues—clusters are useful only if they explain something
+actionable.</td>
+</tr>
+<tr>
+<td><strong>Visualize</strong></td>
+<td>Scatter plots of t-SNE/UMAP embeddings or centroid lines instantly
+reveal whether clusters are distinct or arbitrary.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="next-step">Next step</h3>
+<ol type="1">
+<li><strong>Prototype the summary-feature K-means</strong> (approach 1)
+on a sample; it’s 10 lines of code and often surfaces clear
+“personas.”</li>
+<li>If managers want “how their profit curves <em>look</em>,” drop in
+<strong>TimeSeriesKMeans with DTW</strong> (approach 2).</li>
+<li>Come back here with sample plots or questions—happy to iterate on
+feature engineering, cluster validation, or Bayesian extensions.</li>
+</ol>
+    
+</body>
+</html>
