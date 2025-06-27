@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><p>Below are a handful of analytic “recipes” you can mix-and-match,
+depending on how rigorous you want to be and what questions your
+stakeholders care about most. All of them are implementable in
+plain-vanilla <strong>pandas</strong>, plus (optionally)
+<strong>lifelines</strong> or <strong>scikit-survival</strong> for the
+survival-style work.</p>
+<hr />
+<h3 id="first-profitable-year-a-simple-cut">1. “First Profitable Year” –
+a simple cut</h3>
+<p><strong>Definition</strong></p>
+<blockquote>
+<p>For each agent, find the smallest <code>agent_year</code> where
+<code>profit_for_year ≥ 0</code>. If it never happens before the record
+ends (or the agent terminates), tag them as
+<strong>right-censored</strong>.</p>
+</blockquote>
+<p><strong>Steps</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># A = annual profit data, B = start/termination info</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> pd.read_csv(<span class="st">&quot;agent_year_profit.csv&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> pd.read_csv(<span class="st">&quot;agent_dates.csv&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># merge for convenience</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> A.merge(B, on<span class="op">=</span><span class="st">&quot;agent_code&quot;</span>, how<span class="op">=</span><span class="st">&quot;left&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># add a helper flag</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;profitable_flag&quot;</span>] <span class="op">=</span> (df[<span class="st">&quot;profit_for_year&quot;</span>] <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># first profitable year per agent</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>first_prof <span class="op">=</span> (</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    df[df.profitable_flag]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">&quot;agent_code&quot;</span>)[<span class="st">&quot;agent_year&quot;</span>]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">min</span>()</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    .rename(<span class="st">&quot;first_profitable_year&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><strong>Outputs you can show</strong></p>
+<ul>
+<li>Distribution / histogram of <code>first_profitable_year</code>.</li>
+<li>Median / percentiles.</li>
+<li>Box by cohort (e.g., agents who started in the same calendar
+quarter).</li>
+</ul>
+<p><strong>Limitations</strong></p>
+<ul>
+<li>Ignores magnitude: an agent who makes $1 in year 2 is treated the
+same as one who makes $50 K.</li>
+<li>Censors all “never profitable” agents at the observation end; that’s
+OK, but you must treat them correctly (see §3).</li>
+</ul>
+<hr />
+<h3 id="break-even-point-cumulative-view">2. “Break-Even Point” –
+cumulative view</h3>
+<p>Instead of “first non-negative year,” ask “when does cumulative
+profit turn positive?”</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> time_to_breakeven(agent_df):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    agent_df <span class="op">=</span> agent_df.sort_values(<span class="st">&quot;agent_year&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    cumsum <span class="op">=</span> agent_df.profit_for_year.cumsum()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> cumsum.ge(<span class="dv">0</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pos.<span class="bu">any</span>():</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pos.idxmax()  <span class="co"># first index where cumulative ≥ 0</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.NA           <span class="co"># never breaks even</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>t2b <span class="op">=</span> (</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">&quot;agent_code&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      .<span class="bu">apply</span>(time_to_breakeven)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      .rename(<span class="st">&quot;breakeven_year&quot;</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p>This paints a more financially faithful picture when early losses are
+big but later profits dwarf them.</p>
+<hr />
+<h3 id="treat-it-as-time-to-event-survival-analysis">3. Treat it as
+<strong>time-to-event</strong> (survival analysis)</h3>
+<p>Your question — “How long until an event (profitability) occurs, with
+some agents leaving early?” — is textbook survival analysis.</p>
+<ol type="1">
+<li><strong>Event time</strong> = min(time-to-profit,
+time-to-termination, time-to-end-of-data).</li>
+<li><strong>Event occurred?</strong> = 1 if they became profitable
+before censoring, else 0.</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lifelines <span class="im">import</span> KaplanMeierFitter</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> first_prof.fillna(max_year_observed <span class="op">+</span> <span class="dv">1</span>)       <span class="co"># crude time axis</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>E <span class="op">=</span> first_prof.notna().astype(<span class="bu">int</span>)                 <span class="co"># 1 if event observed</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>kmf <span class="op">=</span> KaplanMeierFitter().fit(T, event_observed<span class="op">=</span>E)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>kmf.plot_survival_function()</span></code></pre></div>
+<p><em>Interpretation</em>: The survival curve S(t) here is “probability
+an agent is <em>still</em> unprofitable after t years.” Its complement
+(1 – S) is the cumulative share who <em>have</em> hit profitability.</p>
+<p>Advantages</p>
+<ul>
+<li>Handles right-censoring automatically.</li>
+<li>Add covariates with a Cox model (<code>lifelines.CoxPHFitter</code>)
+to see how features (region, acquisition cost, training spend) change
+the hazard of turning profitable.</li>
+</ul>
+<hr />
+<h3 id="predictive-modeling">4. Predictive modeling</h3>
+<p>If leadership wants <strong>leading indicators</strong>:</p>
+<ul>
+<li>Binary → profit in year N? Use logistic regression, gradient-boosted
+trees, etc.</li>
+<li>Continuous → “net present value in first 5 years?” Use regression
+models.</li>
+</ul>
+<p>You’ll still compute profit trajectories, but the target shifts from
+descriptive “when” to predictive “will they.”</p>
+<hr />
+<h3 id="cohort-retention-slicing">5. Cohort &amp; retention slicing</h3>
+<ul>
+<li>Slice by <strong>hire quarter / year</strong>: Is the 2024 cohort
+reaching break-even faster than 2022?</li>
+<li>Separate active vs. terminated agents (their motivations
+differ).</li>
+<li>Use <strong>agent tenure buckets</strong> (0-1 yr, 1-2 yr, …) rather
+than absolute calendar time if macro conditions vary.</li>
+</ul>
+<hr />
+<h3 id="putting-it-into-practice">Putting it into practice</h3>
+<p><em>Start scrappy</em>: Build §1 &amp; §2 in pandas, visualize with
+matplotlib or seaborn. <em>Level-up</em>: Drop §3’s survival curves into
+a simple report; management usually loves reading “Median time-to-profit
+= 18 months (95 % CI 15-22).” <em>Productionize</em>: wrap your code in
+a function, schedule weekly refreshes, and store the Kaplan-Meier object
+or summary stats in a dashboard.</p>
+<hr />
+<p><strong>Key gotchas</strong></p>
+<ol type="1">
+<li><strong>Negative outliers</strong>: A huge sign-on bonus may delay
+break-even; consider winsorizing or reporting both mean &amp;
+median.</li>
+<li><strong>Observation window</strong>: If your dataset ends mid-2025,
+agents hired in 2024 can’t physically have 3 years of tenure yet —
+right-censor them.</li>
+<li><strong>Inflation / discounting</strong>: If the time span is long,
+discount cash flows before summing.</li>
+<li><strong>Exchange rates</strong> (if multi-currency).</li>
+</ol>
+<hr />
+<h3 id="libraries-starter-imports">Libraries &amp; starter imports</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional survival libs</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install lifelines scikit-survival</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> lifelines <span class="im">import</span> KaplanMeierFitter, CoxPHFitter</span></code></pre></div>
+<hr />
+<p>That should give you a roadmap from quick-and-dirty through
+statistically principled. Happy crunching!</p>
+    
+</body>
+</html>
