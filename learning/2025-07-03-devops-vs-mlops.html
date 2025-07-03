@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+<style>
+body {
+  font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+  padding: 1em;
+  margin: auto;
+  max-width: 42em;
+  background: #fefefe;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+h1 {
+  color: #000000;
+  font-size: 28pt;
+}
+
+h2 {
+  border-bottom: 1px solid #cccccc;
+  color: #000000;
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777777;
+  background-color: inherit;
+  font-size: 14px;
+}
+
+hr {
+  height: 0.2em;
+  border: 0;
+  color: #cccccc;
+  background-color: #cccccc;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
+  margin: 15px 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid #eaeaea;
+
+  border-radius: 3px;
+  padding: 5px;
+}
+
+tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+a,
+a:visited {
+  color: #4183c4;
+  background-color: inherit;
+  text-decoration: none;
+}
+
+#message {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 60px;
+  margin: 6px 0px;
+}
+
+button,
+#ws {
+  font-size: 10pt;
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  background-color: #eee;
+}
+
+code,
+pre,
+#ws,
+#message {
+  font-family: Monaco, monospace;
+  font-size: 10pt;
+  border-radius: 3px;
+  background-color: #f8f8f8;
+  color: inherit;
+}
+
+code {
+  border: 1px solid #eaeaea;
+  margin: 0 2px;
+  padding: 0 5px;
+}
+
+pre {
+  border: 1px solid #cccccc;
+  overflow: auto;
+  padding: 4px 8px;
+}
+
+pre > code {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#ws {
+  background-color: #f8f8f8;
+}
+
+.send {
+  color: #77bb77;
+}
+.server {
+  color: #7799bb;
+}
+.error {
+  color: #aa0000;
+}
+</style>
+
+
+     </head>
+  <body><h3 id="devops-in-a-nutshell-shipping-software-reliably">1 DevOps in a
+nutshell — “shipping software reliably”</h3>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 68%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr>
+<th>Core purpose</th>
+<th>Key practices</th>
+<th>Typical artefacts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Accelerate and stabilize software delivery</strong> by
+bridging Development &amp; Operations</td>
+<td>1. <strong>CI</strong> (Continuous Integration) – every code change
+is built &amp; tested automatically<br>2. <strong>CD</strong>
+(Continuous Delivery/Deployment) – automated promotion of tested builds
+to staging → production<br>3. <strong>IaC &amp; automation</strong> –
+infrastructure declared as code, provisioned by pipelines<br>4.
+<strong>Monitoring &amp; feedback loops</strong> – telemetry feeds back
+into backlog</td>
+<td>• Source code<br>• Application binaries / containers<br>• Config
+&amp; IaC templates</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Mental model:</strong> <em>Any</em> change (feature, bug-fix,
+config tweak) travels a predictable, automated path: <strong>commit →
+build → test → deploy → observe → improve</strong>.</p>
+</blockquote>
+<hr />
+<h3 id="why-devops-alone-isnt-enough-for-machine-learning">2 Why DevOps
+alone isn’t enough for Machine Learning</h3>
+<p>Machine-learning systems contain <strong>two extra, volatile
+ingredients</strong>:</p>
+<ol type="1">
+<li><strong>Data</strong> – changes continually and can break model
+behaviour even when code is untouched.</li>
+<li><strong>Models</strong> – binary artefacts whose quality depends on
+both data <strong>and</strong> hyper-parameters; they degrade over time
+(“model drift”).</li>
+</ol>
+<p>Regulators and auditors also ask new questions: <em>Where did this
+training data come from?</em> <em>Who approved this model version?</em>
+<em>Is it fair and explainable?</em></p>
+<hr />
+<h3 id="mlops-devops-principles-expanded-to-data-models">3 MLOps —
+DevOps principles, expanded to data &amp; models</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 47%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>DevOps principle</th>
+<th><strong>Analogy in MLOps</strong></th>
+<th>Extra ML-specific twist</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Version everything</strong> (code, infrastructure)</td>
+<td>Version <strong>code, data <em>and</em> models</strong></td>
+<td>Data &amp; models stored in immutable registries; lineage tracked
+end-to-end</td>
+</tr>
+<tr>
+<td><strong>CI</strong> – build &amp; unit-test on every commit</td>
+<td><strong>CI + CT</strong> (Continuous <em>Training</em>) – after code
+or data change, retrain models and run validation suites</td>
+<td>Tests include accuracy, bias, reproducibility checks</td>
+</tr>
+<tr>
+<td><strong>CD</strong> – auto-deploy apps</td>
+<td><strong>CD + CM</strong> (Continuous <em>Model</em>
+deployment/monitoring) – promote validated models to production
+endpoints</td>
+<td>Promotion often gated by human approval; live monitoring for
+drift</td>
+</tr>
+<tr>
+<td><strong>Infrastructure-as-Code</strong></td>
+<td><strong>Infra- &amp; Data-as-Code</strong></td>
+<td>Feature stores, data pipelines and compute clusters defined
+declaratively</td>
+</tr>
+<tr>
+<td><strong>Observability</strong> (logs, traces, metrics)</td>
+<td><strong>Dual observability</strong> – application health
+<strong>and</strong> model performance (precision, recall, drift
+stats)</td>
+<td>Alerting may trigger auto-retrain or rollback</td>
+</tr>
+<tr>
+<td><strong>Security &amp; compliance</strong> baked in</td>
+<td><strong>Governance &amp; explainability</strong> baked in</td>
+<td>Audit trails for dataset usage, model lineage, approvals</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Short definition:</strong> <strong>MLOps</strong> applies
+DevOps automation <strong>plus governance</strong> to the <em>full</em>
+ML life-cycle: <strong>Data → Train → Validate → Deploy → Monitor →
+(Drift?) → Retrain.</strong></p>
+</blockquote>
+<hr />
+<h3 id="similarities-at-a-glance">4 Similarities at a glance</h3>
+<ul>
+<li><strong>Automation first</strong> – pipelines replace manual
+steps.</li>
+<li><strong>Collaboration culture</strong> – breaks silos between Data
+Scientists, ML Engineers, and Ops (analogous to Dev + Ops).</li>
+<li><strong>Fail-fast testing</strong> – catch errors early, protect
+production.</li>
+<li><strong>Feedback loops</strong> – production telemetry drives
+backlog priorities.</li>
+</ul>
+<hr />
+<h3 id="key-differences-youll-feel-in-practice">5 Key differences you’ll
+feel in practice</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 25%" />
+<col style="width: 58%" />
+</colgroup>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>DevOps focus</th>
+<th>MLOps additional concerns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Artefacts</strong></td>
+<td>Code &amp; binaries</td>
+<td>+ Datasets, feature definitions, trained models</td>
+</tr>
+<tr>
+<td><strong>Testing scope</strong></td>
+<td>Functional &amp; integration tests</td>
+<td>+ Statistical tests (accuracy, bias, stability), data-quality
+checks</td>
+</tr>
+<tr>
+<td><strong>Release cadence</strong></td>
+<td>Whenever code changes</td>
+<td>Also when data drifts or business re-labels outcomes</td>
+</tr>
+<tr>
+<td><strong>Monitoring KPIs</strong></td>
+<td>Latency, errors, uptime</td>
+<td>+ Model performance, data drift, concept drift</td>
+</tr>
+<tr>
+<td><strong>Governance</strong></td>
+<td>Change control, RBAC</td>
+<td>+ Lineage, provenance, explainability, human-in-loop approvals</td>
+</tr>
+<tr>
+<td><strong>Toolchain</strong></td>
+<td>Git, CI servers, IaC, APM</td>
+<td>+ Feature store, model registry, experiment tracker, drift
+monitor</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="take-away">6 Take-away</h3>
+<p><em>DevOps</em> gets software changes to users quickly and safely.
+<em>MLOps</em> does the same <strong>and</strong> guarantees that the
+<strong>data &amp; models</strong> powering those changes are versioned,
+validated, monitored, and auditable.</p>
+<p>If you already invest in DevOps, think of MLOps as <strong>adding two
+new first-class citizens—data and models—plus governance knobs</strong>
+to the pipeline you know.</p>
+    
+</body>
+</html>
